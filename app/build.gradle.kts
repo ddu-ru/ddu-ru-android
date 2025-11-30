@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "com.example.dduru_android"
+    namespace = "com.gildongmu.dduru_android"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "com.example.dduru_android"
+        applicationId = "com.gildongmu.dduru_android"
         minSdk = 28
         targetSdk = 36
         versionCode = 1

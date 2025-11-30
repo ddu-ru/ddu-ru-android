@@ -1,4 +1,4 @@
-package com.example.dduru_android.ui.theme
+package com.gildongmu.dduru_android.ui.theme
 
 import androidx.compose.material3.Typography
 import androidx.compose.ui.text.TextStyle

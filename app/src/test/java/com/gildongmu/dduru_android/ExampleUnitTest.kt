@@ -1,4 +1,4 @@
-package com.example.dduru_android
+package com.gildongmu.dduru_android
 
 import org.junit.Test
 
