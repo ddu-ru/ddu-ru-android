@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android
+package com.gildongmu.dduru_android.presentation.feature.main
 
 import android.os.Bundle
 import androidx.activity.ComponentActivity
