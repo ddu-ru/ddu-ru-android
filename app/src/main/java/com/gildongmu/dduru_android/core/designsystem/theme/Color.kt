@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.ui.theme
+package com.gildongmu.dduru_android.core.designsystem.theme
 
 import androidx.compose.ui.graphics.Color
 

@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.ui.theme
+package com.gildongmu.dduru_android.core.designsystem.theme
 
 import android.os.Build
 import androidx.compose.foundation.isSystemInDarkTheme
