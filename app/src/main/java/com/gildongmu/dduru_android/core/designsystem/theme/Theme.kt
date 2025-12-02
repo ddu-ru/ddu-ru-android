@@ -1,57 +1,77 @@
 package com.gildongmu.dduru_android.core.designsystem.theme
 
-import android.os.Build
+
+import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.darkColorScheme
-import androidx.compose.material3.dynamicDarkColorScheme
-import androidx.compose.material3.dynamicLightColorScheme
 import androidx.compose.material3.lightColorScheme
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.platform.LocalContext
+import androidx.compose.runtime.CompositionLocalProvider
+import androidx.compose.runtime.ReadOnlyComposable
+import androidx.compose.runtime.SideEffect
+import androidx.compose.ui.graphics.toArgb
+import androidx.compose.ui.platform.LocalView
+import androidx.core.view.WindowCompat
 
-private val DarkColorScheme = darkColorScheme(
-    primary = Purple80,
-    secondary = PurpleGrey80,
-    tertiary = Pink80
-)
 
+// 1. Theme Object
+object DduruTheme {
+    val colors: DduruColors
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDduruColors.current
+
+    val typography: DduruTypography
+        @Composable
+        @ReadOnlyComposable
+        get() = LocalDduruTypography.current
+}
+
+// 2. Material3 호환을 위한 ColorScheme
 private val LightColorScheme = lightColorScheme(
-    primary = Purple40,
-    secondary = PurpleGrey40,
-    tertiary = Pink40
-
-    /* Other default colors to override
-    background = Color(0xFFFFFBFE),
-    surface = Color(0xFFFFFBFE),
-    onPrimary = Color.White,
-    onSecondary = Color.White,
-    onTertiary = Color.White,
-    onBackground = Color(0xFF1C1B1F),
-    onSurface = Color(0xFF1C1B1F),
-    */
+    primary = Orange500,
+    onPrimary = White,
+    secondary = Orange100,
+    onSecondary = Black,
+    background = White,
+    surface = White,
+    onBackground = Black,
+    onSurface = Black,
+    error = DeepOrange
 )
 
+// 3. Theme Provider
 @Composable
-fun Dduru_androidTheme(
+fun DduruTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
-    // Dynamic color is available on Android 12+
-    dynamicColor: Boolean = true,
+    // Dynamic color는 끄는 게 디자인 시스템 유지에 좋습니다.
+    dynamicColor: Boolean = false,
     content: @Composable () -> Unit
 ) {
-    val colorScheme = when {
-        dynamicColor && Build.VERSION.SDK_INT >= Build.VERSION_CODES.S -> {
-            val context = LocalContext.current
-            if (darkTheme) dynamicDarkColorScheme(context) else dynamicLightColorScheme(context)
-        }
+    // 1. 우리가 만든 커스텀 컬러/폰트 가져오기
+    val colors = defaultDduruColors
+    val typography = defaultDduruTypography
 
-        darkTheme -> DarkColorScheme
-        else -> LightColorScheme
+    // 2. 상태바 색상 설정
+    val view = LocalView.current
+    if (!view.isInEditMode) {
+        SideEffect {
+            val window = (view.context as Activity).window
+            window.statusBarColor = colors.Background.toArgb() // 배경색과 맞춤
+            // 상태바 아이콘 색상
+            WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = !darkTheme
+        }
     }
 
-    MaterialTheme(
-        colorScheme = colorScheme,
-        typography = Typography,
-        content = content
-    )
+    // 3. CompositionLocalProvider
+    CompositionLocalProvider(
+        LocalDduruColors provides colors,
+        LocalDduruTypography provides typography
+    ) {
+        // 4. MaterialTheme 호환성 유지
+        MaterialTheme(
+            colorScheme = LightColorScheme, // Material 컴포넌트용
+            content = content
+        )
+    }
 }
