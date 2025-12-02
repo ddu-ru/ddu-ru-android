@@ -1,7 +1,6 @@
 package com.gildongmu.dduru_android.core.designsystem.theme
 
 
-
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.text.TextStyle
@@ -9,9 +8,7 @@ import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
 
-
 // 1. Font Family 정의
-
 val DduruFontFamily = FontFamily.Default
 
 // 2. Typography Token
@@ -24,9 +21,7 @@ data class DduruTypography(
     val bodyMedium: TextStyle,
     val bodySmall: TextStyle,
     val labelLarge: TextStyle,
-
-    )
-
+)
 
 // 3. 기본값 연결
 val defaultDduruTypography = DduruTypography(
@@ -74,7 +69,5 @@ val defaultDduruTypography = DduruTypography(
     )
 )
 
-
 // 4. CompositionLocal 등록
-
 val LocalDduruTypography = staticCompositionLocalOf { defaultDduruTypography }
