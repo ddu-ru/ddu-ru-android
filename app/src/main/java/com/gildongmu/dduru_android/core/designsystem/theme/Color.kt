@@ -32,7 +32,8 @@ val Gray300 = Color(0xFFDADCE0)
 val Gray200 = Color(0xFFE8EAED)
 val Gray100 = Color(0xFFF1F3F4)
 val Gray50  = Color(0xFFF8F9FA)
-
+val BlackAlpha14 = Color(0x24000000)
+val WhiteAlpha30 = Color(0x4DFFFFFF)
 // 2. System Token
 
 @Immutable
@@ -77,7 +78,9 @@ data class DduruColors(
 
     // Gradients
     val GradientStart: Color,
-    val GradientEnd: Color
+    val GradientEnd: Color,
+    val Shadow: Color,
+    val ButtonBorder: Color
 )
 
 
@@ -104,7 +107,7 @@ val defaultDduruColors = DduruColors(
     PointBorder = DeepOrange,
     HighlightBg = PaleYellow,
 
-    Background = White,
+    Background = Gray50,
     Surface = White,
 
     TextMain = Gray900,
@@ -117,7 +120,9 @@ val defaultDduruColors = DduruColors(
     LineDivider = Gray200,
 
     GradientStart = Yellow500,
-    GradientEnd = SoftOrange
+    GradientEnd = SoftOrange,
+    Shadow = BlackAlpha14,
+    ButtonBorder = WhiteAlpha30
 )
 
 

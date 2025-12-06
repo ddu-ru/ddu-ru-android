@@ -14,6 +14,9 @@ android {
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
+        val properties = Properties()
+        properties.load(project.rootProject.file("local.properties").inputStream())
+
         applicationId = "com.gildongmu.dduru_android"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
@@ -21,7 +24,18 @@ android {
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
+
+        // BASE_URL
         buildConfigField("String", "BASE_URL", properties["base.url"].toString())
+
+        // Google 웹 클라이언트 ID
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties.getProperty("google.client.id")}\"")
+
+        // Kakao 네이티브 앱 키 (BuildConfig용)
+        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${properties.getProperty("kakao.api.key")}\"")
+
+        // Manifest에 카카오 키 전달
+        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = properties.getProperty("kakao.api.key") as String
     }
 
     buildTypes {
@@ -47,6 +61,7 @@ android {
         compose = true
         buildConfig = true
     }
+    buildToolsVersion = "36.1.0"
 }
 
 dependencies {
@@ -68,4 +83,12 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.foundation)
+
+    // Google 로그인
+    implementation("com.google.android.gms:play-services-auth:21.4.0")
+    implementation("androidx.credentials:credentials:1.5.0")
+    implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
+
+    // 카카오 로그인
+    implementation("com.kakao.sdk:v2-user:2.20.1")
 }
