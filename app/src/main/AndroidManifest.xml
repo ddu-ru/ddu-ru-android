@@ -2,7 +2,6 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
 
-    <!-- 인터넷 권한 -->
     <uses-permission android:name="android.permission.INTERNET" />
 
     <application
@@ -16,10 +15,10 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Dduru_android">
 
-        <!-- 메인 Activity (LoginActivity를 시작 화면으로) -->
         <activity
-            android:name=".presentation.feature.auth.login.LoginActivity"
+            android:name=".presentation.feature.main.MainActivity"
             android:exported="true"
+            android:label="@string/app_name"
             android:theme="@style/Theme.Dduru_android">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -27,14 +26,6 @@
             </intent-filter>
         </activity>
 
-        <!-- MainActivity -->
-        <activity
-            android:name=".presentation.feature.main.MainActivity"
-            android:exported="false"
-            android:label="@string/app_name"
-            android:theme="@style/Theme.Dduru_android" />
-
-        <!-- 카카오 로그인용 Activity -->
         <activity
             android:name="com.kakao.sdk.auth.AuthCodeHandlerActivity"
             android:exported="true">
@@ -42,9 +33,6 @@
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />
                 <category android:name="android.intent.category.BROWSABLE" />
-
-                <!-- 카카오 로그인 Redirect URI -->
-                <!-- kakao${KAKAO_NATIVE_APP_KEY}://oauth -->
                 <data
                     android:host="oauth"
                     android:scheme="kakao${KAKAO_NATIVE_APP_KEY}" />

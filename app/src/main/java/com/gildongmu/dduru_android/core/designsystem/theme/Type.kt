@@ -33,8 +33,9 @@ val defaultDduruTypography = DduruTypography(
         fontFamily = DduruFontFamily,
         fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp,
-        lineHeight = 28.sp // 적절한 줄간격
+        lineHeight = 28.sp
     ),
+
     titleMedium = TextStyle(
         fontFamily = DduruFontFamily,
         fontWeight = FontWeight.Bold,
@@ -48,24 +49,28 @@ val defaultDduruTypography = DduruTypography(
         fontSize = 16.sp,
         lineHeight = 22.sp
     ),
+
     bodyLarge = TextStyle(
         fontFamily = DduruFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp
     ),
+
     bodyMedium = TextStyle(
         fontFamily = DduruFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
         lineHeight = 20.sp
     ),
+
     bodySmall = TextStyle(
         fontFamily = DduruFontFamily,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
         lineHeight = 16.sp
     ),
+
     labelLarge = TextStyle(
         fontFamily = DduruFontFamily,
         fontWeight = FontWeight.Medium,
