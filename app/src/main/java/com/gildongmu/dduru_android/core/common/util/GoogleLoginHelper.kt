@@ -12,19 +12,15 @@ import com.google.android.gms.tasks.Task
 
 object GoogleLoginHelper : SocialLoginHelper("GoogleLogin") {
 
-    /**
-     * 구글 로그인 화면을 띄우기 위한 Intent를 생성
-     * 매번 signOut()을 호출하여 '계정 선택 창'이 무조건 뜨게
-     */
+     //구글 로그인 화면을 띄우기 위한 Intent를 생성
     fun getSignInIntent(context: Context): Intent {
         val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
-            .requestIdToken(BuildConfig.GOOGLE_WEB_CLIENT_ID) // local.properties의 Web Client ID
+            .requestIdToken(BuildConfig.GOOGLE_WEB_CLIENT_ID)
             .requestEmail()
             .build()
 
         val googleSignInClient = GoogleSignIn.getClient(context, gso)
 
-        // 기존 로그인 기록을 지워야 "다른 계정으로 로그인" 옵션이 항상 보입니다.
         googleSignInClient.signOut()
 
         return googleSignInClient.signInIntent

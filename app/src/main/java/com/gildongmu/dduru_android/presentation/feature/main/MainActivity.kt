@@ -48,15 +48,13 @@ class MainActivity : ComponentActivity() {
                                 },
                                 onGuestClick = {
                                     Toast.makeText(applicationContext, "게스트 입장(홈으로)", Toast.LENGTH_SHORT).show()
-                                    // 게스트는 바로 홈으로 가거나 정책에 따라 Welcome을 보여줄 수도 있습니다.
                                 }
                             )
                         }
                         Screen.Welcome -> {
                             WelcomeScreen(
-                                modifier = modifier, // padding 적용
+                                modifier = modifier,
                                 onNextClick = {
-                                    // 3. Welcome 화면에서 버튼을 누르면, 아까 저장한 정보를 확인합니다.
                                     if (isNewUserCheck) {
                                         // 신규 유저 -> 생년월일 입력 화면으로
                                         Toast.makeText(applicationContext, "신규 회원입니다! 생년월일 화면으로 이동", Toast.LENGTH_SHORT).show()
@@ -77,7 +75,7 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-// 화면 순서 정의 (나중에 Birthday, Home 등 추가 필요)
+// 화면 순서 정의
 enum class Screen {
     Login,
     Welcome,
