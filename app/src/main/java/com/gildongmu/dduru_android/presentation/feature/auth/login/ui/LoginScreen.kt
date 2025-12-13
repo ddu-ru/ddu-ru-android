@@ -40,8 +40,9 @@ fun LoginScreen(
                 .fillMaxSize()
                 .padding(horizontal = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+            verticalArrangement = Arrangement.Top
         ) {
+            Spacer(modifier = Modifier.height(170.dp))
 
             //1. 캐릭터
             Column(
@@ -65,7 +66,7 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(95.dp))
 
             //2. 버튼 영역
             Column(

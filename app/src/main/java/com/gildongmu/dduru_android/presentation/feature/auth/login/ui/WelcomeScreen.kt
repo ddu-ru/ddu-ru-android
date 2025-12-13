@@ -2,10 +2,13 @@ package com.gildongmu.dduru_android.presentation.feature.auth.login.ui
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -19,14 +22,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru_android.R
-import com.gildongmu.dduru_android.core.designsystem.component.DduruButton // 방금 만든 버튼 컴포넌트 import
+import com.gildongmu.dduru_android.core.designsystem.component.DduruButton
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.ColorFilter
 
 @Composable
 fun WelcomeScreen(
     modifier: Modifier = Modifier,
-    onNextClick: () -> Unit,
-    onGuestClick: () -> Unit
+    onNextClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -37,14 +41,34 @@ fun WelcomeScreen(
     ) {
 
         // 1. 말풍선 영역
-        Image(
-            painter = painterResource(id = R.drawable.img_message),
-            contentDescription = "뚜르에 오신 것을 환영해요! 저는 뚜르의 마스코트 뚜비에요. 시작하기 전에 간단하게 서로 알아가 볼까요?",
+        Box(
             modifier = Modifier
                 .width(340.dp)
-                .wrapContentHeight(),
-            contentScale = ContentScale.Fit
-        )
+                .wrapContentHeight()
+        ) {
+            //그림자
+            Image(
+                painter = painterResource(id = R.drawable.img_message),
+                contentDescription = null,
+                modifier = Modifier
+                    .matchParentSize() // 부모 Box의 크기와 똑같이 맞춤
+                    .offset(y = 9.dp) // 그림자 위치 (숫자가 클수록 아래로 내려옴)
+                    .blur(radius = 17.dp) // 번짐 정도 (숫자가 클수록 부드럽게 퍼짐)
+                    .alpha(0.3f), // 투명도 (0.1f = 연함, 1.0f = 완전 진함)
+                contentScale = ContentScale.Fit,
+                colorFilter = ColorFilter.tint(androidx.compose.ui.graphics.Color.Black)
+            )
+
+            // Layer 2: 원본 이미지
+            Image(
+                painter = painterResource(id = R.drawable.img_message),
+                contentDescription = "뚜르에 오신 것을 환영해요! ...",
+                modifier = Modifier
+                    .fillMaxWidth() // Box 너비(340dp)를 꽉 채움
+                    .wrapContentHeight(), // 이미지 비율에 맞춰 높이 자동 설정 (핵심!)
+                contentScale = ContentScale.Fit
+            )
+        }
 
         Spacer(modifier = Modifier.height(20.dp))
 
@@ -68,7 +92,7 @@ fun WelcomeScreen(
                 .padding(1.dp)
         )
 
-        Spacer(modifier = Modifier.height(80.dp))
+        Spacer(modifier = Modifier.height(83.dp))
 
         // 4. 버튼
         DduruButton(
@@ -86,6 +110,6 @@ fun WelcomeScreen(
 @Composable
 private fun WelcomeScreenPreview() {
     DduruTheme {
-        WelcomeScreen(onNextClick = {}, onGuestClick = {})
+        WelcomeScreen(onNextClick = {})
     }
 }

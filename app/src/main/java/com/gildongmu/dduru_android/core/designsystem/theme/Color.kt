@@ -33,6 +33,8 @@ val Gray200 = Color(0xFFE8EAED)
 val Gray100 = Color(0xFFF1F3F4)
 val Gray50  = Color(0xFFF8F9FA)
 val BlackAlpha14 = Color(0x24000000)
+val BlackAlpha05 = Color(0x0D000000)
+val BlackAlpha10 = Color(0x1A000000)
 val WhiteAlpha30 = Color(0x4DFFFFFF)
 val KakaoLabel = Color(0xFF191919)
 // 2. System Token
@@ -82,6 +84,8 @@ data class DduruColors(
     val GradientStart: Color,
     val GradientEnd: Color,
     val Shadow: Color,
+    val ShadowSmall: Color,
+    val ShadowMedium: Color,
     val ButtonBorder: Color,
 
     val BorderLight: Color,
@@ -131,6 +135,8 @@ val defaultDduruColors = DduruColors(
     GradientStart = Yellow500,
     GradientEnd = SoftOrange,
     Shadow = BlackAlpha14,
+    ShadowSmall = BlackAlpha05,
+    ShadowMedium = BlackAlpha10,
     ButtonBorder = WhiteAlpha30,
 
     BorderLight = Gray200,
