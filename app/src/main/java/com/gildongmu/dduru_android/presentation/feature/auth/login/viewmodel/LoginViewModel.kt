@@ -1,11 +1,10 @@
 package com.gildongmu.dduru_android.presentation.feature.auth.login.viewmodel
 
 import android.content.Context
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gildongmu.dduru_android.data.datastore.TokenDataStore
-import com.gildongmu.dduru_android.data.model.request.LoginRequest
-import com.gildongmu.dduru_android.data.service.AuthService
+import com.gildongmu.dduru_android.domain.repository.AuthRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -17,45 +16,43 @@ import javax.inject.Inject
 sealed class LoginUiState {
     object Idle : LoginUiState()
     object Loading : LoginUiState()
-    object Success : LoginUiState()
+    data class Success(val isNewUser: Boolean) : LoginUiState()
     data class Error(val message: String) : LoginUiState()
 }
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authService: AuthService,
-    @ApplicationContext private val context: Context
+    private val authRepository: AuthRepository,
+    @ApplicationContext context: Context
 ) : ViewModel() {
-
-    private val tokenDataStore = TokenDataStore(context)
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    /**
-     * 서버에 로그인 요청
-     * @param idToken 소셜 로그인에서 받은 ID 토큰
-     * @param provider "KAKAO" 또는 "GOOGLE"
-     */
+
+    //서버에 로그인 요청
     fun loginToServer(idToken: String, provider: String) {
         viewModelScope.launch {
-            try {
-                _uiState.value = LoginUiState.Loading
+            _uiState.value = LoginUiState.Loading
 
-                // 서버에 로그인 요청
-                val response = when (provider) {
-                    "KAKAO" -> authService.loginWithKakao(LoginRequest(idToken))
-                    "GOOGLE" -> authService.loginWithGoogle(LoginRequest(idToken))
-                    else -> throw IllegalArgumentException("Unknown provider: $provider")
-                }
-
-                // 토큰 저장
-                tokenDataStore.saveTokens(response.accessToken, response.refreshToken)
-
-                _uiState.value = LoginUiState.Success
-            } catch (e: Exception) {
-                _uiState.value = LoginUiState.Error("로그인 실패: ${e.message}")
+            if (idToken == "CANCELED") {
+                _uiState.value = LoginUiState.Idle
+                return@launch
             }
+
+            val result: Result<Boolean> = when (provider) {
+                "KAKAO" -> authRepository.loginWithKakao(idToken)
+                "GOOGLE" -> authRepository.loginWithGoogle(idToken)
+                else -> throw IllegalArgumentException("Unknown provider: $provider")
+            }
+
+            result.onSuccess { isNewUser ->
+                _uiState.value = LoginUiState.Success(isNewUser)
+            }.onFailure { e ->
+                Log.e("LoginViewModel", "Login failed", e)
+                _uiState.value = LoginUiState.Error(e.message ?: "알 수 없는 에러가 발생했습니다.")
+            }
+
         }
     }
 }

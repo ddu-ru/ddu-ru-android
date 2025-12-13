@@ -6,14 +6,17 @@ import androidx.datastore.preferences.core.Preferences
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
+import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.map
+import javax.inject.Inject
 
 // DataStore 확장 프로퍼티
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(name = "auth_tokens")
 
-class TokenDataStore(private val context: Context) {
+class TokenDataStore @Inject constructor(
+    @ApplicationContext private val context: Context) {
 
     companion object {
         private val ACCESS_TOKEN_KEY = stringPreferencesKey("access_token")

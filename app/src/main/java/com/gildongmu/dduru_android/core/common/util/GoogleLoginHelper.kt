@@ -1,65 +1,69 @@
 package com.gildongmu.dduru_android.core.common.util
 
-import android.app.Activity
 import android.content.Context
 import android.content.Intent
 import android.util.Log
-import androidx.activity.result.ActivityResultLauncher
-import androidx.activity.result.IntentSenderRequest
 import com.gildongmu.dduru_android.BuildConfig
-import com.google.android.gms.auth.api.identity.BeginSignInRequest
-import com.google.android.gms.auth.api.identity.Identity
-import com.google.android.gms.auth.api.identity.SignInClient
+import com.google.android.gms.auth.api.signin.GoogleSignIn
+import com.google.android.gms.auth.api.signin.GoogleSignInAccount
+import com.google.android.gms.auth.api.signin.GoogleSignInOptions
 import com.google.android.gms.common.api.ApiException
+import com.google.android.gms.tasks.Task
 
 object GoogleLoginHelper : SocialLoginHelper("GoogleLogin") {
 
-    private lateinit var oneTapClient: SignInClient
-    private lateinit var signInRequest: BeginSignInRequest
-
-    fun initGoogleLogin(activity: Activity, launcher: ActivityResultLauncher<IntentSenderRequest>) {
-        oneTapClient = Identity.getSignInClient(activity)
-        val webClientId = BuildConfig.GOOGLE_WEB_CLIENT_ID
-
-        signInRequest = BeginSignInRequest.builder()
-            .setGoogleIdTokenRequestOptions(
-                BeginSignInRequest.GoogleIdTokenRequestOptions.builder()
-                    .setSupported(true)
-                    .setServerClientId(webClientId)
-                    .setFilterByAuthorizedAccounts(false)
-                    .build()
-            )
-            .setAutoSelectEnabled(false)
+    /**
+     * 구글 로그인 화면을 띄우기 위한 Intent를 생성
+     * 매번 signOut()을 호출하여 '계정 선택 창'이 무조건 뜨게
+     */
+    fun getSignInIntent(context: Context): Intent {
+        val gso = GoogleSignInOptions.Builder(GoogleSignInOptions.DEFAULT_SIGN_IN)
+            .requestIdToken(BuildConfig.GOOGLE_WEB_CLIENT_ID) // local.properties의 Web Client ID
+            .requestEmail()
             .build()
 
-        oneTapClient.beginSignIn(signInRequest)
-            .addOnSuccessListener { result ->
-                launcher.launch(IntentSenderRequest.Builder(result.pendingIntent.intentSender).build())
-            }
-            .addOnFailureListener { e ->
-                Log.e(tag, "로그인 UI 표시 실패", e)
-            }
+        val googleSignInClient = GoogleSignIn.getClient(context, gso)
+
+        // 기존 로그인 기록을 지워야 "다른 계정으로 로그인" 옵션이 항상 보입니다.
+        googleSignInClient.signOut()
+
+        return googleSignInClient.signInIntent
     }
 
-    fun handleResult(context: Activity, data: Intent?, callback: SocialLoginCallback) {
+    /**
+     * 로그인 결과(Intent)를 처리하여 ID Token을 추출합니다.
+     */
+    fun handleActivityResult(data: Intent?, callback: SocialLoginCallback) {
+        val task = GoogleSignIn.getSignedInAccountFromIntent(data)
+        handleSignInResult(task, callback)
+    }
+
+    private fun handleSignInResult(completedTask: Task<GoogleSignInAccount>, callback: SocialLoginCallback) {
         try {
-            val credential = oneTapClient.getSignInCredentialFromIntent(data)
-            val idToken = credential.googleIdToken
+            val account = completedTask.getResult(ApiException::class.java)
+            val idToken = account.idToken
+
             if (idToken != null) {
+                // 성공 로그
+                Log.d(tag, "구글 로그인 성공 ID Token: $idToken")
                 callback.onSuccess(idToken)
             } else {
-                callback.onFailure("ID Token이 null입니다.")
+                callback.onFailure("ID Token이 없습니다.")
             }
         } catch (e: ApiException) {
-            Log.e(tag, "Google Sign-In 결과 파싱 실패", e)
-            callback.onFailure(e.statusMessage)
+            //사용자가 창을 닫거나 취소한 경우 (StatusCode 12501)
+            if (e.statusCode == 12501) {
+                Log.d(tag, "사용자가 로그인을 취소했습니다.")
+                callback.onFailure("CANCELED")
+                return
+            }
+
+            Log.e(tag, "구글 로그인 실패: ${e.statusCode}", e)
+            callback.onFailure("구글 로그인 실패 (코드: ${e.statusCode})")
         }
     }
 
     override fun login(context: Context, callback: SocialLoginCallback) {
-        if (BuildConfig.DEBUG) {
-            Log.w(tag, "login() 호출됨")
-            callback.onFailure("Google 로그인은 initGoogleLogin()으로 시작해야 해서 실패.")
-        }
+        // Empty implementation
     }
 }

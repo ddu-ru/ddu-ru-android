@@ -31,10 +31,10 @@ android {
         // Google 웹 클라이언트 ID
         buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties.getProperty("google.client.id")}\"")
 
-        // Kakao 네이티브 앱 키 (BuildConfig용)
+
         buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${properties.getProperty("kakao.api.key")}\"")
 
-        // Manifest에 카카오 키 전달
+        
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = properties.getProperty("kakao.api.key") as String
     }
 
@@ -85,10 +85,11 @@ dependencies {
     implementation(libs.androidx.foundation)
 
     // Google 로그인
-    implementation("com.google.android.gms:play-services-auth:21.4.0")
-    implementation("androidx.credentials:credentials:1.5.0")
+    implementation("androidx.credentials:credentials:1.3.0")
+    implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-
+    implementation("com.google.android.gms:play-services-auth:21.2.0")
     // 카카오 로그인
     implementation("com.kakao.sdk:v2-user:2.20.1")
+    implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
 }
