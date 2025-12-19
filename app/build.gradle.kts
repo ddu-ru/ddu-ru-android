@@ -1,5 +1,14 @@
 import java.util.Properties
 
+val properties = Properties().apply {
+    val file = rootProject.file("local.properties")
+    require(file.exists()) { "local.properties가 없어 base.url을 읽을 수 없습니다." }
+    file.inputStream().use { load(it) }
+}
+
+val baseUrl = properties.getProperty("BASE_URL")
+    ?: error("local.properties에 base.url 항목이 없습니다.")
+
 plugins {
     alias(libs.plugins.android.application)
     alias(libs.plugins.jetbrains.kotlin.android)
@@ -21,7 +30,7 @@ android {
         versionName = libs.versions.versionName.get()
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
-        buildConfigField("String", "BASE_URL", properties["base.url"].toString())
+        buildConfigField("String", "BASE_URL", "\"$baseUrl\"")
     }
 
     buildTypes {

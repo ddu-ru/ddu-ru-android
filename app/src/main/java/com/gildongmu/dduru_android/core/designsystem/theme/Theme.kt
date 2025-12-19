@@ -12,6 +12,17 @@ import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.gildongmu.dduru_android.core.designsystem.color.Black
+import com.gildongmu.dduru_android.core.designsystem.color.DduruColors
+import com.gildongmu.dduru_android.core.designsystem.color.DeepOrange
+import com.gildongmu.dduru_android.core.designsystem.color.LocalDduruColors
+import com.gildongmu.dduru_android.core.designsystem.color.Orange100
+import com.gildongmu.dduru_android.core.designsystem.color.Orange500
+import com.gildongmu.dduru_android.core.designsystem.color.White
+import com.gildongmu.dduru_android.core.designsystem.color.defaultDduruColors
+import com.gildongmu.dduru_android.core.designsystem.typography.DduruTypography
+import com.gildongmu.dduru_android.core.designsystem.typography.LocalDduruTypography
+import com.gildongmu.dduru_android.core.designsystem.typography.defaultDduruTypography
 
 
 // 1. Theme Object
