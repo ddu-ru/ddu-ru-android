@@ -2,7 +2,7 @@ package com.gildongmu.dduru_android.core.common.util
 
 import android.content.Context
 import android.util.Log
-import com.gildongmu.dduru_android.data.datastore.TokenDataStore
+import com.gildongmu.dduru_android.data.local.TokenDataStore
 import com.gildongmu.dduru_android.data.remote.dto.request.RefreshTokenRequest
 import com.gildongmu.dduru_android.data.remote.service.AuthService
 import dagger.hilt.android.qualifiers.ApplicationContext

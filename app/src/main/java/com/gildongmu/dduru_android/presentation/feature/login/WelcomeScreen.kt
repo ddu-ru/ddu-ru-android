@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.auth.login.ui
+package com.gildongmu.dduru_android.presentation.feature.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -25,6 +25,7 @@ import com.gildongmu.dduru_android.R
 import com.gildongmu.dduru_android.core.designsystem.component.DduruButton
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 import androidx.compose.ui.draw.blur
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 
 @Composable
@@ -56,7 +57,7 @@ fun WelcomeScreen(
                     .blur(radius = 17.dp) // 번짐 정도 (숫자가 클수록 부드럽게 퍼짐)
                     .alpha(0.3f), // 투명도 (0.1f = 연함, 1.0f = 완전 진함)
                 contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(androidx.compose.ui.graphics.Color.Black)
+                colorFilter = ColorFilter.tint(Color.Black)
             )
 
             // Layer 2: 원본 이미지

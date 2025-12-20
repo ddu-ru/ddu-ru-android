@@ -14,8 +14,8 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru_android.presentation.feature.auth.login.navigation.LoginRoute
-import com.gildongmu.dduru_android.presentation.feature.auth.login.ui.WelcomeScreen
+import com.gildongmu.dduru_android.presentation.navigation.LoginRoute
+import com.gildongmu.dduru_android.presentation.feature.login.WelcomeScreen
 import dagger.hilt.android.AndroidEntryPoint
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {

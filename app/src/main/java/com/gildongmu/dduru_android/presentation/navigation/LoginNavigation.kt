@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.auth.login.navigation
+package com.gildongmu.dduru_android.presentation.navigation
 
 import android.app.Activity
 import android.widget.Toast
@@ -13,9 +13,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru_android.core.common.util.GoogleLoginHelper
 import com.gildongmu.dduru_android.core.common.util.KakaoLoginHelper
 import com.gildongmu.dduru_android.core.common.util.SocialLoginCallback
-import com.gildongmu.dduru_android.presentation.feature.auth.login.ui.LoginScreen
-import com.gildongmu.dduru_android.presentation.feature.auth.login.viewmodel.LoginUiState
-import com.gildongmu.dduru_android.presentation.feature.auth.login.viewmodel.LoginViewModel
+import com.gildongmu.dduru_android.presentation.feature.login.LoginScreen
+import com.gildongmu.dduru_android.presentation.feature.login.LoginUiState
+import com.gildongmu.dduru_android.presentation.feature.login.LoginViewModel
 
 @Composable
 fun LoginRoute(

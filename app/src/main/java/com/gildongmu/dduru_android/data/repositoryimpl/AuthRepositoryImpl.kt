@@ -1,6 +1,6 @@
 package com.gildongmu.dduru_android.data.repositoryimpl
 
-import com.gildongmu.dduru_android.data.datastore.TokenDataStore
+import com.gildongmu.dduru_android.data.local.TokenDataStore
 import com.gildongmu.dduru_android.data.remote.datasource.AuthDataSource
 import com.gildongmu.dduru_android.data.remote.dto.request.LoginRequest
 import com.gildongmu.dduru_android.domain.repository.AuthRepository

@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.auth.login.ui
+package com.gildongmu.dduru_android.presentation.feature.login
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

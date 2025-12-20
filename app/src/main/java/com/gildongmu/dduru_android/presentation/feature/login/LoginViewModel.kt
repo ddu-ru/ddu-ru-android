@@ -1,10 +1,11 @@
-package com.gildongmu.dduru_android.presentation.feature.auth.login.viewmodel
+package com.gildongmu.dduru_android.presentation.feature.login
 
 import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru_android.domain.repository.AuthRepository
+import com.gildongmu.dduru_android.domain.usecase.LoginGoogleUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ sealed class LoginUiState {
 @HiltViewModel
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
+    private val loginGoogleUseCase: LoginGoogleUseCase,
     @ApplicationContext context: Context
 ) : ViewModel() {
 
@@ -42,7 +44,7 @@ class LoginViewModel @Inject constructor(
 
             val result: Result<Boolean> = when (provider) {
                 "KAKAO" -> authRepository.loginWithKakao(idToken)
-                "GOOGLE" -> authRepository.loginWithGoogle(idToken)
+                "GOOGLE" -> loginGoogleUseCase(idToken)
                 else -> throw IllegalArgumentException("Unknown provider: $provider")
             }
 
