@@ -40,33 +40,38 @@ fun LoginButton(
     modifier: Modifier = Modifier,
     hasBorder: Boolean = false // 구글 버튼 등 테두리가 필요할 때를 대비
 ) {
+    val buttonShape = RoundedCornerShape(16.dp)
+
     Surface(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(48.dp)
             .shadow(
                 elevation = 8.dp,
-                shape = RoundedCornerShape(12.dp),
-                spotColor = DduruTheme.colors.Shadow,
-                ambientColor = DduruTheme.colors.Shadow
+                shape = buttonShape,
+                spotColor = DduruTheme.colors.BlackAlpha10,
+                ambientColor = DduruTheme.colors.BlackAlpha10
             )
             .then(
                 if (hasBorder) Modifier.border(
-                    width = 1.dp,
-                    color = DduruTheme.colors.BorderLight,
-                    shape = RoundedCornerShape(12.dp)
+                    width = 0.8.dp,
+                    color = DduruTheme.colors.GrayBorder,
+                    shape = buttonShape
                 ) else Modifier
             )
-            .clip(RoundedCornerShape(12.dp))
+            .clip(buttonShape)
             .clickable { onClick() },
         color = containerColor,
     ) {
         Row(
             modifier = Modifier
                 .fillMaxSize()
-                .padding(horizontal = 20.dp), // 좌우 여백
+                .padding(horizontal = 18.dp, vertical = 3.dp),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.Center
+            horizontalArrangement = Arrangement.spacedBy(
+                space = 25.dp,
+                alignment = Alignment.CenterHorizontally
+            )
         ) {
             // 아이콘
             Image(
@@ -76,15 +81,10 @@ fun LoginButton(
                 contentScale = ContentScale.Fit
             )
 
-            Spacer(modifier = Modifier.width(8.dp)) // 아이콘과 텍스트 사이 간격
-
             Text(
                 text = text,
                 color = contentColor,
-                style = DduruTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
-                )
+                style = DduruTheme.typography.Button
             )
         }
     }

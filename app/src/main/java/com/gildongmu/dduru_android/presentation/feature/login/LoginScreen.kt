@@ -10,13 +10,13 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
+import androidx.compose.ui.draw.scale
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru_android.R
 import com.gildongmu.dduru_android.core.designsystem.component.LoginButton
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
@@ -32,7 +32,7 @@ fun LoginScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(DduruTheme.colors.Background),
+            .background(DduruTheme.colors.Gray50),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -45,24 +45,37 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(170.dp))
 
             //1. 캐릭터
-            Column(
-                horizontalAlignment = Alignment.CenterHorizontally
+            Box(
+                contentAlignment = Alignment.BottomCenter,
+                modifier = Modifier
+                    .width(244.dp)
+                    .height(267.dp)
             ) {
-                Image(
-                    painter = painterResource(id = R.drawable.img_dduri_fly_2),
-                    contentDescription = "뚜루 캐릭터",
-                    contentScale = ContentScale.Fit,
-                    modifier = Modifier.size(183.dp)
-                )
-
                 Image(
                     painter = painterResource(id = R.drawable.bg_welcome_shadow),
                     contentDescription = null,
+                    contentScale = ContentScale.None,
+                    modifier = Modifier
+                        .padding(bottom = 10.dp)
+                        .size(95.dp)
+                        .scale(scaleX = 1f, scaleY = 0.2f)
+                        .background(
+                            brush = androidx.compose.ui.graphics.Brush.radialGradient(
+                                colors = listOf(
+                                    DduruTheme.colors.Black.copy(alpha = 0.5f),
+                                    androidx.compose.ui.graphics.Color.Transparent
+                                )
+                            ),
+                            shape = androidx.compose.foundation.shape.CircleShape
+                        )
+                )
+
+                Image(
+                    painter = painterResource(id = R.drawable.img_penguin_1),
+                    contentDescription = "뚜루 캐릭터",
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier
-                        .width(46.dp)
-                        .height(8.dp)
-                        .alpha(0.5f)
+                        .matchParentSize()
                 )
             }
 
@@ -71,15 +84,15 @@ fun LoginScreen(
             //2. 버튼 영역
             Column(
                 modifier = Modifier.width(343.dp),
-                verticalArrangement = Arrangement.spacedBy(12.dp),
+                verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 // 카카오 로그인
                 LoginButton(
                     iconResId = R.drawable.img_kakao_icon,
                     text = "카카오로 시작하기",
-                    containerColor = DduruTheme.colors.KakaoBg,
-                    contentColor = DduruTheme.colors.KakaoText,
+                    containerColor = DduruTheme.colors.KakaoYellow,
+                    contentColor = DduruTheme.colors.Gray900,
                     onClick = onKakaoClick
                 )
 
@@ -87,10 +100,10 @@ fun LoginScreen(
                 LoginButton(
                     iconResId = R.drawable.img_google_icon,
                     text = "구글로 시작하기",
-                    containerColor = DduruTheme.colors.GoogleBg,
-                    contentColor = DduruTheme.colors.GoogleText,
+                    containerColor = DduruTheme.colors.Gray0,
+                    contentColor = DduruTheme.colors.Gray900,
                     onClick = onGoogleClick,
-                    hasBorder = false
+                    hasBorder = true
                 )
             }
 
@@ -100,19 +113,15 @@ fun LoginScreen(
             Text(
                 text = "가입 없이 둘러볼래요",
                 modifier = Modifier.clickable { onGuestClick() },
-                style = DduruTheme.typography.bodyMedium.copy(
-                    fontSize = 14.sp,
-                    lineHeight = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = DduruTheme.colors.TextGuest
-                ),
+                style = DduruTheme.typography.LabelMedium,
+                color = DduruTheme.colors.Gray500,
                 textAlign = TextAlign.Center
             )
         }
 
         if (isLoading) {
             CircularProgressIndicator(
-                color = DduruTheme.colors.MainColor,
+                color = DduruTheme.colors.Primary,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
