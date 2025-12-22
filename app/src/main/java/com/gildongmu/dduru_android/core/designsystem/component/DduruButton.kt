@@ -22,9 +22,9 @@ fun DduruButton(
     Button(
         onClick = onClick,
         modifier = modifier
-            .height(56.dp)
+            .height(48.dp)
             .shadow(
-                elevation = 8.dp,
+                elevation = 12.dp,
                 shape = RoundedCornerShape(12.dp),
                 spotColor = DduruTheme.colors.Shadow,
                 ambientColor = DduruTheme.colors.Shadow
@@ -38,7 +38,7 @@ fun DduruButton(
             containerColor = DduruTheme.colors.MainColor
         ),
         shape = RoundedCornerShape(12.dp),
-        contentPadding = PaddingValues(0.dp)
+        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 3.dp)
     ) {
         Text(
             text = text,

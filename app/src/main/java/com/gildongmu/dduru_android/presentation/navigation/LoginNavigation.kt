@@ -10,7 +10,6 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.gildongmu.dduru_android.core.common.util.GoogleLoginHelper
 import com.gildongmu.dduru_android.core.common.util.KakaoLoginHelper
 import com.gildongmu.dduru_android.core.common.util.SocialLoginCallback
 import com.gildongmu.dduru_android.presentation.feature.login.LoginScreen
@@ -31,18 +30,7 @@ fun LoginRoute(
     val googleLoginLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.StartActivityForResult()
     ) { result ->
-        if (result.resultCode == Activity.RESULT_OK) {
-            GoogleLoginHelper.handleActivityResult(result.data, object : SocialLoginCallback {
-                override fun onSuccess(idToken: String) {
-                    viewModel.loginToServer(idToken, "GOOGLE")
-                }
-                override fun onFailure(errorMessage: String?) {
-                    if (errorMessage != null) {
-                        Toast.makeText(context, errorMessage, Toast.LENGTH_SHORT).show()
-                    }
-                }
-            })
-        }
+        viewModel.handleGoogleResult(result.data)
     }
 
     // 2. 상태 관찰
@@ -64,7 +52,7 @@ fun LoginRoute(
         onKakaoClick = {
             KakaoLoginHelper.login(context, object : SocialLoginCallback {
                 override fun onSuccess(idToken: String) {
-                    viewModel.loginToServer(idToken, "KAKAO")
+                    viewModel.loginWithKakao(idToken)
                 }
                 override fun onFailure(errorMessage: String?) {
                     Toast.makeText(context, "카카오 로그인 실패: $errorMessage", Toast.LENGTH_SHORT).show()
@@ -72,8 +60,8 @@ fun LoginRoute(
             })
         },
         onGoogleClick = {
-            val signInIntent = GoogleLoginHelper.getSignInIntent(context)
-            googleLoginLauncher.launch(signInIntent)
+            val intent = viewModel.getGoogleIntent()
+            googleLoginLauncher.launch(intent)
         },
         onGuestClick = onGuestClick
     )

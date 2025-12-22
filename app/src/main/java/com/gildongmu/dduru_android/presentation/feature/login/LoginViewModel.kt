@@ -1,6 +1,7 @@
 package com.gildongmu.dduru_android.presentation.feature.login
 
 import android.content.Context
+import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -31,29 +32,40 @@ class LoginViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    // 서버에 로그인 요청
-    fun loginToServer(idToken: String, provider: String) {
+    fun getGoogleIntent(): Intent {
+        return authRepository.getGoogleSignInIntent()
+    }
+    fun handleGoogleResult(data: Intent?) {
         viewModelScope.launch {
-            _uiState.value = LoginUiState.Loading
-
-            // 사용자가 로그인을 중간에 취소한 경우 (Google 등)
-            if (idToken == "CANCELED") {
-                _uiState.value = LoginUiState.Idle
+            if (data == null) {
+                // 데이터가 없으면 취소나 실패로 간주
                 return@launch
             }
 
-            val result: Result<Boolean> = when (provider) {
-                "KAKAO" -> authRepository.loginWithKakao(idToken)
-                "GOOGLE" -> loginGoogleUseCase(idToken)
-                else -> throw IllegalArgumentException("Unknown provider: $provider")
-            }
+            _uiState.value = LoginUiState.Loading
+
+            // UseCase에게 Intent를 통째로 넘김 (파싱은 Data Layer가 알아서 함)
+            val result = loginGoogleUseCase(data)
 
             result.onSuccess { isNewUser ->
-                // 성공 시
                 _uiState.value = LoginUiState.Success(isNewUser)
             }.onFailure { e ->
-                Log.e("LoginViewModel", "Login failed: ${e.message}", e)
-                _uiState.value = LoginUiState.Error("로그인에 실패했습니다. 네트워크를 확인해주세요.")
+                Log.e("LoginViewModel", "Google Login failed: ${e.message}", e)
+                _uiState.value = LoginUiState.Error("구글 로그인 실패: ${e.message}")
+            }
+        }
+    }
+    fun loginWithKakao(idToken: String) {
+        viewModelScope.launch {
+            _uiState.value = LoginUiState.Loading
+
+            val result = authRepository.loginWithKakao(idToken)
+
+            result.onSuccess { isNewUser ->
+                _uiState.value = LoginUiState.Success(isNewUser)
+            }.onFailure { e ->
+                Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
+                _uiState.value = LoginUiState.Error("카카오 로그인 실패")
             }
         }
     }
