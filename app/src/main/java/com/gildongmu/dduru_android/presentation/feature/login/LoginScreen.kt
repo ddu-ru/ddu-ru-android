@@ -32,7 +32,7 @@ fun LoginScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(DduruTheme.colors.Background),
+            .background(DduruTheme.colors.Gray50),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -78,8 +78,8 @@ fun LoginScreen(
                 LoginButton(
                     iconResId = R.drawable.img_kakao_icon,
                     text = "카카오로 시작하기",
-                    containerColor = DduruTheme.colors.KakaoBg,
-                    contentColor = DduruTheme.colors.KakaoText,
+                    containerColor = DduruTheme.colors.KakaoYellow,
+                    contentColor = DduruTheme.colors.Black,
                     onClick = onKakaoClick
                 )
 
@@ -87,8 +87,8 @@ fun LoginScreen(
                 LoginButton(
                     iconResId = R.drawable.img_google_icon,
                     text = "구글로 시작하기",
-                    containerColor = DduruTheme.colors.GoogleBg,
-                    contentColor = DduruTheme.colors.GoogleText,
+                    containerColor = DduruTheme.colors.Gray0,
+                    contentColor = DduruTheme.colors.Black,
                     onClick = onGoogleClick,
                     hasBorder = false
                 )
@@ -100,19 +100,15 @@ fun LoginScreen(
             Text(
                 text = "가입 없이 둘러볼래요",
                 modifier = Modifier.clickable { onGuestClick() },
-                style = DduruTheme.typography.bodyMedium.copy(
-                    fontSize = 14.sp,
-                    lineHeight = 14.sp,
-                    fontWeight = FontWeight.Medium,
-                    color = DduruTheme.colors.TextGuest
-                ),
+                style = DduruTheme.typography.LabelMedium,
+                color = DduruTheme.colors.Gray500,
                 textAlign = TextAlign.Center
             )
         }
 
         if (isLoading) {
             CircularProgressIndicator(
-                color = DduruTheme.colors.MainColor,
+                color = DduruTheme.colors.Primary,
                 modifier = Modifier.align(Alignment.Center)
             )
         }

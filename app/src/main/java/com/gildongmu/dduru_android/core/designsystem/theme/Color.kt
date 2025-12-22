@@ -4,149 +4,98 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-// 1. Reference Token
+// 1. Reference Token (순수 색상 정의)
+val Blue500 = Color(0xFF289BFF)
+val Blue100 = Color(0xFFC8E5FF)
 
-val Orange500 = Color(0xFFFFA100) // 메인 주황
-val Orange100 = Color(0xFFFFECCA) // 연한 주황
-val DeepOrange = Color(0xFFF36945) // 포인트 테두리
-val SoftOrange = Color(0xFFFF9A80) // 그라데이션용 살구색
-val Yellow500 = Color(0xFFFEE500) // 그라데이션용 노란색
-val PaleYellow = Color(0xFFFFFCEE) // 크림색 배경
+val Gray0   = Color(0xFFFFFFFF) // White는 Gray0으로 정의
+val Gray50  = Color(0xFFF8F9FA)
+val Gray100 = Color(0xFFF1F3F4)
+val Gray200 = Color(0xFFE8EAED)
+val Gray300 = Color(0xFFDADCE0)
+val Gray400 = Color(0xFFBDC1C6)
+val Gray500 = Color(0xFF9AA0A6)
+val Gray600 = Color(0xFF80868B)
+val Gray700 = Color(0xFF5F6368)
+val Gray800 = Color(0xFF3C4043)
+val Gray846 = Color(0xFF2E3134)
+val Gray868 = Color(0xFF282A2D)
+val Gray900 = Color(0xFF202124)
+val Gray928 = Color(0xFF17181B)
+val Gray958 = Color(0xFF0E1013)
 
-
-val White = Color(0xFFFFFFFF)
 val Black = Color(0xFF000000)
 
-// Gray Scale
-val Gray958 = Color(0xFF0E1013)
-val Gray928 = Color(0xFF17181B)
-val Gray900 = Color(0xFF202124)
-val Gray868 = Color(0xFF282A2D)
-val Gray846 = Color(0xFF2E3134)
-val Gray800 = Color(0xFF3C4043)
-val Gray700 = Color(0xFF5F6368)
-val Gray600 = Color(0xFF80868B)
-val Gray500 = Color(0xFF9AA0A6)
-val Gray400 = Color(0xFFBDC1C6)
-val Gray300 = Color(0xFFDADCE0)
-val Gray200 = Color(0xFFE8EAED)
-val Gray100 = Color(0xFFF1F3F4)
-val Gray50  = Color(0xFFF8F9FA)
+val KakaoYellow = Color(0xFFFEE500)
 val BlackAlpha14 = Color(0x24000000)
-val BlackAlpha05 = Color(0x0D000000)
 val BlackAlpha10 = Color(0x1A000000)
+val BlackAlpha05 = Color(0x0D000000)
 val WhiteAlpha30 = Color(0x4DFFFFFF)
-val KakaoLabel = Color(0xFF191919)
+
 // 2. System Token
 
 @Immutable
 data class DduruColors(
-    // Brand Identity
-    val MainColor: Color,
-    val SubColor: Color,
+    // [Brand]
+    val Primary: Color,
+    val Secondary: Color,
 
-    // Actions & Interactive
-    val ButtonActive: Color,
-    val ButtonDisabled: Color,
-    val TextOnButtonActive: Color,
-    val TextOnButtonDisabled: Color,
+    // [GrayScale]
+    val Gray0: Color,
+    val Gray50: Color,
+    val Gray100: Color,
+    val Gray200: Color,
+    val Gray300: Color,
+    val Gray400: Color,
+    val Gray500: Color,
+    val Gray600: Color,
+    val Gray700: Color,
+    val Gray800: Color,
+    val Gray846: Color,
+    val Gray868: Color,
+    val Gray900: Color,
+    val Gray928: Color,
+    val Gray958: Color,
 
-    // Selection & Toggles
-    val SelectActiveBg: Color,
-    val SelectActiveText: Color,
-    val SelectInactiveBg: Color,
-    val SelectInactiveBorder: Color,
-    val SelectInactiveText: Color,
+    val Black: Color,
 
-    // Components (Badge, Highlight)
-    val StepBadgeBg: Color,
-    val StepBadgeText: Color,
-    val PointBorder: Color,
-    val HighlightBg: Color,
-
-    // Backgrounds
-    val Background: Color,
-    val Surface: Color,
-
-    // Texts & Icons
-    val TextMain: Color,
-    val TextBody: Color,
-    val TextSub: Color,
-    val TextHint: Color,
-    val IconDefault: Color,
-    val TextGuest: Color,
-
-    // Borders & Lines
-    val BorderDefault: Color,
-    val LineDivider: Color,
-
-    // Gradients
-    val GradientStart: Color,
-    val GradientEnd: Color,
-    val Shadow: Color,
-    val ShadowSmall: Color,
-    val ShadowMedium: Color,
-    val ButtonBorder: Color,
-
-    val BorderLight: Color,
-    val KakaoBg: Color,
-    val KakaoText: Color,
-    val GoogleBg: Color,
-    val GoogleText: Color
+    val KakaoYellow: Color,
+    val BlackAlpha14: Color,
+    val BlackAlpha10: Color,
+    val BlackAlpha05: Color,
+    val WhiteAlpha30: Color
 )
 
-
-// 3. 기본값 연결
-
+//3.매핑
 val defaultDduruColors = DduruColors(
-    MainColor = Orange500,
-    SubColor = Orange100,
+    Primary = Blue500,
+    Secondary = Blue100,
 
-    ButtonActive = Orange500,
-    ButtonDisabled = Gray200,
-    TextOnButtonActive = White,
-    TextOnButtonDisabled = Gray500,
+    // GrayScale
+    Gray0 = Gray0,
+    Gray50 = Gray50,
+    Gray100 = Gray100,
+    Gray200 = Gray200,
+    Gray300 = Gray300,
+    Gray400 = Gray400,
+    Gray500 = Gray500,
+    Gray600 = Gray600,
+    Gray700 = Gray700,
+    Gray800 = Gray800,
+    Gray846 = Gray846,
+    Gray868 = Gray868,
+    Gray900 = Gray900,
+    Gray928 = Gray928,
+    Gray958 = Gray958,
 
-    SelectActiveBg = Orange500,
-    SelectActiveText = White,
-    SelectInactiveBg = White,
-    SelectInactiveBorder = Gray300,
-    SelectInactiveText = Gray600,
+    Black = Black,
 
-    StepBadgeBg = Orange100,
-    StepBadgeText = Orange500,
+    KakaoYellow = KakaoYellow,
 
-    PointBorder = DeepOrange,
-    HighlightBg = PaleYellow,
-
-    Background = Gray50,
-    Surface = White,
-
-    TextMain = Gray900,
-    TextBody = Gray700,
-    TextSub = Gray600,
-    TextHint = Gray400,
-    IconDefault = Black,
-    TextGuest = Gray500,
-
-    BorderDefault = Gray300,
-    LineDivider = Gray200,
-
-    GradientStart = Yellow500,
-    GradientEnd = SoftOrange,
-    Shadow = BlackAlpha14,
-    ShadowSmall = BlackAlpha05,
-    ShadowMedium = BlackAlpha10,
-    ButtonBorder = WhiteAlpha30,
-
-    BorderLight = Gray200,
-    KakaoBg = Yellow500,
-    KakaoText = KakaoLabel,
-    GoogleBg = White,
-    GoogleText = Black
+    BlackAlpha14 = BlackAlpha14,
+    BlackAlpha10 = BlackAlpha10,
+    BlackAlpha05 = BlackAlpha05,
+    WhiteAlpha30 = WhiteAlpha30
 )
-
-
-// 4. CompositionLocal 등록
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }

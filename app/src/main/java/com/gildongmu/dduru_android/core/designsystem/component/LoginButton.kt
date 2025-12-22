@@ -47,13 +47,13 @@ fun LoginButton(
             .shadow(
                 elevation = 8.dp,
                 shape = RoundedCornerShape(12.dp),
-                spotColor = DduruTheme.colors.Shadow,
-                ambientColor = DduruTheme.colors.Shadow
+                spotColor = DduruTheme.colors.BlackAlpha14,
+                ambientColor = DduruTheme.colors.BlackAlpha14
             )
             .then(
                 if (hasBorder) Modifier.border(
                     width = 1.dp,
-                    color = DduruTheme.colors.BorderLight,
+                    color = DduruTheme.colors.Gray200,
                     shape = RoundedCornerShape(12.dp)
                 ) else Modifier
             )
@@ -81,10 +81,7 @@ fun LoginButton(
             Text(
                 text = text,
                 color = contentColor,
-                style = DduruTheme.typography.bodyMedium.copy(
-                    fontWeight = FontWeight.SemiBold,
-                    fontSize = 16.sp
-                )
+                style = DduruTheme.typography.LabelLarge
             )
         }
     }
