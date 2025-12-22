@@ -1,5 +1,7 @@
 package com.gildongmu.dduru_android.data.di
 
+import com.gildongmu.dduru_android.data.local.TokenLocalDataSource
+import com.gildongmu.dduru_android.data.local.TokenLocalDataSourceImpl
 import com.gildongmu.dduru_android.data.remote.datasource.AuthDataSource
 import com.gildongmu.dduru_android.data.remote.datasourceimpl.AuthDataSourceImpl
 import dagger.Binds
@@ -17,4 +19,10 @@ abstract class DataSourceModule {
     abstract fun bindAuthDataSource(
         authDataSourceImpl: AuthDataSourceImpl
     ): AuthDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindTokenLocalDataSource(
+        tokenLocalDataSourceImpl: TokenLocalDataSourceImpl
+    ): TokenLocalDataSource
 }

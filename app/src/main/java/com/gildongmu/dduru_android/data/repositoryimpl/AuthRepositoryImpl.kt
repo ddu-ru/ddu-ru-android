@@ -1,6 +1,6 @@
 package com.gildongmu.dduru_android.data.repositoryimpl
 
-import com.gildongmu.dduru_android.data.local.TokenDataStore
+import com.gildongmu.dduru_android.data.local.TokenLocalDataSource
 import com.gildongmu.dduru_android.data.remote.datasource.AuthDataSource
 import com.gildongmu.dduru_android.data.remote.dto.request.LoginRequest
 import com.gildongmu.dduru_android.domain.repository.AuthRepository
@@ -8,7 +8,7 @@ import javax.inject.Inject
 
 class AuthRepositoryImpl @Inject constructor(
     private val authDataSource: AuthDataSource,
-    private val tokenDataStore: TokenDataStore
+    private val tokenLocalDataSource: TokenLocalDataSource
 ) : AuthRepository {
 
     override suspend fun loginWithKakao(idToken: String): Result<Boolean> {
@@ -16,7 +16,7 @@ class AuthRepositoryImpl @Inject constructor(
             val response = authDataSource.loginWithKakao(LoginRequest(idToken))
 
             if (response.data != null) {
-                tokenDataStore.saveTokens(response.data.accessToken, response.data.refreshToken)
+                tokenLocalDataSource.saveTokens(response.data.accessToken, response.data.refreshToken)
 
                 Result.success(response.data.isNewUser)
             } else {
@@ -32,7 +32,7 @@ class AuthRepositoryImpl @Inject constructor(
             val response = authDataSource.loginWithGoogle(LoginRequest(idToken))
 
             if (response.data != null) {
-                tokenDataStore.saveTokens(response.data.accessToken, response.data.refreshToken)
+                tokenLocalDataSource.saveTokens(response.data.accessToken, response.data.refreshToken)
 
                 Result.success(response.data.isNewUser)
             } else {

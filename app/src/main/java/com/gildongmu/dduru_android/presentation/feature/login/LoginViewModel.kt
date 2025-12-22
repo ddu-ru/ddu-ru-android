@@ -31,12 +31,12 @@ class LoginViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState
 
-
-    //서버에 로그인 요청
+    // 서버에 로그인 요청
     fun loginToServer(idToken: String, provider: String) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
 
+            // 사용자가 로그인을 중간에 취소한 경우 (Google 등)
             if (idToken == "CANCELED") {
                 _uiState.value = LoginUiState.Idle
                 return@launch
@@ -49,12 +49,12 @@ class LoginViewModel @Inject constructor(
             }
 
             result.onSuccess { isNewUser ->
+                // 성공 시
                 _uiState.value = LoginUiState.Success(isNewUser)
             }.onFailure { e ->
-                Log.e("LoginViewModel", "Login failed", e)
-                _uiState.value = LoginUiState.Error(e.message ?: "알 수 없는 에러가 발생했습니다.")
+                Log.e("LoginViewModel", "Login failed: ${e.message}", e)
+                _uiState.value = LoginUiState.Error("로그인에 실패했습니다. 네트워크를 확인해주세요.")
             }
-
         }
     }
 }

@@ -7,7 +7,7 @@ import com.gildongmu.dduru_android.data.remote.dto.response.LoginResponse
 import com.gildongmu.dduru_android.data.remote.service.AuthService
 import javax.inject.Inject
 
-// @Inject를 통해 AuthService를 주입받습니다.
+// @Inject를 통해 AuthService를 주입
 class AuthDataSourceImpl @Inject constructor(
     private val authService: AuthService
 ) : AuthDataSource {
