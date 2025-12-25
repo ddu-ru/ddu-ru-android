@@ -5,6 +5,7 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
+import androidx.activity.viewModels
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -18,24 +19,24 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru_android.data.local.TokenLocalDataSource
+import com.gildongmu.dduru_android.presentation.feature.login.LoginViewModel
 import com.gildongmu.dduru_android.presentation.feature.login.WelcomeScreen
 import com.gildongmu.dduru_android.presentation.navigation.LoginRoute
 import dagger.hilt.android.AndroidEntryPoint
-import kotlinx.coroutines.flow.first
-import javax.inject.Inject
 
 @AndroidEntryPoint
 class MainActivity : ComponentActivity() {
-    @Inject
-    lateinit var tokenLocalDataSource: TokenLocalDataSource
+    private val viewModel: LoginViewModel by viewModels()
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
         setContent {
             DduruTheme {
+                val startScreen by viewModel.startScreen.collectAsStateWithLifecycle()
+
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
                     // 초기 상태: Splash
@@ -46,16 +47,12 @@ class MainActivity : ComponentActivity() {
                         .padding(innerPadding)
 
                     //자동 로그인 유지
-                    LaunchedEffect(Unit) {
-                        val accessToken = tokenLocalDataSource.accessToken.first()
-
-                        if (!accessToken.isNullOrBlank()) {
-                            // 토큰 있음 -> (기존 회원 취급) -> 바로 홈으로!
-                            Toast.makeText(applicationContext, "자동 로그인 성공!", Toast.LENGTH_SHORT).show()
-                            currentScreen = Screen.Home
-                        } else {
-                            // 토큰 없음 -> 로그인 화면으로
-                            currentScreen = Screen.Login
+                    LaunchedEffect(startScreen) {
+                        if (startScreen != Screen.Splash) {
+                            currentScreen = startScreen
+                            if (startScreen == Screen.Home) {
+                                Toast.makeText(applicationContext, "자동 로그인 성공", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     }
 
@@ -66,7 +63,6 @@ class MainActivity : ComponentActivity() {
                                 Text("DDURU 로딩 중...")
                             }
                         }
-
                         Screen.Login -> {
                             LoginRoute(
                                 onLoginSuccess = { isNewUser ->
