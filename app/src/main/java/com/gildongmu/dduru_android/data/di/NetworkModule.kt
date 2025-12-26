@@ -1,7 +1,7 @@
 package com.gildongmu.dduru_android.data.di
 
 import com.gildongmu.dduru_android.BuildConfig
-import com.gildongmu.dduru_android.data.service.AuthService
+import com.gildongmu.dduru_android.data.remote.service.AuthService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -33,6 +33,7 @@ object NetworkModule {
         }
 
         return OkHttpClient.Builder()
+            .retryOnConnectionFailure(true)
             .addInterceptor(logging)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)

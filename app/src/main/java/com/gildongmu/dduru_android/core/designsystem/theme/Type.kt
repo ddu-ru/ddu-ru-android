@@ -6,77 +6,105 @@ import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.text.font.Font
+import com.gildongmu.dduru_android.R
 
-val DduruFontFamily = FontFamily.Default
+// 1. Pretendard
+val Pretendard = FontFamily(
+    Font(R.font.pretendard_bold, FontWeight.Bold),
+    Font(R.font.pretendard_semibold, FontWeight.SemiBold),
+    Font(R.font.pretendard_medium, FontWeight.Medium),
+    Font(R.font.pretendard_regular, FontWeight.Normal)
+)
+
+// 2. Typography 데이터 클래스
 
 @Immutable
 data class DduruTypography(
-    val titleLarge: TextStyle,
-    val titleMedium: TextStyle,
-    val titleSmall: TextStyle,
-    val bodyLarge: TextStyle,
-    val bodyMedium: TextStyle,
-    val bodySmall: TextStyle,
-    val labelLarge: TextStyle,
-    val buttonText: TextStyle
-)
+    val TitleLarge: TextStyle,
+    val TitleMedium: TextStyle,
+    val TitleSmall: TextStyle,
 
+    val BodyLarge: TextStyle,
+    val BodyMedium: TextStyle,
+    val BodySmall: TextStyle,
+
+    val LabelLarge: TextStyle,
+    val LabelMedium: TextStyle,
+    val LabelSmall: TextStyle,
+    val Button: TextStyle,
+    val ButtonLarge: TextStyle
+)
+// 3. 스타일 정의
 val defaultDduruTypography = DduruTypography(
-    titleLarge = TextStyle(
-        fontFamily = DduruFontFamily,
+    TitleLarge = TextStyle(
+        fontFamily = Pretendard,
         fontWeight = FontWeight.Bold,
         fontSize = 22.sp,
         lineHeight = 28.sp
     ),
-
-    buttonText = TextStyle(
-        fontFamily = DduruFontFamily,
-        fontWeight = FontWeight.SemiBold,
+    TitleMedium = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Bold,
         fontSize = 20.sp,
-        lineHeight = 28.sp
+        lineHeight = 26.sp
     ),
-
-    titleMedium = TextStyle(
-        fontFamily = DduruFontFamily,
+    TitleSmall = TextStyle(
+        fontFamily = Pretendard,
         fontWeight = FontWeight.Bold,
         fontSize = 18.sp,
         lineHeight = 24.sp
     ),
-
-    titleSmall = TextStyle(
-        fontFamily = DduruFontFamily,
+    BodyLarge = TextStyle(
+        fontFamily = Pretendard,
         fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 22.sp
-    ),
-
-    bodyLarge = TextStyle(
-        fontFamily = DduruFontFamily,
-        fontWeight = FontWeight.Normal,
         fontSize = 16.sp,
         lineHeight = 24.sp
     ),
-
-    bodyMedium = TextStyle(
-        fontFamily = DduruFontFamily,
+    BodyMedium = TextStyle(
+        fontFamily = Pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 14.sp,
-        lineHeight = 20.sp
+        lineHeight = 22.sp
     ),
-
-    bodySmall = TextStyle(
-        fontFamily = DduruFontFamily,
+    BodySmall = TextStyle(
+        fontFamily = Pretendard,
         fontWeight = FontWeight.Normal,
         fontSize = 12.sp,
-        lineHeight = 16.sp
+        lineHeight = 18.sp
     ),
-
-    labelLarge = TextStyle(
-        fontFamily = DduruFontFamily,
+    LabelLarge = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 16.sp,
+        lineHeight = 24.sp
+    ),
+    LabelMedium = TextStyle(
+        fontFamily = Pretendard,
         fontWeight = FontWeight.Medium,
         fontSize = 14.sp,
         lineHeight = 20.sp
+    ),
+    LabelSmall = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Medium,
+        fontSize = 11.sp,
+        lineHeight = 16.sp
+    ),
+    Button = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Bold,
+        fontSize = 14.sp,
+        lineHeight = 20.sp
+    ),
+    ButtonLarge = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 20.sp,
+        lineHeight = 24.sp
     )
+
 )
 
+// 4. CompositionLocal 등록
 val LocalDduruTypography = staticCompositionLocalOf { defaultDduruTypography }
