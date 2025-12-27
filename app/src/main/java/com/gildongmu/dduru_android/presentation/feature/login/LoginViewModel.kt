@@ -9,6 +9,7 @@ import com.gildongmu.dduru_android.domain.repository.AuthRepository
 import com.gildongmu.dduru_android.domain.usecase.LoginGoogleUseCase
 import com.gildongmu.dduru_android.domain.usecase.LoginKakaoUseCase
 import com.gildongmu.dduru_android.presentation.feature.main.Screen
+import com.gildongmu.dduru_android.data.remote.datasource.KakaoAuthDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -29,7 +30,8 @@ class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val loginGoogleUseCase: LoginGoogleUseCase,
     private val loginKakaoUseCase: LoginKakaoUseCase,
-    private val tokenLocalDataSource: TokenLocalDataSource
+    private val kakaoAuthDataSource: KakaoAuthDataSource,
+    private val tokenLocalDataSource: TokenLocalDataSource,
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
@@ -75,6 +77,28 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    fun startKakaoLogin() {
+        viewModelScope.launch {
+            _uiState.value = LoginUiState.Loading
+
+            val idToken = kakaoAuthDataSource.getIdToken()
+            if (idToken.isNullOrBlank()) {
+                _uiState.value = LoginUiState.Idle
+                return@launch
+            }
+
+            val result = loginKakaoUseCase(idToken)
+
+            result.onSuccess { isNewUser ->
+                _uiState.value = LoginUiState.Success(isNewUser)
+            }.onFailure { e ->
+                Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
+                _uiState.value = LoginUiState.Error("카카오 로그인 실패: ${e.message}")
+            }
+        }
+    }
+
     fun loginWithKakao(idToken: String) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
