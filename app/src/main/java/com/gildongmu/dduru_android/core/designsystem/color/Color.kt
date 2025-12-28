@@ -6,7 +6,7 @@ import androidx.compose.ui.graphics.Color
 
 // 1. Reference Token
 
-val Orange500 = Color(0xFFFFA100) // 메인 주황
+val Orange500 = Color(0xFF289BFF) // 메인 주황
 val Orange100 = Color(0xFFFFECCA) // 연한 주황
 val DeepOrange = Color(0xFFF36945) // 포인트 테두리
 val SoftOrange = Color(0xFFFF9A80) // 그라데이션용 살구색
