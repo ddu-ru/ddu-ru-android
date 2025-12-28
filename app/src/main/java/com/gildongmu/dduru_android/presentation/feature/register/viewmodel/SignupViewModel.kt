@@ -1,6 +1,5 @@
 package com.gildongmu.dduru_android.presentation.feature.register
 
-
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
@@ -19,7 +18,6 @@ class SignupViewModel : ViewModel() {
     var uiState by mutableStateOf(SignupUiState())
         private set
 
-    // 하드코딩 데이터
     val years = (1980..2024).toList()
     val months = (1..12).toList()
     val days = (1..31).toList()
@@ -30,8 +28,6 @@ class SignupViewModel : ViewModel() {
         "상큼라임",
         "따뜻한눈송이"
     )
-
-    /* ---------- BIRTH ---------- */
 
     fun onYearSelected(value: Int) {
         uiState = uiState.copy(year = value)
@@ -67,8 +63,6 @@ class SignupViewModel : ViewModel() {
         )
     }
 
-    /* ---------- GENDER ---------- */
-
     fun onGenderSelect(gender: Gender) {
         val updatedItems = uiState.completedItems
             .filterNot { it.label == "성별" } + CompletedItem(
@@ -87,7 +81,6 @@ class SignupViewModel : ViewModel() {
         )
     }
 
-    /* ---------- NICKNAME ---------- */
 
     fun onNicknameChange(value: String) {
         uiState = uiState.copy(nickname = value)
@@ -109,7 +102,6 @@ class SignupViewModel : ViewModel() {
         )
     }
 
-    /* ---------- PHONE ---------- */
 
     fun onPhoneChange(value: String) {
         uiState = uiState.copy(phoneNumber = value)
@@ -138,7 +130,6 @@ class SignupViewModel : ViewModel() {
         startAuthTimer()
     }
 
-    /* ---------- AUTH ---------- */
 
     fun onAuthCodeChange(value: String) {
         uiState = uiState.copy(authCode = value)
