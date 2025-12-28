@@ -1,6 +1,5 @@
 package com.gildongmu.dduru_android.presentation.feature.login
 
-import android.content.Context
 import android.content.Intent
 import android.util.Log
 import androidx.lifecycle.ViewModel
@@ -8,9 +7,10 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru_android.data.local.TokenLocalDataSource
 import com.gildongmu.dduru_android.domain.repository.AuthRepository
 import com.gildongmu.dduru_android.domain.usecase.LoginGoogleUseCase
+import com.gildongmu.dduru_android.domain.usecase.LoginKakaoUseCase
 import com.gildongmu.dduru_android.presentation.feature.main.Screen
+import com.gildongmu.dduru_android.data.remote.datasource.KakaoAuthDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
-import dagger.hilt.android.qualifiers.ApplicationContext
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.first
@@ -29,8 +29,9 @@ sealed class LoginUiState {
 class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val loginGoogleUseCase: LoginGoogleUseCase,
+    private val loginKakaoUseCase: LoginKakaoUseCase,
+    private val kakaoAuthDataSource: KakaoAuthDataSource,
     private val tokenLocalDataSource: TokenLocalDataSource,
-    @ApplicationContext context: Context
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
@@ -76,11 +77,33 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
+
+    fun startKakaoLogin() {
+        viewModelScope.launch {
+            _uiState.value = LoginUiState.Loading
+
+            val idToken = kakaoAuthDataSource.getIdToken()
+            if (idToken.isNullOrBlank()) {
+                _uiState.value = LoginUiState.Idle
+                return@launch
+            }
+
+            val result = loginKakaoUseCase(idToken)
+
+            result.onSuccess { isNewUser ->
+                _uiState.value = LoginUiState.Success(isNewUser)
+            }.onFailure { e ->
+                Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
+                _uiState.value = LoginUiState.Error("카카오 로그인 실패: ${e.message}")
+            }
+        }
+    }
+
     fun loginWithKakao(idToken: String) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
 
-            val result = authRepository.loginWithKakao(idToken)
+            val result = loginKakaoUseCase(idToken)
 
             result.onSuccess { isNewUser ->
                 _uiState.value = LoginUiState.Success(isNewUser)

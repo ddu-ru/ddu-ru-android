@@ -6,6 +6,8 @@ import com.gildongmu.dduru_android.data.remote.datasource.AuthDataSource
 import com.gildongmu.dduru_android.data.remote.datasourceimpl.AuthDataSourceImpl
 import com.gildongmu.dduru_android.data.remote.datasource.GoogleAuthDataSource
 import com.gildongmu.dduru_android.data.remote.datasource.GoogleAuthDataSourceImpl
+import com.gildongmu.dduru_android.data.remote.datasource.KakaoAuthDataSource
+import com.gildongmu.dduru_android.data.remote.datasourceimpl.KakaoAuthDataSourceImpl
 
 import dagger.Binds
 import dagger.Module
@@ -28,6 +30,12 @@ abstract class DataSourceModule {
     abstract fun bindTokenLocalDataSource(
         tokenLocalDataSourceImpl: TokenLocalDataSourceImpl
     ): TokenLocalDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindKakaoAuthDataSource(
+        impl: KakaoAuthDataSourceImpl
+    ): KakaoAuthDataSource
 
     @Binds
     @Singleton
