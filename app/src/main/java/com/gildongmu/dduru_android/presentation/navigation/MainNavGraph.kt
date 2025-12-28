@@ -4,6 +4,11 @@ import androidx.compose.runtime.Composable
 import androidx.navigation.NavHostController
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Text
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
 
 @Composable
 fun MainNavGraph(
@@ -15,19 +20,51 @@ fun MainNavGraph(
         startDestination = startDestination
     ) {
         composable(BottomNavItem.Home.route) {
-            @Composable fun HomeScreen(){}
+            HomeDummyScreen()
         }
         composable(BottomNavItem.Itinerary.route) {
-            @Composable fun ItineraryScreen(){}
+            ItineraryDummyScreen()
         }
         composable(BottomNavItem.Match.route) {
-            @Composable fun MatchScreen(){}
+            MatchDummyScreen()
         }
         composable(BottomNavItem.Chat.route) {
-            @Composable fun ChatScreen(){}
+            ChatDummyScreen()
         }
         composable(BottomNavItem.Mypage.route) {
-            @Composable fun MyPageScreen(){}
+            MyPageDummyScreen()
         }
+    }
+}
+
+@Composable
+private fun HomeDummyScreen() {
+    CenterText("Home")
+}
+
+@Composable
+private fun ItineraryDummyScreen() {
+    CenterText("Itinerary")
+}
+
+@Composable
+private fun MatchDummyScreen() {
+    CenterText("Match")
+}
+
+@Composable
+private fun ChatDummyScreen() {
+    CenterText("Chat")
+}
+
+@Composable
+private fun MyPageDummyScreen() {
+    CenterText("MyPage")
+}
+
+@Composable
+private fun CenterText(text: String) {
+    Box(modifier = Modifier.fillMaxSize(), contentAlignment = Alignment.Center) {
+        Text(text = text)
     }
 }
