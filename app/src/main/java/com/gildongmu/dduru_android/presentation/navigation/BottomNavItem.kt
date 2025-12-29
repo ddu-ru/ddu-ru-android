@@ -11,31 +11,31 @@ sealed class BottomNavItem(
 
     object Home : BottomNavItem(
         route = "home",
-        label = "홈",
+        label = "Home",
         iconRes = R.drawable.ic_bottom_navigation_tab_home
     )
 
     object Itinerary : BottomNavItem(
         route = "itinerary",
-        label = "일정",
+        label = "Itinerary",
         iconRes = R.drawable.ic_bottom_navigation_tab_itinerary
     )
 
     object Match : BottomNavItem(
         route = "match",
-        label = "매칭",
+        label = "Match",
         iconRes = R.drawable.ic_bottom_navigation_tab_match
     )
 
     object Chat : BottomNavItem(
         route = "chat",
-        label = "채팅",
+        label = "Chat",
         iconRes = R.drawable.ic_bottom_navigation_tab_chat
     )
 
     object Mypage : BottomNavItem(
         route = "myPage",
-        label = "마이",
+        label = "MyPage",
         iconRes = R.drawable.ic_bottom_navigation_tab_mypage
     )
 
