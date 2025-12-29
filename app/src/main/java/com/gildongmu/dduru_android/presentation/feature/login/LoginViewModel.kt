@@ -1,6 +1,6 @@
 package com.gildongmu.dduru_android.presentation.feature.login
 
-import android.content.Intent
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -54,26 +54,19 @@ class LoginViewModel @Inject constructor(
             }
         }
     }
-    fun getGoogleIntent(): Intent {
-        return authRepository.getGoogleSignInIntent()
-    }
-    fun handleGoogleResult(data: Intent?) {
-        viewModelScope.launch {
-            if (data == null) {
-                // 데이터가 없으면 취소나 실패로 간주
-                return@launch
-            }
 
+    fun startGoogleLogin(context: Context) {
+        viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
 
-            // UseCase에게 Intent를 통째로 넘김 (파싱은 Data Layer가 알아서 함)
-            val result = loginGoogleUseCase(data)
+            // UseCase를 통해 바로 로그인 진행
+            val result = loginGoogleUseCase(context)
 
             result.onSuccess { isNewUser ->
                 _uiState.value = LoginUiState.Success(isNewUser)
             }.onFailure { e ->
                 Log.e("LoginViewModel", "Google Login failed: ${e.message}", e)
-                _uiState.value = LoginUiState.Error("구글 로그인 실패: ${e.message}")
+                _uiState.value = LoginUiState.Error("구글 로그인 실패")
             }
         }
     }

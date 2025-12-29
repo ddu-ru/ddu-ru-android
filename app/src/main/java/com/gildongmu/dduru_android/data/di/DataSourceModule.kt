@@ -5,7 +5,7 @@ import com.gildongmu.dduru_android.data.local.TokenLocalDataSourceImpl
 import com.gildongmu.dduru_android.data.remote.datasource.AuthDataSource
 import com.gildongmu.dduru_android.data.remote.datasourceimpl.AuthDataSourceImpl
 import com.gildongmu.dduru_android.data.remote.datasource.GoogleAuthDataSource
-import com.gildongmu.dduru_android.data.remote.datasource.GoogleAuthDataSourceImpl
+import com.gildongmu.dduru_android.data.remote.datasourceimpl.GoogleAuthDataSourceImpl
 import com.gildongmu.dduru_android.data.remote.datasource.KakaoAuthDataSource
 import com.gildongmu.dduru_android.data.remote.datasourceimpl.KakaoAuthDataSourceImpl
 
