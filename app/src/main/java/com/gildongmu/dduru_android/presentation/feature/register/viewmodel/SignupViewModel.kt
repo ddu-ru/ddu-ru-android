@@ -5,13 +5,18 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru_android.domain.entity.Nickname
+import com.gildongmu.dduru_android.domain.usecase.CheckNicknameUseCase
+import com.gildongmu.dduru_android.domain.usecase.GenerateNicknameUseCase
 import com.gildongmu.dduru_android.presentation.feature.register.state.CompletedItem
 import com.gildongmu.dduru_android.presentation.feature.register.state.Gender
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupStep
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import javax.inject.Inject
 
 class SignupViewModel : ViewModel() {
 
@@ -163,5 +168,40 @@ class SignupViewModel : ViewModel() {
     private fun stopAuthTimer() {
         authTimerJob?.cancel()
         authTimerJob = null
+    }
+}
+
+@HiltViewModel
+class SignupViewModel2 @Inject constructor(
+    private val checkNicknameUseCase: CheckNicknameUseCase,
+    private val generateNicknameUseCase: GenerateNicknameUseCase
+) : ViewModel() {
+
+    var uiState by mutableStateOf(SignupUiState())
+        private set
+
+    fun onNicknameChange(value: String) {
+        uiState = uiState.copy(nickname = value)
+    }
+
+    fun onCheckNickname() {
+        viewModelScope.launch {
+            val result = checkNicknameUseCase(
+                Nickname(uiState.nickname)
+            )
+            uiState = uiState.copy(
+                isNicknameAvailable = result
+            )
+        }
+    }
+
+    fun onGenerateNickname() {
+        viewModelScope.launch {
+            val nickname = generateNicknameUseCase()
+            uiState = uiState.copy(
+                nickname = nickname.value,
+                isNicknameAvailable = true
+            )
+        }
     }
 }

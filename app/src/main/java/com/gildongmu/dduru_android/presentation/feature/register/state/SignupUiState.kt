@@ -38,3 +38,7 @@ data class SignupUiState(
     val isAuthVerified: Boolean = false,
     val authTimerSeconds: Int = 0
 )
+data class SignupUiState2(
+    val nickname: String = "",
+    val isNicknameAvailable: Boolean? = null
+)

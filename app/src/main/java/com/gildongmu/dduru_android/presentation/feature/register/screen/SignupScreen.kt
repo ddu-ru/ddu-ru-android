@@ -183,3 +183,11 @@ private fun formatTimer(seconds: Int): String {
 private fun SignupScreenPReview() {
     SignupScreen()
 }
+
+//NicknameInpu2t(
+//value = state.nickname,
+//onValueChange = viewModel::onNicknameChange,
+//onCheckClick = viewModel::onCheckNickname,
+//onRandomClick = viewModel::onGenerateNickname,
+//isAvailable = state.isNicknameAvailable
+//)
