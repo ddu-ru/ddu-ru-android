@@ -1,8 +1,6 @@
 package com.gildongmu.dduru_android.presentation.navigation
 
 import android.widget.Toast
-import androidx.activity.compose.rememberLauncherForActivityResult
-import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -23,14 +21,7 @@ fun LoginRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    // 1. 구글 로그인 런처
-    val googleLoginLauncher = rememberLauncherForActivityResult(
-        contract = ActivityResultContracts.StartActivityForResult()
-    ) { result ->
-        viewModel.handleGoogleResult(result.data)
-    }
-
-    // 2. 상태 관찰
+    //  상태 관찰
     LaunchedEffect(uiState) {
         when (val state = uiState) {
             is LoginUiState.Success -> {
@@ -43,13 +34,12 @@ fun LoginRoute(
         }
     }
 
-    // 3. UI 표시
+    // UI 표시
     LoginScreen(
         isLoading = (uiState is LoginUiState.Loading),
         onKakaoClick = { viewModel.startKakaoLogin() },
         onGoogleClick = {
-            val intent = viewModel.getGoogleIntent()
-            googleLoginLauncher.launch(intent)
+            viewModel.startGoogleLogin(context)
         },
         onGuestClick = onGuestClick
     )
