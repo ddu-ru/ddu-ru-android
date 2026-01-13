@@ -7,6 +7,7 @@ import androidx.compose.ui.graphics.Color
 // 1. Reference Token (순수 색상 정의)
 val Blue500 = Color(0xFF289BFF)
 val Blue100 = Color(0xFFC8E5FF)
+val PrimaryShadow = Color(0x52289BFF)
 
 val Gray0   = Color(0xFFFFFFFF) // White는 Gray0으로 정의
 val Gray50  = Color(0xFFF8F9FA)
@@ -30,6 +31,13 @@ val BlackAlpha10 = Color(0x1A000000)
 val BlackAlpha05 = Color(0x0D000000)
 val WhiteAlpha30 = Color(0x4DFFFFFF)
 val GrayBorder = Color(0x80797479)
+val BlueProfile1 = Color(0xFFABEDFF) // 프로필 배경 1
+val BlueProfile2 = Color(0xFF75B5FF) // 프로필 배경 2
+val GrayText400 = Color(0xFF4A5565)  // 인원수 텍스트 색상
+val WhiteAlpha05 = Color(0x0DFFFFFF)
+val BlackAlpha08 = Color(0x14000000)
+val WhiteAlpha50 = Color(0x80FFFFFF)
+val BlackAlpha30 = Color(0x4D000000)
 // 2. System Token
 
 @Immutable
@@ -37,6 +45,7 @@ data class DduruColors(
     // [Brand]
     val Primary: Color,
     val Secondary: Color,
+    val PrimaryShadow: Color,
 
     // [GrayScale]
     val Gray0: Color,
@@ -62,7 +71,14 @@ data class DduruColors(
     val BlackAlpha10: Color,
     val BlackAlpha05: Color,
     val WhiteAlpha30: Color,
-    val GrayBorder : Color
+    val GrayBorder : Color,
+    val BlueProfile1: Color,
+    val BlueProfile2: Color,
+    val GrayText400: Color,
+    val WhiteAlpha05: Color,
+    val BlackAlpha08: Color,
+    val WhiteAlpha50: Color,
+    val BlackAlpha30: Color
 )
 
 
@@ -72,6 +88,7 @@ data class DduruColors(
 val defaultDduruColors = DduruColors(
     Primary = Blue500,
     Secondary = Blue100,
+    PrimaryShadow = PrimaryShadow,
 
     // GrayScale
     Gray0 = Gray0,
@@ -98,7 +115,14 @@ val defaultDduruColors = DduruColors(
     BlackAlpha10 = BlackAlpha10,
     BlackAlpha05 = BlackAlpha05,
     WhiteAlpha30 = WhiteAlpha30,
-    GrayBorder = GrayBorder
+    GrayBorder = GrayBorder,
+    BlueProfile1 = BlueProfile1,
+    BlueProfile2 = BlueProfile2,
+    GrayText400 = GrayText400,
+    WhiteAlpha05 = WhiteAlpha05,
+    BlackAlpha08 = BlackAlpha08,
+    WhiteAlpha50 = WhiteAlpha50,
+    BlackAlpha30 = BlackAlpha30
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }

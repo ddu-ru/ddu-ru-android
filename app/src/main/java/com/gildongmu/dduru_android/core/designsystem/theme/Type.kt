@@ -33,7 +33,11 @@ data class DduruTypography(
     val LabelMedium: TextStyle,
     val LabelSmall: TextStyle,
     val Button: TextStyle,
-    val ButtonLarge: TextStyle
+    val ButtonLarge: TextStyle,
+    val HomeGreeting: TextStyle,
+    val HomeBanner: TextStyle,
+    val HomeFilter: TextStyle,
+
 )
 // 3. 스타일 정의
 val defaultDduruTypography = DduruTypography(
@@ -102,6 +106,24 @@ val defaultDduruTypography = DduruTypography(
         fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp,
         lineHeight = 24.sp
+    ),
+    HomeGreeting = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp,
+        lineHeight = 25.2.sp
+    ),
+    HomeBanner = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.SemiBold,
+        fontSize = 18.sp,
+        lineHeight = 18.sp
+    ),
+    HomeFilter = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Medium,
+        fontSize = 12.sp,
+        lineHeight = 12.sp
     )
 
 )
