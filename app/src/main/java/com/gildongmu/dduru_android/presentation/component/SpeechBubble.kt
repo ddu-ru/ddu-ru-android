@@ -77,9 +77,9 @@ fun SpeechBubble(
     containerColor: Color = Color.White,
     contentPadding: PaddingValues = PaddingValues(
         start = 24.dp,
-        top = 24.dp,
+        top = 8.dp,
         end = 24.dp,
-        bottom = 24.dp + arrowHeight
+        bottom = 8.dp + arrowHeight
     ),
     content: @Composable () -> Unit
 ) {
