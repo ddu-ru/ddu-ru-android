@@ -37,6 +37,7 @@ fun OnboardingResultScreen(
         verticalArrangement = Arrangement.SpaceEvenly
     ){
         Text(
+            modifier = Modifier.padding(top = 16.dp),
             text = "내 여행 성격",
             style = DduruTheme.typography.TitleMedium,
             textAlign = TextAlign.Center,
@@ -118,7 +119,9 @@ fun OnboardingResultScreen(
         DduruButton(
             "네 맞아요!",
             {},
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 78.dp)
         )
     }
 }
