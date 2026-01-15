@@ -99,7 +99,6 @@ fun SpeechBubble(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
                 .padding(contentPadding),
             contentAlignment = Alignment.Center,
         ) {
