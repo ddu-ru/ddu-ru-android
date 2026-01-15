@@ -1,5 +1,6 @@
 package com.gildongmu.dduru_android.presentation.feature.register
 
+import android.net.Uri
 import com.gildongmu.dduru_android.R
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -31,9 +32,12 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import com.gildongmu.dduru_android.presentation.component.ProfileCharacterCustomScreen
 import com.gildongmu.dduru_android.presentation.component.ProfileImageCrop
 import com.gildongmu.dduru_android.presentation.component.SpeechBubble
 import com.gildongmu.dduru_android.presentation.model.ProfileImageCropOption
+import com.gildongmu.dduru_android.presentation.model.ProfileType
+import rememberGalleryLauncher
 
 @Composable
 fun ProfileSettingScreen(
@@ -43,11 +47,20 @@ fun ProfileSettingScreen(
     val maxLength = 60
 
     val radioOptions = listOf(
-        ProfileImageCropOption(R.drawable.img_penguin_personallity, 1.6f, 15.dp),
-        ProfileImageCropOption(R.drawable.img_blank_profile),
+        ProfileImageCropOption(R.drawable.img_penguin_personallity, ProfileType.CHARACTER, 1.6f, 0.16f),
+        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM,),
     )
 
     val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
+    val isCharacterSelected = selectedOption.type == ProfileType.CHARACTER
+
+    var showProfileCharacterCustomScreen by remember { mutableStateOf(false) }
+
+    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
+
+    val galleryLauncher = rememberGalleryLauncher { uri ->
+        selectedImageUri = uri
+    }
 
     Column (
         modifier = modifier
@@ -79,10 +92,13 @@ fun ProfileSettingScreen(
                 verticalArrangement = Arrangement.spacedBy(12.dp),
             )
             {
+                val currentUri = if (option.type == ProfileType.CUSTOM) selectedImageUri else null
+
                 ProfileImageCrop(
-                resId = option.resId,
-                scale = option.scale,
-                offset = option.offset
+                    resId = option.resId,
+                    imageUri = currentUri,
+                    scale = option.scale,
+                    offsetRatio = option.offsetRatio
                 )
 
                 RadioButton(
@@ -93,14 +109,23 @@ fun ProfileSettingScreen(
             }
         }
         Button(
-            {},
+            {
+                if (isCharacterSelected) showProfileCharacterCustomScreen = true
+                else {galleryLauncher.launch("image/*")}
+            },
             colors = ButtonDefaults.buttonColors(DduruTheme.colors.Gray200),
             modifier = Modifier,
         ){
             Text(
-                text = "아바타 편집",
+                text = if (isCharacterSelected) "아바타 편집" else "사진 변경",
                 style = DduruTheme.typography.Button,
                 color = DduruTheme.colors.Gray700
+            )
+        }
+
+        if (showProfileCharacterCustomScreen) {
+            ProfileCharacterCustomScreen(
+                onDismiss = { showProfileCharacterCustomScreen = false }
             )
         }
 
