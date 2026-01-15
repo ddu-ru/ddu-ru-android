@@ -10,6 +10,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 
@@ -17,15 +18,17 @@ import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 fun DduruButton(
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    height: Dp = 48.dp,
+    cornerShape: Dp = 12.dp
 ) {
     Button(
         onClick = onClick,
         modifier = modifier
-            .height(48.dp)
+            .height(height)
             .shadow(
                 elevation = 12.dp,
-                shape = RoundedCornerShape(12.dp),
+                shape = RoundedCornerShape(cornerShape),
                 spotColor = DduruTheme.colors.BlackAlpha14,
                 ambientColor = DduruTheme.colors.BlackAlpha14
             )
