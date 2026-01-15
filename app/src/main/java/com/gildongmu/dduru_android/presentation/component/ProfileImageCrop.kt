@@ -1,6 +1,6 @@
 package com.gildongmu.dduru_android.presentation.component
 
-import androidx.compose.foundation.Image
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -14,32 +14,39 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 
 @Composable
 fun ProfileImageCrop(
-    resId: Int,
+    modifier: Modifier = Modifier,
+    resId: Int? = null,
+    imageUri: Uri? = null,
     scale: Float = 1f,
-    offset: Dp = 0.dp,
+    offsetRatio: Float = 0f,
+    size: Dp = 100.dp
 ){
     Box(
-        modifier = Modifier
+        modifier = modifier
             .background(Color(0xFFACD3FF), CircleShape)
-            .size(100.dp)
+            .size(size)
             .clip(CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        Image(
-            painter = painterResource(resId),
+        val image = imageUri ?: resId
+
+        AsyncImage(
+            model = image,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxSize()
                 .scale(scale)
-                .offset(y = offset)
+                .offset{
+                    IntOffset(x = 0, y = (size.toPx() * offsetRatio).toInt())
+                }
         )
     }
 }
-
