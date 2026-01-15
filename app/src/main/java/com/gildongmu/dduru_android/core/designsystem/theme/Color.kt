@@ -29,6 +29,7 @@ val BlackAlpha14 = Color(0x24000000)
 val BlackAlpha10 = Color(0x1A000000)
 val BlackAlpha05 = Color(0x0D000000)
 val WhiteAlpha30 = Color(0x4DFFFFFF)
+val BlackAlpha25 = Color(0x40000000)
 val GrayBorder = Color(0x80797479)
 // 2. System Token
 
@@ -62,6 +63,7 @@ data class DduruColors(
     val BlackAlpha10: Color,
     val BlackAlpha05: Color,
     val WhiteAlpha30: Color,
+    val BlackAlpha25: Color,
     val GrayBorder : Color
 )
 
@@ -98,6 +100,7 @@ val defaultDduruColors = DduruColors(
     BlackAlpha10 = BlackAlpha10,
     BlackAlpha05 = BlackAlpha05,
     WhiteAlpha30 = WhiteAlpha30,
+    BlackAlpha25 = BlackAlpha25,
     GrayBorder = GrayBorder
 )
 

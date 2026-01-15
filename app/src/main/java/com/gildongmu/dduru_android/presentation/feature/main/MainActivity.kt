@@ -23,6 +23,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru_android.presentation.feature.login.LoginViewModel
 import com.gildongmu.dduru_android.presentation.feature.login.WelcomeScreen
+import com.gildongmu.dduru_android.presentation.feature.register.survey.SurveyMainScreen
 import com.gildongmu.dduru_android.presentation.navigation.LoginRoute
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -50,6 +51,7 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(startScreen) {
                         if (startScreen != Screen.Splash) {
                             currentScreen = startScreen
+                            //currentScreen = Screen.Onboarding //온보딩 테스트용
                             if (startScreen == Screen.Home) {
                                 Toast.makeText(applicationContext, "자동 로그인 성공", Toast.LENGTH_SHORT).show()
                             }
@@ -91,16 +93,16 @@ class MainActivity : ComponentActivity() {
                         }
 
                         Screen.Onboarding -> {
-                            Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                                androidx.compose.foundation.layout.Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                                    Text("여기가 온보딩(생년월일 입력) 화면입니다!")
-                                    Button(onClick = {
-                                        currentScreen = Screen.Home
-                                    }) {
-                                        Text("입력 완료하고 홈으로 가기")
-                                    }
+                            SurveyMainScreen(
+                                modifier = modifier,
+                                onSurveyComplete = {
+                                    // 11번 질문 완료 후 -> 홈으로 이동
+                                    currentScreen = Screen.Home
+                                },
+                                onBackPressed = {
+                                    currentScreen = Screen.Home
                                 }
-                            }
+                            )
                         }
 
                         Screen.Home -> {
