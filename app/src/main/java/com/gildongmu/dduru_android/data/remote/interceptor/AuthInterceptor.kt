@@ -18,12 +18,12 @@ class AuthInterceptor @Inject constructor(
 
         val originalRequest = chain.request()
 
-        // 2. 토큰이 없으면 그냥 보냅니다 (로그인 요청 등)
+        // 2. 토큰이 없으면 그냥
         if (accessToken.isNullOrBlank()) {
             return chain.proceed(originalRequest)
         }
 
-        // 3. 토큰이 있으면 헤더에 붙여서 보냅니다.
+        // 3. 토큰이 있으면 헤더에 붙여서
         val newRequest = originalRequest.newBuilder()
             .addHeader("Authorization", "Bearer $accessToken")
             .build()
