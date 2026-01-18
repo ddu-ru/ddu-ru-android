@@ -22,11 +22,11 @@ fun SurveyMainScreen(
     val uiState by viewModel.uiState.collectAsState()
 
     // 설문 완료 시 동작
-    LaunchedEffect(uiState) {
-        if (uiState is SurveyUiState.Success) {
-            onSurveyComplete()
-        }
-    }
+//    /*LaunchedEffect(uiState) {
+//        if (uiState is SurveyUiState.Success) {
+//            onSurveyComplete()
+//        }
+//    }*/
 
     BackHandler(enabled = currentQuestion > 0) {
         viewModel.previousQuestion()
@@ -149,6 +149,40 @@ fun SurveyMainScreen(
             ) {
                 CircularProgressIndicator()
             }
+        }
+        if (uiState is SurveyUiState.Success) {
+            // 수정 포인트: .data를 지우고 result를 바로 data 변수에 담습니다.
+            val data = (uiState as SurveyUiState.Success).result
+
+            AlertDialog(
+                onDismissRequest = { /* 비워둠 */ },
+                title = { Text(text = "설문 결과") },
+                text = {
+                    Column {
+                        Text(text = "당신의 여행 스타일은?", style = MaterialTheme.typography.bodyMedium)
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(
+                            text = data.avatarName,
+                            style = MaterialTheme.typography.headlineMedium,
+                            color = MaterialTheme.colorScheme.primary
+                        )
+                        Spacer(modifier = Modifier.height(8.dp))
+
+                        Text(text = data.avatarDescription)
+                    }
+                },
+                confirmButton = {
+                    Button(
+                        onClick = {
+                            viewModel.resetUiState()
+                            onSurveyComplete()
+                        }
+                    ) {
+                        Text("확인")
+                    }
+                }
+            )
         }
 
         // 에러 상태일 때 메시지 표시
