@@ -156,7 +156,7 @@ private fun StandardQuestionScreen(
                 options.forEachIndexed { index, option ->
                     SurveyOptionButton(
                         text = option,
-                        isSelected = selectedOption == index,
+                        isSelected = selectedOption == index +1,
                         onClick = { onOptionSelected(index) }
                     )
                 }

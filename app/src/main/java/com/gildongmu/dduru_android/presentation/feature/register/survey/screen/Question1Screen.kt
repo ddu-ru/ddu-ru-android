@@ -61,12 +61,12 @@ fun Question1Screen(
             ) {
                 SurveyOptionButton(
                     text = "🚶여행은 낭만이지! 걷거나 버스",
-                    isSelected = selectedOption == 0,
+                    isSelected = selectedOption == 1,
                     onClick = { onOptionSelected(0) }
                 )
                 SurveyOptionButton(
                     text = "🚕 편한게 최고~ 택시 타는 거 어때?",
-                    isSelected = selectedOption == 1,
+                    isSelected = selectedOption == 2,
                     onClick = { onOptionSelected(1) }
                 )
             }

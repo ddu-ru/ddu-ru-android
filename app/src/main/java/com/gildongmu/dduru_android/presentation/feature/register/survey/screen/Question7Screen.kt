@@ -19,18 +19,20 @@ import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru_android.presentation.feature.register.survey.components.*
 
-
 @Composable
 fun Question7Screen(
     selectedOptions: Set<Int>,
     onOptionToggled: (Int) -> Unit,
     onNextClick: () -> Unit,
     onBackClick: () -> Unit,
+    isNextButtonEnabled: Boolean,
     modifier: Modifier = Modifier
 ) {
     val options = listOf(
         "🏛️ 관광", "⚽ 관람", "🥦 자연 탐방", "🍅 먹방",
-        "🎁 쇼핑", "🎨 휴양", "🏃 액티비티", "🔥 페스티벌"
+        "🎁 쇼핑", "🎨 휴양", "🏃 액티비티",
+        "🎡 놀이공원",
+        "🔥 페스티벌"
     )
 
     Box(
@@ -81,8 +83,8 @@ fun Question7Screen(
                 itemsIndexed(options) { index, option ->
                     SurveyGridOptionButton(
                         text = option,
-                        isSelected = selectedOptions.contains(index),
-                        onClick = { onOptionToggled(index) },
+                        isSelected = selectedOptions.contains(index + 1),
+                        onClick = { onOptionToggled(index) }, // 클릭은 그대로 index(0,1...)를 보내면 뷰모델이 +1 해서 처리함
                         modifier = Modifier.fillMaxWidth()
                     )
                 }
@@ -92,6 +94,7 @@ fun Question7Screen(
         if (selectedOptions.isNotEmpty()) {
             Button(
                 onClick = onNextClick,
+                enabled = isNextButtonEnabled,
                 modifier = Modifier
                     .align(Alignment.BottomCenter)
                     .fillMaxWidth()
@@ -99,7 +102,9 @@ fun Question7Screen(
                     .height(56.dp),
                 colors = ButtonDefaults.buttonColors(
                     containerColor = DduruTheme.colors.Primary,
-                    contentColor = DduruTheme.colors.Gray0
+                    contentColor = DduruTheme.colors.Gray0,
+                    disabledContainerColor = DduruTheme.colors.Gray200,
+                    disabledContentColor = DduruTheme.colors.Gray500
                 ),
                 shape = RoundedCornerShape(16.dp)
             ) {
@@ -118,10 +123,11 @@ fun Question7Screen(
 fun Question7ScreenPreview() {
     DduruTheme {
         Question7Screen(
-            selectedOptions = setOf(0, 1),
+            selectedOptions = setOf(1, 2),
             onOptionToggled = {},
             onNextClick = {},
-            onBackClick = {}
+            onBackClick = {},
+            isNextButtonEnabled = true
         )
     }
 }

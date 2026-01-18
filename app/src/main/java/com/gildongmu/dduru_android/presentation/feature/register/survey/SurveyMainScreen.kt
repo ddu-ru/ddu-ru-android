@@ -1,5 +1,6 @@
 package com.gildongmu.dduru_android.presentation.feature.register.survey
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -20,11 +21,15 @@ fun SurveyMainScreen(
     val surveyState by viewModel.surveyState.collectAsState()
     val uiState by viewModel.uiState.collectAsState()
 
-    // 설문 완료 시 동작 (Success 상태 감지)
+    // 설문 완료 시 동작
     LaunchedEffect(uiState) {
         if (uiState is SurveyUiState.Success) {
             onSurveyComplete()
         }
+    }
+
+    BackHandler(enabled = currentQuestion > 0) {
+        viewModel.previousQuestion()
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -91,9 +96,8 @@ fun SurveyMainScreen(
 
             7 -> Question7Screen(
                 selectedOptions = surveyState.q7,
-                onOptionToggled = { answer ->
-                    viewModel.toggleQ7Answer(answer)
-                },
+                isNextButtonEnabled = surveyState.q7.isNotEmpty(),
+                onOptionToggled = { answer -> viewModel.toggleQ7Answer(answer) },
                 onNextClick = { viewModel.nextQuestion() },
                 onBackClick = { viewModel.previousQuestion() }
             )
@@ -149,7 +153,6 @@ fun SurveyMainScreen(
 
         // 에러 상태일 때 메시지 표시
         if (uiState is SurveyUiState.Error) {
-            // Snackbar 등을 이용해 에러 표시
             Text(
                 text = (uiState as SurveyUiState.Error).message,
                 modifier = Modifier.align(Alignment.BottomCenter).padding(20.dp),

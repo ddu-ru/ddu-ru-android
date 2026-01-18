@@ -51,7 +51,6 @@ class MainActivity : ComponentActivity() {
                     LaunchedEffect(startScreen) {
                         if (startScreen != Screen.Splash) {
                             currentScreen = startScreen
-                            //currentScreen = Screen.Onboarding //온보딩 테스트용
                             if (startScreen == Screen.Home) {
                                 Toast.makeText(applicationContext, "자동 로그인 성공", Toast.LENGTH_SHORT).show()
                             }
@@ -65,7 +64,7 @@ class MainActivity : ComponentActivity() {
                                 Text("DDURU 로딩 중...")
                             }
                         }
-                        Screen.Login -> {
+                        /*Screen.Login -> {
                             LoginRoute(
                                 onLoginSuccess = { isNewUser ->
                                     if (isNewUser) {
@@ -73,6 +72,21 @@ class MainActivity : ComponentActivity() {
                                         currentScreen = Screen.Welcome
                                     } else {
                                         // 기존 회원 ->Home
+                                        currentScreen = Screen.Home
+                                    }
+                                },
+                                onGuestClick = {
+                                    currentScreen = Screen.Home
+                                }
+                            )
+                        }*/
+                        Screen.Login -> {
+                            LoginRoute(
+                                onLoginSuccess = { isNewUser ->
+                                    if (true) {
+                                        // 신규 회원인 척 -> Welcome으로 이동
+                                        currentScreen = Screen.Welcome
+                                    } else {
                                         currentScreen = Screen.Home
                                     }
                                 },

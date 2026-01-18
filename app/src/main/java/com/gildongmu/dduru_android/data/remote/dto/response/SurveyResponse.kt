@@ -1,5 +1,8 @@
 package com.gildongmu.dduru_android.data.remote.dto.response
 
+import kotlinx.serialization.Serializable
+
+@Serializable
 data class SurveyResponse(
     val r: Double,
     val w: Double,
