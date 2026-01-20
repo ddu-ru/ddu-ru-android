@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.register
+package com.gildongmu.dduru_android.presentation.feature.register.servey
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -20,7 +20,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru_android.R
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru_android.presentation.component.LoadingFlashing
+import com.gildongmu.dduru_android.presentation.feature.register.servey.component.LoadingFlashing
 import com.gildongmu.dduru_android.presentation.component.SpeechBubble
 
 @Composable

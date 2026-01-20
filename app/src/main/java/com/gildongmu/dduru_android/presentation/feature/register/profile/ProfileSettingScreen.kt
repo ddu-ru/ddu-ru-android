@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.register
+package com.gildongmu.dduru_android.presentation.feature.register.profile
 
 import android.net.Uri
 import com.gildongmu.dduru_android.R
@@ -32,7 +32,6 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
-import com.gildongmu.dduru_android.presentation.component.ProfileCharacterCustomScreen
 import com.gildongmu.dduru_android.presentation.component.ProfileImageCrop
 import com.gildongmu.dduru_android.presentation.component.SpeechBubble
 import com.gildongmu.dduru_android.presentation.model.ProfileImageCropOption

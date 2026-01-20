@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.component
+package com.gildongmu.dduru_android.presentation.feature.register.servey.component
 
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.background

@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.register
+package com.gildongmu.dduru_android.presentation.feature.register.servey
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -26,7 +26,8 @@ import com.gildongmu.dduru_android.presentation.component.SpeechBubble
 
 @Composable
 fun OnboardingResultScreen(
-    modifier: Modifier
+    modifier: Modifier,
+    onNextClick: () -> Unit
 ){
     Column (
         modifier = modifier
@@ -118,7 +119,7 @@ fun OnboardingResultScreen(
         }
         DduruButton(
             "네 맞아요!",
-            {},
+            { onNextClick() },
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(bottom = 78.dp)
