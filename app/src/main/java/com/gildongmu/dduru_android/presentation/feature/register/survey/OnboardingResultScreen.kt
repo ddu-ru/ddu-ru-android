@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.register.servey
+package com.gildongmu.dduru_android.presentation.feature.register.survey
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -6,6 +6,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -78,6 +79,7 @@ fun OnboardingResultScreen(
                 textAlign = TextAlign.Center,
                 color = DduruTheme.colors.Gray600
             )
+            Spacer(modifier = Modifier.padding(32.dp))
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
