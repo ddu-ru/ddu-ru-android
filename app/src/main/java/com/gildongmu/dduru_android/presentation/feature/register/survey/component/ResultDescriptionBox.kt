@@ -33,7 +33,7 @@ fun ResultDescriptionBox(items: List<String>){
             Text(
                 modifier = Modifier
                     .padding(8.dp),
-                text = "- {$it}",
+                text = "- $it",
                 style = DduruTheme.typography.BodyMedium,
                 textAlign = TextAlign.Center,
                 color = DduruTheme.colors.Gray700
