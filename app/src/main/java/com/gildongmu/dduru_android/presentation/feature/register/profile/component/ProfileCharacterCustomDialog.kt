@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.register.profile
+package com.gildongmu.dduru_android.presentation.feature.register.profile.component
 
 import ColorDotGrid
 import com.gildongmu.dduru_android.R
