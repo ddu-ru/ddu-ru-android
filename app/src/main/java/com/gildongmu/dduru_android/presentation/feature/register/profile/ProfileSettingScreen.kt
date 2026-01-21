@@ -20,6 +20,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru_android.presentation.component.SpeechBubble
+import com.gildongmu.dduru_android.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
 import com.gildongmu.dduru_android.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru_android.presentation.feature.register.profile.component.ProfileIntroduction
 import com.gildongmu.dduru_android.presentation.model.ProfileType
@@ -61,6 +62,12 @@ fun ProfileSettingScreen(
                 else galleryLauncher.launch("image/*")
             }
         )
+
+        if (showCharacterCustomScreen) {
+            ProfileCharacterCustomDialog(
+                onDismiss = { showCharacterCustomScreen = false }
+            )
+        }
 
         Column( horizontalAlignment = Alignment.CenterHorizontally,)
         {

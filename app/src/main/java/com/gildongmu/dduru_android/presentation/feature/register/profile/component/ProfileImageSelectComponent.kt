@@ -72,9 +72,7 @@ fun ProfileImageSelector(
         }
 
         Button(
-            {
-                onActionClick
-            },
+            onActionClick,
             colors = ButtonDefaults.buttonColors(DduruTheme.colors.Gray200),
             modifier = Modifier,
         ) {

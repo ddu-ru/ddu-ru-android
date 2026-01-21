@@ -30,7 +30,7 @@ import com.gildongmu.dduru_android.presentation.model.ProfileBackgroundColorList
 
 @Composable
 
-fun ProfileCharacterCustomScreen(onDismiss: () -> Unit){
+fun ProfileCharacterCustomDialog(onDismiss: () -> Unit){
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -75,7 +75,7 @@ fun ProfileCharacterCustomScreen(onDismiss: () -> Unit){
                     )
                     DduruButton(
                         "완료",
-                        {},
+                        onDismiss, //추후 저장 로직 추가
                         cornerShape = 99.dp
                     )
                 }
