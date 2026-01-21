@@ -1,25 +1,13 @@
 package com.gildongmu.dduru_android.presentation.feature.register.profile
 
-import android.net.Uri
-import com.gildongmu.dduru_android.R
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.selection.selectable
-import androidx.compose.foundation.selection.selectableGroup
-import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
@@ -30,36 +18,24 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.semantics.Role
-import com.gildongmu.dduru_android.presentation.component.ProfileImageCrop
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru_android.presentation.component.SpeechBubble
-import com.gildongmu.dduru_android.presentation.model.ProfileImageCropOption
+import com.gildongmu.dduru_android.presentation.feature.register.profile.component.ProfileImageSelector
+import com.gildongmu.dduru_android.presentation.feature.register.profile.component.ProfileIntroduction
 import com.gildongmu.dduru_android.presentation.model.ProfileType
 import rememberGalleryLauncher
 
 @Composable
 fun ProfileSettingScreen(
-    modifier: Modifier
+    modifier: Modifier,
+    viewModel: ProfileViewModel = hiltViewModel()
 ) {
-    var text by remember { mutableStateOf("") }
-    val maxLength = 60
+    val selectedOption by viewModel.selectedOption.collectAsState()
+    val selectedImageUri by viewModel.selectedImageUri.collectAsState()
+    val introduction by viewModel.introduction.collectAsState()
 
-    val radioOptions = listOf(
-        ProfileImageCropOption(R.drawable.img_penguin_personallity, ProfileType.CHARACTER, 1.6f, 0.16f),
-        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM,),
-    )
-
-    val (selectedOption, onOptionSelected) = remember { mutableStateOf(radioOptions[0]) }
-    val isCharacterSelected = selectedOption.type == ProfileType.CHARACTER
-
-    var showProfileCharacterCustomScreen by remember { mutableStateOf(false) }
-
-    var selectedImageUri by remember { mutableStateOf<Uri?>(null) }
-
-    val galleryLauncher = rememberGalleryLauncher { uri ->
-        selectedImageUri = uri
-    }
+    var showCharacterCustomScreen by remember { mutableStateOf(false) }
+    val galleryLauncher = rememberGalleryLauncher { uri -> viewModel.onImageSelected(uri) }
 
     Column (
         modifier = modifier
@@ -74,59 +50,17 @@ fun ProfileSettingScreen(
             style = DduruTheme.typography.TitleMedium,
             textAlign = TextAlign.Center,
         )
-        Row (
-            modifier = Modifier
-                .selectableGroup()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
-        ){ radioOptions.forEach { option ->
-            Column(
-                Modifier.selectable(
-                        selected = (option == selectedOption),
-                        onClick = { onOptionSelected(option) },
-                        role = Role.RadioButton
-                    )
-                    .padding(8.dp),
-                horizontalAlignment = Alignment.CenterHorizontally,
-                verticalArrangement = Arrangement.spacedBy(12.dp),
-            )
-            {
-                val currentUri = if (option.type == ProfileType.CUSTOM) selectedImageUri else null
 
-                ProfileImageCrop(
-                    resId = option.resId,
-                    imageUri = currentUri,
-                    scale = option.scale,
-                    offsetRatio = option.offsetRatio
-                )
-
-                RadioButton(
-                    selected = (option == selectedOption),
-                    onClick = null
-                )
+        ProfileImageSelector(
+            options = viewModel.radioOptions,
+            selectedOption = selectedOption,
+            selectedImageUri = selectedImageUri,
+            onOptionSelected = { viewModel.onOptionSelected(it) },
+            onActionClick = {
+                if (selectedOption.type == ProfileType.CHARACTER) showCharacterCustomScreen = true
+                else galleryLauncher.launch("image/*")
             }
-            }
-        }
-        Button(
-            {
-                if (isCharacterSelected) showProfileCharacterCustomScreen = true
-                else {galleryLauncher.launch("image/*")}
-            },
-            colors = ButtonDefaults.buttonColors(DduruTheme.colors.Gray200),
-            modifier = Modifier,
-        ){
-            Text(
-                text = if (isCharacterSelected) "아바타 편집" else "사진 변경",
-                style = DduruTheme.typography.Button,
-                color = DduruTheme.colors.Gray700
-            )
-        }
-
-        if (showProfileCharacterCustomScreen) {
-            ProfileCharacterCustomScreen(
-                onDismiss = { showProfileCharacterCustomScreen = false }
-            )
-        }
+        )
 
         Column( horizontalAlignment = Alignment.CenterHorizontally,)
         {
@@ -147,58 +81,13 @@ fun ProfileSettingScreen(
             )
         }
 
-        Column (
-            horizontalAlignment = Alignment.Start,
+        ProfileIntroduction(
+            text = introduction,
+            maxLength = viewModel.maxIntroLength,
+            onValueChange = { viewModel.onIntroductionChanged(it)},
+            modifier = Modifier.fillMaxWidth()
         )
-        {
-            Text(
-                modifier = Modifier
-                    .padding(8.dp, bottom = 16.dp),
-                text = "자기소개",
-                style = DduruTheme.typography.BodyLarge
-            )
-            Box(
-                modifier = Modifier
-                    .border(1.dp, DduruTheme.colors.Gray300, RoundedCornerShape(16.dp))
-                    .background(Color.White)
-            ) {
-                BasicTextField(
-                    value = text,
-                    onValueChange = {
-                        if (it.length <= maxLength) text = it
-                    },
-                    maxLines = 4,
-                    textStyle = DduruTheme.typography.BodyLarge.copy(
-                        color = Color.Black
-                    ),
-                    decorationBox = { innerTextField ->
-                        Box(
-                            Modifier.padding(16.dp)
-                        ) {
-                            if (text.isEmpty()) {
-                                Text(
-                                    text = "나를 소개하는 한마디를 작성해주세요!",
-                                    style = DduruTheme.typography.BodyLarge,
-                                    color = DduruTheme.colors.Gray300
-                                )
-                            }
-                            innerTextField()
-                        }
-                    },
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .heightIn(min = 140.dp)
-                )
-                Text(
-                    text = "${text.length} / $maxLength",
-                    style = DduruTheme.typography.BodyMedium,
-                    modifier = Modifier
-                        .align(Alignment.BottomEnd)
-                        .padding(8.dp),
-                    color = DduruTheme.colors.Gray300
-                )
-            }
-        }
+
         SpeechBubble(
             shadowElevation = 3.dp
         ){
