@@ -1,8 +1,5 @@
 package com.gildongmu.dduru_android.presentation.model
 
-import androidx.compose.ui.unit.Dp
-import androidx.compose.ui.unit.dp
-
 enum class ProfileType {
     CHARACTER, CUSTOM
 }
