@@ -1,10 +1,11 @@
-package com.gildongmu.dduru_android.presentation.feature.register
+package com.gildongmu.dduru_android.presentation.feature.register.viewmodel
 
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru_android.core.common.util.DateUtils
 import com.gildongmu.dduru_android.domain.entity.Nickname
 import com.gildongmu.dduru_android.domain.usecase.CheckNicknameUseCase
 import com.gildongmu.dduru_android.domain.usecase.GenerateNicknameUseCase
@@ -23,24 +24,38 @@ class SignupViewModel : ViewModel() {
     var uiState by mutableStateOf(SignupUiState())
         private set
 
-    val years = (1980..2024).toList()
+    val years = (1940..2024).toList().reversed()
     val months = (1..12).toList()
-    val days = (1..31).toList()
-    private val nicknameSamples = listOf(
-        "겨울이요길",
-        "푸른돌고래",
-        "포근한별님",
-        "상큼라임",
-        "따뜻한눈송이"
-    )
+    val days: List<Int>
+        get() = DateUtils.getDayListInMonth(uiState.year, uiState.month)
 
     fun onYearSelected(value: Int) {
-        uiState = uiState.copy(year = value)
+        val currentMonth = uiState.month
+        val currentDay = uiState.day
+        if (currentMonth == null || currentDay == null) {
+            uiState = uiState.copy(year = value)
+        } else {
+            val correctedDay = DateUtils.getCorrectedDay(value, currentMonth, currentDay)
+            uiState = uiState.copy(
+                year = value,
+                day = correctedDay
+            )
+        }
         checkBirthCompletion()
     }
 
     fun onMonthSelected(value: Int) {
-        uiState = uiState.copy(month = value)
+        val currentYear = uiState.year
+        val currentDay = uiState.day
+        if (currentYear == null || currentDay == null) {
+            uiState = uiState.copy(month = value)
+        } else {
+            val correctedDay = DateUtils.getCorrectedDay(currentYear, value, currentDay)
+            uiState = uiState.copy(
+                month = value,
+                day = correctedDay
+            )
+        }
         checkBirthCompletion()
     }
 
@@ -48,6 +63,14 @@ class SignupViewModel : ViewModel() {
         uiState = uiState.copy(day = value)
         checkBirthCompletion()
     }
+
+    private val nicknameSamples = listOf(
+        "겨울이요길",
+        "푸른돌고래",
+        "포근한별님",
+        "상큼라임",
+        "따뜻한눈송이"
+    )
 
     private fun checkBirthCompletion() {
         val year = uiState.year
@@ -86,7 +109,6 @@ class SignupViewModel : ViewModel() {
         )
     }
 
-
     fun onNicknameChange(value: String) {
         uiState = uiState.copy(nickname = value)
     }
@@ -106,7 +128,6 @@ class SignupViewModel : ViewModel() {
             step = SignupStep.PHONE
         )
     }
-
 
     fun onPhoneChange(value: String) {
         uiState = uiState.copy(phoneNumber = value)
@@ -190,7 +211,7 @@ class SignupViewModel2 @Inject constructor(
                 Nickname(uiState.nickname)
             )
             uiState = uiState.copy(
-                isNicknameAvailable = result
+                //isNicknameAvailable = result
             )
         }
     }
@@ -200,7 +221,7 @@ class SignupViewModel2 @Inject constructor(
             val nickname = generateNicknameUseCase()
             uiState = uiState.copy(
                 nickname = nickname.value,
-                isNicknameAvailable = true
+                //isNicknameAvailable = true
             )
         }
     }
