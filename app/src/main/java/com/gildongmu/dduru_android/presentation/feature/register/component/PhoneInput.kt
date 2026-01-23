@@ -5,6 +5,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 
 @Composable
 fun PhoneInput(
@@ -24,14 +25,15 @@ fun PhoneInput(
         actionContent = {
             InlineActionButton(
                 text = if (isResendButton) "재전송" else "인증요청",
+                textColor = if (isResendButton) DduruTheme.colors.Gray700 else Color.White,
                 enabled = actionEnabled,
                 onClick = onActionClick,
                 colors = if (isResendButton) {
                     ButtonDefaults.buttonColors(
                         containerColor = Color.White,
-                        contentColor = Color.Black,
+                        contentColor = DduruTheme.colors.Gray700,
                         disabledContainerColor = Color.White,
-                        disabledContentColor = Color.Black.copy(alpha = 0.4f)
+                        disabledContentColor = DduruTheme.colors.Gray700,
                     )
                 } else {
                     null
