@@ -44,7 +44,7 @@ fun MaterialUnderlineTextField(
 
         Text(
             text = label,
-            style = DduruTheme.typography.bodyMedium,
+            style = DduruTheme.typography.BodyMedium,
             color = labelColor
         )
 
@@ -62,22 +62,22 @@ fun MaterialUnderlineTextField(
                 placeholder = {
                     Text(
                         text = placeholder,
-                        style = DduruTheme.typography.bodyMedium,
+                        style = DduruTheme.typography.BodyLarge,
                         color = placeholderColor
                     )
                 },
-                textStyle = DduruTheme.typography.bodyMedium,
+                textStyle = DduruTheme.typography.BodyLarge,
                 singleLine = true,
                 colors = androidx.compose.material3.TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
                     disabledContainerColor = Color.Transparent,
 
-                    focusedIndicatorColor = DduruTheme.colors.MainColor,
-                    unfocusedIndicatorColor =DduruTheme.colors.MainColor.copy(alpha = 0.4f),
-                    disabledIndicatorColor = DduruTheme.colors.MainColor.copy(alpha = 0.2f),
+                    focusedIndicatorColor = DduruTheme.colors.Primary,
+                    unfocusedIndicatorColor =DduruTheme.colors.Primary.copy(alpha = 0.4f),
+                    disabledIndicatorColor = DduruTheme.colors.Primary.copy(alpha = 0.2f),
 
-                    cursorColor = DduruTheme.colors.MainColor,
+                    cursorColor = DduruTheme.colors.Primary,
                     focusedTextColor = labelColor,
                     unfocusedTextColor = labelColor
                 )
@@ -105,8 +105,8 @@ fun UnderlineActionTextField(
     Column {
         Text(
             text = label,
-            style = DduruTheme.typography.bodyMedium,
-            color = DduruTheme.colors.MainColor
+            style = DduruTheme.typography.BodyMedium,
+            color = DduruTheme.colors.Primary
         )
 
         Spacer(modifier = Modifier.height(10.dp))
@@ -117,13 +117,13 @@ fun UnderlineActionTextField(
                 onValueChange = onValueChange,
                 enabled = enabled,
                 modifier = Modifier.weight(1f),
-                textStyle = DduruTheme.typography.bodyMedium,
+                textStyle = DduruTheme.typography.BodyMedium,
                 decorationBox = { innerTextField ->
                     Box(modifier = Modifier
                         .fillMaxWidth()
                         .padding(vertical = 10.dp) ){
                             if (value.isEmpty()) {
-                                Text(text = placeholder, color = DduruTheme.colors.MainColor)
+                                Text(text = placeholder, color = DduruTheme.colors.Primary)
                                 innerTextField()
                             }
                         }
@@ -153,10 +153,10 @@ fun InlineActionButton(
         shape = RoundedCornerShape(12.dp),
         border = border,
         colors = colors ?: ButtonDefaults.buttonColors(
-            containerColor = if (enabled) DduruTheme.colors.MainColor else Color(0xFFE4E9F0),
-            contentColor = if (enabled) Color.White else DduruTheme.colors.MainColor.copy(alpha = 0.5f),
+            containerColor = if (enabled) DduruTheme.colors.Primary else Color(0xFFE4E9F0),
+            contentColor = if (enabled) Color.White else DduruTheme.colors.Primary.copy(alpha = 0.5f),
             disabledContainerColor = Color(0xFFE4E9F0),
-            disabledContentColor = DduruTheme.colors.MainColor.copy(alpha = 0.4f)
+            disabledContentColor = DduruTheme.colors.Primary.copy(alpha = 0.4f)
         )
     ) {
         Text(text)

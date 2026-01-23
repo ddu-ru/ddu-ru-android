@@ -6,7 +6,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.gildongmu.dduru_android.presentation.feature.register.SignupViewModel
+import com.gildongmu.dduru_android.presentation.feature.register.viewmodel.SignupViewModel
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupUiState
 
 @Composable
