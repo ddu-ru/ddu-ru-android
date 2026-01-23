@@ -150,7 +150,7 @@ class SignupViewModel : ViewModel() {
             completedItems = updatedItems,
             step = SignupStep.AUTH,
             isPhoneRequested = true,
-            authTimerSeconds = 60,
+            authTimerSeconds = 180,
             authCode = ""
         )
         startAuthTimer()
