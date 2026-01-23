@@ -94,7 +94,7 @@ val defaultDduruTypography = DduruTypography(
     Button = TextStyle(
         fontFamily = Pretendard,
         fontWeight = FontWeight.Bold,
-        fontSize = 14.sp,
+        fontSize = 16.sp,
         lineHeight = 20.sp
     ),
     ButtonLarge = TextStyle(
