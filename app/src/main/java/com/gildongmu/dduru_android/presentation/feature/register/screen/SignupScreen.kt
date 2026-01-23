@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.gildongmu.dduru_android.core.designsystem.component.DduruButton
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru_android.presentation.feature.register.viewmodel.SignupViewModel
 import com.gildongmu.dduru_android.presentation.feature.register.component.AuthCodeInput
@@ -29,7 +30,6 @@ import com.gildongmu.dduru_android.presentation.feature.register.component.Gende
 import com.gildongmu.dduru_android.presentation.feature.register.component.GreetingMessageCard
 import com.gildongmu.dduru_android.presentation.feature.register.component.NicknameInput
 import com.gildongmu.dduru_android.presentation.feature.register.component.PhoneInput
-import com.gildongmu.dduru_android.presentation.feature.register.component.PrimaryButton
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupStep
 import java.util.Locale
 
@@ -166,7 +166,7 @@ fun SignupScreen(
                 else -> Triple("", false, {})
             }
 
-            PrimaryButton(
+            DduruButton(
                 text = buttonText,
                 enabled = buttonEnabled,
                 onClick = onButtonClick,
