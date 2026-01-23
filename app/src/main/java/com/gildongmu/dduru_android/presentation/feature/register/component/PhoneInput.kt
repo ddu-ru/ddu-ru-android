@@ -6,9 +6,11 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
+import androidx.compose.ui.Modifier
 
 @Composable
 fun PhoneInput(
+    modifier: Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean,
@@ -17,6 +19,7 @@ fun PhoneInput(
     isResendButton: Boolean
 ) {
     MaterialUnderlineTextField(
+        modifier = modifier,
         label = "전화번호",
         value = value,
         placeholder = "01012341234",

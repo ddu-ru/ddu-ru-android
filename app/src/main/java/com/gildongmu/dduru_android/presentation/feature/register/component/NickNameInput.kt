@@ -18,12 +18,14 @@ import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 
 @Composable
 fun NicknameInput(
+    modifier: Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean,
     onRandomClick: () -> Unit
 ) {
     MaterialUnderlineTextField(
+        modifier = modifier,
         label = "닉네임",
         value = value,
         placeholder = "겨울이요길",

@@ -30,6 +30,7 @@ import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 
 @Composable
 fun MaterialUnderlineTextField(
+    modifier: Modifier = Modifier,
     label: String,
     value: String,
     placeholder: String,
@@ -57,7 +58,7 @@ fun MaterialUnderlineTextField(
                 value = value,
                 onValueChange = onValueChange,
                 enabled = enabled,
-                modifier = Modifier.weight(1f),
+                modifier = modifier.weight(1f),
                 placeholder = {
                     Text(
                         text = placeholder,

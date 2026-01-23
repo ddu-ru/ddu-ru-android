@@ -1,9 +1,11 @@
 package com.gildongmu.dduru_android.presentation.feature.register.component
 
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 
 @Composable
 fun AuthCodeInput(
+    modifier: Modifier,
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean,
@@ -12,6 +14,7 @@ fun AuthCodeInput(
     timerText: String
 ) {
     MaterialUnderlineTextField(
+        modifier = modifier,
         label = "인증번호",
         value = value,
         placeholder = timerText,
