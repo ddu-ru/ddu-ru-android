@@ -14,9 +14,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -31,6 +36,7 @@ import com.gildongmu.dduru_android.presentation.feature.register.component.Greet
 import com.gildongmu.dduru_android.presentation.feature.register.component.NicknameInput
 import com.gildongmu.dduru_android.presentation.feature.register.component.PhoneInput
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupStep
+import kotlinx.coroutines.delay
 import java.util.Locale
 
 
@@ -41,7 +47,12 @@ fun SignupScreen(
     val state = viewModel.uiState
     val currentStep = state.step
 
+    val listState = rememberLazyListState()
+
     val birthEnabled = currentStep.ordinal >= SignupStep.BIRTH.ordinal
+    val nicknameFocusRequester = remember { FocusRequester() }
+    val phoneFocusRequester = remember { FocusRequester() }
+    val authFocusRequester = remember { FocusRequester() }
 
     val sections = buildList<@Composable () -> Unit> {
         add {
@@ -57,12 +68,17 @@ fun SignupScreen(
         if (currentStep.ordinal >= SignupStep.GENDER.ordinal) {
             val genderEnabled = currentStep.ordinal >= SignupStep.GENDER.ordinal
             add {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    GenderSegment(
-                        selected = state.gender,
-                        onSelect = viewModel::onGenderSelect,
-                        enabled = genderEnabled
-                    )
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = true,
+                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically()
+                ) {
+                    Column(modifier = Modifier.fillMaxWidth()) {
+                        GenderSegment(
+                            selected = state.gender,
+                            onSelect = viewModel::onGenderSelect,
+                            enabled = genderEnabled
+                        )
+                    }
                 }
             }
         }
@@ -70,13 +86,22 @@ fun SignupScreen(
         if (currentStep.ordinal >= SignupStep.NICKNAME.ordinal) {
             val nicknameEnabled = currentStep.ordinal >= SignupStep.NICKNAME.ordinal
             add {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    NicknameInput(
-                        value = state.nickname,
-                        onValueChange = viewModel::onNicknameChange,
-                        enabled = nicknameEnabled,
-                        onRandomClick = viewModel::onRandomNickname
-                    )
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = true,
+                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        NicknameInput(
+                            modifier = Modifier.focusRequester(nicknameFocusRequester),
+                            value = state.nickname,
+                            onValueChange = viewModel::onNicknameChange,
+                            enabled = nicknameEnabled,
+                            onRandomClick = viewModel::onRandomNickname
+                        )
+                    }
                 }
             }
         }
@@ -86,15 +111,27 @@ fun SignupScreen(
             val phoneEnabled = showPhoneSection
             val phoneButtonEnabled = phoneEnabled
             add {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    PhoneInput(
-                        value = state.phoneNumber,
-                        onValueChange = viewModel::onPhoneChange,
-                        enabled = phoneEnabled,
-                        actionEnabled = phoneButtonEnabled && state.phoneNumber.length >= 10,
-                        onActionClick = viewModel::onPhoneComplete,
-                        isResendButton = state.isPhoneRequested
-                    )
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = true,
+                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        PhoneInput(
+                            modifier = Modifier.focusRequester(phoneFocusRequester),
+                            value = state.phoneNumber,
+                            onValueChange = viewModel::onPhoneChange,
+                            enabled = phoneEnabled,
+                            actionEnabled = phoneButtonEnabled && state.phoneNumber.length >= 10,
+                            onActionClick = {
+                                viewModel.onPhoneComplete()
+                                authFocusRequester.requestFocus()
+                            },
+                            isResendButton = state.isPhoneRequested
+                        )
+                    }
                 }
             }
         }
@@ -103,15 +140,24 @@ fun SignupScreen(
             val authEnabled = currentStep.ordinal >= SignupStep.AUTH.ordinal
             val authButtonEnabled = currentStep == SignupStep.AUTH
             add {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    AuthCodeInput(
-                        value = state.authCode,
-                        onValueChange = viewModel::onAuthCodeChange,
-                        enabled = authEnabled,
-                        actionEnabled = authButtonEnabled && state.authCode.length >= 4,
-                        onActionClick = viewModel::onAuthComplete,
-                        timerText = formatTimer(state.authTimerSeconds)
-                    )
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = true,
+                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically()
+                ) {
+                    Column(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                    ) {
+                        AuthCodeInput(
+                            modifier = Modifier.focusRequester(authFocusRequester),
+                            value = state.authCode,
+                            onValueChange = viewModel::onAuthCodeChange,
+                            enabled = authEnabled,
+                            actionEnabled = authButtonEnabled && state.authCode.length >= 4,
+                            onActionClick = viewModel::onAuthComplete,
+                            timerText = formatTimer(state.authTimerSeconds)
+                        )
+                    }
                 }
             }
         }
@@ -122,6 +168,20 @@ fun SignupScreen(
                     Text("회원가입 완료 🎉", color = Color.Blue)
                 }
             }
+        }
+    }
+
+    LaunchedEffect(currentStep) {
+        delay(100)
+        if (sections.isNotEmpty()) {
+            val lastIndex = sections.size - 1
+            listState.animateScrollToItem(lastIndex)
+        }
+        when (currentStep) {
+            SignupStep.NICKNAME -> nicknameFocusRequester.requestFocus()
+            SignupStep.PHONE -> phoneFocusRequester.requestFocus()
+            SignupStep.AUTH -> authFocusRequester.requestFocus()
+            else -> {}
         }
     }
 
@@ -141,6 +201,7 @@ fun SignupScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .weight(1f)
                 .fillMaxWidth(),
@@ -148,8 +209,14 @@ fun SignupScreen(
             verticalArrangement = Arrangement.spacedBy(24.dp),
             reverseLayout = true
         ) {
-            items(sections) { content ->
-                content()
+            items(
+                items = sections,
+                key = { sections.indexOf(it) }
+            ) { content ->
+                // animateItem()은 리스트 안에서 아이템이 추가/이동될 때 위치를 부드럽게 잡아줌
+                Column(modifier = Modifier.animateItem()) {
+                    content()
+                }
             }
         }
 
