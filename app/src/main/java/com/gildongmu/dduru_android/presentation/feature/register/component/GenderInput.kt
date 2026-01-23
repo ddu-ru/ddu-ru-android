@@ -3,12 +3,14 @@ package com.gildongmu.dduru_android.presentation.feature.register.component
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru_android.core.designsystem.component.DduruButton
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru_android.presentation.feature.register.state.Gender
 
@@ -19,57 +21,46 @@ fun GenderSegment(
     enabled: Boolean
 ) {
     val unselectedColors = ButtonDefaults.buttonColors(
-        containerColor = Color.Transparent,
-        contentColor = DduruTheme.colors.TextOnButtonDisabled,
-        disabledContainerColor = Color.Transparent,
-        disabledContentColor = DduruTheme.colors.TextOnButtonDisabled,
+        containerColor = Color.White,
+        contentColor = DduruTheme.colors.Gray700,
+        disabledContainerColor = Color.White,
+        disabledContentColor = DduruTheme.colors.Gray700,
 //            Color.Black.copy(alpha = 0.4f)
     )
     val buttonShape = RoundedCornerShape(16.dp)
 
-    Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         val isMaleSelected = selected == Gender.MALE
-        PrimaryButton(
+        DduruButton(
+            modifier = Modifier.weight(1f),
             text = "남자",
-            enabled = enabled,
             onClick = { onSelect(Gender.MALE) },
-            modifier = Modifier
-                .weight(1f)
-                .let { base ->
-                    if (isMaleSelected) base else base.border(
-                        width = 1.dp,
-                        color =  DduruTheme.colors.MainColor,
-                        shape = buttonShape
-                    )
-                },
             colors = if (isMaleSelected) ButtonDefaults.buttonColors(
-                containerColor = DduruTheme.colors.MainColor,
+                containerColor = DduruTheme.colors.Primary,
                 contentColor = Color.White,
-                disabledContainerColor = DduruTheme.colors.MainColor.copy(alpha = 0.3f),
+                disabledContainerColor = DduruTheme.colors.Primary.copy(alpha = 0.3f),
                 disabledContentColor = Color.White.copy(alpha = 0.7f)
-            ) else unselectedColors
-        )
+            ) else unselectedColors,
+            borderColor = if (isMaleSelected) DduruTheme.colors.WhiteAlpha30 else DduruTheme.colors.Gray200,
+            cornerSize = 16.dp,
+            )
 
         val isFemaleSelected = selected == Gender.FEMALE
-        PrimaryButton(
+        DduruButton(
+            modifier = Modifier.weight(1f),
             text = "여자",
-            enabled = enabled,
             onClick = { onSelect(Gender.FEMALE) },
-            modifier = Modifier
-                .weight(1f)
-                .let { base ->
-                    if (isFemaleSelected) base else base.border(
-                        width = 1.dp,
-                        color =DduruTheme.colors.MainColor,
-                        shape = buttonShape
-                    )
-                },
             colors = if (isFemaleSelected) ButtonDefaults.buttonColors(
-                containerColor = DduruTheme.colors.MainColor,
+                containerColor = DduruTheme.colors.Primary,
                 contentColor = Color.White,
-                disabledContainerColor = DduruTheme.colors.MainColor.copy(alpha = 0.3f),
+                disabledContainerColor = DduruTheme.colors.Primary.copy(alpha = 0.3f),
                 disabledContentColor = Color.White.copy(alpha = 0.7f)
-            ) else unselectedColors
+            ) else unselectedColors,
+            borderColor = if (isFemaleSelected) DduruTheme.colors.WhiteAlpha30 else DduruTheme.colors.Gray200,
+            cornerSize = 16.dp,
         )
     }
 }
