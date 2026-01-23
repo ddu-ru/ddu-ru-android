@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
@@ -44,7 +45,7 @@ fun YearDropdownField(
 
         Text(
             text = label,
-            style = DduruTheme.typography.bodySmall,
+            style = DduruTheme.typography.BodyMedium,
             color = textColor
         )
 
@@ -61,14 +62,14 @@ fun YearDropdownField(
                     modifier = Modifier
                         .fillMaxWidth()
                         .then(clickableModifier)
-                        .padding(vertical = 12.dp),
+                        .padding(vertical = 17.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = selectedValue?.toString() ?: "선택",
+                        text = selectedValue?.let { "%02d".format(it) } ?: "선택",
                         modifier = Modifier.weight(1f),
-                        style = DduruTheme.typography.bodyMedium,
-                        color = textColor
+                        style = DduruTheme.typography.BodyLarge,
+                        color = if (selectedValue != null) DduruTheme.colors.Gray900 else DduruTheme.colors.Gray500
                     )
 
                     Icon(
@@ -78,8 +79,8 @@ fun YearDropdownField(
                 }
 
                 HorizontalDivider(
-                    thickness = 1.dp,
-                    color = Color.Black.copy(alpha = 0.7f)
+                    thickness = 2.dp,
+                    color = DduruTheme.colors.Gray400
                 )
             }
 
@@ -88,14 +89,22 @@ fun YearDropdownField(
                     expanded = expanded,
                     onDismissRequest = { expanded = false },
                     modifier = Modifier
+                        .heightIn(max = 480.dp)
                         .background(
-                            color = DduruTheme.colors.Background,
+                            color = DduruTheme.colors.Gray50,
                             shape = RoundedCornerShape(8.dp)
                         )
                 ) {
                     items.forEach { item ->
+                        val isSelected = (item == selectedValue)
+
                         DropdownMenuItem(
-                            text = { Text(item.toString()) },
+                            text = {
+                                Text(
+                                    text = "%02d".format(item),
+                                    color = if (isSelected) DduruTheme.colors.Gray900 else DduruTheme.colors.Gray500,
+                                )
+                                   },
                             onClick = {
                                 onItemSelected(item)
                                 expanded = false
