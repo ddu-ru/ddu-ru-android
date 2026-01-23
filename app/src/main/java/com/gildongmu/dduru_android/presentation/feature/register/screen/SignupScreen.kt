@@ -46,145 +46,27 @@ fun SignupScreen(
 ) {
     val state = viewModel.uiState
     val currentStep = state.step
-
     val listState = rememberLazyListState()
 
-    val birthEnabled = currentStep.ordinal >= SignupStep.BIRTH.ordinal
-    val nicknameFocusRequester = remember { FocusRequester() }
-    val phoneFocusRequester = remember { FocusRequester() }
-    val authFocusRequester = remember { FocusRequester() }
-
-    val sections = buildList<@Composable () -> Unit> {
-        add {
-            Column(modifier = Modifier.fillMaxWidth()) {
-                BirthInputRow(
-                    state = state,
-                    viewModel = viewModel,
-                    enabled = birthEnabled
-                )
-            }
-        }
-
-        if (currentStep.ordinal >= SignupStep.GENDER.ordinal) {
-            val genderEnabled = currentStep.ordinal >= SignupStep.GENDER.ordinal
-            add {
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = true,
-                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically()
-                ) {
-                    Column(modifier = Modifier.fillMaxWidth()) {
-                        GenderSegment(
-                            selected = state.gender,
-                            onSelect = viewModel::onGenderSelect,
-                            enabled = genderEnabled
-                        )
-                    }
-                }
-            }
-        }
-
-        if (currentStep.ordinal >= SignupStep.NICKNAME.ordinal) {
-            val nicknameEnabled = currentStep.ordinal >= SignupStep.NICKNAME.ordinal
-            add {
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = true,
-                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        NicknameInput(
-                            modifier = Modifier.focusRequester(nicknameFocusRequester),
-                            value = state.nickname,
-                            onValueChange = viewModel::onNicknameChange,
-                            enabled = nicknameEnabled,
-                            onRandomClick = viewModel::onRandomNickname
-                        )
-                    }
-                }
-            }
-        }
-
-        val showPhoneSection = currentStep.ordinal >= SignupStep.PHONE.ordinal || state.nickname.isNotBlank()
-        if (showPhoneSection) {
-            val phoneEnabled = showPhoneSection
-            val phoneButtonEnabled = phoneEnabled
-            add {
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = true,
-                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        PhoneInput(
-                            modifier = Modifier.focusRequester(phoneFocusRequester),
-                            value = state.phoneNumber,
-                            onValueChange = viewModel::onPhoneChange,
-                            enabled = phoneEnabled,
-                            actionEnabled = phoneButtonEnabled && state.phoneNumber.length >= 10,
-                            onActionClick = {
-                                viewModel.onPhoneComplete()
-                                authFocusRequester.requestFocus()
-                            },
-                            isResendButton = state.isPhoneRequested
-                        )
-                    }
-                }
-            }
-        }
-
-        if (currentStep.ordinal >= SignupStep.AUTH.ordinal) {
-            val authEnabled = currentStep.ordinal >= SignupStep.AUTH.ordinal
-            val authButtonEnabled = currentStep == SignupStep.AUTH
-            add {
-                androidx.compose.animation.AnimatedVisibility(
-                    visible = true,
-                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically()
-                ) {
-                    Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                    ) {
-                        AuthCodeInput(
-                            modifier = Modifier.focusRequester(authFocusRequester),
-                            value = state.authCode,
-                            onValueChange = viewModel::onAuthCodeChange,
-                            enabled = authEnabled,
-                            actionEnabled = authButtonEnabled && state.authCode.length >= 4,
-                            onActionClick = viewModel::onAuthComplete,
-                            timerText = formatTimer(state.authTimerSeconds)
-                        )
-                    }
-                }
-            }
-        }
-
-        if (currentStep == SignupStep.DONE) {
-            add {
-                Column(modifier = Modifier.fillMaxWidth()) {
-                    Text("회원가입 완료 🎉", color = Color.Blue)
-                }
-            }
-        }
+    val visibleSteps = remember(currentStep) {
+        SignupStep.entries.filter { it.ordinal <= currentStep.ordinal }
     }
+
+    val isBottomButtonVisible = currentStep.ordinal >= SignupStep.NICKNAME.ordinal && currentStep != SignupStep.DONE
 
     LaunchedEffect(currentStep) {
-        delay(100)
-        if (sections.isNotEmpty()) {
-            val lastIndex = sections.size - 1
-            listState.animateScrollToItem(lastIndex)
-        }
-        when (currentStep) {
-            SignupStep.NICKNAME -> nicknameFocusRequester.requestFocus()
-            SignupStep.PHONE -> phoneFocusRequester.requestFocus()
-            SignupStep.AUTH -> authFocusRequester.requestFocus()
-            else -> {}
+        if (visibleSteps.isNotEmpty()) {
+            delay(200)
+            listState.animateScrollToItem(visibleSteps.size - 1)
         }
     }
 
+    fun formatTimer(seconds: Int): String {
+        val safeSeconds = seconds.coerceAtLeast(0)
+        val minutes = safeSeconds / 60
+        val secs = safeSeconds % 60
+        return String.format(Locale.getDefault(), "%02d:%02d", minutes, secs)
+    }
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -210,59 +92,111 @@ fun SignupScreen(
             reverseLayout = true
         ) {
             items(
-                items = sections,
-                key = { sections.indexOf(it) }
-            ) { content ->
-                // animateItem()은 리스트 안에서 아이템이 추가/이동될 때 위치를 부드럽게 잡아줌
-                Column(modifier = Modifier.animateItem()) {
-                    content()
+                items = visibleSteps,
+                key = { it.name }
+            ) { step ->
+                androidx.compose.animation.AnimatedVisibility(
+                    visible = true,
+                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically(),
+                    modifier = Modifier.animateItem()
+                ) {
+                    when (step) {
+                        SignupStep.BIRTH -> {
+                            BirthInputRow(
+                                state = state,
+                                viewModel = viewModel,
+                                enabled = true
+                            )
+                        }
+
+                        SignupStep.GENDER -> {
+                            GenderSegment(
+                                selected = state.gender,
+                                onSelect = viewModel::onGenderSelect,
+                                enabled = true
+                            )
+                        }
+
+                        SignupStep.NICKNAME -> {
+                            NicknameInput(
+                                modifier = Modifier,
+                                value = state.nickname,
+                                onValueChange = viewModel::onNicknameChange,
+                                enabled = true,
+                                onRandomClick = viewModel::onRandomNickname,
+                                shouldAutoFocus = (currentStep == SignupStep.NICKNAME)
+                            )
+                        }
+
+                        SignupStep.PHONE -> {
+                            PhoneInput(
+                                modifier = Modifier,
+                                value = state.phoneNumber,
+                                onValueChange = viewModel::onPhoneChange,
+                                enabled = true,
+                                shouldAutoFocus = (currentStep == SignupStep.PHONE)
+                            )
+                        }
+
+                        SignupStep.AUTH -> {
+                            AuthCodeInput(
+                                modifier = Modifier,
+                                value = state.authCode,
+                                onValueChange = viewModel::onAuthCodeChange,
+                                enabled = true,
+                                timerText = formatTimer(state.authTimerSeconds),
+                                shouldAutoFocus = (currentStep == SignupStep.AUTH),
+                                onResendClick = {
+                                    viewModel.onPhoneComplete()
+                                },
+                            )
+                        }
+
+                        SignupStep.DONE -> {
+                            Text(
+                                "회원가입 완료 🎉",
+                                color = Color.Blue,
+                                modifier = Modifier.padding(16.dp)
+                            )
+                        }
+                    }
                 }
             }
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
-
-        if (currentStep.ordinal >= SignupStep.AUTH.ordinal) {
+        if (isBottomButtonVisible) {
             val (buttonText, buttonEnabled, onButtonClick) = when (currentStep) {
+                SignupStep.NICKNAME -> Triple(
+                    "다음",
+                    state.nickname.isNotBlank(),
+                    viewModel::onNicknameComplete
+                )
+                SignupStep.PHONE -> Triple(
+                    "인증번호 전송",
+                    state.phoneNumber.length >= 10,
+                    viewModel::onPhoneComplete
+                )
                 SignupStep.AUTH -> Triple(
-                    if (state.authCode.isNotEmpty()) "확인" else "인증완료",
+                    if (state.authCode.isNotEmpty()) "확인" else "인증요청",
                     state.authCode.isNotEmpty(),
                     viewModel::onAuthComplete
                 )
-                SignupStep.DONE -> Triple("완료", true, {})
                 else -> Triple("", false, {})
             }
 
-            DduruButton(
-                text = buttonText,
-                enabled = buttonEnabled,
-                onClick = onButtonClick,
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(horizontal = 24.dp)
-            )
-            Spacer(modifier = Modifier.height(24.dp))
+            ) {
+                DduruButton(
+                    text = buttonText,
+                    enabled = buttonEnabled,
+                    onClick = onButtonClick,
+                    modifier = Modifier.fillMaxWidth()
+                )
+                Spacer(modifier = Modifier.height(12.dp))
+            }
         }
     }
 }
-
-private fun formatTimer(seconds: Int): String {
-    val safe = seconds.coerceAtLeast(0)
-    val minutes = safe / 60
-    val secs = safe % 60
-    return String.format(Locale.getDefault(), "%02d:%02d", minutes, secs)
-}
-
-@Preview
-@Composable
-private fun SignupScreenPReview() {
-    SignupScreen()
-}
-
-//NicknameInpu2t(
-//value = state.nickname,
-//onValueChange = viewModel::onNicknameChange,
-//onCheckClick = viewModel::onCheckNickname,
-//onRandomClick = viewModel::onGenerateNickname,
-//isAvailable = state.isNicknameAvailable
-//)

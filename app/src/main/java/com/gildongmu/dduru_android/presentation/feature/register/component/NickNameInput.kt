@@ -9,12 +9,18 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Text
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
+import kotlinx.coroutines.delay
 
 @Composable
 fun NicknameInput(
@@ -22,10 +28,23 @@ fun NicknameInput(
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean,
-    onRandomClick: () -> Unit
+    onRandomClick: () -> Unit,
+    shouldAutoFocus: Boolean = false
 ) {
+
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(shouldAutoFocus) {
+        if (shouldAutoFocus && enabled) {
+            delay(200)
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
+
     MaterialUnderlineTextField(
-        modifier = modifier,
+        modifier = modifier.focusRequester(focusRequester),
         label = "닉네임",
         value = value,
         placeholder = "겨울이요길",

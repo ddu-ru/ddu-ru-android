@@ -3,10 +3,16 @@ package com.gildongmu.dduru_android.presentation.feature.register.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.remember
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import kotlinx.coroutines.delay
 
 @Composable
 fun PhoneInput(
@@ -14,35 +20,26 @@ fun PhoneInput(
     value: String,
     onValueChange: (String) -> Unit,
     enabled: Boolean,
-    actionEnabled: Boolean,
-    onActionClick: () -> Unit,
-    isResendButton: Boolean
+    shouldAutoFocus: Boolean = false,
 ) {
+
+    val focusRequester = remember { FocusRequester() }
+    val keyboardController = LocalSoftwareKeyboardController.current
+
+    LaunchedEffect(shouldAutoFocus) {
+        if (shouldAutoFocus && enabled) {
+            delay(200)
+            focusRequester.requestFocus()
+            keyboardController?.show()
+        }
+    }
+
     MaterialUnderlineTextField(
-        modifier = modifier,
+        modifier = modifier.focusRequester(focusRequester),
         label = "전화번호",
         value = value,
         placeholder = "01012341234",
         onValueChange = onValueChange,
         enabled = enabled,
-        actionContent = {
-            InlineActionButton(
-                text = if (isResendButton) "재전송" else "인증요청",
-                textColor = if (isResendButton) DduruTheme.colors.Gray700 else Color.White,
-                enabled = actionEnabled,
-                onClick = onActionClick,
-                colors = if (isResendButton) {
-                    ButtonDefaults.buttonColors(
-                        containerColor = Color.White,
-                        contentColor = DduruTheme.colors.Gray700,
-                        disabledContainerColor = Color.White,
-                        disabledContentColor = DduruTheme.colors.Gray700,
-                    )
-                } else {
-                    null
-                },
-                border = if (isResendButton) BorderStroke(1.dp, Color(0xFFD5DAE2)) else null
-            )
-        }
     )
 }
