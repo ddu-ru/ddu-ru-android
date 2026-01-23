@@ -1,7 +1,6 @@
 package com.gildongmu.dduru_android.presentation.feature.register.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -141,6 +140,7 @@ fun UnderlineActionTextField(
 @Composable
 fun InlineActionButton(
     text: String,
+    textColor : Color = Color.White,
     enabled: Boolean,
     onClick: () -> Unit,
     colors: ButtonColors? = null,
@@ -159,7 +159,10 @@ fun InlineActionButton(
             disabledContentColor = DduruTheme.colors.Primary.copy(alpha = 0.4f)
         )
     ) {
-        Text(text)
+        Text(
+            text = text,
+            color = textColor,
+        )
     }
 }
 
