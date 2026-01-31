@@ -12,10 +12,12 @@ import com.gildongmu.dduru_android.domain.usecase.GenerateNicknameUseCase
 import com.gildongmu.dduru_android.presentation.feature.register.state.AuthCodeValidationResult
 import com.gildongmu.dduru_android.presentation.feature.register.state.CompletedItem
 import com.gildongmu.dduru_android.presentation.feature.register.state.Gender
+import com.gildongmu.dduru_android.presentation.feature.register.state.NicknameValidationResult
 import com.gildongmu.dduru_android.presentation.feature.register.state.PhoneValidationResult
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupStep
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupUiState
 import com.gildongmu.dduru_android.presentation.feature.register.util.AuthCodeValidator
+import com.gildongmu.dduru_android.presentation.feature.register.util.NicknameValidator
 import com.gildongmu.dduru_android.presentation.feature.register.util.PhoneValidator
 import com.gildongmu.dduru_android.presentation.feature.register.util.ValidationMessageMapper.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -127,7 +129,16 @@ class SignupViewModel : ViewModel() {
     }
 
     fun onNicknameComplete() {
+        val result = NicknameValidator.validate(uiState.nickname)
+
+        if (result != NicknameValidationResult.VALID) {
+            uiState = uiState.copy(
+                nicknameErrorMessage = result.toMessage()
+            )
+            return
+        }
         uiState = uiState.copy(
+            nicknameErrorMessage = "",
             completedItems = uiState.completedItems + CompletedItem(
                 label = "닉네임",
                 value = uiState.nickname
