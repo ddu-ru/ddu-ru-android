@@ -1,6 +1,5 @@
 package com.gildongmu.dduru_android.presentation.feature.register.component
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -25,9 +24,7 @@ fun GenderSegment(
         contentColor = DduruTheme.colors.Gray700,
         disabledContainerColor = Color.White,
         disabledContentColor = DduruTheme.colors.Gray700,
-//            Color.Black.copy(alpha = 0.4f)
     )
-    val buttonShape = RoundedCornerShape(16.dp)
 
     Row(
         modifier = Modifier.fillMaxWidth(),
