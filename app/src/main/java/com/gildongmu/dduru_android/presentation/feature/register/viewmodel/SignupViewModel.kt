@@ -6,9 +6,7 @@ import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru_android.core.common.util.DateUtils
-import com.gildongmu.dduru_android.domain.entity.Nickname
-import com.gildongmu.dduru_android.domain.usecase.CheckNicknameUseCase
-import com.gildongmu.dduru_android.domain.usecase.GenerateNicknameUseCase
+import com.gildongmu.dduru_android.domain.nickname.NicknameRepository
 import com.gildongmu.dduru_android.presentation.feature.register.state.AuthCodeValidationResult
 import com.gildongmu.dduru_android.presentation.feature.register.state.CompletedItem
 import com.gildongmu.dduru_android.presentation.feature.register.state.Gender
@@ -26,7 +24,10 @@ import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
-class SignupViewModel : ViewModel() {
+@HiltViewModel
+class SignupViewModel @Inject constructor(
+    private val nicknameRepository: NicknameRepository
+) : ViewModel() {
 
     var uiState by mutableStateOf(SignupUiState())
         private set
@@ -35,14 +36,6 @@ class SignupViewModel : ViewModel() {
     val months = (1..12).toList()
     val days: List<Int>
         get() = DateUtils.getDayListInMonth(uiState.year, uiState.month)
-
-    private val nicknameSamples = listOf(
-        "겨울이요길",
-        "푸른돌고래",
-        "포근한별님",
-        "상큼라임",
-        "따뜻한눈송이"
-    )
 
     private var authTimerJob: Job? = null
 
@@ -123,9 +116,23 @@ class SignupViewModel : ViewModel() {
     }
 
     fun onRandomNickname() {
-        if (nicknameSamples.isEmpty()) return
-        val randomNickname = nicknameSamples.random()
-        uiState = uiState.copy(nickname = randomNickname)
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                nicknameErrorMessage = ""
+            )
+
+            nicknameRepository.getRandomNickname()
+                .onSuccess { nickname ->
+                    uiState = uiState.copy(
+                        nickname = nickname,
+                    )
+                }
+                .onFailure { e ->
+                    uiState = uiState.copy(
+                        nicknameErrorMessage = e.message ?: "랜덤 닉네임을 불러오지 못했어요."
+                    )
+                }
+        }
     }
 
     fun onNicknameComplete() {
@@ -137,14 +144,30 @@ class SignupViewModel : ViewModel() {
             )
             return
         }
-        uiState = uiState.copy(
-            nicknameErrorMessage = "",
-            completedItems = uiState.completedItems + CompletedItem(
-                label = "닉네임",
-                value = uiState.nickname
-            ),
-            step = SignupStep.PHONE
-        )
+
+        viewModelScope.launch {
+            uiState = uiState.copy(
+                nicknameErrorMessage = ""
+            )
+
+            nicknameRepository.sanitizeNickname(uiState.nickname)
+                .onSuccess { sanitized ->
+                    uiState = uiState.copy(
+                        nickname = uiState.nickname,
+                        nicknameErrorMessage = "",
+                        completedItems = uiState.completedItems + CompletedItem(
+                            label = "닉네임",
+                            value = uiState.nickname
+                        ),
+                        step = SignupStep.PHONE
+                    )
+                }
+                .onFailure { e ->
+                    uiState = uiState.copy(
+                        nicknameErrorMessage = e.message ?: "닉네임을 확인해주세요."
+                    )
+                }
+        }
     }
 
     fun onPhoneChange(value: String) {
@@ -220,40 +243,5 @@ class SignupViewModel : ViewModel() {
     private fun stopAuthTimer() {
         authTimerJob?.cancel()
         authTimerJob = null
-    }
-}
-
-@HiltViewModel
-class SignupViewModel2 @Inject constructor(
-    private val checkNicknameUseCase: CheckNicknameUseCase,
-    private val generateNicknameUseCase: GenerateNicknameUseCase
-) : ViewModel() {
-
-    var uiState by mutableStateOf(SignupUiState())
-        private set
-
-    fun onNicknameChange(value: String) {
-        uiState = uiState.copy(nickname = value)
-    }
-
-    fun onCheckNickname() {
-        viewModelScope.launch {
-            val result = checkNicknameUseCase(
-                Nickname(uiState.nickname)
-            )
-            uiState = uiState.copy(
-                //isNicknameAvailable = result
-            )
-        }
-    }
-
-    fun onGenerateNickname() {
-        viewModelScope.launch {
-            val nickname = generateNicknameUseCase()
-            uiState = uiState.copy(
-                nickname = nickname.value,
-                //isNicknameAvailable = true
-            )
-        }
     }
 }
