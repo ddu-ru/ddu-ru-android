@@ -1,6 +1,5 @@
 package com.gildongmu.dduru_android.presentation.feature.register.state
 
-
 enum class Gender {
     MALE, FEMALE
 }
@@ -13,10 +12,19 @@ enum class SignupStep {
     DONE
 }
 
+enum class PhoneValidationResult {
+    VALID,
+    EMPTY,
+    NOT_DIGITS,
+    INVALID_LENGTH
+}
+
+
 data class CompletedItem(
     val label: String,
     val value: String
 )
+
 
 data class SignupUiState(
     val step: SignupStep = SignupStep.BIRTH,
@@ -33,12 +41,10 @@ data class SignupUiState(
 
     val phoneNumber: String = "",
     val isPhoneRequested: Boolean = false,
+    val phoneValidation: PhoneValidationResult = PhoneValidationResult.EMPTY,
+    val phoneErrorMessage: String = "",
 
     val authCode: String = "",
     val isAuthVerified: Boolean = false,
     val authTimerSeconds: Int = 0
-)
-data class SignupUiState2(
-    val nickname: String = "",
-    val isNicknameAvailable: Boolean? = null
 )
