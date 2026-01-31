@@ -16,9 +16,14 @@ enum class PhoneValidationResult {
     VALID,
     EMPTY,
     NOT_DIGITS,
-    INVALID_LENGTH
+    INVALID_LENGTH,
 }
 
+enum class AuthCodeValidationResult {
+    VALID,
+    EMPTY,
+    EXPIRED_TIME,
+}
 
 data class CompletedItem(
     val label: String,
@@ -46,5 +51,7 @@ data class SignupUiState(
 
     val authCode: String = "",
     val isAuthVerified: Boolean = false,
-    val authTimerSeconds: Int = 0
+    val authCodeValidation : AuthCodeValidationResult = AuthCodeValidationResult.EMPTY,
+    val authCodeErrorMessage: String = "",
+    val authTimerSeconds: Int = 0,
 )
