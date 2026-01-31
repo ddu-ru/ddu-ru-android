@@ -2,6 +2,7 @@ package com.gildongmu.dduru_android.presentation.feature.register.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Text
@@ -26,7 +27,9 @@ fun AuthCodeInput(
     enabled: Boolean,
     timerText: String,
     onResendClick: () -> Unit,
-    shouldAutoFocus: Boolean = false
+    shouldAutoFocus: Boolean = false,
+    validationCheck: Boolean = false,
+    validationMessage : String,
 ) {
 
     val focusRequester = remember { FocusRequester() }
@@ -40,24 +43,15 @@ fun AuthCodeInput(
         }
     }
 
-    MaterialUnderlineTextField(
-        modifier = modifier.focusRequester(focusRequester),
-        label = "인증번호",
-        value = value,
-        placeholder = timerText,
-        onValueChange = onValueChange,
-        enabled = enabled,
-        actionContent = {
-            Row(
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.spacedBy(12.dp)
-            ) {
-                Text(
-                    text = timerText,
-                    style = DduruTheme.typography.BodySmall,
-                    color = Color.Red
-                )
-
+    Column() {
+        MaterialUnderlineTextField(
+            modifier = modifier.focusRequester(focusRequester),
+            label = "인증번호",
+            value = value,
+            placeholder = timerText,
+            onValueChange = onValueChange,
+            enabled = enabled,
+            actionContent = {
                 InlineActionButton(
                     text = "재전송",
                     textColor = DduruTheme.colors.Gray600,
@@ -72,6 +66,11 @@ fun AuthCodeInput(
                     border = BorderStroke(1.dp, DduruTheme.colors.Gray300)
                 )
             }
+        )
+        if(validationCheck && validationMessage.isNotBlank()) {
+            ValidationMessage(
+                text = validationMessage,
+            )
         }
-    )
+    }
 }

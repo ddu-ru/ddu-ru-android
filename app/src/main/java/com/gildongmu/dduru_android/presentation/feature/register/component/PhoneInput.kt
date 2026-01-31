@@ -1,6 +1,7 @@
 package com.gildongmu.dduru_android.presentation.feature.register.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Column
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +22,8 @@ fun PhoneInput(
     onValueChange: (String) -> Unit,
     enabled: Boolean,
     shouldAutoFocus: Boolean = false,
+    validationCheck: Boolean = false,
+    validationMessage : String,
 ) {
 
     val focusRequester = remember { FocusRequester() }
@@ -33,13 +36,19 @@ fun PhoneInput(
             keyboardController?.show()
         }
     }
-
-    MaterialUnderlineTextField(
-        modifier = modifier.focusRequester(focusRequester),
-        label = "전화번호",
-        value = value,
-        placeholder = "01012341234",
-        onValueChange = onValueChange,
-        enabled = enabled,
-    )
+    Column() {
+        MaterialUnderlineTextField(
+            modifier = modifier.focusRequester(focusRequester),
+            label = "전화번호",
+            value = value,
+            placeholder = "01012341234",
+            onValueChange = onValueChange,
+            enabled = enabled,
+        )
+        if(validationCheck && validationMessage.isNotBlank()) {
+            ValidationMessage(
+                text = validationMessage,
+            )
+        }
+    }
 }
