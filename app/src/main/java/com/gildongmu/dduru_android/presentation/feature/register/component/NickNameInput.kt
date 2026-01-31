@@ -1,5 +1,6 @@
 package com.gildongmu.dduru_android.presentation.feature.register.component
 
+import androidx.compose.foundation.layout.Column
 import com.gildongmu.dduru_android.R
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -20,6 +21,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Text
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru_android.core.designsystem.theme.ValidationRed
 import kotlinx.coroutines.delay
 
 @Composable
@@ -29,9 +31,10 @@ fun NicknameInput(
     onValueChange: (String) -> Unit,
     enabled: Boolean,
     onRandomClick: () -> Unit,
-    shouldAutoFocus: Boolean = false
+    shouldAutoFocus: Boolean = false,
+    validationCheck: Boolean = false,
+    validationMessage : String,
 ) {
-
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -42,21 +45,27 @@ fun NicknameInput(
             keyboardController?.show()
         }
     }
-
-    MaterialUnderlineTextField(
-        modifier = modifier.focusRequester(focusRequester),
-        label = "닉네임",
-        value = value,
-        placeholder = "겨울이요길",
-        onValueChange = onValueChange,
-        enabled = enabled,
-        actionContent = {
-            RandomNicknameButton(
-                enabled = enabled,
-                onClick = onRandomClick
+    Column() {
+        MaterialUnderlineTextField(
+            modifier = modifier.focusRequester(focusRequester),
+            label = "닉네임",
+            value = value,
+            placeholder = "겨울이요길",
+            onValueChange = onValueChange,
+            enabled = enabled,
+            actionContent = {
+                RandomNicknameButton(
+                    enabled = enabled,
+                    onClick = onRandomClick
+                )
+            }
+        )
+        if(validationCheck && validationMessage.isNotBlank()) {
+            ValidationMessage(
+                text = validationMessage,
             )
         }
-    )
+    }
 }
 
 @Composable
