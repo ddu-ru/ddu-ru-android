@@ -1,8 +1,6 @@
-package com.gildongmu.dduru_android.domain.repository
+package com.gildongmu.dduru_android.domain.nickname
 
 import com.gildongmu.dduru_android.data.nickname.api.NicknameApi
-import com.gildongmu.dduru_android.data.nickname.repository.NicknameRepositoryImpl
-import dagger.Binds
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -12,11 +10,6 @@ import retrofit2.Retrofit
 @Module
 @InstallIn(SingletonComponent::class)
 abstract class NicknameModule {
-
-    @Binds
-    abstract fun bindNicknameRepository(
-        impl: NicknameRepositoryImpl
-    ): NicknameRepository
 }
 
 @Module
