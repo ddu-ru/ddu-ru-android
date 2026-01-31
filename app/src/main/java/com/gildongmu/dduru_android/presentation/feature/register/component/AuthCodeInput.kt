@@ -28,7 +28,6 @@ fun AuthCodeInput(
     timerText: String,
     onResendClick: () -> Unit,
     shouldAutoFocus: Boolean = false,
-    validationCheck: Boolean = false,
     validationMessage : String,
 ) {
 
@@ -44,7 +43,7 @@ fun AuthCodeInput(
     }
 
     Column() {
-        MaterialUnderlineTextField(
+        MaterialUnderlineNumberTextField(
             modifier = modifier.focusRequester(focusRequester),
             label = "인증번호",
             value = value,
@@ -67,7 +66,7 @@ fun AuthCodeInput(
                 )
             }
         )
-        if(validationCheck && validationMessage.isNotBlank()) {
+        if(validationMessage.isNotBlank()) {
             ValidationMessage(
                 text = validationMessage,
             )
