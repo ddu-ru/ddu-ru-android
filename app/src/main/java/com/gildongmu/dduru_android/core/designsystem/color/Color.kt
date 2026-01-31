@@ -30,6 +30,7 @@ val BlackAlpha10 = Color(0x1A000000)
 val BlackAlpha05 = Color(0x0D000000)
 val WhiteAlpha30 = Color(0x4DFFFFFF)
 val GrayBorder = Color(0x80797479)
+val ValidationRed = Color(0xFFFF2828)
 // 2. System Token
 
 @Immutable
@@ -62,7 +63,8 @@ data class DduruColors(
     val BlackAlpha10: Color,
     val BlackAlpha05: Color,
     val WhiteAlpha30: Color,
-    val GrayBorder : Color
+    val GrayBorder : Color,
+    val ValidationRed : Color,
 )
 
 
@@ -98,7 +100,8 @@ val defaultDduruColors = DduruColors(
     BlackAlpha10 = BlackAlpha10,
     BlackAlpha05 = BlackAlpha05,
     WhiteAlpha30 = WhiteAlpha30,
-    GrayBorder = GrayBorder
+    GrayBorder = GrayBorder,
+    ValidationRed = ValidationRed,
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }
