@@ -124,7 +124,9 @@ fun SignupScreen(
                                 onValueChange = viewModel::onNicknameChange,
                                 enabled = true,
                                 onRandomClick = viewModel::onRandomNickname,
-                                shouldAutoFocus = (currentStep == SignupStep.NICKNAME)
+                                shouldAutoFocus = (currentStep == SignupStep.NICKNAME),
+                                validationCheck = false,
+                                validationMessage = "",
                             )
                         }
 
@@ -134,7 +136,8 @@ fun SignupScreen(
                                 value = state.phoneNumber,
                                 onValueChange = viewModel::onPhoneChange,
                                 enabled = true,
-                                shouldAutoFocus = (currentStep == SignupStep.PHONE)
+                                shouldAutoFocus = (currentStep == SignupStep.PHONE),
+                                validationMessage = state.phoneErrorMessage,
                             )
                         }
 
@@ -149,6 +152,8 @@ fun SignupScreen(
                                 onResendClick = {
                                     viewModel.onPhoneComplete()
                                 },
+                                validationCheck = false,
+                                validationMessage = "",
                             )
                         }
 
