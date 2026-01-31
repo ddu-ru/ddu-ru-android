@@ -12,15 +12,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.DividerDefaults
 import androidx.compose.material3.TextField
+import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.text.input.ImeAction
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.OutlinedButton
@@ -68,7 +72,7 @@ fun MaterialUnderlineTextField(
                 },
                 textStyle = DduruTheme.typography.BodyLarge,
                 singleLine = true,
-                colors = androidx.compose.material3.TextFieldDefaults.colors(
+                colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
                     disabledContainerColor = Color.Transparent,
@@ -91,51 +95,76 @@ fun MaterialUnderlineTextField(
     }
 }
 
-
 @Composable
-fun UnderlineActionTextField(
+fun MaterialUnderlineNumberTextField(
+    modifier: Modifier = Modifier,
     label: String,
     value: String,
     placeholder: String,
-    actionText: String,
-    enabled: Boolean = true,
     onValueChange: (String) -> Unit,
-    onActionClick: () -> Unit
+    enabled: Boolean = true,
+    maxLength: Int? = null,
+    actionContent: (@Composable (() -> Unit))? = null
 ) {
     Column {
+        val labelColor = if (enabled) Color.Black else Color.Black.copy(alpha = 0.4f)
+        val placeholderColor = Color.Black.copy(alpha = if (enabled) 0.4f else 0.2f)
+
         Text(
             text = label,
             style = DduruTheme.typography.BodyMedium,
-            color = DduruTheme.colors.Primary
+            color = labelColor
         )
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
-        Row(verticalAlignment = Alignment.CenterVertically) {
-            BasicTextField(
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TextField(
                 value = value,
-                onValueChange = onValueChange,
+                onValueChange = { input ->
+                    val digitsOnly = input.filter { it.isDigit() }
+                    val limited = maxLength?.let { digitsOnly.take(it) } ?: digitsOnly
+                    onValueChange(limited)
+                },
                 enabled = enabled,
-                modifier = Modifier.weight(1f),
-                textStyle = DduruTheme.typography.BodyMedium,
-                decorationBox = { innerTextField ->
-                    Box(modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 10.dp) ){
-                            if (value.isEmpty()) {
-                                Text(text = placeholder, color = DduruTheme.colors.Primary)
-                                innerTextField()
-                            }
-                        }
-                })
-        }
-        Spacer(modifier = Modifier.height(9.dp))
+                modifier = modifier.weight(1f),
+                placeholder = {
+                    Text(
+                        text = placeholder,
+                        style = DduruTheme.typography.BodyLarge,
+                        color = placeholderColor
+                    )
+                },
+                textStyle = DduruTheme.typography.BodyLarge,
+                singleLine = true,
+                keyboardOptions = KeyboardOptions(
+                    keyboardType = KeyboardType.Number,
+                    imeAction = ImeAction.Done
+                ),
+                colors = TextFieldDefaults.colors(
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent,
+                    disabledContainerColor = Color.Transparent,
 
-        OutlinedButton(onClick = onActionClick,enabled = enabled) {
-            Text(actionText)
+                    focusedIndicatorColor = DduruTheme.colors.Primary,
+                    unfocusedIndicatorColor = DduruTheme.colors.Primary.copy(alpha = 0.4f),
+                    disabledIndicatorColor = DduruTheme.colors.Primary.copy(alpha = 0.2f),
+
+                    cursorColor = DduruTheme.colors.Primary,
+                    focusedTextColor = labelColor,
+                    unfocusedTextColor = labelColor
+                )
+            )
+
+            actionContent?.let {
+                Spacer(modifier = Modifier.width(8.dp))
+                it()
+            }
         }
     }
-    DividerDefaults
 }
 
 @Composable
