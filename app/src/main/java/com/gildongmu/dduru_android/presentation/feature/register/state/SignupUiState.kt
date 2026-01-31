@@ -12,6 +12,12 @@ enum class SignupStep {
     DONE
 }
 
+enum class NicknameValidationResult {
+    VALID,
+    EMPTY,
+    TOO_LONG,
+}
+
 enum class PhoneValidationResult {
     VALID,
     EMPTY,
@@ -43,6 +49,8 @@ data class SignupUiState(
     val gender: Gender? = null,
 
     val nickname: String = "",
+    val nicknameValidation: NicknameValidationResult = NicknameValidationResult.EMPTY,
+    val nicknameErrorMessage: String = "",
 
     val phoneNumber: String = "",
     val isPhoneRequested: Boolean = false,
