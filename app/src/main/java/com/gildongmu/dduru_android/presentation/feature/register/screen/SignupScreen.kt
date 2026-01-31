@@ -122,8 +122,7 @@ fun SignupScreen(
                                 enabled = true,
                                 onRandomClick = viewModel::onRandomNickname,
                                 shouldAutoFocus = (currentStep == SignupStep.NICKNAME),
-                                validationCheck = false,
-                                validationMessage = "",
+                                validationMessage = state.nicknameErrorMessage,
                             )
                         }
 

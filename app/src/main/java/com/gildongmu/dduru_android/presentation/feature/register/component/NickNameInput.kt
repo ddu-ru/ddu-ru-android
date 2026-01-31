@@ -31,7 +31,6 @@ fun NicknameInput(
     enabled: Boolean,
     onRandomClick: () -> Unit,
     shouldAutoFocus: Boolean = false,
-    validationCheck: Boolean = false,
     validationMessage : String,
 ) {
     val focusRequester = remember { FocusRequester() }
@@ -59,7 +58,7 @@ fun NicknameInput(
                 )
             }
         )
-        if(validationCheck && validationMessage.isNotBlank()) {
+        if(validationMessage.isNotBlank()) {
             ValidationMessage(
                 text = validationMessage,
             )
