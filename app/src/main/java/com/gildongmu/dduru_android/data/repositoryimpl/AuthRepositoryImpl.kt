@@ -1,6 +1,6 @@
 package com.gildongmu.dduru_android.data.repositoryimpl
 
-import android.content.Intent
+import android.content.Context
 import com.gildongmu.dduru_android.data.local.TokenLocalDataSource
 import com.gildongmu.dduru_android.data.remote.datasource.AuthDataSource
 import com.gildongmu.dduru_android.data.remote.datasource.GoogleAuthDataSource
@@ -27,13 +27,9 @@ class AuthRepositoryImpl @Inject constructor(
         }
     }
 
-    override fun getGoogleSignInIntent(): Intent {
-        return googleAuthDataSource.getSignInIntent()
-    }
-
-    override suspend fun loginWithGoogle(intent: Intent): Result<Boolean> {
+    override suspend fun loginWithGoogle(context: Context): Result<Boolean> {
         return try {
-            val idToken = googleAuthDataSource.getIdTokenFromIntent(intent)
+            val idToken = googleAuthDataSource.getGoogleIdToken(context)
                 ?: return Result.failure(Exception("Google ID Token이 없습니다."))
 
             val response = authDataSource.loginWithGoogle(LoginRequest(idToken))
