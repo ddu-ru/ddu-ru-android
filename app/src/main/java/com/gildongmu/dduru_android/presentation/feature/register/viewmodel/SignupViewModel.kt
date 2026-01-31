@@ -11,8 +11,10 @@ import com.gildongmu.dduru_android.domain.usecase.CheckNicknameUseCase
 import com.gildongmu.dduru_android.domain.usecase.GenerateNicknameUseCase
 import com.gildongmu.dduru_android.presentation.feature.register.state.CompletedItem
 import com.gildongmu.dduru_android.presentation.feature.register.state.Gender
+import com.gildongmu.dduru_android.presentation.feature.register.state.PhoneValidationResult
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupStep
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupUiState
+import com.gildongmu.dduru_android.presentation.feature.register.util.PhoneValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -28,6 +30,18 @@ class SignupViewModel : ViewModel() {
     val months = (1..12).toList()
     val days: List<Int>
         get() = DateUtils.getDayListInMonth(uiState.year, uiState.month)
+
+    private val nicknameSamples = listOf(
+        "겨울이요길",
+        "푸른돌고래",
+        "포근한별님",
+        "상큼라임",
+        "따뜻한눈송이"
+    )
+
+    private var phoneErrorMessage = ""
+
+    private var authTimerJob: Job? = null
 
     fun onYearSelected(value: Int) {
         val currentMonth = uiState.month
@@ -63,14 +77,6 @@ class SignupViewModel : ViewModel() {
         uiState = uiState.copy(day = value)
         checkBirthCompletion()
     }
-
-    private val nicknameSamples = listOf(
-        "겨울이요길",
-        "푸른돌고래",
-        "포근한별님",
-        "상큼라임",
-        "따뜻한눈송이"
-    )
 
     private fun checkBirthCompletion() {
         val year = uiState.year
@@ -133,9 +139,21 @@ class SignupViewModel : ViewModel() {
         uiState = uiState.copy(phoneNumber = value)
     }
 
-    private var authTimerJob: Job? = null
-
     fun onPhoneComplete() {
+        val result = PhoneValidator.validate(uiState.phoneNumber)
+
+        if (result != PhoneValidationResult.VALID) {
+            uiState = uiState.copy(
+                phoneErrorMessage = when(result) {
+                    PhoneValidationResult.EMPTY -> "전화번호를 입력해주세요."
+                    PhoneValidationResult.NOT_DIGITS -> "숫자만 입력 가능합니다."
+                    PhoneValidationResult.INVALID_LENGTH -> "전화번호를 정확히 입력해주세요."
+                    else -> ""
+                }
+            )
+            return
+        }
+
         val itemsWithoutPhone = uiState.completedItems.filterNot { it.label == "전화번호" }
         val ensuredNickname = if (itemsWithoutPhone.none { it.label == "닉네임" } && uiState.nickname.isNotBlank()) {
             itemsWithoutPhone + CompletedItem(label = "닉네임", value = uiState.nickname)
@@ -147,6 +165,7 @@ class SignupViewModel : ViewModel() {
             value = uiState.phoneNumber
         )
         uiState = uiState.copy(
+            phoneErrorMessage = "",
             completedItems = updatedItems,
             step = SignupStep.AUTH,
             isPhoneRequested = true,
