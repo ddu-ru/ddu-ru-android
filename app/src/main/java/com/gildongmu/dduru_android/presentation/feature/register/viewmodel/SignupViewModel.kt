@@ -9,12 +9,15 @@ import com.gildongmu.dduru_android.core.common.util.DateUtils
 import com.gildongmu.dduru_android.domain.entity.Nickname
 import com.gildongmu.dduru_android.domain.usecase.CheckNicknameUseCase
 import com.gildongmu.dduru_android.domain.usecase.GenerateNicknameUseCase
+import com.gildongmu.dduru_android.presentation.feature.register.state.AuthCodeValidationResult
 import com.gildongmu.dduru_android.presentation.feature.register.state.CompletedItem
 import com.gildongmu.dduru_android.presentation.feature.register.state.Gender
 import com.gildongmu.dduru_android.presentation.feature.register.state.PhoneValidationResult
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupStep
 import com.gildongmu.dduru_android.presentation.feature.register.state.SignupUiState
+import com.gildongmu.dduru_android.presentation.feature.register.util.AuthCodeValidator
 import com.gildongmu.dduru_android.presentation.feature.register.util.PhoneValidator
+import com.gildongmu.dduru_android.presentation.feature.register.util.ValidationMessageMapper.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -38,8 +41,6 @@ class SignupViewModel : ViewModel() {
         "상큼라임",
         "따뜻한눈송이"
     )
-
-    private var phoneErrorMessage = ""
 
     private var authTimerJob: Job? = null
 
@@ -143,14 +144,7 @@ class SignupViewModel : ViewModel() {
         val result = PhoneValidator.validate(uiState.phoneNumber)
 
         if (result != PhoneValidationResult.VALID) {
-            uiState = uiState.copy(
-                phoneErrorMessage = when(result) {
-                    PhoneValidationResult.EMPTY -> "전화번호를 입력해주세요."
-                    PhoneValidationResult.NOT_DIGITS -> "숫자만 입력 가능합니다."
-                    PhoneValidationResult.INVALID_LENGTH -> "전화번호를 정확히 입력해주세요."
-                    else -> ""
-                }
-            )
+            uiState = uiState.copy(phoneErrorMessage = result.toMessage())
             return
         }
 
@@ -175,14 +169,21 @@ class SignupViewModel : ViewModel() {
         startAuthTimer()
     }
 
-
     fun onAuthCodeChange(value: String) {
         uiState = uiState.copy(authCode = value)
     }
 
     fun onAuthComplete() {
+        val result = AuthCodeValidator.validate(uiState.authCode, uiState.authTimerSeconds)
+
+        if (result != AuthCodeValidationResult.VALID) {
+            uiState = uiState.copy(authCodeErrorMessage = result.toMessage())
+            return
+        }
+
         stopAuthTimer()
         uiState = uiState.copy(
+            authCodeErrorMessage = "",
             completedItems = uiState.completedItems + CompletedItem(
                 label = "인증번호",
                 value = "완료"
