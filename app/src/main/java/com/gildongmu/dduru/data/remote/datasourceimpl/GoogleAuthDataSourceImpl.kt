@@ -5,10 +5,10 @@ import android.util.Log
 import androidx.credentials.CredentialManager
 import androidx.credentials.GetCredentialRequest
 import com.gildongmu.dduru.data.remote.datasource.GoogleAuthDataSource
-import gildong.dduru.BuildConfig
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dagger.hilt.android.qualifiers.ApplicationContext
+import gildong.dduru.BuildConfig
 import javax.inject.Inject
 
 class GoogleAuthDataSourceImpl @Inject constructor(

@@ -21,7 +21,7 @@ val localProperties = Properties().apply {
 
 fun readLocalProperty(key: String): String =
     localProperties.getProperty(key)?.removeSurrounding("\"")
-        ?: error("local.properties에 ${key} 값을 정의해 주세요.")
+        ?: error("local.properties에 $key 값을 정의해 주세요.")
 
 fun readLocalPropertyQuoted(key: String): String = "\"${readLocalProperty(key)}\""
 
