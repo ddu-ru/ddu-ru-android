@@ -63,7 +63,7 @@ android {
         )
 
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] =
-            readLocalProperty("kakao.api.key", allowDefault = false)
+            readLocalProperty("kakao.api.key", allowDefault = true)
     }
 
     buildTypes {
