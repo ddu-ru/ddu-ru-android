@@ -1,4 +1,4 @@
-일단 설정하려는데  Created by https://www.toptal.com/developers/gitignore/api/android,androidstudio,macos,windows,linux
+Created by https://www.toptal.com/developers/gitignore/api/android,androidstudio,macos,windows,linux
 # Edit at https://www.toptal.com/developers/gitignore?templates=android,androidstudio,macos,windows,linux
 
 ### Android ###
@@ -236,5 +236,8 @@ fabric.properties
 ### AndroidStudio Patch ###
 
 !/gradle/wrapper/gradle-wrapper.jar
+
+# keep shared run configurations
+!.idea/runConfigurations/
 
  # End of https://www.toptal.com/developers/gitignore/api/android,androidstudio,macos,windows,linux
