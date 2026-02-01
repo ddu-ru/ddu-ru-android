@@ -7,10 +7,11 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.ktlint)
 }
 
 android {
-    //namespace = "com.gildongmu.dduru_android"
+    namespace = "com.gildongmu.dduru"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -29,12 +30,18 @@ android {
         buildConfigField("String", "BASE_URL", properties["base.url"].toString())
 
         // Google 웹 클라이언트 ID
-        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties.getProperty("google.client.id")}\"")
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            "\"${properties.getProperty("google.client.id")}\""
+        )
 
+        buildConfigField(
+            "String",
+            "KAKAO_NATIVE_APP_KEY",
+            "\"${properties.getProperty("kakao.api.key")}\""
+        )
 
-        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${properties.getProperty("kakao.api.key")}\"")
-
-        
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = properties.getProperty("kakao.api.key") as String
     }
 
@@ -49,23 +56,24 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
     buildFeatures {
         compose = true
         buildConfig = true
     }
-    //buildToolsVersion = "36.1.0"
+    // buildToolsVersion = "36.1.0"
 }
 
 dependencies {
     implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.monitor)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.test)
     debugImplementation(libs.bundles.debug)
@@ -91,4 +99,17 @@ dependencies {
     // 카카오 로그인
     implementation("com.kakao.sdk:v2-user:2.20.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+}
+
+ktlint {
+    android = true
+    debug = true
+    coloredOutput = true
+    verbose = true
+    outputToConsole = true
+
+    filter {
+        exclude { element -> element.file.path.contains("test/") }
+        exclude { element -> element.file.path.contains("androidTest/") }
+    }
 }
