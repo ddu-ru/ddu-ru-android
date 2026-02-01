@@ -22,16 +22,25 @@ reviews:
         - 불필요한 recomposition 가능성, remember/derivedStateOf 적절한 사용 확인
         - 네이밍 컨벤션, 가독성, Google 권장 Android 아키텍처 준수 여부
 
-        - 레이어 분리 준수: presentation(ViewModel/Ui) ↔ domain(usecase) ↔ data(repository/datasource) 의존 방향이 단방향인지 확인
-        - ViewModel이 Android/IO 디테일에 과하게 의존하지 않는지(예: Retrofit DTO 직접 노출, Context 의존, Room Entity 그대로 UI로 전달) 확인
-        - UI는 UiState만 관찰하고, 비즈니스 로직은 ViewModel/UseCase로 이동되어 있는지 확인(Composable에서 로직/네트워크 호출 금지)
-        - UiState는 불변(immutable) 구조로 관리되고, 상태 갱신은 copy/update로 일관되게 처리되는지 확인
-        - 단발성 이벤트(네비게이션/토스트/스낵바)는 State와 분리(예: SharedFlow/Channel)되어 중복 실행/회전 재수집 이슈가 없는지 확인
-        - Repository는 single source of truth 원칙을 따르는지(캐시/로컬/원격 데이터 흐름이 일관) 확인
-        - Flow/Coroutine 사용이 적절한지: viewModelScope 사용, dispatcher 주입(또는 명확한 IO/Default 분리), collectLatest/cancellation 고려
-        - 에러 처리 전략이 일관적인지: Result/UiState.Error/DomainException 등으로 화면이 예측 가능하게 처리되는지 확인
-        - DI(Hilt) 경계 확인: 모듈 제공 범위(Singleton/ViewModelScoped) 적절, interface 바인딩(impl 분리), 테스트 가능성 고려
-        - 테스트 관점: domain/usecase와 repository는 단위 테스트 가능하도록 순수 로직/의존성 주입 구조인지 확인
+        # Google Recommended Architecture
+        - 레이어 분리 준수: presentation(ViewModel/Ui) ↔ data(repository/datasource) 의존 방향이 단방향인지 확인
+        - 비즈니스 로직이 ViewModel 또는 Repository에 과도하게 섞여 있지 않은지, 책임이 명확한지 확인
+        - ViewModel이 Android/IO 디테일에 과하게 의존하지 않는지 확인
+          (예: Context 직접 의존, Retrofit DTO/Room Entity를 그대로 UI에 노출)
+        - UI(Composable)는 UiState만 관찰하고, 로직/네트워크/상태 변경이 직접 발생하지 않는지 확인
+        - UiState는 불변(immutable) 구조로 관리되고, 상태 갱신은 copy/update 패턴으로 일관되게 처리되는지 확인
+        - 단발성 이벤트(네비게이션/토스트/스낵바)는 State와 분리되어
+          (예: SharedFlow/Channel) 중복 실행·화면 회전 시 재처리 문제가 없는지 확인
+        - Repository는 single source of truth 원칙을 따르는지 확인
+          (원격/로컬/캐시 데이터 흐름이 한 곳에서 일관되게 관리되는지)
+        - Flow/Coroutine 사용이 적절한지 확인
+          (viewModelScope 사용, collectLatest/cancellation 고려, dispatcher 분리 여부)
+        - 에러 처리 전략이 일관적인지 확인
+          (UiState.Error, Result 등으로 UI가 예측 가능하게 상태를 표현하는지)
+        - DI(Hilt) 경계 확인
+          (ViewModel/Singleton 스코프 적절성, interface 기반 바인딩, 테스트 가능성)
+        - 테스트 관점에서 ViewModel과 Repository가
+          의존성 주입을 통해 단위 테스트 가능하도록 설계되어 있는지 확인
 
   # 리뷰에서 제외할 파일
   path_filters:
