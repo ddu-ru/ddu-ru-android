@@ -10,15 +10,27 @@ plugins {
     alias(libs.plugins.ktlint)
 }
 
+val localProperties = Properties().apply {
+    val file = project.rootProject.file("local.properties")
+    if (file.exists()) {
+        load(file.inputStream())
+    } else {
+        error("local.properties 파일을 찾을 수 없습니다. 프로젝트 루트에 생성해 주세요.")
+    }
+}
+
+fun readLocalProperty(key: String): String =
+    localProperties.getProperty(key)?.removeSurrounding("\"")
+        ?: error("local.properties에 ${key} 값을 정의해 주세요.")
+
+fun readLocalPropertyQuoted(key: String): String = "\"${readLocalProperty(key)}\""
+
 android {
-    namespace = "com.gildongmu.dduru"
+    namespace = "gildong.dduru"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        val properties = Properties()
-        properties.load(project.rootProject.file("local.properties").inputStream())
-
-        applicationId = "com.gildongmu.dduru_android"
+        applicationId = "gildong.dduru"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
@@ -26,28 +38,26 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // BASE_URL
-        buildConfigField("String", "BASE_URL", properties["base.url"].toString())
-
         // Google 웹 클라이언트 ID
-        buildConfigField(
-            "String",
-            "GOOGLE_WEB_CLIENT_ID",
-            "\"${properties.getProperty("google.client.id")}\""
-        )
+        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", readLocalPropertyQuoted("google.client.id"))
 
         buildConfigField(
             "String",
             "KAKAO_NATIVE_APP_KEY",
-            "\"${properties.getProperty("kakao.api.key")}\""
+            readLocalPropertyQuoted("kakao.api.key")
         )
 
-        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = properties.getProperty("kakao.api.key") as String
+        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = readLocalProperty("kakao.api.key")
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", readLocalPropertyQuoted("debug.base.url"))
+        }
+
         release {
             isMinifyEnabled = false
+            buildConfigField("String", "BASE_URL", readLocalPropertyQuoted("release.base.url"))
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
