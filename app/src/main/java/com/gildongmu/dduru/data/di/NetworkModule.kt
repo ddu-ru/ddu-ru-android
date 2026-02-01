@@ -1,12 +1,12 @@
 package com.gildongmu.dduru.data.di
 
+import com.gildongmu.dduru.BuildConfig
 import com.gildongmu.dduru.data.remote.service.AuthService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import com.gildongmu.dduru.BuildConfig
 import java.util.concurrent.TimeUnit
 import javax.inject.Singleton
 import kotlinx.serialization.json.Json

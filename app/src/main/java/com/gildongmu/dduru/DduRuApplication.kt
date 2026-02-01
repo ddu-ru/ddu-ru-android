@@ -3,7 +3,6 @@ package com.gildongmu.dduru
 import android.app.Application
 import com.kakao.sdk.common.KakaoSdk
 import dagger.hilt.android.HiltAndroidApp
-import com.gildongmu.dduru.BuildConfig
 import timber.log.Timber
 
 @HiltAndroidApp

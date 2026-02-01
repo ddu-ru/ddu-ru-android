@@ -26,9 +26,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.LoginButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.R
 
 @Composable
 fun LoginScreen(
