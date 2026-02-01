@@ -71,10 +71,12 @@ jobs:
         env:
           DEBUG_BASE_URL: ${{ secrets.DEBUG_BASE_URL }}
           RELEASE_BASE_URL: ${{ secrets.RELEASE_BASE_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
         run: |
           echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
           echo "debug.base.url=\"${DEBUG_BASE_URL}\"" >> local.properties
           echo "release.base.url=\"${RELEASE_BASE_URL}\"" >> local.properties
+          echo "google.client.id=\"${GOOGLE_CLIENT_ID}\"" >> local.properties
 
       - name: Grant permission to gradlew
         run: chmod +x ./gradlew
