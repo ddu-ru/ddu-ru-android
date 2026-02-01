@@ -1,0 +1,28 @@
+root = true
+
+[*]
+charset = utf-8
+end_of_line = lf
+insert_final_newline = true
+trim_trailing_whitespace = true
+
+[*.{kt,kts}]
+indent_style = space
+indent_size = 4
+
+# 줄 길이 (Compose 고려)
+max_line_length = 120
+
+# ktLint 스타일
+ktlint_code_style = android
+
+# trailing comma 허용 (Compose에 중요)
+ktlint_standard_trailing-comma = enabled
+
+# 패키지명 규칙 (언더스코어 허용 여부)
+# ↓ 언더스코어 유지할 거면 enabled / 끌 거면 disabled
+ktlint_standard_package-name = disabled
+
+
+# 와일드카드 import 금지
+ktlint_standard_no-wildcard-imports = enabled
