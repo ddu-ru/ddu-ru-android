@@ -49,13 +49,13 @@ android {
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
         // Google 웹 클라이언트 ID
-        // 로그인 / 실사용 키
         buildConfigField(
             "String",
             "GOOGLE_WEB_CLIENT_ID",
             readLocalPropertyQuoted("google.client.id", allowDefault = true)
         )
 
+        // Kakao api 키
         buildConfigField(
             "String",
             "KAKAO_NATIVE_APP_KEY",
