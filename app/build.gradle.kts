@@ -53,13 +53,13 @@ android {
         buildConfigField(
             "String",
             "GOOGLE_WEB_CLIENT_ID",
-            readLocalPropertyQuoted("google.client.id", allowDefault = false)
+            readLocalPropertyQuoted("google.client.id", allowDefault = true)
         )
 
         buildConfigField(
             "String",
             "KAKAO_NATIVE_APP_KEY",
-            readLocalPropertyQuoted("kakao.api.key", allowDefault = false)
+            readLocalPropertyQuoted("kakao.api.key", allowDefault = true)
         )
 
         manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] =
