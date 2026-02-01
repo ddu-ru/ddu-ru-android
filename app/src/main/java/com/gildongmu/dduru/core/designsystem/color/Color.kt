@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.core.designsystem.theme
+package com.gildongmu.dduru.core.designsystem.color
 
 import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf

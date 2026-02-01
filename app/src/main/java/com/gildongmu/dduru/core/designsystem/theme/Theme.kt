@@ -11,6 +11,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.toArgb
 import androidx.compose.ui.platform.LocalView
 import androidx.core.view.WindowCompat
+import com.gildongmu.dduru.core.designsystem.color.DduruColors
+import com.gildongmu.dduru.core.designsystem.color.LocalDduruColors
+import com.gildongmu.dduru.core.designsystem.color.defaultDduruColors
 
 // 1. Theme Object
 object DduruTheme {
