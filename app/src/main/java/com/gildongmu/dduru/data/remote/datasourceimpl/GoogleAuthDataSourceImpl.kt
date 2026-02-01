@@ -8,7 +8,7 @@ import com.gildongmu.dduru.data.remote.datasource.GoogleAuthDataSource
 import com.google.android.libraries.identity.googleid.GetSignInWithGoogleOption
 import com.google.android.libraries.identity.googleid.GoogleIdTokenCredential
 import dagger.hilt.android.qualifiers.ApplicationContext
-import gildong.dduru.BuildConfig
+import com.gildongmu.dduru.BuildConfig
 import javax.inject.Inject
 
 class GoogleAuthDataSourceImpl @Inject constructor(

@@ -2,7 +2,7 @@ name: Dduru CI
 
 on:
   pull_request:
-    branches: [ develop ]
+    branches: [ dev ]
 
 jobs:
   lint:
@@ -83,6 +83,7 @@ jobs:
         run: ./gradlew assembleDebug --stacktrace
 
       - name: Upload Debug APK
+        if: github.event.pull_request.head.repo.fork == false
         uses: actions/upload-artifact@v4
         with:
           name: debug-apk

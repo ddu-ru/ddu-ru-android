@@ -1,6 +1,10 @@
 package com.gildongmu.dduru
 
 import androidx.test.platform.app.InstrumentationRegistry
+import androidx.test.ext.junit.runners.AndroidJUnit4
+import org.junit.Test
+import org.junit.runner.RunWith
+import org.junit.Assert.*
 
 /**
  * Example local unit test, which will execute on the development machine (host).
@@ -13,6 +17,6 @@ class ExampleUnitTest {
     fun useAppContext() {
         // Context of the app under test.
         val appContext = InstrumentationRegistry.getInstrumentation().targetContext
-        assertEquals("gildong.dduru", appContext.packageName)
+        assertEquals("com.gildongmu.dduru", appContext.packageName)
     }
 }

@@ -13,7 +13,7 @@ plugins {
 val localProperties = Properties().apply {
     val file = project.rootProject.file("local.properties")
     if (file.exists()) {
-        load(file.inputStream())
+        file.inputStream().use { load(it) }
     } else {
         error("local.properties 파일을 찾을 수 없습니다. 프로젝트 루트에 생성해 주세요.")
     }
@@ -26,11 +26,11 @@ fun readLocalProperty(key: String): String =
 fun readLocalPropertyQuoted(key: String): String = "\"${readLocalProperty(key)}\""
 
 android {
-    namespace = "gildong.dduru"
+    namespace = "com.gildongmu.dduru"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        applicationId = "gildong.dduru"
+        applicationId = "com.gildongmu.dduru"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
@@ -84,6 +84,7 @@ android {
 dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.monitor)
+    implementation(libs.androidx.junit.ktx)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.test)
     debugImplementation(libs.bundles.debug)
