@@ -75,7 +75,7 @@ private fun ThreeOptionQuestionScreen(
         )
 
         PenguinCharacter(
-            modifier = Modifier.align(Alignment.TopCenter).padding(top = 40.dp)
+            modifier = Modifier.align(Alignment.TopCenter).padding(top = 55.dp)
         )
 
         Column(
@@ -109,7 +109,7 @@ private fun ThreeOptionQuestionScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun Question8ScreenPreview() {
+private fun Question8ScreenPreview() {
     DduruTheme {
         Question8Screen(selectedOption = null, onOptionSelected = {}, onBackClick = {})
     }

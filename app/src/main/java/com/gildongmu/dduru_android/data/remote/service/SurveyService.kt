@@ -9,9 +9,8 @@ import retrofit2.http.POST
 
 interface SurveyService {
     @POST("api/v1/surveys")
-    suspend fun submitSurvey(
-        @Body request: SurveyRequest
-    ): ApiResponse<SurveyResponse>
+    suspend fun submitSurvey(@Body request: SurveyRequest): ApiResponse<SurveyResponse>
+
     @GET("api/v1/surveys/me")
     suspend fun getMySurveyResult(): ApiResponse<SurveyResponse>
 }

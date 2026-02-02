@@ -26,7 +26,6 @@ fun PenguinCharacter(
                 color = DduruTheme.colors.Gray50,
                 shape = RoundedCornerShape(99.dp)
             )
-            // 3. 크기 및 패딩
             .size(width = 48.dp, height = 60.dp)
             .padding(8.dp)
     )

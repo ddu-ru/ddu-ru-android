@@ -47,13 +47,11 @@ fun QuestionStart(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
 
-        // 1. 말풍선 영역
         Box(
             modifier = Modifier
                 .width(340.dp)
                 .wrapContentHeight()
         ) {
-            // 그림자
             Image(
                 painter = painterResource(id = R.drawable.ic_survey_message),
                 contentDescription = null,
@@ -65,7 +63,7 @@ fun QuestionStart(
                 contentScale = ContentScale.Fit,
                 colorFilter = ColorFilter.tint(Color.Black)
             )
-            // 원본 이미지
+
             Image(
                 painter = painterResource(id = R.drawable.ic_survey_message),
                 contentDescription = "설문을 해주세요",
@@ -77,12 +75,10 @@ fun QuestionStart(
         }
         Spacer(modifier = Modifier.height(20.dp))
 
-        // 2. 캐릭터 이미지
         Box(
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier.width(230.dp)
         ) {
-            // 그림자
             Box(
                 modifier = Modifier
                     .padding(bottom = 12.dp)
@@ -110,7 +106,6 @@ fun QuestionStart(
         }
         Spacer(modifier = Modifier.height(83.dp))
 
-        // 4. 버튼
         DduruButton(
             text = "네, 좋아요!",
             onClick = onNextClick,

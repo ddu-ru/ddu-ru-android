@@ -7,8 +7,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -18,6 +16,7 @@ import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 fun QuestionNumberBadge(
     currentQuestion: Int,
     totalQuestions: Int = 11,
+    label: String = "Question",
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -34,14 +33,10 @@ fun QuestionNumberBadge(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Text(
-                text = "Question",
-                style = TextStyle(
-                    fontSize = 10.sp,
-                    lineHeight = 10.sp,
-                    fontWeight = FontWeight(700),
-                    color = DduruTheme.colors.Primary,
-                    textAlign = TextAlign.Center,
-                )
+                text = label,
+                style = DduruTheme.typography.Badge,
+                color = DduruTheme.colors.Primary,
+                textAlign = TextAlign.Center,
             )
 
             Row(
@@ -50,35 +45,26 @@ fun QuestionNumberBadge(
             ) {
                 Text(
                     text = "$currentQuestion",
-                    style = TextStyle(
-                        fontSize = 10.sp,
-                        lineHeight = 10.sp,
-                        fontWeight = FontWeight(700),
-                        color = DduruTheme.colors.Primary,
-                        textAlign = TextAlign.Center,
-                    )
+                    style = DduruTheme.typography.Badge,
+                    color = DduruTheme.colors.Primary,
+                    textAlign = TextAlign.Center,
                 )
 
                 Text(
                     text = "/",
-                    style = TextStyle(
+                    style = DduruTheme.typography.Badge.copy(
                         fontSize = 8.sp,
-                        lineHeight = 8.sp,
-                        fontWeight = FontWeight(700),
-                        color = DduruTheme.colors.Primary,
-                        textAlign = TextAlign.Center,
-                    )
+                        lineHeight = 8.sp
+                    ),
+                    color = DduruTheme.colors.Primary,
+                    textAlign = TextAlign.Center,
                 )
 
                 Text(
                     text = "$totalQuestions",
-                    style = TextStyle(
-                        fontSize = 10.sp,
-                        lineHeight = 10.sp,
-                        fontWeight = FontWeight(700),
-                        color = DduruTheme.colors.Primary,
-                        textAlign = TextAlign.Center,
-                    )
+                    style = DduruTheme.typography.Badge, // 스타일 적용
+                    color = DduruTheme.colors.Primary,
+                    textAlign = TextAlign.Center,
                 )
             }
         }

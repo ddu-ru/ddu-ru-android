@@ -41,7 +41,6 @@ fun Question7Screen(
             .background(color = DduruTheme.colors.Gray50),
         contentAlignment = Alignment.TopCenter
     ) {
-        // 1. 뒤로가기 버튼
         BackButton(
             onClick = onBackClick,
             modifier = Modifier
@@ -49,14 +48,12 @@ fun Question7Screen(
                 .padding(top = 40.dp, start = 16.dp)
         )
 
-        // 2. 펭귄 캐릭터
         PenguinCharacter(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 40.dp)
+                .padding(top = 55.dp)
         )
 
-        // 3. 메인 컨텐츠
         Column(
             modifier = Modifier
                 .fillMaxWidth()
@@ -120,7 +117,7 @@ fun Question7Screen(
 
 @Preview(showBackground = true)
 @Composable
-fun Question7ScreenPreview() {
+private fun Question7ScreenPreview() {
     DduruTheme {
         Question7Screen(
             selectedOptions = setOf(1, 2),

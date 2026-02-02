@@ -21,7 +21,6 @@ fun LoginRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    //  상태 관찰
     LaunchedEffect(uiState) {
         when (val state = uiState) {
             is LoginUiState.Success -> {
@@ -34,7 +33,6 @@ fun LoginRoute(
         }
     }
 
-    // UI 표시
     LoginScreen(
         isLoading = (uiState is LoginUiState.Loading),
         onKakaoClick = { viewModel.startKakaoLogin() },

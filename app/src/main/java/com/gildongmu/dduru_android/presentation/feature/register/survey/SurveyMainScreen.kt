@@ -185,7 +185,6 @@ fun SurveyMainScreen(
             )
         }
 
-        // 에러 상태일 때 메시지 표시
         if (uiState is SurveyUiState.Error) {
             Text(
                 text = (uiState as SurveyUiState.Error).message,

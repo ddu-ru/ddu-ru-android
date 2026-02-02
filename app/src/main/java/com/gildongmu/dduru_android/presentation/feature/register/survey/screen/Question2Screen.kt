@@ -11,7 +11,23 @@ import com.gildongmu.dduru_android.R
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru_android.presentation.feature.register.survey.components.*
 
-// 개별 질문 화면들 (Q2 ~ Q6)
+@Composable
+fun Question1Screen(
+    selectedOption: Int?,
+    onOptionSelected: (Int) -> Unit,
+    onBackClick: () -> Unit
+) {
+    StandardQuestionScreen(
+        questionNumber = 1,
+        questionTitle = "다음 여행지로 출발~ \n어떻게 가지?",
+        imageRes = R.drawable.img_q1,
+        options = listOf("🚶여행은 낭만이지! 걷거나 버스", "🚕 편한게 최고~ 택시 타는 거 어때?"),
+        selectedOption = selectedOption,
+        onOptionSelected = onOptionSelected,
+        onBackClick = onBackClick
+    )
+}
+
 @Composable
 fun Question2Screen(
     selectedOption: Int?,
@@ -97,7 +113,6 @@ fun Question6Screen(
     )
 }
 
-// 공통 레이아웃
 @Composable
 private fun StandardQuestionScreen(
     questionNumber: Int,
@@ -114,7 +129,6 @@ private fun StandardQuestionScreen(
             .background(color = DduruTheme.colors.Gray50),
         contentAlignment = Alignment.TopCenter
     ) {
-        // 뒤로가기
         BackButton(
             onClick = onBackClick,
             modifier = Modifier
@@ -122,21 +136,18 @@ private fun StandardQuestionScreen(
                 .padding(top = 40.dp, start = 16.dp)
         )
 
-        // 펭귄 (중앙 정렬)
         PenguinCharacter(
             modifier = Modifier
                 .align(Alignment.TopCenter)
-                .padding(top = 50.dp)
+                .padding(top = 55.dp)
         )
 
-        // 메인 컨텐츠
         Column(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 100.dp, start = 16.dp, end = 16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-            // 질문 카드
             QuestionCard(
                 questionNumber = questionNumber,
                 questionTitle = questionTitle,
@@ -148,7 +159,6 @@ private fun StandardQuestionScreen(
 
             Spacer(modifier = Modifier.height(52.dp))
 
-            // 선택지 리스트
             Column(
                 modifier = Modifier.width(343.dp),
                 verticalArrangement = Arrangement.spacedBy(11.dp)
@@ -168,7 +178,7 @@ private fun StandardQuestionScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun Question2ScreenPreview() {
+private fun Question2ScreenPreview() {
     DduruTheme {
         Question2Screen(selectedOption = null, onOptionSelected = {}, onBackClick = {})
     }

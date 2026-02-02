@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -20,28 +21,36 @@ fun QuestionCard(
     imageRes: Int? = null,
     modifier: Modifier = Modifier
 ) {
+    val cardShape = remember { RoundedCornerShape(24.dp) }
+
     Box(
         modifier = modifier
-            .shadow(
-                elevation = 4.dp,
-                spotColor = DduruTheme.colors.BlackAlpha25,
-                ambientColor = DduruTheme.colors.BlackAlpha25
-            )
+            .padding(10.dp)
+
             .shadow(
                 elevation = 16.dp,
+                shape = cardShape,
                 spotColor = DduruTheme.colors.BlackAlpha10,
-                ambientColor = DduruTheme.colors.BlackAlpha10
+                ambientColor = DduruTheme.colors.BlackAlpha10,
+                clip = false
+            )
+            .shadow(
+                elevation = 4.dp,
+                shape = cardShape,
+                spotColor = DduruTheme.colors.BlackAlpha25,
+                ambientColor = DduruTheme.colors.BlackAlpha25,
+                clip = false
             )
             .background(
                 color = DduruTheme.colors.Gray0,
-                shape = RoundedCornerShape(size = 24.dp)
+                shape = cardShape
             )
             .padding(16.dp)
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally,
-            modifier = Modifier.fillMaxWidth() // 박스 꽉 채우기
+            modifier = Modifier.fillMaxWidth()
         ) {
             Column(
                 horizontalAlignment = Alignment.CenterHorizontally,
