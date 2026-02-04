@@ -27,7 +27,7 @@ class OnboardingResultViewModel @Inject constructor(
             personality = "사람을 편안하게 해주며, 맛있는 것과 좋은 분위기만 있다면 행복한 미식 힐링러.",
             strength= "단체 일정 코디, 실패 없는 맛집 픽, 여행 중 쉼표 만들어주기.",
             tip = "활동적인 친구와 여행할 때는 '식사 후 자유시간'으로 완급을 조절하세요.",
-            tags = listOf("#따듯함", "#세심함", "#여행즐김러"),
+            tags = listOf("따듯함", "세심함", "여행즐김러"),
         )
     }
 }
