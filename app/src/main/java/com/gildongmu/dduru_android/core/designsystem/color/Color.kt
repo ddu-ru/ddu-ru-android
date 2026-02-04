@@ -5,8 +5,8 @@ import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
 // 1. Reference Token
-val Blue500 = Color(0xFF289BFF)
-val Blue100 = Color(0xFFC8E5FF)
+val Primary= Color(0xFF289BFF)
+val Secondary = Color(0xFFC8E5FF)
 
 val Gray0   = Color(0xFFFFFFFF) // White
 val Gray50  = Color(0xFFF8F9FA)
@@ -74,8 +74,8 @@ data class DduruColors(
 //3.매핑
 
 val defaultDduruColors = DduruColors(
-    Primary = Blue500,
-    Secondary = Blue100,
+    Primary = Primary,
+    Secondary = Secondary,
 
     // GrayScale
     Gray0 = Gray0,
