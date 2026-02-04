@@ -15,15 +15,20 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gildongmu.dduru_android.core.designsystem.component.DduruButton
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru_android.presentation.feature.register.survey.component.SurveyResultDetail
+import com.gildongmu.dduru_android.presentation.feature.register.survey.viewmodel.OnboardingResultViewModel
 
 @Composable
 fun OnboardingResultScreen(
     modifier: Modifier = Modifier,
+    viewModel: OnboardingResultViewModel = viewModel(),
     onNextClick: () -> Unit
 ){
+    val uiState = viewModel.uiState
+
     Column (
         modifier = modifier
             .background(DduruTheme.colors.Gray50)
@@ -46,7 +51,8 @@ fun OnboardingResultScreen(
         )
 
         SurveyResultDetail(
-            modifier = Modifier.weight(3f)
+            modifier = Modifier.weight(3f),
+            uiModel = uiState
         )
 
         DduruButton(

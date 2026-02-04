@@ -17,11 +17,13 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru_android.R
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru_android.presentation.component.SpeechBubble
+import com.gildongmu.dduru_android.presentation.feature.register.survey.state.SurveyResultUiState
 
 
 @Composable
 
 fun SurveyResultDetail(
+    uiModel: SurveyResultUiState,
     modifier: Modifier = Modifier,
 ){
     Column(
@@ -33,13 +35,13 @@ fun SurveyResultDetail(
         ) {
             Text(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
-                text = "모두가 편안해야\n내가 편해요!", //avatarDescription
+                text = uiModel.avatarDescription,
                 style = DduruTheme.typography.BodyLarge,
                 textAlign = TextAlign.Center
             )
         }
         Image(
-            painter = painterResource(id = R.drawable.img_penguin_personallity),
+            painter = painterResource(uiModel.imageUrl),
             contentDescription = "뚜비 캐릭터",
             modifier = Modifier
                 .width(202.dp)
@@ -49,18 +51,24 @@ fun SurveyResultDetail(
         Text(
             modifier = Modifier
                 .padding(8.dp),
-            text = "포근포근형", //avatarName
+            text = uiModel.avatarName,
             style = DduruTheme.typography.TitleMedium,
             textAlign = TextAlign.Center,
         )
         Text(
             modifier = Modifier
                 .padding(8.dp, bottom = 24.dp),
-            text = "#따듯함 #세심함 #여행즐김러", //tags
+            text = uiModel.tags.joinToString(" ") { "#$it" },
             style = DduruTheme.typography.LabelMedium,
             textAlign = TextAlign.Center,
             color = DduruTheme.colors.Gray600
         )
-        ResultDescriptionBox(listOf("어쩌구 저쩌구 설명...","어쩌구 저쩌구 설명...","어쩌구 저쩌구 설명..."))
+        ResultDescriptionBox(
+            listOf(
+                uiModel.personality,
+                uiModel.strength,
+                uiModel.tip,
+            )
+        )
     }
 }
