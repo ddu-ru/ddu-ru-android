@@ -1,14 +1,17 @@
 package com.gildongmu.dduru_android.presentation.feature.register.state
 
 enum class Gender {
-    MALE, FEMALE
+    MALE,
+    FEMALE
 }
+
 enum class SignupStep {
     BIRTH,
     GENDER,
     NICKNAME,
     PHONE,
     AUTH,
+    AUTH_VERIFICATION,
     DONE
 }
 
@@ -39,6 +42,8 @@ data class CompletedItem(
 
 data class SignupUiState(
     val step: SignupStep = SignupStep.BIRTH,
+
+    val isLoading: Boolean = false,
 
     val completedItems: List<CompletedItem> = emptyList(),
 
