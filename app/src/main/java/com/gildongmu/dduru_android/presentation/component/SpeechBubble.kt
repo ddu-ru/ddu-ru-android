@@ -1,8 +1,6 @@
 package com.gildongmu.dduru_android.presentation.component
 
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -20,11 +18,16 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
-private class SpeechBubbleShape(
+enum class BubbleArrowDirection {
+    Bottom, Right
+}
+
+private class UniversalSpeechBubbleShape(
+    private val direction: BubbleArrowDirection = BubbleArrowDirection.Bottom,
     private val cornerRadius: Dp,
     private val arrowWidth: Dp,
     private val arrowHeight: Dp,
-    private val arrowCenterOffsetX: Dp = 0.dp,
+    private val arrowOffset: Dp = 0.dp,
 ) : Shape {
 
     override fun createOutline(
@@ -36,30 +39,35 @@ private class SpeechBubbleShape(
         val cr = cornerRadius.toPx()
         val aw = arrowWidth.toPx()
         val ah = arrowHeight.toPx()
-        val offsetX = arrowCenterOffsetX.toPx()
+        val offset = arrowOffset.toPx()
 
-        // 꼬리 영역을 제외한 본체 높이
-        val bodyHeight = (size.height - ah).coerceAtLeast(0f)
+        val path = Path()
 
-        val centerX = size.width / 2f + offsetX
-        val halfArrowW = aw / 2f
-        val baseLeftX = (centerX - halfArrowW).coerceIn(0f, size.width)
-        val baseRightX = (centerX + halfArrowW).coerceIn(0f, size.width)
+        when (direction) {
+            BubbleArrowDirection.Bottom -> {
+                val bodyHeight = (size.height - ah).coerceAtLeast(0f)
+                val centerX = size.width / 2f + offset
 
-        val path = Path().apply {
-            //본체 사각형
-            addRoundRect(
-                RoundRect(
-                    rect = Rect(0f, 0f, size.width, bodyHeight),
-                    cornerRadius = CornerRadius(cr, cr)
-                )
-            )
+                path.apply {
+                    addRoundRect(RoundRect(Rect(0f, 0f, size.width, bodyHeight), CornerRadius(cr, cr)))
+                    moveTo(centerX - aw / 2f, bodyHeight)
+                    lineTo(centerX, bodyHeight + ah)
+                    lineTo(centerX + aw / 2f, bodyHeight)
+                    close()
+                }
+            }
+            BubbleArrowDirection.Right -> {
+                val bodyWidth = (size.width - aw).coerceAtLeast(0f)
+                val centerY = size.height / 2f + offset
 
-            //꼬리 삼각형
-            moveTo(baseLeftX, bodyHeight)
-            lineTo(centerX, bodyHeight + ah)
-            lineTo(baseRightX, bodyHeight)
-            close()
+                path.apply {
+                    addRoundRect(RoundRect(Rect(0f, 0f, bodyWidth, size.height), CornerRadius(cr, cr)))
+                    moveTo(bodyWidth, centerY - ah / 2f)
+                    lineTo(bodyWidth + aw, centerY)
+                    lineTo(bodyWidth, centerY + ah / 2f)
+                    close()
+                }
+            }
         }
 
         Outline.Generic(path)
@@ -69,25 +77,22 @@ private class SpeechBubbleShape(
 @Composable
 fun SpeechBubble(
     modifier: Modifier = Modifier,
+    direction: BubbleArrowDirection = BubbleArrowDirection.Bottom, // 방향 인자 추가
     cornerRadius: Dp = 24.dp,
     arrowWidth: Dp = 22.dp,
     arrowHeight: Dp = 12.dp,
-    arrowCenterOffsetX: Dp = 0.dp,
+    arrowOffset: Dp = 0.dp,
     shadowElevation: Dp = 12.dp,
     containerColor: Color = Color.White,
-    contentPadding: PaddingValues = PaddingValues(
-        start = 24.dp,
-        top = 8.dp,
-        end = 24.dp,
-        bottom = 8.dp + arrowHeight
-    ),
     content: @Composable () -> Unit
 ) {
-    val shape = SpeechBubbleShape(
+
+    val shape = UniversalSpeechBubbleShape(
+        direction = direction,
         cornerRadius = cornerRadius,
         arrowWidth = arrowWidth,
         arrowHeight = arrowHeight,
-        arrowCenterOffsetX = arrowCenterOffsetX
+        arrowOffset = arrowOffset
     )
 
     Surface(
@@ -95,11 +100,9 @@ fun SpeechBubble(
         shape = shape,
         color = containerColor,
         shadowElevation = shadowElevation,
-        tonalElevation = 0.dp
     ) {
         Box(
-            modifier = Modifier
-                .padding(contentPadding),
+            modifier = Modifier.padding(16.dp),
             contentAlignment = Alignment.Center,
         ) {
             content()
