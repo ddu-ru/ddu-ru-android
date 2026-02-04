@@ -21,14 +21,18 @@ import com.gildongmu.dduru_android.presentation.component.SpeechBubble
 
 @Composable
 
-fun SurveyResultDetail(){
+fun SurveyResultDetail(
+    modifier: Modifier = Modifier,
+){
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
     )
     {
-        SpeechBubble {
+        SpeechBubble(
+            modifier = Modifier
+        ) {
             Text(
-                modifier = Modifier.padding(horizontal = 8.dp),
+                modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
                 text = "모두가 편안해야\n내가 편해요!", //avatarDescription
                 style = DduruTheme.typography.BodyLarge,
                 textAlign = TextAlign.Center
@@ -57,7 +61,6 @@ fun SurveyResultDetail(){
             textAlign = TextAlign.Center,
             color = DduruTheme.colors.Gray600
         )
-        Spacer(modifier = Modifier.padding(32.dp))
         ResultDescriptionBox(listOf("어쩌구 저쩌구 설명...","어쩌구 저쩌구 설명...","어쩌구 저쩌구 설명..."))
     }
 }

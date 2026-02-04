@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru_android.presentation.component.SpeechBubble
 import com.gildongmu.dduru_android.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
@@ -52,9 +53,9 @@ fun ProfileSettingScreen(
         verticalArrangement = Arrangement.SpaceEvenly
     ){
         Text(
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 78.dp),
             text = "프로필 설정",
-            style = DduruTheme.typography.TitleMedium,
+            style = DduruTheme.typography.TitleLarge,
             textAlign = TextAlign.Center,
         )
 
@@ -116,5 +117,13 @@ fun ProfileSettingScreen(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(top = 0.dp, bottom = 78.dp))
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileSettingScreenPreview() {
+    DduruTheme {
+        ProfileSettingScreen()
     }
 }
