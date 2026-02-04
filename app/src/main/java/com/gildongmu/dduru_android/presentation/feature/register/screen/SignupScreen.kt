@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gildongmu.dduru_android.core.designsystem.component.DduruButton
@@ -44,17 +45,40 @@ fun SignupScreen(
     val state = viewModel.uiState
     val currentStep = state.step
     val listState = rememberLazyListState()
+    val keyboardController = LocalSoftwareKeyboardController.current
 
-    val visibleSteps = remember(currentStep) {
-        SignupStep.entries.filter { it.ordinal <= currentStep.ordinal }
+    val SIGNUP_FLOW = remember {
+        listOf(
+            SignupStep.BIRTH,
+            SignupStep.GENDER,
+            SignupStep.NICKNAME,
+            SignupStep.PHONE,
+            SignupStep.AUTH,
+            SignupStep.AUTH_VERIFICATION,
+            SignupStep.DONE
+        )
     }
 
-    val isBottomButtonVisible = currentStep.ordinal >= SignupStep.NICKNAME.ordinal && currentStep != SignupStep.DONE
+    val visibleSteps = remember(currentStep) {
+        val idx = SIGNUP_FLOW.indexOf(currentStep).takeIf { it >= 0 } ?: 0
+        SIGNUP_FLOW.take(idx + 1)
+    }
+
+    val isBottomButtonVisible = when (currentStep) {
+        SignupStep.NICKNAME,
+        SignupStep.PHONE,
+        SignupStep.AUTH,
+        SignupStep.AUTH_VERIFICATION -> true
+        else -> false
+    }
 
     LaunchedEffect(currentStep) {
         if (visibleSteps.isNotEmpty()) {
             delay(200)
             listState.animateScrollToItem(visibleSteps.size - 1)
+        }
+        if (currentStep == SignupStep.AUTH_VERIFICATION) {
+            keyboardController?.hide()
         }
     }
 
@@ -152,6 +176,8 @@ fun SignupScreen(
                             )
                         }
 
+                        SignupStep.AUTH_VERIFICATION -> {}
+
                         SignupStep.DONE -> {
                             Text(
                                 "회원가입 완료 🎉",
@@ -168,7 +194,7 @@ fun SignupScreen(
             val (buttonText, buttonEnabled, onButtonClick) = when (currentStep) {
                 SignupStep.NICKNAME -> Triple(
                     "다음",
-                    state.nickname.isNotBlank(),
+                    state.nickname.length >= 2,
                     viewModel::onNicknameComplete
                 )
                 SignupStep.PHONE -> Triple(
@@ -177,10 +203,18 @@ fun SignupScreen(
                     viewModel::onPhoneComplete
                 )
                 SignupStep.AUTH -> Triple(
-                    if (state.authCode.isNotEmpty()) "확인" else "인증요청",
+                    "확인",
                     state.authCode.isNotEmpty(),
-                    viewModel::onAuthComplete
+                    {
+                        viewModel.onRegisterComplete()
+                    }
                 )
+
+                SignupStep.AUTH_VERIFICATION -> Triple(
+                    "다음",
+                    true,
+                    viewModel::onRegisterComplete)
+
                 else -> Triple("", false, {})
             }
 
