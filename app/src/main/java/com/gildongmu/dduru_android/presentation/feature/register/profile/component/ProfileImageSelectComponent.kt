@@ -17,7 +17,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru_android.presentation.component.ProfileImageCrop
 import com.gildongmu.dduru_android.presentation.model.ProfileImageCropOption
 import com.gildongmu.dduru_android.presentation.model.ProfileType
 

@@ -25,7 +25,6 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.gildongmu.dduru_android.core.designsystem.component.DduruButton
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru_android.presentation.component.ProfileImageCrop
 import com.gildongmu.dduru_android.presentation.model.ProfileBackgroundColorList
 
 @Composable
