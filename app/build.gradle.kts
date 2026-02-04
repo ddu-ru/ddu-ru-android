@@ -7,17 +7,40 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.ktlint)
 }
 
+val localProperties = Properties().apply {
+    val file = project.rootProject.file("local.properties")
+    if (file.exists()) {
+        file.inputStream().use { load(it) }
+    }
+}
+
+fun readLocalProperty(
+    key: String,
+    allowDefault: Boolean,
+    default: String = "DUMMY"
+): String {
+    val value = localProperties.getProperty(key)?.removeSurrounding("\"")
+    return when {
+        value != null -> value
+        allowDefault -> default
+        else -> error("local.properties에 $key 값을 정의해 주세요.")
+    }
+}
+
+fun readLocalPropertyQuoted(
+    key: String,
+    allowDefault: Boolean
+): String = "\"${readLocalProperty(key, allowDefault)}\""
+
 android {
-    //namespace = "com.gildongmu.dduru_android"
+    namespace = "com.gildongmu.dduru"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
-        val properties = Properties()
-        properties.load(project.rootProject.file("local.properties").inputStream())
-
-        applicationId = "com.gildongmu.dduru_android"
+        applicationId = "com.gildongmu.dduru"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
@@ -25,22 +48,32 @@ android {
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
 
-        // BASE_URL
-        buildConfigField("String", "BASE_URL", properties["base.url"].toString())
-
         // Google 웹 클라이언트 ID
-        buildConfigField("String", "GOOGLE_WEB_CLIENT_ID", "\"${properties.getProperty("google.client.id")}\"")
+        buildConfigField(
+            "String",
+            "GOOGLE_WEB_CLIENT_ID",
+            readLocalPropertyQuoted("google.client.id", allowDefault = true)
+        )
 
+        // Kakao api 키
+        buildConfigField(
+            "String",
+            "KAKAO_NATIVE_APP_KEY",
+            readLocalPropertyQuoted("kakao.api.key", allowDefault = true)
+        )
 
-        buildConfigField("String", "KAKAO_NATIVE_APP_KEY", "\"${properties.getProperty("kakao.api.key")}\"")
-
-        
-        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] = properties.getProperty("kakao.api.key") as String
+        manifestPlaceholders["KAKAO_NATIVE_APP_KEY"] =
+            readLocalProperty("kakao.api.key", allowDefault = true)
     }
 
     buildTypes {
+        debug {
+            buildConfigField("String", "BASE_URL", readLocalPropertyQuoted("debug.base.url", allowDefault = true))
+        }
+
         release {
             isMinifyEnabled = false
+            buildConfigField("String", "BASE_URL", readLocalPropertyQuoted("release.base.url", allowDefault = true))
             proguardFiles(
                 getDefaultProguardFile("proguard-android-optimize.txt"),
                 "proguard-rules.pro"
@@ -49,23 +82,25 @@ android {
     }
 
     compileOptions {
-        sourceCompatibility = JavaVersion.VERSION_11
-        targetCompatibility = JavaVersion.VERSION_11
+        sourceCompatibility = JavaVersion.VERSION_17
+        targetCompatibility = JavaVersion.VERSION_17
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = "17"
     }
 
     buildFeatures {
         compose = true
         buildConfig = true
     }
-    //buildToolsVersion = "36.1.0"
+    // buildToolsVersion = "36.1.0"
 }
 
 dependencies {
     implementation(libs.androidx.compose.material)
+    implementation(libs.androidx.monitor)
+    implementation(libs.androidx.junit.ktx)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.test)
     debugImplementation(libs.bundles.debug)
@@ -91,4 +126,17 @@ dependencies {
     // 카카오 로그인
     implementation("com.kakao.sdk:v2-user:2.20.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
+}
+
+ktlint {
+    android = true
+    debug = true
+    coloredOutput = true
+    verbose = true
+    outputToConsole = true
+
+    filter {
+        exclude { element -> element.file.path.contains("test/") }
+        exclude { element -> element.file.path.contains("androidTest/") }
+    }
 }

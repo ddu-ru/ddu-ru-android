@@ -1,0 +1,95 @@
+name: Dduru CI
+
+on:
+  pull_request:
+    branches: [ dev ]
+
+jobs:
+  lint:
+    name: PR Lint Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Create local.properties
+        env:
+          DEBUG_BASE_URL: ${{ secrets.DEBUG_BASE_URL }}
+          RELEASE_BASE_URL: ${{ secrets.RELEASE_BASE_URL }}
+        run: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          echo "debug.base.url=\"${DEBUG_BASE_URL}\"" >> local.properties
+          echo "release.base.url=\"${RELEASE_BASE_URL}\"" >> local.properties
+
+      - name: Grant permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Run ktlint
+        run: ./gradlew ktlintCheck
+
+      - name: Upload ktlint reports
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: ktlint-reports
+          path: app/build/reports/ktlint/
+
+  build:
+    name: PR Build Check
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v6
+
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@v4
+
+      - name: Set up JDK 17
+        uses: actions/setup-java@v5
+        with:
+          java-version: 17
+          distribution: 'temurin'
+
+      - name: Set up Android SDK
+        uses: android-actions/setup-android@v3
+
+      - name: Create local.properties
+        env:
+          DEBUG_BASE_URL: ${{ secrets.DEBUG_BASE_URL }}
+          RELEASE_BASE_URL: ${{ secrets.RELEASE_BASE_URL }}
+          GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
+          KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
+        run: |
+          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          echo "debug.base.url=\"${DEBUG_BASE_URL}\"" >> local.properties
+          echo "release.base.url=\"${RELEASE_BASE_URL}\"" >> local.properties
+          echo "google.client.id=\"${GOOGLE_CLIENT_ID}\"" >> local.properties
+          echo "kakao.api.key=\"${KAKAO_API_KEY}\"" >> local.properties
+
+      - name: Grant permission to gradlew
+        run: chmod +x ./gradlew
+
+      - name: Build Debug APK
+        run: ./gradlew assembleDebug --stacktrace
+
+      - name: Upload Debug APK
+        if: github.event.pull_request.head.repo.fork == false
+        uses: actions/upload-artifact@v4
+        with:
+          name: debug-apk
+          path: app/build/outputs/apk/debug/*.apk
+          retention-days: 7
