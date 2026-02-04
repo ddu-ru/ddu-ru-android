@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.component
+package com.gildongmu.dduru_android.presentation.feature.register.profile.component
 
 import android.net.Uri
 import androidx.compose.foundation.background
