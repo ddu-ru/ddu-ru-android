@@ -9,7 +9,6 @@ import androidx.compose.ui.unit.sp
 import androidx.compose.ui.text.font.Font
 import com.gildongmu.dduru_android.R
 
-// 1. Pretendard
 val Pretendard = FontFamily(
     Font(R.font.pretendard_bold, FontWeight.Bold),
     Font(R.font.pretendard_semibold, FontWeight.SemiBold),
@@ -17,7 +16,6 @@ val Pretendard = FontFamily(
     Font(R.font.pretendard_regular, FontWeight.Normal)
 )
 
-// 2. Typography 데이터 클래스
 
 @Immutable
 data class DduruTypography(
@@ -33,9 +31,10 @@ data class DduruTypography(
     val LabelMedium: TextStyle,
     val LabelSmall: TextStyle,
     val Button: TextStyle,
-    val ButtonLarge: TextStyle
+    val ButtonLarge: TextStyle,
+    val Badge: TextStyle
 )
-// 3. 스타일 정의
+
 val defaultDduruTypography = DduruTypography(
     TitleLarge = TextStyle(
         fontFamily = Pretendard,
@@ -102,9 +101,14 @@ val defaultDduruTypography = DduruTypography(
         fontWeight = FontWeight.SemiBold,
         fontSize = 20.sp,
         lineHeight = 24.sp
+    ),
+    Badge = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Bold,
+        fontSize = 10.sp,
+        lineHeight = 10.sp
     )
 
 )
 
-// 4. CompositionLocal 등록
 val LocalDduruTypography = staticCompositionLocalOf { defaultDduruTypography }

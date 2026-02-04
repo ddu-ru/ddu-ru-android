@@ -4,11 +4,11 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-// 1. Reference Token (순수 색상 정의)
+// 1. Reference Token
 val Blue500 = Color(0xFF289BFF)
 val Blue100 = Color(0xFFC8E5FF)
 
-val Gray0   = Color(0xFFFFFFFF) // White는 Gray0으로 정의
+val Gray0   = Color(0xFFFFFFFF) // White
 val Gray50  = Color(0xFFF8F9FA)
 val Gray100 = Color(0xFFF1F3F4)
 val Gray200 = Color(0xFFE8EAED)
@@ -23,22 +23,25 @@ val Gray868 = Color(0xFF282A2D)
 val Gray900 = Color(0xFF202124)
 val Gray928 = Color(0xFF17181B)
 val Gray958 = Color(0xFF0E1013)
+
 val Black = Color(0xFF000000)
+
 val KakaoYellow = Color(0xFFFEE500)
 val BlackAlpha14 = Color(0x24000000)
 val BlackAlpha10 = Color(0x1A000000)
 val BlackAlpha05 = Color(0x0D000000)
 val WhiteAlpha30 = Color(0x4DFFFFFF)
+val BlackAlpha25 = Color(0x40000000)
 val GrayBorder = Color(0x80797479)
-// 2. System Token
 
+// 2. System Token
 @Immutable
 data class DduruColors(
-    // [Brand]
+    // Brand
     val Primary: Color,
     val Secondary: Color,
 
-    // [GrayScale]
+    // GrayScale
     val Gray0: Color,
     val Gray50: Color,
     val Gray100: Color,
@@ -62,6 +65,7 @@ data class DduruColors(
     val BlackAlpha10: Color,
     val BlackAlpha05: Color,
     val WhiteAlpha30: Color,
+    val BlackAlpha25: Color,
     val GrayBorder : Color
 )
 
@@ -93,11 +97,11 @@ val defaultDduruColors = DduruColors(
     Black = Black,
 
     KakaoYellow = KakaoYellow,
-
     BlackAlpha14 = BlackAlpha14,
     BlackAlpha10 = BlackAlpha10,
     BlackAlpha05 = BlackAlpha05,
     WhiteAlpha30 = WhiteAlpha30,
+    BlackAlpha25 = BlackAlpha25,
     GrayBorder = GrayBorder
 )
 
