@@ -38,8 +38,6 @@ fun ProfileImageSelector(
         Row(
             modifier = Modifier
                 .selectableGroup()
-                .padding(8.dp),
-            horizontalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             options.forEach { option ->
                 Column(
@@ -74,7 +72,7 @@ fun ProfileImageSelector(
         Button(
             onActionClick,
             colors = ButtonDefaults.buttonColors(DduruTheme.colors.Gray200),
-            modifier = Modifier,
+            modifier = Modifier.padding(top = 16.dp),
         ) {
             Text(
                 text = if (selectedOption.type == ProfileType.CHARACTER) "아바타 편집" else "사진 변경",

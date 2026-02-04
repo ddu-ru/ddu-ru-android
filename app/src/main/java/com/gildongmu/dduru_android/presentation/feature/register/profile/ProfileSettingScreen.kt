@@ -3,8 +3,11 @@ package com.gildongmu.dduru_android.presentation.feature.register.profile
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -28,7 +31,7 @@ import rememberGalleryLauncher
 
 @Composable
 fun ProfileSettingScreen(
-    modifier: Modifier,
+    modifier: Modifier = Modifier,
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val selectedOption by viewModel.selectedOption.collectAsState()
@@ -41,6 +44,9 @@ fun ProfileSettingScreen(
     Column (
         modifier = modifier
             .background(DduruTheme.colors.Gray50)
+            .fillMaxSize()
+            .statusBarsPadding()
+            .navigationBarsPadding()
             .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
@@ -72,15 +78,14 @@ fun ProfileSettingScreen(
         Column( horizontalAlignment = Alignment.CenterHorizontally,)
         {
             Text(
-                modifier = Modifier
-                    .padding(8.dp),
+                modifier = Modifier,
                 text = "겨울이 오길",
                 style = DduruTheme.typography.TitleMedium,
                 textAlign = TextAlign.Center,
             )
             Text(
                 modifier = Modifier
-                    .padding(8.dp, bottom = 24.dp),
+                    .padding(8.dp, 8.dp, bottom = 24.dp),
                 text = "뚜르 무드",
                 style = DduruTheme.typography.LabelMedium,
                 textAlign = TextAlign.Center,
@@ -110,6 +115,6 @@ fun ProfileSettingScreen(
             {},
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(bottom = 78.dp))
+                .padding(top = 0.dp, bottom = 78.dp))
     }
 }
