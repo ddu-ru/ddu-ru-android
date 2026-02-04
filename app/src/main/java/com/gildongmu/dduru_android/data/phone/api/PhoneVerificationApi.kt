@@ -11,7 +11,7 @@ import retrofit2.http.POST
 
 interface PhoneVerificationApi {
 
-    @POST("api/v1/verifications")
+    @POST("api/v1/verifications/admin")
     suspend fun sendVerificationCode(
         @Body request: VerificationSendRequest
     ): ApiResponse<VerificationSendResponse>
