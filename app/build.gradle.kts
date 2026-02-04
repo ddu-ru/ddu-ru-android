@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    namespace = "com.gildongmu.dduru_android"
+    //namespace = "com.gildongmu.dduru_android"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
@@ -61,7 +61,7 @@ android {
         compose = true
         buildConfig = true
     }
-    buildToolsVersion = "36.1.0"
+    //buildToolsVersion = "36.1.0"
 }
 
 dependencies {
@@ -88,7 +88,6 @@ dependencies {
     implementation("androidx.credentials:credentials:1.3.0")
     implementation("androidx.credentials:credentials-play-services-auth:1.3.0")
     implementation("com.google.android.libraries.identity.googleid:googleid:1.1.1")
-    implementation("com.google.android.gms:play-services-auth:21.2.0")
     // 카카오 로그인
     implementation("com.kakao.sdk:v2-user:2.20.1")
     implementation("com.squareup.okhttp3:logging-interceptor:4.12.0")
