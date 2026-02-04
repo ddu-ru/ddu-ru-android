@@ -7,6 +7,11 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru_android.core.common.util.DateUtils
 import com.gildongmu.dduru_android.domain.nickname.NicknameRepository
+import com.gildongmu.dduru_android.domain.phone.PhoneVerificationErrorMapper
+import com.gildongmu.dduru_android.domain.entity.ExceptionResponse
+import com.gildongmu.dduru_android.domain.nickname.NicknameErrorMapper
+import com.gildongmu.dduru_android.domain.phone.PhoneVerificationRepository
+import com.gildongmu.dduru_android.domain.register.OnboardingRegisterRepository
 import com.gildongmu.dduru_android.presentation.feature.register.state.AuthCodeValidationResult
 import com.gildongmu.dduru_android.presentation.feature.register.state.CompletedItem
 import com.gildongmu.dduru_android.presentation.feature.register.state.Gender
@@ -26,7 +31,9 @@ import javax.inject.Inject
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
-    private val nicknameRepository: NicknameRepository
+    private val nicknameRepository: NicknameRepository,
+    private val phoneVerificationRepository: PhoneVerificationRepository,
+    private val onboardingRegisterRepository: OnboardingRegisterRepository,
 ) : ViewModel() {
 
     var uiState by mutableStateOf(SignupUiState())
@@ -128,8 +135,12 @@ class SignupViewModel @Inject constructor(
                     )
                 }
                 .onFailure { e ->
+                    val status = (e as? ExceptionResponse)?.status
+
                     uiState = uiState.copy(
-                        nicknameErrorMessage = e.message ?: "랜덤 닉네임을 불러오지 못했어요."
+                        nicknameErrorMessage = NicknameErrorMapper.toMessage(
+                            status = status,
+                        )
                     )
                 }
         }
@@ -163,8 +174,12 @@ class SignupViewModel @Inject constructor(
                     )
                 }
                 .onFailure { e ->
+                    val status = (e as? ExceptionResponse)?.status
+
                     uiState = uiState.copy(
-                        nicknameErrorMessage = e.message ?: "닉네임을 확인해주세요."
+                        nicknameErrorMessage = NicknameErrorMapper.toMessage(
+                            status = status,
+                        )
                     )
                 }
         }
@@ -182,25 +197,43 @@ class SignupViewModel @Inject constructor(
             return
         }
 
-        val itemsWithoutPhone = uiState.completedItems.filterNot { it.label == "전화번호" }
-        val ensuredNickname = if (itemsWithoutPhone.none { it.label == "닉네임" } && uiState.nickname.isNotBlank()) {
-            itemsWithoutPhone + CompletedItem(label = "닉네임", value = uiState.nickname)
-        } else {
-            itemsWithoutPhone
+        viewModelScope.launch {
+            uiState = uiState.copy(phoneErrorMessage = "")
+
+            phoneVerificationRepository.sendVerificationCode(uiState.phoneNumber)
+                .onSuccess {
+                    val itemsWithoutPhone = uiState.completedItems.filterNot { it.label == "전화번호" }
+                    val ensuredNickname = if (
+                        itemsWithoutPhone.none { it.label == "닉네임" } && uiState.nickname.isNotBlank()
+                    ) {
+                        itemsWithoutPhone + CompletedItem(label = "닉네임", value = uiState.nickname)
+                    } else {
+                        itemsWithoutPhone
+                    }
+                    val updatedItems = ensuredNickname + CompletedItem(
+                        label = "전화번호",
+                        value = uiState.phoneNumber
+                    )
+
+                    uiState = uiState.copy(
+                        phoneErrorMessage = "",
+                        completedItems = updatedItems,
+                        step = SignupStep.AUTH,
+                        isPhoneRequested = true,
+                        authTimerSeconds = 180,
+                        authCode = "",
+                    )
+                    startAuthTimer()
+                }
+                .onFailure { e ->
+                    val status = (e as? ExceptionResponse)?.status
+                    uiState = uiState.copy(
+                        phoneErrorMessage = PhoneVerificationErrorMapper.sendErrorMessage(
+                            status = status,
+                        )
+                    )
+                }
         }
-        val updatedItems = ensuredNickname + CompletedItem(
-            label = "전화번호",
-            value = uiState.phoneNumber
-        )
-        uiState = uiState.copy(
-            phoneErrorMessage = "",
-            completedItems = updatedItems,
-            step = SignupStep.AUTH,
-            isPhoneRequested = true,
-            authTimerSeconds = 180,
-            authCode = ""
-        )
-        startAuthTimer()
     }
 
     fun onAuthCodeChange(value: String) {
@@ -215,16 +248,34 @@ class SignupViewModel @Inject constructor(
             return
         }
 
-        stopAuthTimer()
-        uiState = uiState.copy(
-            authCodeErrorMessage = "",
-            completedItems = uiState.completedItems + CompletedItem(
-                label = "인증번호",
-                value = "완료"
-            ),
-            step = SignupStep.DONE,
-            authTimerSeconds = 0
-        )
+        viewModelScope.launch {
+            uiState = uiState.copy(authCodeErrorMessage = "")
+
+            phoneVerificationRepository.confirmVerificationCode(
+                phoneNumber = uiState.phoneNumber,
+                verificationCode = uiState.authCode
+            )
+                .onSuccess {
+                    stopAuthTimer()
+                    uiState = uiState.copy(
+                        authCodeErrorMessage = "",
+                        completedItems = uiState.completedItems + CompletedItem(
+                            label = "인증번호",
+                            value = "완료"
+                        ),
+                        step = SignupStep.AUTH_VERIFICATION,
+                        authTimerSeconds = 0
+                    )
+                }
+                .onFailure { e ->
+                    val status = (e as? ExceptionResponse)?.status
+                    uiState = uiState.copy(
+                        authCodeErrorMessage = PhoneVerificationErrorMapper.confirmErrorMessage(
+                            status = status,
+                        )
+                    )
+                }
+        }
     }
 
     private fun startAuthTimer() {
@@ -243,5 +294,54 @@ class SignupViewModel @Inject constructor(
     private fun stopAuthTimer() {
         authTimerJob?.cancel()
         authTimerJob = null
+    }
+
+    fun onRegisterComplete() {
+        viewModelScope.launch {
+            uiState = uiState.copy()
+
+            val genderValue = when (uiState.gender) {
+                Gender.MALE -> "M"
+                Gender.FEMALE -> "F"
+                null -> {
+                    uiState = uiState.copy(isLoading = false)
+                    return@launch
+                }
+            }
+
+            val year = uiState.year ?: run {
+                uiState = uiState.copy(isLoading = false)
+                return@launch
+            }
+
+            val month = uiState.month ?: run {
+                uiState = uiState.copy(isLoading = false)
+                return@launch
+            }
+
+            val day = uiState.day ?: run {
+                uiState = uiState.copy(isLoading = false)
+                return@launch
+            }
+
+            val birthday = "%04d-%02d-%02d".format(year, month, day)
+
+            onboardingRegisterRepository.initProfile(
+                nickname = uiState.nickname,
+                gender = genderValue,
+                phoneNumber = uiState.phoneNumber,
+                birthday = birthday
+            ).onSuccess {
+                uiState = uiState.copy(isLoading = false, step = SignupStep.DONE)
+            }.onFailure { e ->
+                uiState = uiState.copy(
+                    isLoading = false,
+//                    profileErrorMessage = ProfileInitErrorMapper.toMessage(
+//                        status = status,
+//                        serverMessage = e.message
+//                    )
+                )
+            }
+        }
     }
 }

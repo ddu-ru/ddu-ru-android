@@ -169,9 +169,7 @@ fun SignupScreen(
                                 enabled = true,
                                 timerText = formatTimer(state.authTimerSeconds),
                                 shouldAutoFocus = (currentStep == SignupStep.AUTH),
-                                onResendClick = {
-                                    viewModel.onPhoneComplete()
-                                },
+                                onResendClick = viewModel::onPhoneComplete,
                                 validationMessage = state.authCodeErrorMessage,
                             )
                         }
@@ -205,9 +203,7 @@ fun SignupScreen(
                 SignupStep.AUTH -> Triple(
                     "확인",
                     state.authCode.isNotEmpty(),
-                    {
-                        viewModel.onRegisterComplete()
-                    }
+                    viewModel::onAuthComplete
                 )
 
                 SignupStep.AUTH_VERIFICATION -> Triple(
