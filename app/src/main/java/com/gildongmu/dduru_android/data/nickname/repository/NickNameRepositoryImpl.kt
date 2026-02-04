@@ -2,7 +2,7 @@ package com.gildongmu.dduru_android.data.nickname.repository
 
 import com.gildongmu.dduru_android.data.nickname.api.NicknameApi
 import com.gildongmu.dduru_android.domain.nickname.NicknameRepository
-import com.gildongmu.dduru_android.domain.entity.VerificationException
+import com.gildongmu.dduru_android.domain.entity.ExceptionResponse
 import javax.inject.Inject
 
 class NicknameRepositoryImpl @Inject constructor(
@@ -14,7 +14,7 @@ class NicknameRepositoryImpl @Inject constructor(
             val response = api.getRandomNickname()
 
             if (response.status != 200) {
-                throw VerificationException(
+                throw ExceptionResponse(
                     status = response.status
                 )
             }
@@ -29,7 +29,7 @@ class NicknameRepositoryImpl @Inject constructor(
             val response = api.sanitizeNickname(nickname)
 
             if (response.status != 200) {
-                throw VerificationException(
+                throw ExceptionResponse(
                     status = response.status,
                 )
             }
