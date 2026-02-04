@@ -16,10 +16,12 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
 
 @Composable
-
-fun ResultDescriptionBox(items: List<String>){
+fun ResultDescriptionBox(
+    modifier: Modifier = Modifier,
+    items: List<String>
+){
     Box(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth()
             .background(DduruTheme.colors.Gray100)
             .border(1.dp, DduruTheme.colors.Gray300, RoundedCornerShape(16.dp))
