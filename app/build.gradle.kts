@@ -10,7 +10,7 @@ plugins {
 }
 
 android {
-    //namespace = "com.gildongmu.dduru_android"
+    namespace = "com.gildongmu.dduru_android"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
