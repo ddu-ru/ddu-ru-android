@@ -4,7 +4,7 @@ import com.gildongmu.dduru_android.data.local.VerificationTokenLocalDataSource
 import com.gildongmu.dduru_android.data.phone.api.PhoneVerificationApi
 import com.gildongmu.dduru_android.data.phone.model.VerificationConfirmRequest
 import com.gildongmu.dduru_android.data.phone.model.VerificationSendRequest
-import com.gildongmu.dduru_android.domain.entity.VerificationException
+import com.gildongmu.dduru_android.domain.entity.ExceptionResponse
 import com.gildongmu.dduru_android.domain.phone.PhoneVerificationRepository
 import javax.inject.Inject
 
@@ -20,7 +20,7 @@ class PhoneVerificationRepositoryImpl @Inject constructor(
             )
 
             if (response.status != 200) {
-                throw VerificationException(
+                throw ExceptionResponse(
                     status = response.status
                 )
             }
@@ -43,7 +43,7 @@ class PhoneVerificationRepositoryImpl @Inject constructor(
             )
 
             if (response.status != 200) {
-                throw VerificationException(
+                throw ExceptionResponse(
                     status = response.status
                 )
             }
