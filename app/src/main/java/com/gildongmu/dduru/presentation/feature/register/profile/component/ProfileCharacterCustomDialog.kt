@@ -15,11 +15,16 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -30,13 +35,27 @@ import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBac
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 
 @Composable
-
 fun ProfileCharacterCustomDialog(
     viewModel: ProfileViewModel,
     onDismiss: () -> Unit
-){
+) {
     val selectedBg = viewModel.selectedBgColor.collectAsState().value
+    ProfileCharacterCustomDialogContent(
+        selectedBg = selectedBg,
+        onBgColorSelected = viewModel::onBgColorSelected,
+        onDismiss = {
+            viewModel.onBgColorSelected(selectedBg)
+            onDismiss()
+        }
+    )
+}
 
+@Composable
+fun ProfileCharacterCustomDialogContent(
+    selectedBg: Color,
+    onBgColorSelected: (Color) -> Unit,
+    onDismiss: () -> Unit
+) {
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -64,9 +83,9 @@ fun ProfileCharacterCustomDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     IconButton(
-                        {onDismiss()},
+                        { onDismiss() },
                         modifier = Modifier.size(48.dp),
-                    ){
+                    ) {
                         Icon(
                             modifier = Modifier.size(48.dp),
                             painter = painterResource(id = R.drawable.ic_arrow_back),
@@ -81,7 +100,7 @@ fun ProfileCharacterCustomDialog(
                     )
                     DduruButton(
                         "완료",
-                        onDismiss, //추후 저장 로직 추가
+                        onDismiss,
                         cornerShape = 99.dp
                     )
                 }
@@ -89,10 +108,10 @@ fun ProfileCharacterCustomDialog(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.SpaceEvenly
                 ) {
-                    ProfileImageCrop(
+                    ProfileImageCircle(
                         modifier = Modifier.padding(32.dp),
                         resId = R.drawable.img_penguin_personallity,
-                        backgroundColor = selectedBg.color,
+                        backgroundColor = selectedBg,
                         scale = 1.6f,
                         offsetRatio = 0.16f,
                         size = 260.dp,
@@ -113,7 +132,6 @@ fun ProfileCharacterCustomDialog(
                         textAlign = TextAlign.Center,
                         color = Color.White,
                     )
-
                 }
                 Column(
                     modifier = Modifier,
@@ -130,10 +148,27 @@ fun ProfileCharacterCustomDialog(
                     )
                     ColorDotGrid(
                         modifier = Modifier.padding(bottom = 78.dp),
-                        ProfileBackgroundColorList.map { it.color },
-                        )
+                        colors = ProfileBackgroundColorList.map { it.color },
+                        onColorClick = onBgColorSelected
+                    )
                 }
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileCharacterCustomDialogPreview() {
+    DduruTheme {
+        val colors = ProfileBackgroundColorList.map { it.color }
+        var selectedBg by remember { mutableStateOf(colors.first())
+        }
+
+        ProfileCharacterCustomDialogContent(
+            selectedBg = selectedBg,
+            onBgColorSelected = { picked -> selectedBg = picked },
+            onDismiss = {}
+        )
     }
 }
