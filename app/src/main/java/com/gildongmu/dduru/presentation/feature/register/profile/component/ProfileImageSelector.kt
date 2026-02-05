@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -26,6 +27,7 @@ fun ProfileImageSelector(
     options: List<ProfileImageCropOption>,
     selectedOption: ProfileImageCropOption,
     selectedImageUri: Uri?,
+    characterBackgroundColor: Color,
     onOptionSelected: (ProfileImageCropOption) -> Unit,
     onActionClick: () -> Unit
 ) {
@@ -53,10 +55,11 @@ fun ProfileImageSelector(
                     val currentUri =
                         if (option.type == ProfileType.CUSTOM) selectedImageUri else null
 
-                    ProfileImageCrop(
+                    ProfileImageCircle(
                         resId = option.resId,
                         imageUri = currentUri,
                         scale = option.scale,
+                        backgroundColor = characterBackgroundColor,
                         offsetRatio = option.offsetRatio
                     )
 

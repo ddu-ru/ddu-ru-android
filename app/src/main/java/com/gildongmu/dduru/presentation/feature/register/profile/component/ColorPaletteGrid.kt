@@ -1,17 +1,19 @@
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.FlowRow
-import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.grid.GridCells
+import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
+import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
-import androidx.compose.foundation.clickable
-import androidx.compose.foundation.border
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.unit.dp
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.ui.Alignment
 
 @Composable
 fun ColorDotGrid(
@@ -21,37 +23,26 @@ fun ColorDotGrid(
     selectedColor: Color? = null,
     onColorClick: (Color) -> Unit = {}
 ) {
-    val remaining = if (colors.isEmpty()) 0
-    else if (colors.size % columnCount == 0) 0
-    else columnCount - (colors.size % columnCount)
-
-    val totalSlots = colors.size + remaining
-
-    FlowRow(
-        modifier = modifier.fillMaxWidth(),
-        horizontalArrangement = Arrangement.Start,
+    LazyVerticalGrid(
+        modifier = modifier,
+        columns = GridCells.Fixed(columnCount),
+        horizontalArrangement = Arrangement.SpaceBetween,
         verticalArrangement = Arrangement.spacedBy(12.dp),
-        maxItemsInEachRow = columnCount
+        contentPadding = PaddingValues(0.dp),
+        userScrollEnabled = false
     ) {
-        for (i in 0 until totalSlots) {
-            val color = colors.getOrNull(i) ?: Color.Transparent
+        items(colors) { color ->
             val isSelected = selectedColor != null && color == selectedColor
-
             Box(
                 contentAlignment = Alignment.Center
             ) {
                 Box(
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(28.dp)                 // ✅ 원 크기 고정
                         .background(color, CircleShape)
+                        .clickable { onColorClick(color) }
                         .then(
-                            if (color != Color.Transparent)
-                                Modifier.clickable { onColorClick(color) }
-                            else Modifier
-                        )
-                        .then(
-                            if (isSelected)
-                                Modifier.border(2.dp, Color.White, CircleShape)
+                            if (isSelected) Modifier.border(2.dp, Color.White, CircleShape)
                             else Modifier
                         )
                 )

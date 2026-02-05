@@ -112,6 +112,7 @@ fun ProfileSettingScreen(
                 ProfileCharacterCustomDialog(
                     viewModel = viewModel,
                     onDismiss = {
+                        viewModel.commitBgColorSelection()
                         showCharacterCustomScreen = false
                     }
                 )
