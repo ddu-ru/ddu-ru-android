@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.material3.Button
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.LaunchedEffect
@@ -23,7 +24,6 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.login.LoginViewModel
 import com.gildongmu.dduru.presentation.feature.login.WelcomeScreen
-import com.gildongmu.dduru.presentation.feature.register.screen.SignupScreen
 import com.gildongmu.dduru.presentation.navigation.LoginRoute
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -34,7 +34,6 @@ class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         enableEdgeToEdge()
-
         setContent {
             DduruTheme {
                 val startScreen by viewModel.startScreen.collectAsStateWithLifecycle()
@@ -75,7 +74,7 @@ class MainActivity : ComponentActivity() {
                                         currentScreen = Screen.Welcome
                                     } else {
                                         // 기존 회원 ->Home
-                                        currentScreen = Screen.Welcome
+                                        currentScreen = Screen.Home
                                     }
                                 },
                                 onGuestClick = {
@@ -99,7 +98,12 @@ class MainActivity : ComponentActivity() {
                                 Column(
                                     horizontalAlignment = Alignment.CenterHorizontally
                                 ) {
-                                    SignupScreen()
+                                    Text("여기가 온보딩(생년월일 입력) 화면입니다!")
+                                    Button(onClick = {
+                                        currentScreen = Screen.Home
+                                    }) {
+                                        Text("입력 완료하고 홈으로 가기")
+                                    }
                                 }
                             }
                         }
