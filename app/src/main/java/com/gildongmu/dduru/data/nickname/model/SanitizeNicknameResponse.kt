@@ -4,5 +4,5 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class SanitizeNicknameResponse(
-    val sanitizedNickname: String,
+    val sanitizedNickname: String
 )

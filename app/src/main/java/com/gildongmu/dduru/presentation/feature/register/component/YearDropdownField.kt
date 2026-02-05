@@ -42,7 +42,6 @@ fun YearDropdownField(
     val textColor = if (enabled) Color.Black else Color.Black.copy(alpha = 0.4f)
 
     Column(modifier = modifier) {
-
         Text(
             text = label,
             style = DduruTheme.typography.BodyMedium,
@@ -102,9 +101,9 @@ fun YearDropdownField(
                             text = {
                                 Text(
                                     text = "%02d".format(item),
-                                    color = if (isSelected) DduruTheme.colors.Gray900 else DduruTheme.colors.Gray500,
+                                    color = if (isSelected) DduruTheme.colors.Gray900 else DduruTheme.colors.Gray500
                                 )
-                                   },
+                            },
                             onClick = {
                                 onItemSelected(item)
                                 expanded = false

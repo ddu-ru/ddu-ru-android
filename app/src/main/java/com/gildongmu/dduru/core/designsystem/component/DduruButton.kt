@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.core.designsystem.component
 
-import androidx.compose.ui.graphics.Color
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.height
@@ -12,6 +11,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -29,7 +29,7 @@ fun DduruButton(
         disabledContentColor = Color.White.copy(alpha = 0.7f)
     ),
     cornerSize: Dp = 12.dp,
-    borderColor : Color = DduruTheme.colors.WhiteAlpha30,
+    borderColor: Color = DduruTheme.colors.WhiteAlpha30
 ) {
     val commonShape = RoundedCornerShape(cornerSize)
 

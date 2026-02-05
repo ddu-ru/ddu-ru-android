@@ -11,13 +11,13 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun ValidationMessage(
     modifier: Modifier = Modifier,
-    text : String,
-    color: Color = DduruTheme.colors.ValidationRed,
-){
+    text: String,
+    color: Color = DduruTheme.colors.ValidationRed
+) {
     Text(
         text = text,
         modifier = modifier.padding(top = 4.dp),
         style = DduruTheme.typography.BodySmall,
-        color = color,
+        color = color
     )
 }

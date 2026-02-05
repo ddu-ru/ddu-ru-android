@@ -5,8 +5,8 @@ import com.gildongmu.dduru.data.register.api.OnboardingRegisterApi
 import com.gildongmu.dduru.data.register.model.OnboardingRegisterRequest
 import com.gildongmu.dduru.domain.entity.ExceptionResponse
 import com.gildongmu.dduru.domain.register.OnboardingRegisterRepository
-import kotlinx.coroutines.flow.first
 import javax.inject.Inject
+import kotlinx.coroutines.flow.first
 
 class OnboardingRegisterRepositoryImpl @Inject constructor(
     private val api: OnboardingRegisterApi,
@@ -17,10 +17,9 @@ class OnboardingRegisterRepositoryImpl @Inject constructor(
         nickname: String,
         gender: String,
         phoneNumber: String,
-        birthday: String,
+        birthday: String
     ): Result<Unit> {
         return runCatching {
-
             val verificationToken = verificationTokenLocalDataSource.verificationToken.first()
                 ?: throw IllegalStateException("인증 토큰이 없습니다.")
 

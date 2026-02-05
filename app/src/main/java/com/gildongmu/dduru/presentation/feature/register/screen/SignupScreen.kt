@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.register.screen
 
-
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -35,9 +34,8 @@ import com.gildongmu.dduru.presentation.feature.register.component.NicknameInput
 import com.gildongmu.dduru.presentation.feature.register.component.PhoneInput
 import com.gildongmu.dduru.presentation.feature.register.state.SignupStep
 import com.gildongmu.dduru.presentation.feature.register.viewmodel.SignupViewModel
-import kotlinx.coroutines.delay
 import java.util.Locale
-
+import kotlinx.coroutines.delay
 
 @Composable
 fun SignupScreen(
@@ -147,7 +145,7 @@ fun SignupScreen(
                                 enabled = true,
                                 onRandomClick = viewModel::onRandomNickname,
                                 shouldAutoFocus = (currentStep == SignupStep.NICKNAME),
-                                validationMessage = state.nicknameErrorMessage,
+                                validationMessage = state.nicknameErrorMessage
                             )
                         }
 
@@ -158,7 +156,7 @@ fun SignupScreen(
                                 onValueChange = viewModel::onPhoneChange,
                                 enabled = true,
                                 shouldAutoFocus = (currentStep == SignupStep.PHONE),
-                                validationMessage = state.phoneErrorMessage,
+                                validationMessage = state.phoneErrorMessage
                             )
                         }
 
@@ -171,7 +169,7 @@ fun SignupScreen(
                                 timerText = formatTimer(state.authTimerSeconds),
                                 shouldAutoFocus = (currentStep == SignupStep.AUTH),
                                 onResendClick = viewModel::onPhoneComplete,
-                                validationMessage = state.authCodeErrorMessage,
+                                validationMessage = state.authCodeErrorMessage
                             )
                         }
 
@@ -210,7 +208,8 @@ fun SignupScreen(
                 SignupStep.AUTH_VERIFICATION -> Triple(
                     "다음",
                     true,
-                    viewModel::onRegisterComplete)
+                    viewModel::onRegisterComplete
+                )
 
                 else -> Triple("", false, {})
             }

@@ -17,9 +17,8 @@ fun PhoneInput(
     onValueChange: (String) -> Unit,
     enabled: Boolean,
     shouldAutoFocus: Boolean = false,
-    validationMessage : String,
+    validationMessage: String
 ) {
-
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -37,11 +36,11 @@ fun PhoneInput(
             value = value,
             placeholder = "01012341234",
             onValueChange = onValueChange,
-            enabled = enabled,
+            enabled = enabled
         )
-        if(validationMessage.isNotBlank()) {
+        if (validationMessage.isNotBlank()) {
             ValidationMessage(
-                text = validationMessage,
+                text = validationMessage
             )
         }
     }

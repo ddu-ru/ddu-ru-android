@@ -7,17 +7,17 @@ import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.stringPreferencesKey
 import androidx.datastore.preferences.preferencesDataStore
 import dagger.hilt.android.qualifiers.ApplicationContext
+import javax.inject.Inject
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.map
-import javax.inject.Inject
 
 private val Context.verificationDataStore: DataStore<Preferences> by preferencesDataStore(
     name = "verification_token"
 )
 
-class VerificationTokenLocalDataSourceImpl @Inject constructor(
+class PhoneVerificationTokenLocalDataSourceImpl @Inject constructor(
     @ApplicationContext private val context: Context
-) : VerificationTokenLocalDataSource {
+) : PhoneVerificationTokenLocalDataSource {
 
     companion object {
         private val VERIFICATION_TOKEN_KEY = stringPreferencesKey("verification_token")

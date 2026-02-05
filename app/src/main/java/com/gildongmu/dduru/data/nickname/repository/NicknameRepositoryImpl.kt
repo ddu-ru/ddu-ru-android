@@ -30,7 +30,7 @@ class NicknameRepositoryImpl @Inject constructor(
 
             if (response.status != 200) {
                 throw ExceptionResponse(
-                    status = response.status,
+                    status = response.status
                 )
             }
 

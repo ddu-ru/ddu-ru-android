@@ -2,7 +2,7 @@ package com.gildongmu.dduru.domain.register
 
 object OnboardingRegisterErrorMapper {
     fun toMessage(
-        status: Int? = null,
+        status: Int? = null
     ): String {
         return when (status) {
             400 -> "입력값이 올바르지 않습니다."

@@ -31,7 +31,7 @@ fun NicknameInput(
     enabled: Boolean,
     onRandomClick: () -> Unit,
     shouldAutoFocus: Boolean = false,
-    validationMessage : String,
+    validationMessage: String
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -58,9 +58,9 @@ fun NicknameInput(
                 )
             }
         )
-        if(validationMessage.isNotBlank()) {
+        if (validationMessage.isNotBlank()) {
             ValidationMessage(
-                text = validationMessage,
+                text = validationMessage
             )
         }
     }
@@ -94,7 +94,7 @@ fun RandomNicknameButton(
             modifier = Modifier.padding(1.dp),
             text = "랜덤",
             style = DduruTheme.typography.Button,
-            color = DduruTheme.colors.Gray700,
+            color = DduruTheme.colors.Gray700
         )
     }
 }

@@ -13,11 +13,11 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.BubbleArrowDirection
@@ -25,7 +25,6 @@ import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.register.state.SignupStep
 
 @Composable
-
 fun StepBadge(
     modifier: Modifier = Modifier,
     current: Int,
@@ -80,7 +79,7 @@ fun GreetingMessageCard(
             direction = BubbleArrowDirection.Right,
             arrowHeight = 22.dp,
             arrowWidth = 12.dp,
-            containerColor = Color.White,
+            containerColor = Color.White
         ) {
             // 말풍선 내부 콘텐츠
             Column(
@@ -97,7 +96,7 @@ fun GreetingMessageCard(
                     text = title,
                     style = DduruTheme.typography.TitleMedium,
                     color = DduruTheme.colors.Gray900,
-                    modifier = Modifier.padding(bottom = 8.dp),
+                    modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Text(
                     text = desc,

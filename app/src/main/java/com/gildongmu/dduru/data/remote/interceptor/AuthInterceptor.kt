@@ -1,11 +1,11 @@
 package com.gildongmu.dduru.data.remote.interceptor
 
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
+import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
 import okhttp3.Interceptor
 import okhttp3.Response
-import javax.inject.Inject
 
 class AuthInterceptor @Inject constructor(
     private val tokenLocalDataSource: TokenLocalDataSource

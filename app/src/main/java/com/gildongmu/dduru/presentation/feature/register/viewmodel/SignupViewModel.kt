@@ -24,16 +24,16 @@ import com.gildongmu.dduru.presentation.feature.register.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.util.PhoneValidator
 import com.gildongmu.dduru.presentation.feature.register.util.ValidationMessageMapper.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
     private val nicknameRepository: NicknameRepository,
     private val phoneVerificationRepository: PhoneVerificationRepository,
-    private val onboardingRegisterRepository: OnboardingRegisterRepository,
+    private val onboardingRegisterRepository: OnboardingRegisterRepository
 ) : ViewModel() {
 
     var uiState by mutableStateOf(SignupUiState())
@@ -131,7 +131,7 @@ class SignupViewModel @Inject constructor(
             nicknameRepository.getRandomNickname()
                 .onSuccess { nickname ->
                     uiState = uiState.copy(
-                        nickname = nickname,
+                        nickname = nickname
                     )
                 }
                 .onFailure { e ->
@@ -139,7 +139,7 @@ class SignupViewModel @Inject constructor(
 
                     uiState = uiState.copy(
                         nicknameErrorMessage = NicknameErrorMapper.toMessage(
-                            status = status,
+                            status = status
                         )
                     )
                 }
@@ -178,7 +178,7 @@ class SignupViewModel @Inject constructor(
 
                     uiState = uiState.copy(
                         nicknameErrorMessage = NicknameErrorMapper.toMessage(
-                            status = status,
+                            status = status
                         )
                     )
                 }
@@ -221,7 +221,7 @@ class SignupViewModel @Inject constructor(
                         step = SignupStep.AUTH,
                         isPhoneRequested = true,
                         authTimerSeconds = 180,
-                        authCode = "",
+                        authCode = ""
                     )
                     startAuthTimer()
                 }
@@ -229,7 +229,7 @@ class SignupViewModel @Inject constructor(
                     val status = (e as? ExceptionResponse)?.status
                     uiState = uiState.copy(
                         phoneErrorMessage = PhoneVerificationErrorMapper.sendErrorMessage(
-                            status = status,
+                            status = status
                         )
                     )
                 }
@@ -271,7 +271,7 @@ class SignupViewModel @Inject constructor(
                     val status = (e as? ExceptionResponse)?.status
                     uiState = uiState.copy(
                         authCodeErrorMessage = PhoneVerificationErrorMapper.confirmErrorMessage(
-                            status = status,
+                            status = status
                         )
                     )
                 }
@@ -335,7 +335,7 @@ class SignupViewModel @Inject constructor(
                 uiState = uiState.copy(isLoading = false, step = SignupStep.DONE)
             }.onFailure { e ->
                 uiState = uiState.copy(
-                    isLoading = false,
+                    isLoading = false
 //                    profileErrorMessage = ProfileInitErrorMapper.toMessage(
 //                        status = status,
 //                        serverMessage = e.message

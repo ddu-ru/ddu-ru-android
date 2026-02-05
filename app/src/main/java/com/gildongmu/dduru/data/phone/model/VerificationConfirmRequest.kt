@@ -7,4 +7,3 @@ data class VerificationConfirmRequest(
     val phoneNumber: String,
     val code: String
 )
-

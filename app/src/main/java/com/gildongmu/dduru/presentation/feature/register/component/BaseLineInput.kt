@@ -26,7 +26,6 @@ import androidx.compose.ui.unit.dp
 import androidx.wear.compose.material.Text
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
-
 @Composable
 fun MaterialUnderlineTextField(
     modifier: Modifier = Modifier,
@@ -73,7 +72,7 @@ fun MaterialUnderlineTextField(
                     disabledContainerColor = Color.Transparent,
 
                     focusedIndicatorColor = DduruTheme.colors.Primary,
-                    unfocusedIndicatorColor =DduruTheme.colors.Primary.copy(alpha = 0.4f),
+                    unfocusedIndicatorColor = DduruTheme.colors.Primary.copy(alpha = 0.4f),
                     disabledIndicatorColor = DduruTheme.colors.Primary.copy(alpha = 0.2f),
 
                     cursorColor = DduruTheme.colors.Primary,
@@ -165,7 +164,7 @@ fun MaterialUnderlineNumberTextField(
 @Composable
 fun InlineActionButton(
     text: String,
-    textColor : Color = Color.White,
+    textColor: Color = Color.White,
     enabled: Boolean,
     onClick: () -> Unit,
     colors: ButtonColors? = null,
@@ -186,7 +185,7 @@ fun InlineActionButton(
     ) {
         Text(
             text = text,
-            color = textColor,
+            color = textColor
         )
     }
 }

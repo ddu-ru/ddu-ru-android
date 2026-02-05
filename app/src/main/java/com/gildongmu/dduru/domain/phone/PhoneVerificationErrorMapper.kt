@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.domain.phone
 
-
 object PhoneVerificationErrorMapper {
 
     fun sendErrorMessage(status: Int? = null): String {

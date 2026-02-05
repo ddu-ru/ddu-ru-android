@@ -24,9 +24,8 @@ fun AuthCodeInput(
     timerText: String,
     onResendClick: () -> Unit,
     shouldAutoFocus: Boolean = false,
-    validationMessage : String,
+    validationMessage: String
 ) {
-
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
@@ -62,9 +61,9 @@ fun AuthCodeInput(
                 )
             }
         )
-        if(validationMessage.isNotBlank()) {
+        if (validationMessage.isNotBlank()) {
             ValidationMessage(
-                text = validationMessage,
+                text = validationMessage
             )
         }
     }

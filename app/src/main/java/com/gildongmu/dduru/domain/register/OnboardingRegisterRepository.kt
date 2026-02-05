@@ -5,6 +5,6 @@ interface OnboardingRegisterRepository {
         nickname: String,
         gender: String,
         phoneNumber: String,
-        birthday: String,
+        birthday: String
     ): Result<Unit>
 }

@@ -64,8 +64,8 @@ data class DduruColors(
     val BlackAlpha10: Color,
     val BlackAlpha05: Color,
     val WhiteAlpha30: Color,
-    val GrayBorder : Color,
-    val ValidationRed : Color,
+    val GrayBorder: Color,
+    val ValidationRed: Color
 )
 
 // 3.매핑
@@ -100,7 +100,7 @@ val defaultDduruColors = DduruColors(
     BlackAlpha05 = BlackAlpha05,
     WhiteAlpha30 = WhiteAlpha30,
     GrayBorder = GrayBorder,
-    ValidationRed = ValidationRed,
+    ValidationRed = ValidationRed
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }

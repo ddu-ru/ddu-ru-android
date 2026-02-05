@@ -2,7 +2,7 @@ package com.gildongmu.dduru.data.local
 
 import kotlinx.coroutines.flow.Flow
 
-interface VerificationTokenLocalDataSource {
+interface PhoneVerificationTokenLocalDataSource {
     val verificationToken: Flow<String?>
 
     suspend fun saveVerificationToken(token: String)
