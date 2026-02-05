@@ -64,7 +64,7 @@ fun SurveyResultDetail(
             color = DduruTheme.colors.Gray600
         )
         ResultDescriptionBox(
-            listOf(
+            items = listOf(
                 uiModel.personality,
                 uiModel.strength,
                 uiModel.tip,
