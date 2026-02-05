@@ -1,20 +1,15 @@
 package com.gildongmu.dduru.presentation.feature.register.profile.viewmodel
 
 import android.net.Uri
+import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
-import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.R
-import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileBackgroundColor
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
 import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharingStarted
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.map
-import kotlinx.coroutines.flow.stateIn
 import javax.inject.Inject
 
 @HiltViewModel
@@ -47,20 +42,22 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
 
     val bgColors = ProfileBackgroundColorList
 
-    private val _selectedBgColorId = MutableStateFlow(bgColors.first().id)
-    val selectedBgColorId = _selectedBgColorId.asStateFlow()
+    private val _selectedBgColor = MutableStateFlow(bgColors.first().color)
+    val selectedBgColor = _selectedBgColor.asStateFlow()
 
-    fun onBgColorSelected(id: Int) {
-        _selectedBgColorId.value = id
+    private val _savedBgColor = MutableStateFlow(bgColors.first().color)
+    val savedBgColor = _savedBgColor.asStateFlow()
+
+    fun onBgColorSelected(color: Color) {
+        _selectedBgColor.value = color
     }
-
-    val selectedBgColor: StateFlow<ProfileBackgroundColor> =
-        selectedBgColorId
-            .map { id -> bgColors.firstOrNull { it.id == id } ?: bgColors.first() }
-            .stateIn(viewModelScope, SharingStarted.Companion.WhileSubscribed(5_000), bgColors.first())
 
     fun onImageSelected(uri: Uri?) {
         _selectedImageUri.value = uri
+    }
+
+    fun commitBgColorSelection() {
+        _savedBgColor.value = _selectedBgColor.value
     }
 
     fun onIntroductionChanged(newText: String) {
