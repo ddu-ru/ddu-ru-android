@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.component
 
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
@@ -96,6 +97,24 @@ fun SpeechBubble(
         arrowOffset = arrowOffset
     )
 
+    val horizontalPadding = 24.dp
+    val verticalPadding = 8.dp
+    val contentPadding = when (direction) {
+        BubbleArrowDirection.Bottom -> PaddingValues(
+            start = horizontalPadding,
+            top = verticalPadding,
+            end = horizontalPadding,
+            bottom = verticalPadding + arrowHeight
+        )
+
+        BubbleArrowDirection.Right -> PaddingValues(
+            start = horizontalPadding,
+            top = verticalPadding,
+            end = horizontalPadding + arrowWidth,
+            bottom = verticalPadding
+        )
+    }
+
     Surface(
         modifier = modifier,
         shape = shape,
@@ -103,7 +122,7 @@ fun SpeechBubble(
         shadowElevation = shadowElevation,
     ) {
         Box(
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(contentPadding),
             contentAlignment = Alignment.Center,
         ) {
             content()
