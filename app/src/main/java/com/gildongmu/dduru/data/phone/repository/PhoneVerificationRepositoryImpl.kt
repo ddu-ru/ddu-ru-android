@@ -1,6 +1,6 @@
 package com.gildongmu.dduru.data.phone.repository
 
-import com.gildongmu.dduru.data.local.VerificationTokenLocalDataSource
+import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSource
 import com.gildongmu.dduru.data.phone.api.PhoneVerificationApi
 import com.gildongmu.dduru.data.phone.model.VerificationConfirmRequest
 import com.gildongmu.dduru.data.phone.model.VerificationSendRequest
@@ -10,7 +10,7 @@ import javax.inject.Inject
 
 class PhoneVerificationRepositoryImpl @Inject constructor(
     private val api: PhoneVerificationApi,
-    private val verificationTokenLocalDataSource: VerificationTokenLocalDataSource
+    private val verificationTokenLocalDataSource: PhoneVerificationTokenLocalDataSource
 ) : PhoneVerificationRepository {
 
     override suspend fun sendVerificationCode(phoneNumber: String): Result<String> {

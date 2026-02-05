@@ -1,6 +1,6 @@
 package com.gildongmu.dduru.data.register.repository
 
-import com.gildongmu.dduru.data.local.VerificationTokenLocalDataSource
+import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSource
 import com.gildongmu.dduru.data.register.api.OnboardingRegisterApi
 import com.gildongmu.dduru.data.register.model.OnboardingRegisterRequest
 import com.gildongmu.dduru.domain.entity.ExceptionResponse
@@ -10,7 +10,7 @@ import kotlinx.coroutines.flow.first
 
 class OnboardingRegisterRepositoryImpl @Inject constructor(
     private val api: OnboardingRegisterApi,
-    private val verificationTokenLocalDataSource: VerificationTokenLocalDataSource
+    private val verificationTokenLocalDataSource: PhoneVerificationTokenLocalDataSource
 ) : OnboardingRegisterRepository {
 
     override suspend fun initProfile(

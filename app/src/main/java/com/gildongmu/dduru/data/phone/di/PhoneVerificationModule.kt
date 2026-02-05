@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.data.phone.di
 
-import com.gildongmu.dduru.data.local.VerificationTokenLocalDataSource
-import com.gildongmu.dduru.data.local.VerificationTokenLocalDataSourceImpl
+import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSource
+import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSourceImpl
 import com.gildongmu.dduru.data.phone.api.PhoneVerificationApi
 import com.gildongmu.dduru.data.phone.repository.PhoneVerificationRepositoryImpl
 import com.gildongmu.dduru.domain.phone.PhoneVerificationRepository
@@ -26,8 +26,8 @@ abstract class PhoneVerificationBindModule {
     @Binds
     @Singleton
     abstract fun bindVerificationTokenLocalDataSource(
-        impl: VerificationTokenLocalDataSourceImpl
-    ): VerificationTokenLocalDataSource
+        impl: PhoneVerificationTokenLocalDataSourceImpl
+    ): PhoneVerificationTokenLocalDataSource
 }
 
 @Module
