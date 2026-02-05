@@ -22,6 +22,7 @@ import com.gildongmu.dduru.presentation.feature.register.state.SignupUiState
 import com.gildongmu.dduru.presentation.feature.register.util.AuthCodeValidator
 import com.gildongmu.dduru.presentation.feature.register.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.util.PhoneValidator
+import com.gildongmu.dduru.presentation.feature.register.util.ValidationMessageMapper.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
