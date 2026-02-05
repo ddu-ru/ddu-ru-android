@@ -8,16 +8,18 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
-
-
+import androidx.compose.foundation.clickable
+import androidx.compose.foundation.border
+import androidx.compose.ui.graphics.Color
 
 @Composable
 fun ColorDotGrid(
     modifier: Modifier = Modifier,
     colors: List<Color>,
-    columnCount: Int = 9,
+    columnCount: Int = 8,
+    selectedColor: Color? = null,
+    onColorClick: (Color) -> Unit = {}
 ) {
     val remaining = if (colors.isEmpty()) 0
     else if (colors.size % columnCount == 0) 0
@@ -32,18 +34,26 @@ fun ColorDotGrid(
         maxItemsInEachRow = columnCount
     ) {
         for (i in 0 until totalSlots) {
+            val color = colors.getOrNull(i) ?: Color.Transparent
+            val isSelected = selectedColor != null && color == selectedColor
+
             Box(
-                modifier = Modifier
-                    .weight(1f / columnCount),
                 contentAlignment = Alignment.Center
             ) {
-
-                val color = colors.getOrNull(i) ?: Color.Transparent
-
                 Box(
                     modifier = Modifier
                         .size(28.dp)
                         .background(color, CircleShape)
+                        .then(
+                            if (color != Color.Transparent)
+                                Modifier.clickable { onColorClick(color) }
+                            else Modifier
+                        )
+                        .then(
+                            if (isSelected)
+                                Modifier.border(2.dp, Color.White, CircleShape)
+                            else Modifier
+                        )
                 )
             }
         }

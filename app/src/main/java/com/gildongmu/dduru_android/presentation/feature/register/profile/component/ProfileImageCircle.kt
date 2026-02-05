@@ -18,19 +18,21 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.gildongmu.dduru_android.presentation.feature.register.profile.util.ProfileBackgroundColorList
 
 @Composable
 fun ProfileImageCrop(
     modifier: Modifier = Modifier,
     resId: Int? = null,
     imageUri: Uri? = null,
+    backgroundColor: Color = ProfileBackgroundColorList.first().color,
     scale: Float = 1f,
     offsetRatio: Float = 0f,
     size: Dp = 100.dp
 ){
     Box(
         modifier = modifier
-            .background(Color(0xFFACD3FF), CircleShape)
+            .background(backgroundColor, CircleShape)
             .size(size)
             .clip(CircleShape),
         contentAlignment = Alignment.Center
