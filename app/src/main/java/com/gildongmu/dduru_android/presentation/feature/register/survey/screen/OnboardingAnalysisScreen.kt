@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.register.survey.Screen
+package com.gildongmu.dduru_android.presentation.feature.register.survey.screen
 
 import LoadingFlashing
 import androidx.compose.foundation.Image

@@ -1,4 +1,4 @@
-package com.gildongmu.dduru_android.presentation.feature.register.profile
+package com.gildongmu.dduru_android.presentation.feature.register.profile.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -24,10 +24,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru_android.presentation.component.SpeechBubble
+import com.gildongmu.dduru_android.presentation.feature.register.profile.viewmodel.ProfileViewModel
 import com.gildongmu.dduru_android.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
 import com.gildongmu.dduru_android.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru_android.presentation.feature.register.profile.component.ProfileIntroduction
-import com.gildongmu.dduru_android.presentation.model.ProfileType
+import com.gildongmu.dduru_android.presentation.feature.register.survey.model.ProfileType
 import rememberGalleryLauncher
 
 @Composable

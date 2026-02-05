@@ -1,6 +1,5 @@
-package com.gildongmu.dduru_android.presentation.feature.register.survey.Screen
+package com.gildongmu.dduru_android.presentation.feature.register.survey.screen
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
