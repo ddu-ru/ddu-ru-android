@@ -19,9 +19,9 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun ProfileIntroduction (
-    text: String,               // 뷰모델에서 전달받은 텍스트
-    maxLength: Int,             // 최대 글자 수
-    onValueChange: (String) -> Unit, // 텍스트 변경 이벤트 콜백
+    text: String,
+    maxLength: Int,
+    onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column (
@@ -36,7 +36,8 @@ fun ProfileIntroduction (
             style = DduruTheme.typography.BodyLarge
         )
         Box(
-            modifier = border(1.dp, DduruTheme.colors.Gray300, RoundedCornerShape(16.dp))
+            modifier = Modifier
+                .border(1.dp, DduruTheme.colors.Gray300, RoundedCornerShape(16.dp))
                 .background(Color.White)
         ) {
             BasicTextField(
