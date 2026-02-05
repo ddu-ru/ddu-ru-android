@@ -19,7 +19,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 fun ResultDescriptionBox(
     modifier: Modifier = Modifier,
     items: List<String>
-){
+) {
     Box(
         modifier = modifier
             .fillMaxWidth()
@@ -30,17 +30,17 @@ fun ResultDescriptionBox(
             modifier = Modifier
                 .padding(16.dp),
             verticalArrangement = Arrangement.SpaceEvenly
-        )
-        {   items.forEach {
-            Text(
-                modifier = Modifier
-                    .padding(8.dp),
-                text = "- $it",
-                style = DduruTheme.typography.BodyMedium,
-                textAlign = TextAlign.Center,
-                color = DduruTheme.colors.Gray700
-            )
-        }
+        ) {
+            items.forEach {
+                Text(
+                    modifier = Modifier
+                        .padding(8.dp),
+                    text = "- $it",
+                    style = DduruTheme.typography.BodyMedium,
+                    textAlign = TextAlign.Center,
+                    color = DduruTheme.colors.Gray700
+                )
+            }
         }
     }
 }

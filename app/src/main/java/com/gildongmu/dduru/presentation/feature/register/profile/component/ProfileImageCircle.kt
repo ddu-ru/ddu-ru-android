@@ -28,7 +28,7 @@ fun ProfileImageCircle(
     scale: Float = 1f,
     offsetRatio: Float = 0f,
     size: Dp = 100.dp
-){
+) {
     Box(
         modifier = modifier
             .background(backgroundColor, CircleShape)
@@ -45,7 +45,7 @@ fun ProfileImageCircle(
             modifier = Modifier
                 .fillMaxSize()
                 .scale(scale)
-                .offset{
+                .offset {
                     IntOffset(x = 0, y = (size.toPx() * offsetRatio).toInt())
                 }
         )

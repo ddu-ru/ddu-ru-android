@@ -17,17 +17,14 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.register.survey.state.SurveyResultUiState
 
-
 @Composable
-
 fun SurveyResultDetail(
     uiModel: SurveyResultUiState,
-    modifier: Modifier = Modifier,
-){
+    modifier: Modifier = Modifier
+) {
     Column(
-        horizontalAlignment = Alignment.CenterHorizontally,
-    )
-    {
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
         SpeechBubble(
             modifier = Modifier
         ) {
@@ -51,7 +48,7 @@ fun SurveyResultDetail(
                 .padding(8.dp),
             text = uiModel.avatarName,
             style = DduruTheme.typography.TitleMedium,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
         Text(
             modifier = Modifier
@@ -65,7 +62,7 @@ fun SurveyResultDetail(
             items = listOf(
                 uiModel.personality,
                 uiModel.strength,
-                uiModel.tip,
+                uiModel.tip
             )
         )
     }

@@ -26,13 +26,12 @@ import com.gildongmu.dduru.presentation.component.SpeechBubble
 
 @Composable
 fun OnboardingAnalysisScreen() {
-    Column (
+    Column(
         modifier = Modifier
             .fillMaxSize()
             .statusBarsPadding()
             .navigationBarsPadding()
-            .padding(16.dp)
-        ,
+            .padding(16.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
@@ -41,11 +40,11 @@ fun OnboardingAnalysisScreen() {
                 .fillMaxWidth()
                 .padding(horizontal = 25.dp)
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally,) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 LoadingFlashing()
                 Text(
                     modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
-                    //닉네임 받아와서 출력해야함(나중에 수정)
+                    // 닉네임 받아와서 출력해야함(나중에 수정)
                     text = "답변하신 내용을 바탕으로\n 겨울이 오길 님의 여행 성격을 \n분석하고 있어요!",
                     style = DduruTheme.typography.BodyLarge,
                     textAlign = TextAlign.Center

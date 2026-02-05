@@ -63,7 +63,7 @@ fun OnboardingResultScreen(
                     .weight(1f),
                 text = "내 여행 성격",
                 style = DduruTheme.typography.TitleLarge,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
 
             SurveyResultDetail(

@@ -84,19 +84,19 @@ fun ProfileCharacterCustomDialogContent(
                 ) {
                     IconButton(
                         { onDismiss() },
-                        modifier = Modifier.size(48.dp),
+                        modifier = Modifier.size(48.dp)
                     ) {
                         Icon(
                             modifier = Modifier.size(48.dp),
                             painter = painterResource(id = R.drawable.ic_arrow_back),
                             contentDescription = "뒤로가기",
-                            tint = Color.Unspecified,
+                            tint = Color.Unspecified
                         )
                     }
                     Text(
                         text = "아바타 편집",
                         style = DduruTheme.typography.TitleMedium,
-                        color = Color.White,
+                        color = Color.White
                     )
                     DduruButton(
                         "완료",
@@ -114,7 +114,7 @@ fun ProfileCharacterCustomDialogContent(
                         backgroundColor = selectedBg,
                         scale = 1.6f,
                         offsetRatio = 0.16f,
-                        size = 260.dp,
+                        size = 260.dp
                     )
                     Text(
                         modifier = Modifier
@@ -130,7 +130,7 @@ fun ProfileCharacterCustomDialogContent(
                         text = "포근포근형",
                         style = DduruTheme.typography.TitleMedium,
                         textAlign = TextAlign.Center,
-                        color = Color.White,
+                        color = Color.White
                     )
                 }
                 Column(
@@ -162,7 +162,8 @@ fun ProfileCharacterCustomDialogContent(
 fun ProfileCharacterCustomDialogPreview() {
     DduruTheme {
         val colors = ProfileBackgroundColorList.map { it.color }
-        var selectedBg by remember { mutableStateOf(colors.first())
+        var selectedBg by remember {
+            mutableStateOf(colors.first())
         }
 
         ProfileCharacterCustomDialogContent(

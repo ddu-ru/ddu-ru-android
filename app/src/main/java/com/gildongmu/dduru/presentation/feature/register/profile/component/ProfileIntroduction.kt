@@ -18,17 +18,16 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
-fun ProfileIntroduction (
+fun ProfileIntroduction(
     text: String,
     maxLength: Int,
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column (
+    Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.Start,
-    )
-    {
+        horizontalAlignment = Alignment.Start
+    ) {
         Text(
             modifier = Modifier
                 .padding(8.dp, bottom = 16.dp),

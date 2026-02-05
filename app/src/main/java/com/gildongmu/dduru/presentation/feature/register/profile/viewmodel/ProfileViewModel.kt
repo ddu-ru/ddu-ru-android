@@ -8,9 +8,9 @@ import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBac
 import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileType
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
-import javax.inject.Inject
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor() : ViewModel() {
@@ -22,7 +22,7 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
             1.6f,
             0.16f
         ),
-        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM),
+        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
     )
 
     private val _selectedOption = MutableStateFlow(radioOptions[0])

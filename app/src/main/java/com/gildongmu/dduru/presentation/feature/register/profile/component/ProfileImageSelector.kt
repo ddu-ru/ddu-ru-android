@@ -22,7 +22,6 @@ import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileIma
 import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileType
 
 @Composable
-
 fun ProfileImageSelector(
     options: List<ProfileImageCropOption>,
     selectedOption: ProfileImageCropOption,
@@ -31,11 +30,10 @@ fun ProfileImageSelector(
     onOptionSelected: (ProfileImageCropOption) -> Unit,
     onActionClick: () -> Unit
 ) {
-
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
-    ){
+    ) {
         Row(
             modifier = Modifier
                 .selectableGroup()
@@ -49,9 +47,8 @@ fun ProfileImageSelector(
                     )
                         .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(12.dp),
-                )
-                {
+                    verticalArrangement = Arrangement.spacedBy(12.dp)
+                ) {
                     val currentUri =
                         if (option.type == ProfileType.CUSTOM) selectedImageUri else null
 
@@ -74,7 +71,7 @@ fun ProfileImageSelector(
         Button(
             onActionClick,
             colors = ButtonDefaults.buttonColors(DduruTheme.colors.Gray200),
-            modifier = Modifier.padding(top = 16.dp),
+            modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(
                 text = if (selectedOption.type == ProfileType.CHARACTER) "아바타 편집" else "사진 변경",

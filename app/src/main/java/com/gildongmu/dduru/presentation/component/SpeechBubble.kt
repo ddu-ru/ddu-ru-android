@@ -29,7 +29,7 @@ private class UniversalSpeechBubbleShape(
     private val cornerRadius: Dp,
     private val arrowWidth: Dp,
     private val arrowHeight: Dp,
-    private val arrowOffset: Dp = 0.dp,
+    private val arrowOffset: Dp = 0.dp
 ) : Shape {
 
     override fun createOutline(
@@ -37,7 +37,6 @@ private class UniversalSpeechBubbleShape(
         layoutDirection: LayoutDirection,
         density: Density
     ): Outline = with(density) {
-
         val cr = cornerRadius.toPx()
         val aw = arrowWidth.toPx()
         val ah = arrowHeight.toPx()
@@ -88,7 +87,6 @@ fun SpeechBubble(
     containerColor: Color = Color.White,
     content: @Composable () -> Unit
 ) {
-
     val shape = UniversalSpeechBubbleShape(
         direction = direction,
         cornerRadius = cornerRadius,
@@ -119,11 +117,11 @@ fun SpeechBubble(
         modifier = modifier,
         shape = shape,
         color = containerColor,
-        shadowElevation = shadowElevation,
+        shadowElevation = shadowElevation
     ) {
         Box(
             modifier = Modifier.padding(contentPadding),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             content()
         }

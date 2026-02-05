@@ -1,11 +1,11 @@
 package com.gildongmu.dduru.presentation.feature.register.survey.component
 
-import androidx.compose.runtime.getValue
 import androidx.compose.animation.core.animateFloat
 import androidx.compose.animation.core.infiniteRepeatable
 import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 
 @Composable
 fun LoadingFlashingAnimation(
