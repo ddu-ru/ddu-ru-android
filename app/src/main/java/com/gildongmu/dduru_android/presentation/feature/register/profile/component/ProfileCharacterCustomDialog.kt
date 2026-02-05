@@ -15,6 +15,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -25,11 +26,18 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.gildongmu.dduru_android.core.designsystem.component.DduruButton
 import com.gildongmu.dduru_android.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru_android.presentation.model.ProfileBackgroundColorList
+import com.gildongmu.dduru_android.presentation.feature.login.LoginUiState
+import com.gildongmu.dduru_android.presentation.feature.register.profile.util.ProfileBackgroundColorList
+import com.gildongmu.dduru_android.presentation.feature.register.profile.viewmodel.ProfileViewModel
 
 @Composable
 
-fun ProfileCharacterCustomDialog(onDismiss: () -> Unit){
+fun ProfileCharacterCustomDialog(
+    viewModel: ProfileViewModel,
+    onDismiss: () -> Unit
+){
+    val selectedBg = viewModel.selectedBgColor.collectAsState().value
+
     Dialog(
         onDismissRequest = onDismiss,
         properties = DialogProperties(
@@ -85,6 +93,7 @@ fun ProfileCharacterCustomDialog(onDismiss: () -> Unit){
                     ProfileImageCrop(
                         modifier = Modifier.padding(32.dp),
                         resId = R.drawable.img_penguin_personallity,
+                        backgroundColor = selectedBg.color,
                         scale = 1.6f,
                         offsetRatio = 0.16f,
                         size = 260.dp,
@@ -122,7 +131,7 @@ fun ProfileCharacterCustomDialog(onDismiss: () -> Unit){
                     )
                     ColorDotGrid(
                         modifier = Modifier.padding(bottom = 78.dp),
-                        ProfileBackgroundColorList,
+                        ProfileBackgroundColorList.map { it.color },
                         )
                 }
             }
