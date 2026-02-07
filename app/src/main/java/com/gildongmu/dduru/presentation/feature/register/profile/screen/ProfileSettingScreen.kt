@@ -43,7 +43,6 @@ fun ProfileSettingScreen(
     val selectedBgColor by viewModel.selectedBgColor.collectAsState()
     val characterImage by viewModel.characterImage.collectAsState()
 
-
     val galleryLauncher = rememberGalleryLauncher { uri -> viewModel.onImageSelected(uri) }
 
     Scaffold(

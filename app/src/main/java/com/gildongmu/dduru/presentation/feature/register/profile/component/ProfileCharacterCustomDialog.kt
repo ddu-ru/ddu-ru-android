@@ -144,13 +144,13 @@ fun ProfileCharacterCustomDialog(
 @Preview(showBackground = true)
 @Composable
 fun ProfileCharacterCustomDialogPreview() {
-   var bg by remember { mutableStateOf(Color.Red) }
+    var bg by remember { mutableStateOf(Color.Red) }
 
-        ProfileCharacterCustomDialog(
-            selectedBg = bg,
-            characterImage = R.drawable.img_penguin_personallity,
-            onBgColorSelected = { bg = it },
-            onConfirm = {},
-            onDismiss = {}
-        )
+    ProfileCharacterCustomDialog(
+        selectedBg = bg,
+        characterImage = R.drawable.img_penguin_personallity,
+        onBgColorSelected = { bg = it },
+        onConfirm = {},
+        onDismiss = {}
+    )
 }
