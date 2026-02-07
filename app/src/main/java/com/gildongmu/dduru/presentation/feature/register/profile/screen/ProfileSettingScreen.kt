@@ -26,9 +26,9 @@ import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
+import com.gildongmu.dduru.presentation.feature.register.profile.component.rememberGalleryLauncher
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileType
-import rememberGalleryLauncher
 
 @Composable
 fun ProfileSettingScreen(
@@ -41,6 +41,7 @@ fun ProfileSettingScreen(
     val selectedImageUri by viewModel.selectedImageUri.collectAsState()
     val introduction by viewModel.introduction.collectAsState()
     val savedBgColor by viewModel.savedBgColor.collectAsState()
+    val selectedBgColor by viewModel.selectedBgColor.collectAsState()
 
     val galleryLauncher = rememberGalleryLauncher { uri -> viewModel.onImageSelected(uri) }
 
@@ -110,9 +111,13 @@ fun ProfileSettingScreen(
 
             if (showCharacterCustomScreen) {
                 ProfileCharacterCustomDialog(
-                    viewModel = viewModel,
-                    onDismiss = {
+                    selectedBg = selectedBgColor,
+                    onBgColorSelected = viewModel::onBgColorSelected,
+                    onConfirm = {
                         viewModel.commitBgColorSelection()
+                        showCharacterCustomScreen = false
+                    },
+                    onDismiss = {
                         showCharacterCustomScreen = false
                     }
                 )

@@ -15,11 +15,11 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.SpeechBubble
-import com.gildongmu.dduru.presentation.feature.register.survey.state.SurveyResultUiState
+import com.gildongmu.dduru.presentation.feature.register.survey.state.SurveyResultState
 
 @Composable
 fun SurveyResultDetail(
-    uiModel: SurveyResultUiState,
+    uiModel: SurveyResultState,
     modifier: Modifier = Modifier
 ) {
     Column(
