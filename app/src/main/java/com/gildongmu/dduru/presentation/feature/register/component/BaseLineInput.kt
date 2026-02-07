@@ -164,7 +164,6 @@ fun MaterialUnderlineNumberTextField(
 @Composable
 fun InlineActionButton(
     text: String,
-    textColor: Color = Color.White,
     enabled: Boolean,
     onClick: () -> Unit,
     colors: ButtonColors? = null,
@@ -177,15 +176,14 @@ fun InlineActionButton(
         shape = RoundedCornerShape(12.dp),
         border = border,
         colors = colors ?: ButtonDefaults.buttonColors(
-            containerColor = if (enabled) DduruTheme.colors.Primary else Color(0xFFE4E9F0),
-            contentColor = if (enabled) Color.White else DduruTheme.colors.Primary.copy(alpha = 0.5f),
-            disabledContainerColor = Color(0xFFE4E9F0),
-            disabledContentColor = DduruTheme.colors.Primary.copy(alpha = 0.4f)
+            containerColor = DduruTheme.colors.Primary,
+            contentColor = Color.White,
+            disabledContainerColor = DduruTheme.colors.Gray200,
+            disabledContentColor =  DduruTheme.colors.Gray400
         )
     ) {
         Text(
             text = text,
-            color = textColor
         )
     }
 }
