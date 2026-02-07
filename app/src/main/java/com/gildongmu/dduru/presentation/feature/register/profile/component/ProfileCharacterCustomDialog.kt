@@ -100,7 +100,7 @@ fun ProfileCharacterCustomDialog(
                     )
                     Text(
                         modifier = Modifier
-                            .padding(8.dp, bottom = 24.dp),
+                            .padding(start = 8.dp, end = 8.dp, bottom = 24.dp),
                         text = "아바타 유형",
                         style = DduruTheme.typography.LabelMedium,
                         textAlign = TextAlign.Center,
@@ -108,7 +108,7 @@ fun ProfileCharacterCustomDialog(
                     )
                     Text(
                         modifier = Modifier
-                            .padding(8.dp, bottom = 24.dp),
+                            .padding(start = 8.dp, end = 8.dp, bottom = 24.dp),
                         text = "포근포근형",
                         style = DduruTheme.typography.TitleMedium,
                         textAlign = TextAlign.Center,
@@ -131,6 +131,7 @@ fun ProfileCharacterCustomDialog(
                     ColorDotGrid(
                         modifier = Modifier.padding(bottom = 78.dp),
                         colors = ProfileBackgroundColorList.map { it.color },
+                        selectedColor = selectedBg,
                         onColorClick = onBgColorSelected
                     )
                 }
