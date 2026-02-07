@@ -24,6 +24,7 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
+import androidx.compose.ui.unit.Dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -163,6 +164,8 @@ fun MaterialUnderlineNumberTextField(
 
 @Composable
 fun InlineActionButton(
+    modifier: Modifier = Modifier,
+    width: Dp = 110.dp,
     text: String,
     enabled: Boolean,
     onClick: () -> Unit,
@@ -172,7 +175,9 @@ fun InlineActionButton(
     Button(
         onClick = onClick,
         enabled = enabled,
-        modifier = Modifier.height(36.dp),
+        modifier = modifier
+            .height(36.dp)
+            .width(width),
         shape = RoundedCornerShape(12.dp),
         border = border,
         colors = colors ?: ButtonDefaults.buttonColors(
