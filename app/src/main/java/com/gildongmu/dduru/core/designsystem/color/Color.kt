@@ -4,9 +4,9 @@ import androidx.compose.runtime.Immutable
 import androidx.compose.runtime.staticCompositionLocalOf
 import androidx.compose.ui.graphics.Color
 
-// 1. Reference Token (순수 색상 정의)
-val Blue500 = Color(0xFF289BFF)
-val Blue100 = Color(0xFFC8E5FF)
+val Primary = Color(0xFF289BFF)
+val Secondary = Color(0xFFC8E5FF)
+val Secondary100 = Color(0xFFE3F2FF)
 
 val Gray0 = Color(0xFFFFFFFF) // White는 Gray0으로 정의
 val Gray50 = Color(0xFFF8F9FA)
@@ -30,73 +30,71 @@ val BlackAlpha10 = Color(0x1A000000)
 val BlackAlpha05 = Color(0x0D000000)
 val WhiteAlpha30 = Color(0x4DFFFFFF)
 val GrayBorder = Color(0x80797479)
-// 2. System Token
 
 @Immutable
 data class DduruColors(
-    // [Brand]
-    val Primary: Color,
-    val Secondary: Color,
 
-    // [GrayScale]
-    val Gray0: Color,
-    val Gray50: Color,
-    val Gray100: Color,
-    val Gray200: Color,
-    val Gray300: Color,
-    val Gray400: Color,
-    val Gray500: Color,
-    val Gray600: Color,
-    val Gray700: Color,
-    val Gray800: Color,
-    val Gray846: Color,
-    val Gray868: Color,
-    val Gray900: Color,
-    val Gray928: Color,
-    val Gray958: Color,
+    val primary: Color,
+    val secondary: Color,
+    val secondary100: Color,
 
-    val Black: Color,
+    val gray0: Color,
+    val gray50: Color,
+    val gray100: Color,
+    val gray200: Color,
+    val gray300: Color,
+    val gray400: Color,
+    val gray500: Color,
+    val gray600: Color,
+    val gray700: Color,
+    val gray800: Color,
+    val gray846: Color,
+    val gray868: Color,
+    val gray900: Color,
+    val gray928: Color,
+    val gray958: Color,
 
-    val KakaoYellow: Color,
-    val BlackAlpha14: Color,
-    val BlackAlpha10: Color,
-    val BlackAlpha05: Color,
-    val WhiteAlpha30: Color,
-    val GrayBorder: Color
+    val black: Color,
+
+    val kakaoYellow: Color,
+    val blackAlpha14: Color,
+    val blackAlpha10: Color,
+    val blackAlpha05: Color,
+    val whiteAlpha30: Color,
+    val grayBorder: Color
 )
 
-// 3.매핑
-
 val defaultDduruColors = DduruColors(
-    Primary = Blue500,
-    Secondary = Blue100,
+    primary = Primary,
+    secondary = Secondary,
+    secondary100 = Secondary100,
 
     // GrayScale
-    Gray0 = Gray0,
-    Gray50 = Gray50,
-    Gray100 = Gray100,
-    Gray200 = Gray200,
-    Gray300 = Gray300,
-    Gray400 = Gray400,
-    Gray500 = Gray500,
-    Gray600 = Gray600,
-    Gray700 = Gray700,
-    Gray800 = Gray800,
-    Gray846 = Gray846,
-    Gray868 = Gray868,
-    Gray900 = Gray900,
-    Gray928 = Gray928,
-    Gray958 = Gray958,
+    gray0 = Gray0,
+    gray50 = Gray50,
+    gray100 = Gray100,
+    gray200 = Gray200,
+    gray300 = Gray300,
+    gray400 = Gray400,
+    gray500 = Gray500,
+    gray600 = Gray600,
+    gray700 = Gray700,
+    gray800 = Gray800,
+    gray846 = Gray846,
+    gray868 = Gray868,
+    gray900 = Gray900,
+    gray928 = Gray928,
+    gray958 = Gray958,
 
-    Black = Black,
+    black = Black,
 
-    KakaoYellow = KakaoYellow,
+    kakaoYellow = KakaoYellow,
 
-    BlackAlpha14 = BlackAlpha14,
-    BlackAlpha10 = BlackAlpha10,
-    BlackAlpha05 = BlackAlpha05,
-    WhiteAlpha30 = WhiteAlpha30,
-    GrayBorder = GrayBorder
+    blackAlpha14 = BlackAlpha14,
+    blackAlpha10 = BlackAlpha10,
+    blackAlpha05 = BlackAlpha05,
+    whiteAlpha30 = WhiteAlpha30,
+    grayBorder = GrayBorder
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }
