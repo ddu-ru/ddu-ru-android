@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.register.profile.component
 
-import ColorDotGrid
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -14,7 +13,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -32,28 +30,12 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
-import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileCharacterCustomDialog(
-    viewModel: ProfileViewModel,
-    onDismiss: () -> Unit
-) {
-    val selectedBg = viewModel.selectedBgColor.collectAsState().value
-    ProfileCharacterCustomDialogContent(
-        selectedBg = selectedBg,
-        onBgColorSelected = viewModel::onBgColorSelected,
-        onDismiss = {
-            viewModel.onBgColorSelected(selectedBg)
-            onDismiss()
-        }
-    )
-}
-
-@Composable
-fun ProfileCharacterCustomDialogContent(
     selectedBg: Color,
     onBgColorSelected: (Color) -> Unit,
+    onConfirm: () -> Unit,
     onDismiss: () -> Unit
 ) {
     Dialog(
@@ -100,7 +82,7 @@ fun ProfileCharacterCustomDialogContent(
                     )
                     DduruButton(
                         "완료",
-                        onDismiss,
+                        onConfirm,
                         cornerShape = 99.dp
                     )
                 }
@@ -160,16 +142,12 @@ fun ProfileCharacterCustomDialogContent(
 @Preview(showBackground = true)
 @Composable
 fun ProfileCharacterCustomDialogPreview() {
-    DduruTheme {
-        val colors = ProfileBackgroundColorList.map { it.color }
-        var selectedBg by remember {
-            mutableStateOf(colors.first())
-        }
+   var bg by remember { mutableStateOf(Color.Red) }
 
-        ProfileCharacterCustomDialogContent(
-            selectedBg = selectedBg,
-            onBgColorSelected = { picked -> selectedBg = picked },
+        ProfileCharacterCustomDialog(
+            selectedBg = bg,
+            onBgColorSelected = { bg = it },
+            onConfirm = {},
             onDismiss = {}
         )
-    }
 }
