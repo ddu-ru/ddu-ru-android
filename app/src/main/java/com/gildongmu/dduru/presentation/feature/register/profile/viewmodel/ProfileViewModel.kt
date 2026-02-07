@@ -28,6 +28,9 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     private val _selectedOption = MutableStateFlow(radioOptions[0])
     val selectedOption = _selectedOption.asStateFlow()
 
+    private val _characterImage = MutableStateFlow<Int>(R.drawable.img_penguin_personallity)
+    val characterImage = _characterImage.asStateFlow()
+
     private val _selectedImageUri = MutableStateFlow<Uri?>(null)
     val selectedImageUri = _selectedImageUri.asStateFlow()
 
