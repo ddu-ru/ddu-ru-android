@@ -80,8 +80,6 @@ fun ProfileSettingScreen(
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
                 .padding(innerPadding)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
