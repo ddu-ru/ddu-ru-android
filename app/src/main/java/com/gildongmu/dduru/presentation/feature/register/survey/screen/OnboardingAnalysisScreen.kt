@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.register.survey.screen
 
-import LoadingFlashing
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -23,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.SpeechBubble
+import com.gildongmu.dduru.presentation.feature.register.survey.component.LoadingFlashing
 
 @Composable
 fun OnboardingAnalysisScreen() {
