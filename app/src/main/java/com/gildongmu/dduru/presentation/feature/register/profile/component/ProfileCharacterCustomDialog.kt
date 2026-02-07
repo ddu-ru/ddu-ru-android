@@ -92,7 +92,6 @@ fun ProfileCharacterCustomDialog(
                 ) {
                     ProfileImageCircle(
                         modifier = Modifier.padding(32.dp),
-                        resId = R.drawable.img_penguin_personallity,
                         backgroundColor = selectedBg,
                         scale = 1.6f,
                         offsetRatio = 0.16f,
