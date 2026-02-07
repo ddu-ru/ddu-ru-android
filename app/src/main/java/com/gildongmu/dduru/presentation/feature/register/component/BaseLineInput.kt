@@ -23,7 +23,7 @@ import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Text
+import androidx.compose.material3.Text
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
