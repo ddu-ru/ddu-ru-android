@@ -1,3 +1,5 @@
+package com.gildongmu.dduru.presentation.feature.register.profile.component
+
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.result.contract.ActivityResultContracts
