@@ -25,8 +25,8 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
         ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
     )
 
-    private val _selectedOption = MutableStateFlow(radioOptions[0])
-    val selectedOption = _selectedOption.asStateFlow()
+    private val _profileSelectedOption = MutableStateFlow(radioOptions.first())
+    val profileSelectedOption = _profileSelectedOption.asStateFlow()
 
     private val _characterImage = MutableStateFlow<Int>(R.drawable.img_penguin_personallity)
     val characterImage = _characterImage.asStateFlow()
@@ -39,10 +39,9 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
 
     val maxIntroLength = 60
 
-    fun onOptionSelected(option: ProfileImageCropOption) {
-        _selectedOption.value = option
+    fun onProfileOptionSelected(option: ProfileImageCropOption) {
+        _profileSelectedOption.value = option
     }
-
     val bgColors = ProfileBackgroundColorList
 
     private val _selectedBgColor = MutableStateFlow(bgColors.first().color)

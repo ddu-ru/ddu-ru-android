@@ -36,7 +36,7 @@ fun ProfileSettingScreen(
     val viewModel: ProfileViewModel = hiltViewModel()
     var showCharacterCustomScreen by remember { mutableStateOf(false) }
 
-    val selectedOption by viewModel.selectedOption.collectAsState()
+    val profileSelectedOption by viewModel.profileSelectedOption.collectAsState()
     val selectedImageUri by viewModel.selectedImageUri.collectAsState()
     val introduction by viewModel.introduction.collectAsState()
     val savedBgColor by viewModel.savedBgColor.collectAsState()
@@ -95,12 +95,12 @@ fun ProfileSettingScreen(
 
             ProfileImageSelector(
                 options = viewModel.radioOptions,
-                selectedOption = selectedOption,
+                selectedOption = profileSelectedOption,
                 selectedImageUri = selectedImageUri,
-                onOptionSelected = { viewModel.onOptionSelected(it) },
+                onOptionSelected = { viewModel.onProfileOptionSelected(it) },
                 characterBackgroundColor = savedBgColor,
                 onActionClick = {
-                    if (selectedOption.type == ProfileType.CHARACTER) {
+                    if (profileSelectedOption.type == ProfileType.CHARACTER) {
                         showCharacterCustomScreen = true
                     } else {
                         galleryLauncher.launch("image/*")
