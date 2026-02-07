@@ -1,3 +1,5 @@
+package com.gildongmu.dduru.presentation.feature.register.profile.component
+
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
@@ -38,7 +40,7 @@ fun ColorDotGrid(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(28.dp) // ✅ 원 크기 고정
+                        .size(28.dp)
                         .background(color, CircleShape)
                         .clickable { onColorClick(color) }
                         .then(
