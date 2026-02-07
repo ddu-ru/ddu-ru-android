@@ -23,7 +23,7 @@ fun ResultDescriptionBox(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(DduruTheme.colors.Gray100)
+            .background(DduruTheme.colors.Gray100, RoundedCornerShape(16.dp))
             .border(1.dp, DduruTheme.colors.Gray300, RoundedCornerShape(16.dp))
     ) {
         Column(
