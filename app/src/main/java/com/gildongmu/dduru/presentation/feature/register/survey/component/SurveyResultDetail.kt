@@ -52,7 +52,7 @@ fun SurveyResultDetail(
         )
         Text(
             modifier = Modifier
-                .padding(8.dp, bottom = 24.dp),
+                .padding(bottom = 24.dp),
             text = uiModel.tags.joinToString(" ") { "#$it" },
             style = DduruTheme.typography.LabelMedium,
             textAlign = TextAlign.Center,
