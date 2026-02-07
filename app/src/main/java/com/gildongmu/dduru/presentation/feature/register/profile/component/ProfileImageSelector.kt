@@ -53,7 +53,7 @@ fun ProfileImageSelector(
                         if (option.type == ProfileType.CUSTOM) selectedImageUri else null
 
                     ProfileImageCircle(
-                        resId = option.resId,
+                        characterImage = option.resId,
                         imageUri = currentUri,
                         scale = option.scale,
                         backgroundColor = characterBackgroundColor,
