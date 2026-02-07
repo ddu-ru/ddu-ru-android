@@ -48,14 +48,13 @@ fun AuthCodeInput(
             actionContent = {
                 InlineActionButton(
                     text = "재전송",
-                    textColor = DduruTheme.colors.Gray600,
                     enabled = enabled,
                     onClick = onResendClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
-                        contentColor = DduruTheme.colors.Gray900,
+                        contentColor = DduruTheme.colors.Gray700,
                         disabledContainerColor = Color.White,
-                        disabledContentColor = DduruTheme.colors.Gray400
+                        disabledContentColor = DduruTheme.colors.Gray700
                     ),
                     border = BorderStroke(1.dp, DduruTheme.colors.Gray300)
                 )
