@@ -8,7 +8,7 @@ val Primary = Color(0xFF289BFF)
 val Secondary = Color(0xFFC8E5FF)
 val Secondary100 = Color(0xFFE3F2FF)
 
-val Gray0 = Color(0xFFFFFFFF) // White는 Gray0으로 정의
+val Gray0 = Color(0xFFFFFFFF) // White
 val Gray50 = Color(0xFFF8F9FA)
 val Gray100 = Color(0xFFF1F3F4)
 val Gray200 = Color(0xFFE8EAED)
