@@ -33,6 +33,7 @@ fun GenderSegment(
         DduruButton(
             modifier = Modifier.weight(1f),
             text = "남자",
+            enabled = enabled,
             onClick = { onSelect(Gender.MALE) },
             colors = if (isMaleSelected) {
                 ButtonDefaults.buttonColors(
@@ -52,6 +53,7 @@ fun GenderSegment(
         DduruButton(
             modifier = Modifier.weight(1f),
             text = "여자",
+            enabled = enabled,
             onClick = { onSelect(Gender.FEMALE) },
             colors = if (isFemaleSelected) {
                 ButtonDefaults.buttonColors(
