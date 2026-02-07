@@ -18,11 +18,11 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
-import com.gildongmu.dduru.R
 
 @Composable
 fun ProfileImageCircle(
     modifier: Modifier = Modifier,
+    characterImage: Int,
     imageUri: Uri? = null,
     backgroundColor: Color,
     scale: Float = 1f,
@@ -36,9 +36,10 @@ fun ProfileImageCircle(
             .clip(CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        val model = imageUri ?: R.drawable.img_blank_profile
+        val image = imageUri ?: characterImage
+
         AsyncImage(
-            model = model,
+            model = image,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
