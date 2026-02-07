@@ -34,6 +34,7 @@ import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBac
 @Composable
 fun ProfileCharacterCustomDialog(
     selectedBg: Color,
+    characterImage: Int,
     onBgColorSelected: (Color) -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
@@ -92,6 +93,7 @@ fun ProfileCharacterCustomDialog(
                 ) {
                     ProfileImageCircle(
                         modifier = Modifier.padding(32.dp),
+                        characterImage = characterImage,
                         backgroundColor = selectedBg,
                         scale = 1.6f,
                         offsetRatio = 0.16f,
@@ -130,7 +132,7 @@ fun ProfileCharacterCustomDialog(
                     ColorDotGrid(
                         modifier = Modifier.padding(bottom = 78.dp),
                         colors = ProfileBackgroundColorList.map { it.color },
-                        selectedColor = selectedBg,
+
                         onColorClick = onBgColorSelected
                     )
                 }
@@ -146,6 +148,7 @@ fun ProfileCharacterCustomDialogPreview() {
 
         ProfileCharacterCustomDialog(
             selectedBg = bg,
+            characterImage = R.drawable.img_penguin_personallity,
             onBgColorSelected = { bg = it },
             onConfirm = {},
             onDismiss = {}

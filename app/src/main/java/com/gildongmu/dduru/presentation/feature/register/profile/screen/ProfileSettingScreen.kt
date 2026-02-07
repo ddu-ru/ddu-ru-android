@@ -6,7 +6,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -42,6 +41,8 @@ fun ProfileSettingScreen(
     val introduction by viewModel.introduction.collectAsState()
     val savedBgColor by viewModel.savedBgColor.collectAsState()
     val selectedBgColor by viewModel.selectedBgColor.collectAsState()
+    val characterImage by viewModel.characterImage.collectAsState()
+
 
     val galleryLauncher = rememberGalleryLauncher { uri -> viewModel.onImageSelected(uri) }
 
@@ -110,6 +111,7 @@ fun ProfileSettingScreen(
             if (showCharacterCustomScreen) {
                 ProfileCharacterCustomDialog(
                     selectedBg = selectedBgColor,
+                    characterImage = characterImage,
                     onBgColorSelected = viewModel::onBgColorSelected,
                     onConfirm = {
                         viewModel.commitBgColorSelection()
@@ -129,8 +131,7 @@ fun ProfileSettingScreen(
                     textAlign = TextAlign.Center
                 )
                 Text(
-                    modifier = Modifier
-                        .padding(8.dp, 8.dp, bottom = 24.dp),
+                    modifier = Modifier.padding(start = 8.dp, bottom = 24.dp),
                     text = "뚜르 무드",
                     style = DduruTheme.typography.LabelMedium,
                     textAlign = TextAlign.Center,
