@@ -26,24 +26,24 @@ fun DduruButton(
             .shadow(
                 elevation = 12.dp,
                 shape = RoundedCornerShape(12.dp),
-                spotColor = DduruTheme.colors.BlackAlpha14,
-                ambientColor = DduruTheme.colors.BlackAlpha14
+                spotColor = DduruTheme.colors.blackAlpha14,
+                ambientColor = DduruTheme.colors.blackAlpha14
             )
             .border(
                 width = 1.dp,
-                color = DduruTheme.colors.WhiteAlpha30,
+                color = DduruTheme.colors.whiteAlpha30,
                 shape = RoundedCornerShape(12.dp)
             ),
         colors = ButtonDefaults.buttonColors(
-            containerColor = DduruTheme.colors.Primary
+            containerColor = DduruTheme.colors.primary
         ),
         shape = RoundedCornerShape(12.dp),
         contentPadding = PaddingValues(horizontal = 18.dp, vertical = 3.dp)
     ) {
         Text(
             text = text,
-            style = DduruTheme.typography.ButtonLarge,
-            color = DduruTheme.colors.Gray0
+            style = DduruTheme.typography.H1,
+            color = DduruTheme.colors.gray0
         )
     }
 }

@@ -41,7 +41,7 @@ fun LoginScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
-            .background(DduruTheme.colors.Gray50),
+            .background(DduruTheme.colors.gray50),
         contentAlignment = Alignment.Center
     ) {
         Column(
@@ -71,7 +71,7 @@ fun LoginScreen(
                         .background(
                             brush = Brush.radialGradient(
                                 colors = listOf(
-                                    DduruTheme.colors.Black.copy(alpha = 0.5f),
+                                    DduruTheme.colors.black.copy(alpha = 0.5f),
                                     Color.Transparent
                                 )
                             ),
@@ -100,8 +100,8 @@ fun LoginScreen(
                 LoginButton(
                     iconResId = R.drawable.img_kakao_icon,
                     text = "카카오로 시작하기",
-                    containerColor = DduruTheme.colors.KakaoYellow,
-                    contentColor = DduruTheme.colors.Gray900,
+                    containerColor = DduruTheme.colors.kakaoYellow,
+                    contentColor = DduruTheme.colors.gray900,
                     onClick = onKakaoClick
                 )
 
@@ -109,8 +109,8 @@ fun LoginScreen(
                 LoginButton(
                     iconResId = R.drawable.img_google_icon,
                     text = "구글로 시작하기",
-                    containerColor = DduruTheme.colors.Gray0,
-                    contentColor = DduruTheme.colors.Gray900,
+                    containerColor = DduruTheme.colors.gray0,
+                    contentColor = DduruTheme.colors.gray900,
                     onClick = onGoogleClick,
                     hasBorder = true
                 )
@@ -122,15 +122,15 @@ fun LoginScreen(
             Text(
                 text = "가입 없이 둘러볼래요",
                 modifier = Modifier.clickable { onGuestClick() },
-                style = DduruTheme.typography.LabelMedium,
-                color = DduruTheme.colors.Gray500,
+                style = DduruTheme.typography.Body3,
+                color = DduruTheme.colors.gray500,
                 textAlign = TextAlign.Center
             )
         }
 
         if (isLoading) {
             CircularProgressIndicator(
-                color = DduruTheme.colors.Primary,
+                color = DduruTheme.colors.primary,
                 modifier = Modifier.align(Alignment.Center)
             )
         }
