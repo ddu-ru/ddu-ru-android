@@ -160,7 +160,7 @@ val defaultDduruTypography = DduruTypography(
         fontFamily = Pretendard,
         fontWeight = FontWeight.SemiBold,
         fontSize = 10.sp,
-        lineHeight = 10.sp
+        lineHeight = 12.sp
     )
 )
 
