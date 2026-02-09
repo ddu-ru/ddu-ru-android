@@ -14,6 +14,7 @@ import okhttp3.MediaType.Companion.toMediaType
 import okhttp3.OkHttpClient
 import okhttp3.logging.HttpLoggingInterceptor
 import retrofit2.Retrofit
+import timber.log.Timber
 
 @Module
 @InstallIn(SingletonComponent::class)
@@ -21,7 +22,10 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideBaseUrl(): String = BuildConfig.BASE_URL
+    fun provideBaseUrl(): String {
+        Timber.d("Using base URL: %s", BuildConfig.BASE_URL)
+        return BuildConfig.BASE_URL
+    }
 
     @Provides
     @Singleton

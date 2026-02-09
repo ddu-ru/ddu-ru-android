@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.data.remote.datasourceimpl
 
+/* Legacy Credential Manager flow (kept for reference)
 import android.content.Context
 import android.util.Log
 import androidx.credentials.CredentialManager
@@ -46,3 +47,4 @@ class GoogleAuthDataSourceImpl @Inject constructor(
         }
     }
 }
+*/

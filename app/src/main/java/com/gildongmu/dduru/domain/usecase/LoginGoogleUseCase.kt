@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.domain.usecase
 
+/* Legacy Credential Manager flow (kept for reference)
 import android.content.Context
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import javax.inject.Inject
@@ -11,3 +12,4 @@ class LoginGoogleUseCase @Inject constructor(
         return authRepository.loginWithGoogle(context)
     }
 }
+*/

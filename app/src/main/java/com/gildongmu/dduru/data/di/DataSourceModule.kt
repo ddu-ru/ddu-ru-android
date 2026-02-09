@@ -3,10 +3,8 @@ package com.gildongmu.dduru.data.di
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.local.TokenLocalDataSourceImpl
 import com.gildongmu.dduru.data.remote.datasource.AuthDataSource
-import com.gildongmu.dduru.data.remote.datasource.GoogleAuthDataSource
 import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
 import com.gildongmu.dduru.data.remote.datasourceimpl.AuthDataSourceImpl
-import com.gildongmu.dduru.data.remote.datasourceimpl.GoogleAuthDataSourceImpl
 import com.gildongmu.dduru.data.remote.datasourceimpl.KakaoAuthDataSourceImpl
 import dagger.Binds
 import dagger.Module
@@ -36,9 +34,12 @@ abstract class DataSourceModule {
         impl: KakaoAuthDataSourceImpl
     ): KakaoAuthDataSource
 
+    /*
+    // Legacy Credential Manager binding (kept for reference)
     @Binds
     @Singleton
     abstract fun bindGoogleAuthDataSource(
         googleAuthDataSourceImpl: GoogleAuthDataSourceImpl
     ): GoogleAuthDataSource
+    */
 }
