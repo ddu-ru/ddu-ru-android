@@ -2,8 +2,8 @@ package com.gildongmu.dduru.data.remote.service
 
 import com.gildongmu.dduru.data.remote.dto.request.SurveyRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
-import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
 import com.gildongmu.dduru.data.remote.dto.response.SurveyQuestionsResponse
+import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST

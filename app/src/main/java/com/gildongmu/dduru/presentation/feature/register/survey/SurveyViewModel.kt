@@ -2,16 +2,16 @@ package com.gildongmu.dduru.presentation.feature.register.survey
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gildongmu.dduru.data.model.survey.SurveyState
+import com.gildongmu.dduru.data.model.SurveyState
 import com.gildongmu.dduru.data.remote.dto.response.QuestionItem
 import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
 import com.gildongmu.dduru.domain.repository.SurveyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import javax.inject.Inject
 
 sealed class SurveyUiState {
     object Idle : SurveyUiState()

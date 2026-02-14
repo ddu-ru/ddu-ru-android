@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.data.model.survey
+package com.gildongmu.dduru.data.model
 
 import com.gildongmu.dduru.data.remote.dto.request.SurveyRequest
 

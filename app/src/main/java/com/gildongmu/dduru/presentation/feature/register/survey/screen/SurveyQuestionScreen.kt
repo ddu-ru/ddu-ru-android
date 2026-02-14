@@ -1,6 +1,13 @@
 package com.gildongmu.dduru.presentation.feature.register.survey.screen
 
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
@@ -13,7 +20,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.data.remote.dto.response.QuestionItem
-import com.gildongmu.dduru.presentation.feature.register.survey.components.*
+import com.gildongmu.dduru.presentation.feature.register.survey.components.SurveyGridOptionButton
+import com.gildongmu.dduru.presentation.feature.register.survey.components.SurveyOptionButton
+import com.gildongmu.dduru.presentation.feature.register.survey.components.SurveyQuestionLayout
 
 @Composable
 fun SurveyQuestionScreen(

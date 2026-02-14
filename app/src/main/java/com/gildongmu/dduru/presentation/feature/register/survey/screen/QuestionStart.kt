@@ -18,26 +18,25 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
-import com.gildongmu.dduru.R
-import com.gildongmu.dduru.core.designsystem.component.DduruButton
-import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
+import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.tooling.preview.Devices
+import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.designsystem.component.DduruButton
+import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun QuestionStart(
     modifier: Modifier = Modifier,
     onNextClick: () -> Unit,
-    onGuestClick: ()-> Unit
+    onGuestClick: () -> Unit
 ) {
     Column(
         modifier = modifier
@@ -46,7 +45,6 @@ fun QuestionStart(
             .padding(top = 100.dp, bottom = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Box(
             modifier = Modifier
                 .width(340.dp)
@@ -124,12 +122,13 @@ fun QuestionStart(
     }
 }
 
-
 @Preview(showBackground = true)
 @Composable
 private fun QuestionStartPreview() {
     DduruTheme {
-        QuestionStart(onNextClick = {},
-            onGuestClick = {})
+        QuestionStart(
+            onNextClick = {},
+            onGuestClick = {}
+        )
     }
 }

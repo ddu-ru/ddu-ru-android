@@ -2,8 +2,8 @@ package com.gildongmu.dduru.data.repositoryimpl
 
 import com.gildongmu.dduru.data.remote.datasource.SurveyRemoteDataSource
 import com.gildongmu.dduru.data.remote.dto.request.SurveyRequest
-import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
 import com.gildongmu.dduru.data.remote.dto.response.SurveyQuestionsResponse
+import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
 import com.gildongmu.dduru.domain.repository.SurveyRepository
 import javax.inject.Inject
 

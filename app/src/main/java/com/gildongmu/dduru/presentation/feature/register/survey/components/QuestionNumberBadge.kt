@@ -1,7 +1,10 @@
 package com.gildongmu.dduru.presentation.feature.register.survey.components
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -30,23 +33,23 @@ fun QuestionNumberBadge(
     ) {
         Row(
             horizontalArrangement = Arrangement.spacedBy(7.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = label,
                 style = DduruTheme.typography.Micro,
                 color = DduruTheme.colors.primary,
-                textAlign = TextAlign.Center,
+                textAlign = TextAlign.Center
             )
             Row(
                 horizontalArrangement = Arrangement.spacedBy(2.dp, Alignment.CenterHorizontally),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "$currentQuestion",
                     style = DduruTheme.typography.Micro,
                     color = DduruTheme.colors.primary,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Center
                 )
                 Text(
                     text = "/",
@@ -55,13 +58,13 @@ fun QuestionNumberBadge(
                         lineHeight = 8.sp
                     ),
                     color = DduruTheme.colors.primary,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Center
                 )
                 Text(
                     text = "$totalQuestions",
                     style = DduruTheme.typography.Micro,
                     color = DduruTheme.colors.primary,
-                    textAlign = TextAlign.Center,
+                    textAlign = TextAlign.Center
                 )
             }
         }

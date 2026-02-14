@@ -12,8 +12,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
+import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun SurveyGridOptionButton(
@@ -31,8 +31,11 @@ fun SurveyGridOptionButton(
                 shape = RoundedCornerShape(size = 16.dp)
             )
             .background(
-                color = if (isSelected) DduruTheme.colors.secondary.copy(alpha = 0.3f)
-                else DduruTheme.colors.gray0,
+                color = if (isSelected) {
+                    DduruTheme.colors.secondary.copy(alpha = 0.3f)
+                } else {
+                    DduruTheme.colors.gray0
+                },
                 shape = RoundedCornerShape(size = 16.dp)
             )
             .noRippleClickable(onClick = onClick)
@@ -42,8 +45,11 @@ fun SurveyGridOptionButton(
         Text(
             text = text,
             style = DduruTheme.typography.Title1,
-            color = if (isSelected) DduruTheme.colors.primary
-            else DduruTheme.colors.gray700,
+            color = if (isSelected) {
+                DduruTheme.colors.primary
+            } else {
+                DduruTheme.colors.gray700
+            },
             textAlign = TextAlign.Center,
             maxLines = 2
         )
