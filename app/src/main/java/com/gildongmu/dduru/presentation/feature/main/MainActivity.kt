@@ -68,7 +68,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        /*Screen.Login -> {
+                        Screen.Login -> {
                             LoginRoute(
                                 onLoginSuccess = { isNewUser ->
                                     currentScreen = if (isNewUser) {
@@ -76,16 +76,6 @@ class MainActivity : ComponentActivity() {
                                     } else {
                                         Screen.Home
                                     }
-                                },
-                                onGuestClick = {
-                                    currentScreen = Screen.Home
-                                }
-                            )
-                        }*/
-                        Screen.Login -> {
-                            LoginRoute(
-                                onLoginSuccess = { isNewUser ->
-                                    currentScreen = Screen.Welcome
                                 },
                                 onGuestClick = {
                                     currentScreen = Screen.Home
