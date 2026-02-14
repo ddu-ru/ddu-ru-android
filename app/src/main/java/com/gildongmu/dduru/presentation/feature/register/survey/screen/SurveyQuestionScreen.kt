@@ -19,14 +19,16 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.data.remote.dto.response.QuestionItem
+import com.gildongmu.dduru.domain.entity.Question
+import com.gildongmu.dduru.domain.entity.QuestionOption
+import com.gildongmu.dduru.domain.entity.QuestionType
 import com.gildongmu.dduru.presentation.feature.register.survey.components.SurveyGridOptionButton
 import com.gildongmu.dduru.presentation.feature.register.survey.components.SurveyOptionButton
 import com.gildongmu.dduru.presentation.feature.register.survey.components.SurveyQuestionLayout
 
 @Composable
 fun SurveyQuestionScreen(
-    question: QuestionItem,
+    question: Question,
     selectedOption: Int?,
     selectedOptions: Set<Int>,
     onOptionSelected: (Int) -> Unit,
@@ -35,7 +37,7 @@ fun SurveyQuestionScreen(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isMultiSelect = question.type == "MULTI"
+    val isMultiSelect = question.type == QuestionType.MULTI
 
     SurveyQuestionLayout(
         questionNumber = question.displayOrder,
@@ -66,7 +68,7 @@ fun SurveyQuestionScreen(
 
 @Composable
 private fun SingleSelectContent(
-    options: List<com.gildongmu.dduru.data.remote.dto.response.QuestionOption>,
+    options: List<QuestionOption>,
     selectedOption: Int?,
     onOptionSelected: (Int) -> Unit
 ) {
@@ -86,7 +88,7 @@ private fun SingleSelectContent(
 
 @Composable
 private fun MultiSelectContent(
-    options: List<com.gildongmu.dduru.data.remote.dto.response.QuestionOption>,
+    options: List<QuestionOption>,
     selectedOptions: Set<Int>,
     maxSelect: Int,
     onOptionToggled: (Int) -> Unit,

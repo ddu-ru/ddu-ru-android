@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.register.survey
 
+import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -30,8 +31,17 @@ fun SurveyMainScreen(
     val questions by viewModel.questions.collectAsState()
     val questionsLoading by viewModel.questionsLoading.collectAsState()
 
-    BackHandler(enabled = currentQuestion > 0) {
-        viewModel.previousQuestion()
+    BackHandler(enabled = true) {
+        when {
+            uiState is SurveyUiState.Success -> {
+            }
+            currentQuestion > 0 -> {
+                viewModel.previousQuestion()
+            }
+            else -> {
+                onBackPressed()
+            }
+        }
     }
 
     Box(modifier = modifier.fillMaxSize()) {
@@ -109,7 +119,12 @@ fun SurveyMainScreen(
                                 viewModel.nextQuestion()
                             }
                         },
-                        onBackClick = { viewModel.previousQuestion() }
+                        onBackClick = {
+                            Log.d("SurveyBack", "화면 뒤로 버튼 클릭 - Question: $currentQuestion")
+                            if (currentQuestion > 0) {
+                                viewModel.previousQuestion()
+                            }
+                        }
                     )
                 }
             }

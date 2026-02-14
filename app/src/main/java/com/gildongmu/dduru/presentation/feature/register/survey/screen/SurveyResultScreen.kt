@@ -27,12 +27,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
+import com.gildongmu.dduru.domain.entity.SurveyResult
 import kotlinx.coroutines.delay
 
 @Composable
 fun SurveyResultScreen(
-    result: SurveyResponse,
+    result: SurveyResult,
     onConfirm: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -83,7 +83,7 @@ private fun AnalyzingScreen() {
 
 @Composable
 private fun ResultScreen(
-    result: SurveyResponse,
+    result: SurveyResult,
     onConfirm: () -> Unit
 ) {
     Column(

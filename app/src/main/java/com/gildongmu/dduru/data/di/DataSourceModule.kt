@@ -5,9 +5,11 @@ import com.gildongmu.dduru.data.local.TokenLocalDataSourceImpl
 import com.gildongmu.dduru.data.remote.datasource.AuthDataSource
 import com.gildongmu.dduru.data.remote.datasource.GoogleAuthDataSource
 import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
+import com.gildongmu.dduru.data.remote.datasource.SurveyRemoteDataSource
 import com.gildongmu.dduru.data.remote.datasourceimpl.AuthDataSourceImpl
 import com.gildongmu.dduru.data.remote.datasourceimpl.GoogleAuthDataSourceImpl
 import com.gildongmu.dduru.data.remote.datasourceimpl.KakaoAuthDataSourceImpl
+import com.gildongmu.dduru.data.remote.datasourceimpl.SurveyRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
 import dagger.hilt.InstallIn
@@ -41,4 +43,10 @@ abstract class DataSourceModule {
     abstract fun bindGoogleAuthDataSource(
         googleAuthDataSourceImpl: GoogleAuthDataSourceImpl
     ): GoogleAuthDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindSurveyRemoteDataSource(
+        surveyRemoteDataSourceImpl: SurveyRemoteDataSourceImpl
+    ): SurveyRemoteDataSource
 }

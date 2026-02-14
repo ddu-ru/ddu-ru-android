@@ -1,6 +1,6 @@
 package com.gildongmu.dduru.data.model
 
-import com.gildongmu.dduru.data.remote.dto.request.SurveyRequest
+import com.gildongmu.dduru.domain.entity.SurveyAnswers
 
 data class SurveyState(
     val q1: Int? = null,
@@ -15,14 +15,14 @@ data class SurveyState(
     val q10: Int? = null,
     val q11: Int? = null
 ) {
-    fun toRequest(): SurveyRequest? {
+    fun toAnswers(): SurveyAnswers? {
         val singleAnswers = listOf(q1, q2, q3, q4, q5, q6, q8, q9, q10, q11)
 
-        if (singleAnswers.any { it == null } || q7.isEmpty()) {
+        if (singleAnswers.any { it == null } || q7.isEmpty() || q7.size > 3) {
             return null
         }
 
-        return SurveyRequest(
+        return SurveyAnswers(
             q1 = q1!!,
             q2 = q2!!,
             q3 = q3!!,

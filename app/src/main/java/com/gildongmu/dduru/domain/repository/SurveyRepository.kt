@@ -1,11 +1,11 @@
 package com.gildongmu.dduru.domain.repository
 
-import com.gildongmu.dduru.data.remote.dto.request.SurveyRequest
-import com.gildongmu.dduru.data.remote.dto.response.SurveyQuestionsResponse
-import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
+import com.gildongmu.dduru.domain.entity.SurveyAnswers
+import com.gildongmu.dduru.domain.entity.SurveyQuestions
+import com.gildongmu.dduru.domain.entity.SurveyResult
 
 interface SurveyRepository {
-    suspend fun submitSurvey(request: SurveyRequest): Result<SurveyResponse>
-    suspend fun getMySurveyResult(): Result<SurveyResponse>
-    suspend fun getSurveyQuestions(): Result<SurveyQuestionsResponse>
+    suspend fun submitSurvey(answers: SurveyAnswers): Result<SurveyResult>
+    suspend fun getMySurveyResult(): Result<SurveyResult>
+    suspend fun getSurveyQuestions(): Result<SurveyQuestions>
 }

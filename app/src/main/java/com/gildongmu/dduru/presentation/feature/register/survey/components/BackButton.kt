@@ -2,7 +2,6 @@ package com.gildongmu.dduru.presentation.feature.register.survey.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,6 +14,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -44,7 +44,7 @@ fun BackButton(
                 color = DduruTheme.colors.whiteAlpha30,
                 shape = RoundedCornerShape(size = 99.dp)
             )
-            .clickable(onClick = onClick)
+            .noRippleClickable(onClick = onClick)
             .padding(8.dp),
         contentAlignment = Alignment.Center
     ) {

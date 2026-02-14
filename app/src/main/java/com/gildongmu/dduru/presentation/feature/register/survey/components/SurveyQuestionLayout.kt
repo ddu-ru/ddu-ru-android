@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.zIndex
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -38,12 +39,14 @@ fun SurveyQuestionLayout(
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(top = 40.dp, start = 16.dp)
+                .zIndex(10f)
         )
 
         PenguinCharacter(
             modifier = Modifier
                 .align(Alignment.TopCenter)
                 .padding(top = 55.dp)
+                .zIndex(5f)
         )
 
         Column(

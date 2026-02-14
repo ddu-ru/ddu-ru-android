@@ -3,8 +3,8 @@ package com.gildongmu.dduru.presentation.feature.register.survey
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.model.SurveyState
-import com.gildongmu.dduru.data.remote.dto.response.QuestionItem
-import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
+import com.gildongmu.dduru.domain.entity.Question
+import com.gildongmu.dduru.domain.entity.SurveyResult
 import com.gildongmu.dduru.domain.repository.SurveyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -16,7 +16,7 @@ import kotlinx.coroutines.launch
 sealed class SurveyUiState {
     object Idle : SurveyUiState()
     object Loading : SurveyUiState()
-    data class Success(val result: SurveyResponse) : SurveyUiState()
+    data class Success(val result: SurveyResult) : SurveyUiState()
     data class Error(val message: String) : SurveyUiState()
 }
 
@@ -34,8 +34,8 @@ class SurveyViewModel @Inject constructor(
     private val _currentQuestion = MutableStateFlow(0)
     val currentQuestion: StateFlow<Int> = _currentQuestion.asStateFlow()
 
-    private val _questions = MutableStateFlow<List<QuestionItem>>(emptyList())
-    val questions: StateFlow<List<QuestionItem>> = _questions.asStateFlow()
+    private val _questions = MutableStateFlow<List<Question>>(emptyList())
+    val questions: StateFlow<List<Question>> = _questions.asStateFlow()
 
     private val _questionsLoading = MutableStateFlow(true)
     val questionsLoading: StateFlow<Boolean> = _questionsLoading.asStateFlow()
@@ -106,10 +106,9 @@ class SurveyViewModel @Inject constructor(
             _currentQuestion.value -= 1
         }
     }
-
     fun submitSurvey() {
-        val request = _surveyState.value.toRequest()
-        if (request == null) {
+        val answers = _surveyState.value.toAnswers()
+        if (answers == null) {
             _uiState.value = SurveyUiState.Error("모든 질문에 답변해주세요.")
             return
         }
@@ -117,11 +116,11 @@ class SurveyViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = SurveyUiState.Loading
 
-            val result = surveyRepository.submitSurvey(request)
+            val result = surveyRepository.submitSurvey(answers)
 
             result.fold(
-                onSuccess = { surveyResponse ->
-                    _uiState.value = SurveyUiState.Success(surveyResponse)
+                onSuccess = { surveyResult ->
+                    _uiState.value = SurveyUiState.Success(surveyResult)
                 },
                 onFailure = { error ->
                     _uiState.value = SurveyUiState.Error(
@@ -139,8 +138,8 @@ class SurveyViewModel @Inject constructor(
             val result = surveyRepository.getMySurveyResult()
 
             result.fold(
-                onSuccess = { surveyResponse ->
-                    _uiState.value = SurveyUiState.Success(surveyResponse)
+                onSuccess = { surveyResult ->
+                    _uiState.value = SurveyUiState.Success(surveyResult)
                 },
                 onFailure = { error ->
                     if (error.message?.contains("찾을 수 없습니다") == true) {
