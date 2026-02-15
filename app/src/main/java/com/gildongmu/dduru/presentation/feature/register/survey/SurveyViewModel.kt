@@ -96,7 +96,7 @@ class SurveyViewModel @Inject constructor(
 
     fun nextQuestion() {
         val totalQuestions = _questions.value.size
-        if (_currentQuestion.value < totalQuestions -1) {
+        if (_currentQuestion.value < totalQuestions) {
             _currentQuestion.value += 1
         }
     }

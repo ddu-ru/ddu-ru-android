@@ -15,6 +15,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -39,14 +40,14 @@ class MainActivity : ComponentActivity() {
 
                 Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
 
-                    var currentScreen by remember { mutableStateOf(Screen.Splash) }
+                    var currentScreen by rememberSaveable { mutableStateOf(Screen.Splash) }
 
                     val modifier = Modifier
                         .fillMaxSize()
                         .padding(innerPadding)
 
                     LaunchedEffect(startScreen) {
-                        if (startScreen != Screen.Splash) {
+                        if (currentScreen == Screen.Splash && startScreen != Screen.Splash) {
                             currentScreen = startScreen
                             if (startScreen == Screen.Home) {
                                 Toast.makeText(
@@ -68,7 +69,7 @@ class MainActivity : ComponentActivity() {
                             }
                         }
 
-                        /*Screen.Login -> {
+                        Screen.Login -> {
                             LoginRoute(
                                 onLoginSuccess = { isNewUser ->
                                     currentScreen = if (isNewUser) {
@@ -76,16 +77,6 @@ class MainActivity : ComponentActivity() {
                                     } else {
                                         Screen.Home
                                     }
-                                },
-                                onGuestClick = {
-                                    currentScreen = Screen.Home
-                                }
-                            )
-                        }*/
-                        Screen.Login -> {
-                            LoginRoute(
-                                onLoginSuccess = { isNewUser ->
-                                    currentScreen = Screen.Welcome // 🔥 무조건 Welcome으로
                                 },
                                 onGuestClick = {
                                     currentScreen = Screen.Home
