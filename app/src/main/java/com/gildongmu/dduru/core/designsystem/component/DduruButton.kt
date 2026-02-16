@@ -23,8 +23,8 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 enum class DduruButtonStyle {
-    FILLED, //파란색 채워진 버튼
-    OUTLINED //회색 테두리 버튼
+    FILLED, // 파란색 채워진 버튼
+    OUTLINED // 회색 테두리 버튼
 }
 
 @Composable
