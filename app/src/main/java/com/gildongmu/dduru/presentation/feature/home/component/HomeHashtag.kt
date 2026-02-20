@@ -20,7 +20,7 @@ fun HomeHashtag(
 ) {
     Box(
         modifier = modifier
-            .clip(shape=RoundedCornerShape(size=99.dp))
+            .clip(shape = RoundedCornerShape(size = 99.dp))
             .background(color = DduruTheme.colors.gray300.copy(alpha = 0.3f))
             .padding(horizontal = 12.dp, vertical = 8.dp),
         contentAlignment = Alignment.Center
