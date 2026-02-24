@@ -1,4 +1,5 @@
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.*
@@ -29,14 +30,15 @@ fun BottomNavBar(
             .clip(RoundedCornerShape(99.dp))
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         items.forEach { item ->
             val isSelected = item.key == currentRoute
             BottomNavBarItem(
                 item = item,
                 isSelected = isSelected,
-                onClick = { onItemClick(item.key) }
+                onClick = { onItemClick(item.key) },
+                modifier = Modifier.weight(1f)
             )
         }
     }
@@ -46,7 +48,8 @@ fun BottomNavBar(
 private fun BottomNavBarItem(
     item: BottomNavItem,
     isSelected: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     val activeColor = DduruTheme.colors.primary
     val inactiveColor = DduruTheme.colors.gray500
@@ -55,15 +58,26 @@ private fun BottomNavBarItem(
     val backgroundColor = if (isSelected) DduruTheme.colors.blackAlpha05 else Color.Transparent
 
     Column(
-        modifier = Modifier
+        modifier = modifier
             .clip(RoundedCornerShape(99.dp))
             .background(backgroundColor)
+            .then(
+                if (isSelected) {
+                    Modifier.border(
+                        width = 1.dp,
+                        color = DduruTheme.colors.gray0.copy(alpha = .3f),
+                        shape = RoundedCornerShape(99.dp)
+                    )
+                } else {
+                    Modifier
+                }
+            )
             .clickable(
                 onClick = onClick,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             )
-            .padding(horizontal = 23.dp, vertical = 7.dp),
+            .padding(vertical = 7.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
