@@ -16,8 +16,8 @@ class RootViewModel @Inject constructor(
     private val tokenLocalDataSource: TokenLocalDataSource
 ) : ViewModel() {
 
-    private val _startDestination = MutableStateFlow<ScreenRoute?>(null)
-    val startDestination: StateFlow<ScreenRoute?> = _startDestination.asStateFlow()
+    private val _startDestination = MutableStateFlow<RootNavRoute?>(null)
+    val startDestination: StateFlow<RootNavRoute?> = _startDestination.asStateFlow()
 
     init {
         checkLoginStatus()
@@ -27,9 +27,9 @@ class RootViewModel @Inject constructor(
         viewModelScope.launch {
             val accessToken = tokenLocalDataSource.accessToken.first()
             if (accessToken.isNullOrBlank()) {
-                _startDestination.value = ScreenRoute.LoginRoute
+                _startDestination.value = RootNavRoute.LoginNavRoute
             } else {
-                _startDestination.value = ScreenRoute.MainRoute
+                _startDestination.value = RootNavRoute.MainNavRoute
             }
         }
     }
