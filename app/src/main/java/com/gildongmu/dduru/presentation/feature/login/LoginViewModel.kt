@@ -4,17 +4,13 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
-import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.usecase.LoginGoogleUseCase
 import com.gildongmu.dduru.domain.usecase.LoginKakaoUseCase
-import com.gildongmu.dduru.presentation.feature.main.Screen
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 // UI 상태 정의
@@ -27,39 +23,18 @@ sealed class LoginUiState {
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
-    private val authRepository: AuthRepository,
     private val loginGoogleUseCase: LoginGoogleUseCase,
     private val loginKakaoUseCase: LoginKakaoUseCase,
     private val kakaoAuthDataSource: KakaoAuthDataSource,
-    private val tokenLocalDataSource: TokenLocalDataSource
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
     val uiState: StateFlow<LoginUiState> = _uiState
 
-    // 앱 시작시 이동할 화면 상태 관리
-    private val _startScreen = MutableStateFlow<Screen>(Screen.Splash)
-    val startScreen: StateFlow<Screen> = _startScreen
-
-    init {
-        checkLoginStatus()
-    }
-    private fun checkLoginStatus() {
-        viewModelScope.launch {
-            val accessToken = tokenLocalDataSource.accessToken.first()
-            if (!accessToken.isNullOrBlank()) {
-                _startScreen.value = Screen.Home
-            } else {
-                _startScreen.value = Screen.Login
-            }
-        }
-    }
-
     fun startGoogleLogin(context: Context) {
         viewModelScope.launch {
             _uiState.value = LoginUiState.Loading
 
-            // UseCase를 통해 바로 로그인 진행
             val result = loginGoogleUseCase(context)
 
             result.onSuccess { isNewUser ->
