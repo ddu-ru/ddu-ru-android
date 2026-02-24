@@ -131,7 +131,7 @@ dependencies {
     implementation(libs.androidx.navigation3.ui)
     implementation(libs.androidx.lifecycle.viewmodel.navigation3)
 
-    implementation("dev.chrisbanes.haze:haze:0.7.3")
+    implementation(libs.haze)
 }
 
 ktlint {
