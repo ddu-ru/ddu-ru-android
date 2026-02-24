@@ -14,6 +14,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.presentation.feature.login.LoginBinder
 import com.gildongmu.dduru.presentation.feature.login.WelcomeScreen
+import com.gildongmu.dduru.presentation.feature.main.MainScreen
 
 @Composable
 fun RootNavigation(
@@ -33,39 +34,42 @@ fun RootNavigation(
             backStack = rootBackStack,
             entryProvider = { route ->
                 when (route) {
-                    is ScreenRoute.LoginRoute -> NavEntry(route) {
+                    is RootNavRoute.LoginNavRoute -> NavEntry(route) {
                         LoginBinder(
                             onLoginSuccess = { isNewUser ->
                                 if (isNewUser) {
                                     rootBackStack.clear()
-                                    rootBackStack.add(ScreenRoute.WelcomeRoute)
+                                    rootBackStack.add(RootNavRoute.WelcomeNavRoute)
                                 } else {
                                     rootBackStack.clear()
-                                    rootBackStack.add(ScreenRoute.MainRoute)
+                                    rootBackStack.add(RootNavRoute.MainNavRoute)
                                 }
                             },
                             onGuestClick = {
                                 rootBackStack.clear()
-                                rootBackStack.add(ScreenRoute.MainRoute)
+                                rootBackStack.add(RootNavRoute.MainNavRoute)
                             }
+
+
                         )
                     }
 
-                    is ScreenRoute.WelcomeRoute -> NavEntry(route) {
+                    is RootNavRoute.WelcomeNavRoute -> NavEntry(route) {
                         WelcomeScreen(
                             onNextClick = {
                                 rootBackStack.clear()
-                                rootBackStack.add(ScreenRoute.RegisterRoute)
+                                rootBackStack.add(RootNavRoute.RegisterNavRoute)
                             }
                         )
                     }
 
-                    is ScreenRoute.RegisterRoute -> NavEntry(route) {}
-                    is ScreenRoute.MainRoute -> NavEntry(route) {}
-                    is ScreenRoute.MatchingRoute -> NavEntry(route) {}
-                    is ScreenRoute.MyPageRoute -> NavEntry(route) {}
-                    is ScreenRoute.ChatRoute -> NavEntry(route) {}
-                    is ScreenRoute.BoardRoute -> NavEntry(route) {}
+                    is RootNavRoute.RegisterNavRoute -> NavEntry(route) {}
+
+                    is RootNavRoute.MainNavRoute -> NavEntry(route) {
+                        MainScreen(
+                        )
+                    }
+
                     else -> NavEntry(route) {}
                 }
             }
