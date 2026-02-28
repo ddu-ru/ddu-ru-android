@@ -55,7 +55,6 @@ fun GreetingMessageCard(
     val stepContents = listOf(
         SignupStep.BIRTH to ("생년월일을 알려주세요" to "정확한 나이를 확인해요"),
         SignupStep.GENDER to ("성별을 선택해주세요" to "추천에 사용돼요"),
-        SignupStep.NICKNAME to ("닉네임을 입력해주세요" to "회원님을 뭐라고 부를까요?"),
         SignupStep.PHONE to ("전화번호를 입력해주세요" to "본인 확인을 위해 필요해요"),
         SignupStep.AUTH to ("인증번호를 입력해주세요" to "문자로 받은 번호를 입력하세요"),
         SignupStep.DONE to ("가입이 완료됐어요" to "이제 두루두루 즐겨봐요!")

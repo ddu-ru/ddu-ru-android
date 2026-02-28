@@ -4,8 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class OnboardingRegisterRequest(
-    val nickname: String,
-
     val gender: String,
 
     val phoneNumber: String,

@@ -7,20 +7,16 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.util.DateUtils
 import com.gildongmu.dduru.domain.entity.ExceptionResponse
-import com.gildongmu.dduru.domain.nickname.NicknameErrorMapper
-import com.gildongmu.dduru.domain.nickname.NicknameRepository
 import com.gildongmu.dduru.domain.phone.PhoneVerificationErrorMapper
 import com.gildongmu.dduru.domain.phone.PhoneVerificationRepository
 import com.gildongmu.dduru.domain.register.OnboardingRegisterRepository
 import com.gildongmu.dduru.presentation.feature.register.state.AuthCodeValidationResult
 import com.gildongmu.dduru.presentation.feature.register.state.CompletedItem
 import com.gildongmu.dduru.presentation.feature.register.state.Gender
-import com.gildongmu.dduru.presentation.feature.register.state.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.state.PhoneValidationResult
 import com.gildongmu.dduru.presentation.feature.register.state.SignupStep
 import com.gildongmu.dduru.presentation.feature.register.state.SignupUiState
 import com.gildongmu.dduru.presentation.feature.register.util.AuthCodeValidator
-import com.gildongmu.dduru.presentation.feature.register.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.util.PhoneValidator
 import com.gildongmu.dduru.presentation.feature.register.util.ValidationMessageMapper.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -31,7 +27,6 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
-    private val nicknameRepository: NicknameRepository,
     private val phoneVerificationRepository: PhoneVerificationRepository,
     private val onboardingRegisterRepository: OnboardingRegisterRepository
 ) : ViewModel() {
@@ -107,7 +102,7 @@ class SignupViewModel @Inject constructor(
             value = if (gender == Gender.MALE) "남자" else "여자"
         )
         val nextStep = if (uiState.step.ordinal <= SignupStep.GENDER.ordinal) {
-            SignupStep.NICKNAME
+            SignupStep.PHONE
         } else {
             uiState.step
         }
@@ -116,73 +111,6 @@ class SignupViewModel @Inject constructor(
             completedItems = updatedItems,
             step = nextStep
         )
-    }
-
-    fun onNicknameChange(value: String) {
-        uiState = uiState.copy(nickname = value)
-    }
-
-    fun onRandomNickname() {
-        viewModelScope.launch {
-            uiState = uiState.copy(
-                nicknameErrorMessage = ""
-            )
-
-            nicknameRepository.getRandomNickname()
-                .onSuccess { nickname ->
-                    uiState = uiState.copy(
-                        nickname = nickname
-                    )
-                }
-                .onFailure { e ->
-                    val status = (e as? ExceptionResponse)?.status
-
-                    uiState = uiState.copy(
-                        nicknameErrorMessage = NicknameErrorMapper.toMessage(
-                            status = status
-                        )
-                    )
-                }
-        }
-    }
-
-    fun onNicknameComplete() {
-        val result = NicknameValidator.validate(uiState.nickname)
-
-        if (result != NicknameValidationResult.VALID) {
-            uiState = uiState.copy(
-                nicknameErrorMessage = result.toMessage()
-            )
-            return
-        }
-
-        viewModelScope.launch {
-            uiState = uiState.copy(
-                nicknameErrorMessage = ""
-            )
-
-            nicknameRepository.sanitizeNickname(uiState.nickname)
-                .onSuccess { sanitized ->
-                    uiState = uiState.copy(
-                        nickname = uiState.nickname,
-                        nicknameErrorMessage = "",
-                        completedItems = uiState.completedItems + CompletedItem(
-                            label = "닉네임",
-                            value = uiState.nickname
-                        ),
-                        step = SignupStep.PHONE
-                    )
-                }
-                .onFailure { e ->
-                    val status = (e as? ExceptionResponse)?.status
-
-                    uiState = uiState.copy(
-                        nicknameErrorMessage = NicknameErrorMapper.toMessage(
-                            status = status
-                        )
-                    )
-                }
-        }
     }
 
     fun onPhoneChange(value: String) {
@@ -203,14 +131,7 @@ class SignupViewModel @Inject constructor(
             phoneVerificationRepository.sendVerificationCode(uiState.phoneNumber)
                 .onSuccess {
                     val itemsWithoutPhone = uiState.completedItems.filterNot { it.label == "전화번호" }
-                    val ensuredNickname = if (
-                        itemsWithoutPhone.none { it.label == "닉네임" } && uiState.nickname.isNotBlank()
-                    ) {
-                        itemsWithoutPhone + CompletedItem(label = "닉네임", value = uiState.nickname)
-                    } else {
-                        itemsWithoutPhone
-                    }
-                    val updatedItems = ensuredNickname + CompletedItem(
+                    val updatedItems = itemsWithoutPhone + CompletedItem(
                         label = "전화번호",
                         value = uiState.phoneNumber
                     )
@@ -327,7 +248,6 @@ class SignupViewModel @Inject constructor(
             val birthday = "%04d-%02d-%02d".format(year, month, day)
 
             onboardingRegisterRepository.initProfile(
-                nickname = uiState.nickname,
                 gender = genderValue,
                 phoneNumber = uiState.phoneNumber,
                 birthday = birthday

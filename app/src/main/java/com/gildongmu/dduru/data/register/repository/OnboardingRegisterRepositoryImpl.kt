@@ -14,7 +14,6 @@ class OnboardingRegisterRepositoryImpl @Inject constructor(
 ) : OnboardingRegisterRepository {
 
     override suspend fun initProfile(
-        nickname: String,
         gender: String,
         phoneNumber: String,
         birthday: String
@@ -25,7 +24,6 @@ class OnboardingRegisterRepositoryImpl @Inject constructor(
 
             val response = api.initProfile(
                 OnboardingRegisterRequest(
-                    nickname = nickname,
                     gender = gender,
                     phoneNumber = phoneNumber,
                     birthday = birthday,

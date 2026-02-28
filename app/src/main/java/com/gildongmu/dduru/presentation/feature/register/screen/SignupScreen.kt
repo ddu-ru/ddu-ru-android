@@ -50,7 +50,6 @@ fun SignupScreen(
         listOf(
             SignupStep.BIRTH,
             SignupStep.GENDER,
-            SignupStep.NICKNAME,
             SignupStep.PHONE,
             SignupStep.AUTH,
             SignupStep.AUTH_VERIFICATION,
@@ -64,7 +63,6 @@ fun SignupScreen(
     }
 
     val isBottomButtonVisible = when (currentStep) {
-        SignupStep.NICKNAME,
         SignupStep.PHONE,
         SignupStep.AUTH,
         SignupStep.AUTH_VERIFICATION -> true
@@ -137,18 +135,6 @@ fun SignupScreen(
                             )
                         }
 
-                        SignupStep.NICKNAME -> {
-                            NicknameInput(
-                                modifier = Modifier,
-                                value = state.nickname,
-                                onValueChange = viewModel::onNicknameChange,
-                                enabled = true,
-                                onRandomClick = viewModel::onRandomNickname,
-                                shouldAutoFocus = (currentStep == SignupStep.NICKNAME),
-                                validationMessage = state.nicknameErrorMessage
-                            )
-                        }
-
                         SignupStep.PHONE -> {
                             PhoneInput(
                                 modifier = Modifier,
@@ -189,11 +175,6 @@ fun SignupScreen(
 
         if (isBottomButtonVisible) {
             val (buttonText, buttonEnabled, onButtonClick) = when (currentStep) {
-                SignupStep.NICKNAME -> Triple(
-                    "다음",
-                    state.nickname.length >= 2,
-                    viewModel::onNicknameComplete
-                )
                 SignupStep.PHONE -> Triple(
                     "인증번호 전송",
                     state.phoneNumber.length >= 10,
