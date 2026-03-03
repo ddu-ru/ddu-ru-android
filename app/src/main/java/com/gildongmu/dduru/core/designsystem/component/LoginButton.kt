@@ -44,14 +44,14 @@ fun LoginButton(
             .shadow(
                 elevation = 8.dp,
                 shape = buttonShape,
-                spotColor = DduruTheme.colors.BlackAlpha10,
-                ambientColor = DduruTheme.colors.BlackAlpha10
+                spotColor = DduruTheme.colors.blackAlpha10,
+                ambientColor = DduruTheme.colors.blackAlpha10
             )
             .then(
                 if (hasBorder) {
                     Modifier.border(
                         width = 0.8.dp,
-                        color = DduruTheme.colors.GrayBorder,
+                        color = DduruTheme.colors.grayBorder,
                         shape = buttonShape
                     )
                 } else {
@@ -83,7 +83,7 @@ fun LoginButton(
             Text(
                 text = text,
                 color = contentColor,
-                style = DduruTheme.typography.Button
+                style = DduruTheme.typography.H1
             )
         }
     }

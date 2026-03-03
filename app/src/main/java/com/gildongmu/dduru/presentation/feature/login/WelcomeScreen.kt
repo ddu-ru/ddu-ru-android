@@ -38,7 +38,7 @@ fun WelcomeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
-            .background(color = DduruTheme.colors.Gray50)
+            .background(color = DduruTheme.colors.gray50)
             .padding(top = 100.dp, bottom = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
@@ -88,7 +88,7 @@ fun WelcomeScreen(
                     .background(
                         brush = Brush.radialGradient(
                             colors = listOf(
-                                DduruTheme.colors.Black.copy(alpha = 0.2f),
+                                DduruTheme.colors.black.copy(alpha = 0.2f),
                                 Color.Transparent
                             )
                         )
