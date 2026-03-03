@@ -24,6 +24,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.login.LoginViewModel
 import com.gildongmu.dduru.presentation.feature.login.WelcomeScreen
+import com.gildongmu.dduru.presentation.feature.register.profile.screen.ProfileSettingScreen
 import com.gildongmu.dduru.presentation.navigation.LoginRoute
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -109,9 +110,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         Screen.Home -> {
-                            Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                                Text("여기가 메인 홈 화면입니다! 🏠")
-                            }
+                            ProfileSettingScreen()
                         }
                     }
                 }

@@ -14,8 +14,10 @@ import androidx.core.view.WindowCompat
 import com.gildongmu.dduru.core.designsystem.color.DduruColors
 import com.gildongmu.dduru.core.designsystem.color.LocalDduruColors
 import com.gildongmu.dduru.core.designsystem.color.defaultDduruColors
+import com.gildongmu.dduru.core.designsystem.typography.DduruTypography
+import com.gildongmu.dduru.core.designsystem.typography.LocalDduruTypography
+import com.gildongmu.dduru.core.designsystem.typography.defaultDduruTypography
 
-// 1. Theme Object
 object DduruTheme {
     val colors: DduruColors
         @Composable
@@ -28,31 +30,26 @@ object DduruTheme {
         get() = LocalDduruTypography.current
 }
 
-// 2. Provider 함수
 @Composable
 fun DduruTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {
-    // 컬러랑 폰트 기본값 가져오기
     val colors = defaultDduruColors
     val typography = defaultDduruTypography
 
-    // 상태바(Status Bar) 제어
     val view = LocalView.current
     if (!view.isInEditMode) {
         SideEffect {
             val window = (view.context as Activity).window
-            // 상태바 배경 투명
+
             @Suppress("DEPRECATION")
             window.statusBarColor = Color.Transparent.toArgb()
 
-            // 상태바 아이콘 검정색
             WindowCompat.getInsetsController(window, view).isAppearanceLightStatusBars = true
         }
     }
 
-    // 3. CompositionLocalProvider로 주입
     CompositionLocalProvider(
         LocalDduruColors provides colors,
         LocalDduruTypography provides typography
