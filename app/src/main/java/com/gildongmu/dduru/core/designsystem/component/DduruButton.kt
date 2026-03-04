@@ -24,47 +24,44 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
-enum class DduruButtonStyle {
-    FILLED,
-    OUTLINED
-}
+data class DduruButtonEnabledColors(
+    val backgroundColor: Color,
+    val textColor: Color,
+    val borderColor: Color
+)
+
+data class DduruButtonDisabledColors(
+    val backgroundColor: Color,
+    val textColor: Color,
+    val borderColor: Color
+)
 
 @Composable
 fun DduruButton(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    style: DduruButtonStyle = DduruButtonStyle.FILLED,
+    enabledColors: DduruButtonEnabledColors = dduruButtonFilledEnabledColors(),
+    disabledColors: DduruButtonDisabledColors = dduruButtonFilledDisabledColors(),
     textStyle: TextStyle = DduruTheme.typography.Title1,
     iconRes: Int? = null,
     enabled: Boolean = true
 ) {
-    val backgroundColor = when (style) {
-        DduruButtonStyle.FILLED -> DduruTheme.colors.primary
-        DduruButtonStyle.OUTLINED -> DduruTheme.colors.grayAlpha30
-    }
-
-    val textColor = when (style) {
-        DduruButtonStyle.FILLED -> DduruTheme.colors.gray0
-        DduruButtonStyle.OUTLINED -> DduruTheme.colors.gray200
-    }
-
-    val borderColor = when (style) {
-        DduruButtonStyle.FILLED -> DduruTheme.colors.whiteAlpha30
-        DduruButtonStyle.OUTLINED -> DduruTheme.colors.grayBorderAlpha10
-    }
+    val currentBackgroundColor = if (enabled) enabledColors.backgroundColor else disabledColors.backgroundColor
+    val currentTextColor = if (enabled) enabledColors.textColor else disabledColors.textColor
+    val currentBorderColor = if (enabled) enabledColors.borderColor else disabledColors.borderColor
 
     Button(
         onClick = onClick,
         modifier = modifier
             .border(
                 width = 1.dp,
-                color = borderColor,
+                color = currentBorderColor,
                 shape = RoundedCornerShape(16.dp)
             ),
         colors = ButtonDefaults.buttonColors(
-            containerColor = backgroundColor,
-            disabledContainerColor = backgroundColor.copy(alpha = 0.5f)
+            containerColor = currentBackgroundColor,
+            disabledContainerColor = disabledColors.backgroundColor
         ),
         shape = RoundedCornerShape(16.dp),
         contentPadding = PaddingValues(horizontal = 18.dp, vertical = 13.dp),
@@ -86,12 +83,54 @@ fun DduruButton(
             Text(
                 text = text,
                 style = textStyle,
-                color = textColor,
+                color = currentTextColor,
                 textAlign = TextAlign.Center
             )
         }
     }
 }
+
+@Composable
+fun dduruButtonFilledEnabledColors() = DduruButtonEnabledColors(
+    backgroundColor = DduruTheme.colors.primary,
+    textColor = DduruTheme.colors.gray0,
+    borderColor = DduruTheme.colors.whiteAlpha30
+)
+
+@Composable
+fun dduruButtonFilledDisabledColors() = DduruButtonDisabledColors(
+    backgroundColor = DduruTheme.colors.primary.copy(alpha = 0.5f),
+    textColor = DduruTheme.colors.gray0.copy(alpha = 0.5f),
+    borderColor = DduruTheme.colors.whiteAlpha30.copy(alpha = 0.5f)
+)
+
+@Composable
+fun dduruButtonOutlinedEnabledColors() = DduruButtonEnabledColors(
+    backgroundColor = DduruTheme.colors.grayAlpha30,
+    textColor = DduruTheme.colors.gray200,
+    borderColor = DduruTheme.colors.grayBorderAlpha10
+)
+
+@Composable
+fun dduruButtonOutlinedDisabledColors() = DduruButtonDisabledColors(
+    backgroundColor = DduruTheme.colors.grayAlpha30.copy(alpha = 0.5f),
+    textColor = DduruTheme.colors.gray200.copy(alpha = 0.5f),
+    borderColor = DduruTheme.colors.grayBorderAlpha10.copy(alpha = 0.5f)
+)
+
+@Composable
+fun dduruButtonWhiteEnabledColors() = DduruButtonEnabledColors(
+    backgroundColor = DduruTheme.colors.gray0,
+    textColor = DduruTheme.colors.gray700,
+    borderColor = DduruTheme.colors.grayBorderAlpha10
+)
+
+@Composable
+fun dduruButtonWhiteDisabledColors() = DduruButtonDisabledColors(
+    backgroundColor = DduruTheme.colors.gray200,
+    textColor = DduruTheme.colors.gray400,
+    borderColor = DduruTheme.colors.gray300
+)
 
 @Preview(showBackground = true)
 @Composable
@@ -115,7 +154,8 @@ private fun DduruButtonPreview() {
                 DduruButton(
                     text = "패스",
                     onClick = {},
-                    style = DduruButtonStyle.OUTLINED,
+                    enabledColors = dduruButtonOutlinedEnabledColors(),
+                    disabledColors = dduruButtonOutlinedDisabledColors(),
                     iconRes = R.drawable.ic_heart_rounded,
                     modifier = Modifier.weight(1f)
                 )
@@ -128,16 +168,35 @@ private fun DduruButtonPreview() {
                 )
             }
 
-            DduruButton(
-                text = "코인 샵으로 이동",
-                onClick = {},
-                iconRes = R.drawable.ic_heart_rounded,
-                modifier = Modifier.fillMaxWidth()
-            )
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                DduruButton(
+                    text = "여자",
+                    onClick = {},
+                    enabledColors = dduruButtonWhiteEnabledColors(),
+                    disabledColors = dduruButtonWhiteDisabledColors(),
+                    enabled = true,
+                    modifier = Modifier.weight(1f)
+                )
+
+                DduruButton(
+                    text = "남자",
+                    onClick = {},
+                    enabledColors = dduruButtonWhiteEnabledColors(),
+                    disabledColors = dduruButtonWhiteDisabledColors(),
+                    enabled = false,
+                    modifier = Modifier.weight(1f)
+                )
+            }
 
             DduruButton(
-                text = "아이콘 없음",
+                text = "인증완료",
                 onClick = {},
+                enabledColors = dduruButtonWhiteEnabledColors(),
+                disabledColors = dduruButtonWhiteDisabledColors(),
+                enabled = false,
                 modifier = Modifier.fillMaxWidth()
             )
         }
