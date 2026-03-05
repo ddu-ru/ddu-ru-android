@@ -28,69 +28,6 @@ import androidx.compose.ui.unit.Dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
-fun MaterialUnderlineTextField(
-    modifier: Modifier = Modifier,
-    label: String,
-    value: String,
-    placeholder: String,
-    onValueChange: (String) -> Unit,
-    enabled: Boolean = true,
-    actionContent: (@Composable (() -> Unit))? = null
-) {
-    Column {
-        val labelColor = if (enabled) Color.Black else Color.Black.copy(alpha = 0.4f)
-        val placeholderColor = Color.Black.copy(alpha = if (enabled) 0.4f else 0.2f)
-
-        Text(
-            text = label,
-            style = DduruTheme.typography.Body2,
-            color = labelColor
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            TextField(
-                value = value,
-                onValueChange = onValueChange,
-                enabled = enabled,
-                modifier = modifier.weight(1f),
-                placeholder = {
-                    Text(
-                        text = placeholder,
-                        style = DduruTheme.typography.Body1,
-                        color = placeholderColor
-                    )
-                },
-                textStyle = DduruTheme.typography.Body1,
-                singleLine = true,
-                colors = TextFieldDefaults.colors(
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent,
-                    disabledContainerColor = Color.Transparent,
-
-                    focusedIndicatorColor = DduruTheme.colors.primary,
-                    unfocusedIndicatorColor = DduruTheme.colors.primary.copy(alpha = 0.4f),
-                    disabledIndicatorColor = DduruTheme.colors.primary.copy(alpha = 0.2f),
-
-                    cursorColor = DduruTheme.colors.primary,
-                    focusedTextColor = labelColor,
-                    unfocusedTextColor = labelColor
-                )
-            )
-
-            actionContent?.let {
-                Spacer(modifier = Modifier.width(8.dp))
-                it()
-            }
-        }
-    }
-}
-
-@Composable
 fun MaterialUnderlineNumberTextField(
     modifier: Modifier = Modifier,
     label: String,
