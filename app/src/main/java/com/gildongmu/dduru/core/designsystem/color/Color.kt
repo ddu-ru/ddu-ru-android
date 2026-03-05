@@ -28,8 +28,10 @@ val KakaoYellow = Color(0xFFFEE500)
 val BlackAlpha14 = Color(0x24000000)
 val BlackAlpha10 = Color(0x1A000000)
 val BlackAlpha05 = Color(0x0D000000)
+val GrayAlpha30 = Color(0x4D969696)
 val WhiteAlpha30 = Color(0x4DFFFFFF)
 val GrayBorder = Color(0x80797479)
+val GrayBorderAlpha10 = Color(0x1A0E1013)
 
 @Immutable
 data class DduruColors(
@@ -60,8 +62,10 @@ data class DduruColors(
     val blackAlpha14: Color,
     val blackAlpha10: Color,
     val blackAlpha05: Color,
+    val grayAlpha30: Color,
     val whiteAlpha30: Color,
-    val grayBorder: Color
+    val grayBorder: Color,
+    val grayBorderAlpha10: Color
 )
 
 val defaultDduruColors = DduruColors(
@@ -93,8 +97,10 @@ val defaultDduruColors = DduruColors(
     blackAlpha14 = BlackAlpha14,
     blackAlpha10 = BlackAlpha10,
     blackAlpha05 = BlackAlpha05,
+    grayAlpha30 = GrayAlpha30,
     whiteAlpha30 = WhiteAlpha30,
-    grayBorder = GrayBorder
+    grayBorder = GrayBorder,
+    grayBorderAlpha10 = GrayBorderAlpha10
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }
