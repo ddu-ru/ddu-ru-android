@@ -30,7 +30,6 @@ import com.gildongmu.dduru.presentation.feature.register.component.AuthCodeInput
 import com.gildongmu.dduru.presentation.feature.register.component.BirthInputRow
 import com.gildongmu.dduru.presentation.feature.register.component.GenderSegment
 import com.gildongmu.dduru.presentation.feature.register.component.GreetingMessageCard
-import com.gildongmu.dduru.presentation.feature.register.component.NicknameInput
 import com.gildongmu.dduru.presentation.feature.register.component.PhoneInput
 import com.gildongmu.dduru.presentation.feature.register.state.SignupStep
 import com.gildongmu.dduru.presentation.feature.register.viewmodel.SignupViewModel
@@ -88,7 +87,7 @@ fun SignupScreen(
     Column(
         modifier = Modifier
             .fillMaxSize()
-            .background(DduruTheme.colors.Gray50)
+            .background(DduruTheme.colors.gray50)
             .statusBarsPadding()
             .imePadding()
     ) {
@@ -202,7 +201,7 @@ fun SignupScreen(
             ) {
                 DduruButton(
                     text = buttonText,
-                    enabled = buttonEnabled,
+//                    enabled = buttonEnabled,
                     onClick = onButtonClick,
                     modifier = Modifier.fillMaxWidth()
                 )

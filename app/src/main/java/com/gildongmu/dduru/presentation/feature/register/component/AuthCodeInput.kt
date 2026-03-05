@@ -52,11 +52,11 @@ fun AuthCodeInput(
                     onClick = onResendClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
-                        contentColor = DduruTheme.colors.Gray700,
+                        contentColor = DduruTheme.colors.gray700,
                         disabledContainerColor = Color.White,
-                        disabledContentColor = DduruTheme.colors.Gray700
+                        disabledContentColor = DduruTheme.colors.gray700
                     ),
-                    border = BorderStroke(1.dp, DduruTheme.colors.Gray300)
+                    border = BorderStroke(1.dp, DduruTheme.colors.gray300)
                 )
             }
         )

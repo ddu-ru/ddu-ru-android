@@ -43,7 +43,7 @@ fun MaterialUnderlineTextField(
 
         Text(
             text = label,
-            style = DduruTheme.typography.BodyMedium,
+            style = DduruTheme.typography.Body2,
             color = labelColor
         )
 
@@ -61,22 +61,22 @@ fun MaterialUnderlineTextField(
                 placeholder = {
                     Text(
                         text = placeholder,
-                        style = DduruTheme.typography.BodyLarge,
+                        style = DduruTheme.typography.Body1,
                         color = placeholderColor
                     )
                 },
-                textStyle = DduruTheme.typography.BodyLarge,
+                textStyle = DduruTheme.typography.Body1,
                 singleLine = true,
                 colors = TextFieldDefaults.colors(
                     focusedContainerColor = Color.Transparent,
                     unfocusedContainerColor = Color.Transparent,
                     disabledContainerColor = Color.Transparent,
 
-                    focusedIndicatorColor = DduruTheme.colors.Primary,
-                    unfocusedIndicatorColor = DduruTheme.colors.Primary.copy(alpha = 0.4f),
-                    disabledIndicatorColor = DduruTheme.colors.Primary.copy(alpha = 0.2f),
+                    focusedIndicatorColor = DduruTheme.colors.primary,
+                    unfocusedIndicatorColor = DduruTheme.colors.primary.copy(alpha = 0.4f),
+                    disabledIndicatorColor = DduruTheme.colors.primary.copy(alpha = 0.2f),
 
-                    cursorColor = DduruTheme.colors.Primary,
+                    cursorColor = DduruTheme.colors.primary,
                     focusedTextColor = labelColor,
                     unfocusedTextColor = labelColor
                 )
@@ -107,7 +107,7 @@ fun MaterialUnderlineNumberTextField(
 
         Text(
             text = label,
-            style = DduruTheme.typography.BodyMedium,
+            style = DduruTheme.typography.Body2,
             color = labelColor
         )
 
@@ -129,11 +129,11 @@ fun MaterialUnderlineNumberTextField(
                 placeholder = {
                     Text(
                         text = placeholder,
-                        style = DduruTheme.typography.BodyLarge,
+                        style = DduruTheme.typography.Body1,
                         color = placeholderColor
                     )
                 },
-                textStyle = DduruTheme.typography.BodyLarge,
+                textStyle = DduruTheme.typography.Body1,
                 singleLine = true,
                 keyboardOptions = KeyboardOptions(
                     keyboardType = KeyboardType.Number,
@@ -144,11 +144,11 @@ fun MaterialUnderlineNumberTextField(
                     unfocusedContainerColor = Color.Transparent,
                     disabledContainerColor = Color.Transparent,
 
-                    focusedIndicatorColor = DduruTheme.colors.Primary,
-                    unfocusedIndicatorColor = DduruTheme.colors.Primary.copy(alpha = 0.4f),
-                    disabledIndicatorColor = DduruTheme.colors.Primary.copy(alpha = 0.2f),
+                    focusedIndicatorColor = DduruTheme.colors.primary,
+                    unfocusedIndicatorColor = DduruTheme.colors.primary.copy(alpha = 0.4f),
+                    disabledIndicatorColor = DduruTheme.colors.primary.copy(alpha = 0.2f),
 
-                    cursorColor = DduruTheme.colors.Primary,
+                    cursorColor = DduruTheme.colors.primary,
                     focusedTextColor = labelColor,
                     unfocusedTextColor = labelColor
                 )
@@ -181,10 +181,10 @@ fun InlineActionButton(
         shape = RoundedCornerShape(12.dp),
         border = border,
         colors = colors ?: ButtonDefaults.buttonColors(
-            containerColor = DduruTheme.colors.Primary,
+            containerColor = DduruTheme.colors.primary,
             contentColor = Color.White,
-            disabledContainerColor = DduruTheme.colors.Gray200,
-            disabledContentColor =  DduruTheme.colors.Gray400
+            disabledContainerColor = DduruTheme.colors.gray200,
+            disabledContentColor =  DduruTheme.colors.gray400
         )
     ) {
         Text(
@@ -198,7 +198,6 @@ fun InlineActionButton(
 private fun RandomNicknameButtonPreview() {
     DduruTheme {
         Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            RandomNicknameButton(enabled = true, onClick = {})
             InlineActionButton(text = "인증요청", enabled = true, onClick = {})
             InlineActionButton(
                 text = "재전송",

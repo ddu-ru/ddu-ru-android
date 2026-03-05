@@ -12,12 +12,12 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 fun ValidationMessage(
     modifier: Modifier = Modifier,
     text: String,
-    color: Color = DduruTheme.colors.ValidationRed
+//    color: Color = DduruTheme.colors.ValidationRed
 ) {
     Text(
         text = text,
         modifier = modifier.padding(top = 4.dp),
-        style = DduruTheme.typography.BodySmall,
-        color = color
+//        style = DduruTheme.typography.BodySmall,
+//        color = color
     )
 }

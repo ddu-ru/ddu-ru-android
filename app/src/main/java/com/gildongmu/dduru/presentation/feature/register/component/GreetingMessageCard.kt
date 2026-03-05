@@ -41,7 +41,7 @@ fun StepBadge(
     ) {
         Text(
             text = "STEP $current / $total",
-            style = DduruTheme.typography.BodySmall,
+            style = DduruTheme.typography.Micro,
             color = Color.White
         )
     }
@@ -93,14 +93,14 @@ fun GreetingMessageCard(
 
                 Text(
                     text = title,
-                    style = DduruTheme.typography.TitleMedium,
-                    color = DduruTheme.colors.Gray900,
+                    style = DduruTheme.typography.Title2,
+                    color = DduruTheme.colors.gray900,
                     modifier = Modifier.padding(bottom = 8.dp)
                 )
                 Text(
                     text = desc,
-                    style = DduruTheme.typography.BodyMedium,
-                    color = DduruTheme.colors.Gray600
+                    style = DduruTheme.typography.Caption1,
+                    color = DduruTheme.colors.gray600
                 )
             }
         }

@@ -44,7 +44,7 @@ fun YearDropdownField(
     Column(modifier = modifier) {
         Text(
             text = label,
-            style = DduruTheme.typography.BodyMedium,
+            style = DduruTheme.typography.Body2,
             color = textColor
         )
 
@@ -67,8 +67,8 @@ fun YearDropdownField(
                     Text(
                         text = selectedValue?.let { "%02d".format(it) } ?: "선택",
                         modifier = Modifier.weight(1f),
-                        style = DduruTheme.typography.BodyLarge,
-                        color = if (selectedValue != null) DduruTheme.colors.Gray900 else DduruTheme.colors.Gray500
+                        style = DduruTheme.typography.Body1,
+                        color = if (selectedValue != null) DduruTheme.colors.gray900 else DduruTheme.colors.gray500
                     )
 
                     Icon(
@@ -79,7 +79,7 @@ fun YearDropdownField(
 
                 HorizontalDivider(
                     thickness = 2.dp,
-                    color = DduruTheme.colors.Gray400
+                    color = DduruTheme.colors.gray400
                 )
             }
 
@@ -90,7 +90,7 @@ fun YearDropdownField(
                     modifier = Modifier
                         .heightIn(max = 480.dp)
                         .background(
-                            color = DduruTheme.colors.Gray50,
+                            color = DduruTheme.colors.gray50,
                             shape = RoundedCornerShape(8.dp)
                         )
                 ) {
@@ -101,7 +101,7 @@ fun YearDropdownField(
                             text = {
                                 Text(
                                     text = "%02d".format(item),
-                                    color = if (isSelected) DduruTheme.colors.Gray900 else DduruTheme.colors.Gray500
+                                    color = if (isSelected) DduruTheme.colors.gray900 else DduruTheme.colors.gray500
                                 )
                             },
                             onClick = {
