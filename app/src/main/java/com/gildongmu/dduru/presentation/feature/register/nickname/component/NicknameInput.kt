@@ -93,7 +93,7 @@ fun RandomNicknameButton(
         Text(
             modifier = Modifier.padding(1.dp),
             text = "랜덤",
-            style = DduruTheme.typography.Button,
+            style = DduruTheme.typography.H2,
             color = DduruTheme.colors.gray700
         )
     }
