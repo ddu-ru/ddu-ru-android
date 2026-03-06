@@ -201,7 +201,7 @@ fun SignupScreen(
             ) {
                 DduruButton(
                     text = buttonText,
-//                    enabled = buttonEnabled,
+                    enabled = buttonEnabled,
                     onClick = onButtonClick,
                     modifier = Modifier.fillMaxWidth()
                 )
