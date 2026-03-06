@@ -23,8 +23,8 @@ fun ResultDescriptionBox(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .background(DduruTheme.colors.Gray100, RoundedCornerShape(16.dp))
-            .border(1.dp, DduruTheme.colors.Gray300, RoundedCornerShape(16.dp))
+            .background(DduruTheme.colors.gray100, RoundedCornerShape(16.dp))
+            .border(1.dp, DduruTheme.colors.gray300, RoundedCornerShape(16.dp))
     ) {
         Column(
             modifier = Modifier
@@ -36,9 +36,9 @@ fun ResultDescriptionBox(
                     modifier = Modifier
                         .padding(8.dp),
                     text = "- $it",
-                    style = DduruTheme.typography.BodyMedium,
+                    style = DduruTheme.typography.Body2,
                     textAlign = TextAlign.Center,
-                    color = DduruTheme.colors.Gray700
+                    color = DduruTheme.colors.gray700
                 )
             }
         }

@@ -21,7 +21,6 @@ class OnboardingResultViewModel @Inject constructor() : ViewModel() {
     private fun loadSurveyResult() {
         uiState = uiState.copy(
             avatarDescription = "모두가 편안해야\n내가 편해요!",
-            // ImageUrl
             avatarName = "포근포근형",
             personality = "사람을 편안하게 해주며, 맛있는 것과 좋은 분위기만 있다면 행복한 미식 힐링러.",
             strength = "단체 일정 코디, 실패 없는 맛집 픽, 여행 중 쉼표 만들어주기.",

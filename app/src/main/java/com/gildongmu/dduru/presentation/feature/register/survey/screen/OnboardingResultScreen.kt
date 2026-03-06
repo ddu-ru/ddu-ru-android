@@ -31,7 +31,7 @@ fun OnboardingResultScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = DduruTheme.colors.Gray50,
+        containerColor = DduruTheme.colors.gray50,
         bottomBar = {
             Column(
                 Modifier
@@ -62,7 +62,7 @@ fun OnboardingResultScreen(
                     .padding(top = 16.dp)
                     .weight(1f),
                 text = "내 여행 성격",
-                style = DduruTheme.typography.TitleLarge,
+                style = DduruTheme.typography.H1,
                 textAlign = TextAlign.Center
             )
 

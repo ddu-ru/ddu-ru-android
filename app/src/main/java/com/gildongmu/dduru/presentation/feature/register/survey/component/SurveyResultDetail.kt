@@ -31,7 +31,7 @@ fun SurveyResultDetail(
             Text(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 16.dp),
                 text = uiModel.avatarDescription,
-                style = DduruTheme.typography.BodyLarge,
+                style = DduruTheme.typography.Body1,
                 textAlign = TextAlign.Center
             )
         }
@@ -47,16 +47,16 @@ fun SurveyResultDetail(
             modifier = Modifier
                 .padding(8.dp),
             text = uiModel.avatarName,
-            style = DduruTheme.typography.TitleMedium,
+            style = DduruTheme.typography.H1,
             textAlign = TextAlign.Center
         )
         Text(
             modifier = Modifier
                 .padding(bottom = 24.dp),
             text = uiModel.tags.joinToString(" ") { "#$it" },
-            style = DduruTheme.typography.LabelMedium,
+            style = DduruTheme.typography.Caption2,
             textAlign = TextAlign.Center,
-            color = DduruTheme.colors.Gray600
+            color = DduruTheme.colors.gray600
         )
         ResultDescriptionBox(
             items = listOf(

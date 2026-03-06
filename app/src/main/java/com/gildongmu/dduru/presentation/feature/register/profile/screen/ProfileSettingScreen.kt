@@ -47,7 +47,7 @@ fun ProfileSettingScreen(
 
     Scaffold(
         modifier = Modifier.fillMaxSize(),
-        containerColor = DduruTheme.colors.Gray50,
+        containerColor = DduruTheme.colors.gray50,
         bottomBar = {
             Column(
                 modifier = Modifier
