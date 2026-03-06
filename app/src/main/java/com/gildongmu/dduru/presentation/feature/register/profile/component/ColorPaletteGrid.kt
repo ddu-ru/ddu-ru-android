@@ -13,6 +13,10 @@ import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -62,9 +66,15 @@ fun ColorDotGrid(
 @Preview(showBackground = true)
 @Composable
 fun ColorDotGridPreview() {
+    var selectedColor by remember { mutableStateOf<Color?>(ProfileBackgroundColorList.first().color) }
+
     ColorDotGrid(
         modifier = Modifier.padding(bottom = 78.dp),
         colors = ProfileBackgroundColorList.map { it.color },
-        onColorClick = {}
+        selectedColor = selectedColor,
+        onColorClick = {
+                clickedColor ->
+            selectedColor = clickedColor
+        }
     )
 }
