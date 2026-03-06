@@ -16,10 +16,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileImageCropOption
-import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileType
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileType
+import androidx.core.net.toUri
 
 @Composable
 fun ProfileImageSelector(
@@ -27,6 +30,7 @@ fun ProfileImageSelector(
     selectedOption: ProfileImageCropOption,
     selectedImageUri: Uri?,
     characterBackgroundColor: Color,
+    isLocked: Boolean,
     onOptionSelected: (ProfileImageCropOption) -> Unit,
     onActionClick: () -> Unit
 ) {
@@ -42,7 +46,8 @@ fun ProfileImageSelector(
                 Column(
                     Modifier.selectable(
                         selected = (option == selectedOption),
-                        onClick = { onOptionSelected(option) },
+                        onClick = { if (!isLocked) onOptionSelected(option) },
+                        enabled = !isLocked,
                         role = Role.RadioButton
                     )
                         .padding(8.dp),
@@ -62,7 +67,8 @@ fun ProfileImageSelector(
 
                     RadioButton(
                         selected = (option == selectedOption),
-                        onClick = null
+                        onClick = null,
+                        enabled = !isLocked
                     )
                 }
             }
@@ -80,4 +86,59 @@ fun ProfileImageSelector(
             )
         }
     }
+}
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileImageSelectorPreview() {
+    ProfileImageSelector(
+        options = listOf(
+            ProfileImageCropOption(
+                R.drawable.img_penguin_personallity,
+                ProfileType.CHARACTER,
+                1.6f,
+                0.16f
+            ),
+            ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
+        ),
+        selectedOption = ProfileImageCropOption(
+            R.drawable.img_penguin_personallity,
+            ProfileType.CHARACTER,
+            1.6f,
+            0.16f
+        ),
+        selectedImageUri = "android.resource://com.gildongmu.dduru/drawable/img_blank_profile".toUri(),
+        isLocked = false,
+        onOptionSelected = { },
+        characterBackgroundColor = Color.White,
+        onActionClick = {}
+    )
+}
+
+
+@Preview(showBackground = true)
+@Composable
+fun ProfileImageSelectorLockedPreview() {
+    ProfileImageSelector(
+        options = listOf(
+            ProfileImageCropOption(
+                R.drawable.img_penguin_personallity,
+                ProfileType.CHARACTER,
+                1.6f,
+                0.16f
+            ),
+            ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
+        ),
+        selectedOption = ProfileImageCropOption(
+            R.drawable.img_penguin_personallity,
+            ProfileType.CHARACTER,
+            1.6f,
+            0.16f
+        ),
+        selectedImageUri = "android.resource://com.gildongmu.dduru/drawable/img_blank_profile".toUri(),
+        isLocked = true,
+        onOptionSelected = { },
+        characterBackgroundColor = Color.White,
+        onActionClick = {}
+    )
 }
