@@ -79,7 +79,7 @@ private fun HomeHashtagDefaultPreview() {
             backgroundColor = DduruTheme.colors.gray300,
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
         )
-    } 
+    }
 }
 
 @Preview(name = "HomeHashtag - AI추천여행지")
@@ -93,5 +93,5 @@ private fun HomeHashtagAIPreview() {
             backgroundColor = DduruTheme.colors.gray300.copy(alpha = 0.3f),
             contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
         )
-    } 
+    }
 }
