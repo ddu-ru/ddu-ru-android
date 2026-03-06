@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.register.survey.model
+package com.gildongmu.dduru.presentation.feature.register.profile.model
 
 enum class ProfileType {
     CHARACTER, CUSTOM
