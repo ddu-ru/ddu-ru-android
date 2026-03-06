@@ -63,7 +63,7 @@ fun ProfileSettingScreen(
                     Text(
                         modifier = Modifier,
                         text = "모든 정보가 맞나요? 이제 시작해요!",
-                        style = DduruTheme.typography.BodyLarge,
+                        style = DduruTheme.typography.Title2,
                         textAlign = TextAlign.Center
                     )
                 }
@@ -88,7 +88,7 @@ fun ProfileSettingScreen(
             Text(
                 modifier = Modifier.padding(top = 16.dp),
                 text = "프로필 설정",
-                style = DduruTheme.typography.TitleLarge,
+                style = DduruTheme.typography.H1,
                 textAlign = TextAlign.Center
             )
 
@@ -111,6 +111,7 @@ fun ProfileSettingScreen(
                 ProfileCharacterCustomDialog(
                     selectedBg = selectedBgColor,
                     characterImage = characterImage,
+                    avatarName = "",
                     onBgColorSelected = viewModel::onBgColorSelected,
                     onConfirm = {
                         viewModel.commitBgColorSelection()
@@ -122,21 +123,6 @@ fun ProfileSettingScreen(
                 )
             }
 
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                Text(
-                    modifier = Modifier,
-                    text = "겨울이 오길",
-                    style = DduruTheme.typography.TitleMedium,
-                    textAlign = TextAlign.Center
-                )
-                Text(
-                    modifier = Modifier.padding(start = 8.dp, bottom = 24.dp),
-                    text = "뚜르 무드",
-                    style = DduruTheme.typography.LabelMedium,
-                    textAlign = TextAlign.Center,
-                    color = DduruTheme.colors.Gray600
-                )
-            }
 
             ProfileIntroduction(
                 text = introduction,

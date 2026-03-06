@@ -70,13 +70,13 @@ fun ProfileImageSelector(
 
         Button(
             onActionClick,
-            colors = ButtonDefaults.buttonColors(DduruTheme.colors.Gray200),
+            colors = ButtonDefaults.buttonColors(DduruTheme.colors.gray200),
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(
                 text = if (selectedOption.type == ProfileType.CHARACTER) "아바타 편집" else "사진 변경",
-                style = DduruTheme.typography.Button,
-                color = DduruTheme.colors.Gray700
+                style = DduruTheme.typography.Body2,
+                color = DduruTheme.colors.gray700
             )
         }
     }

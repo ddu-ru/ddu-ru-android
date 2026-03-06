@@ -35,6 +35,7 @@ import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBac
 fun ProfileCharacterCustomDialog(
     selectedBg: Color,
     characterImage: Int,
+    avatarName: String,
     onBgColorSelected: (Color) -> Unit,
     onConfirm: () -> Unit,
     onDismiss: () -> Unit
@@ -78,13 +79,12 @@ fun ProfileCharacterCustomDialog(
                     }
                     Text(
                         text = "아바타 편집",
-                        style = DduruTheme.typography.TitleMedium,
+                        style = DduruTheme.typography.H1,
                         color = Color.White
                     )
                     DduruButton(
                         "완료",
                         onConfirm,
-                        cornerShape = 99.dp
                     )
                 }
                 Column(
@@ -103,15 +103,15 @@ fun ProfileCharacterCustomDialog(
                         modifier = Modifier
                             .padding(start = 8.dp, end = 8.dp, bottom = 24.dp),
                         text = "아바타 유형",
-                        style = DduruTheme.typography.LabelMedium,
+                        style = DduruTheme.typography.Body2,
                         textAlign = TextAlign.Center,
-                        color = DduruTheme.colors.Gray600
+                        color = DduruTheme.colors.gray600
                     )
                     Text(
                         modifier = Modifier
                             .padding(start = 8.dp, end = 8.dp, bottom = 24.dp),
-                        text = "포근포근형",
-                        style = DduruTheme.typography.TitleMedium,
+                        text = avatarName,
+                        style = DduruTheme.typography.H1,
                         textAlign = TextAlign.Center,
                         color = Color.White
                     )
@@ -125,7 +125,7 @@ fun ProfileCharacterCustomDialog(
                         modifier = Modifier
                             .padding(8.dp, bottom = 16.dp),
                         text = "배경색",
-                        style = DduruTheme.typography.LabelMedium,
+                        style = DduruTheme.typography.Title2,
                         textAlign = TextAlign.Start,
                         color = Color.White
                     )
@@ -149,6 +149,7 @@ fun ProfileCharacterCustomDialogPreview() {
     ProfileCharacterCustomDialog(
         selectedBg = bg,
         characterImage = R.drawable.img_penguin_personallity,
+        avatarName = "뚜르 무드",
         onBgColorSelected = { bg = it },
         onConfirm = {},
         onDismiss = {}

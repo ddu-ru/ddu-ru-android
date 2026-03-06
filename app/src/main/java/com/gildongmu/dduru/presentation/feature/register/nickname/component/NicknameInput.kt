@@ -21,6 +21,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.register.component.ValidationMessage
 import kotlinx.coroutines.delay
 
 @Composable
@@ -48,7 +49,7 @@ fun NicknameInput(
             modifier = modifier.focusRequester(focusRequester),
             label = "닉네임",
             value = value,
-            placeholder = "겨울이요길",
+            placeholder = "닉네임 입력",
             onValueChange = onValueChange,
             enabled = enabled,
             actionContent = {

@@ -32,18 +32,18 @@ fun ProfileIntroduction(
             modifier = Modifier
                 .padding(8.dp, bottom = 16.dp),
             text = "자기소개",
-            style = DduruTheme.typography.BodyLarge
+            style = DduruTheme.typography.Body2
         )
         Box(
             modifier = Modifier
-                .border(1.dp, DduruTheme.colors.Gray300, RoundedCornerShape(16.dp))
+                .border(1.dp, DduruTheme.colors.gray300, RoundedCornerShape(16.dp))
                 .background(Color.White)
         ) {
             BasicTextField(
                 value = text,
                 onValueChange = onValueChange,
                 maxLines = 4,
-                textStyle = DduruTheme.typography.BodyLarge.copy(
+                textStyle = DduruTheme.typography.Body1.copy(
                     color = Color.Black
                 ),
                 decorationBox = { innerTextField ->
@@ -53,8 +53,8 @@ fun ProfileIntroduction(
                         if (text.isEmpty()) {
                             Text(
                                 text = "나를 소개하는 한마디를 작성해주세요!",
-                                style = DduruTheme.typography.BodyLarge,
-                                color = DduruTheme.colors.Gray300
+                                style = DduruTheme.typography.Body1,
+                                color = DduruTheme.colors.gray300
                             )
                         }
                         innerTextField()
@@ -66,11 +66,11 @@ fun ProfileIntroduction(
             )
             Text(
                 text = "${text.length} / $maxLength",
-                style = DduruTheme.typography.BodyMedium,
+                style = DduruTheme.typography.Body1,
                 modifier = Modifier
                     .align(Alignment.BottomEnd)
                     .padding(8.dp),
-                color = DduruTheme.colors.Gray300
+                color = DduruTheme.colors.gray300
             )
         }
     }
