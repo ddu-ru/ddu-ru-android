@@ -61,7 +61,7 @@ private fun HomeHashtagRealtimePreview() {
         HomeHashtag(
             text = "힐링",
             textColor = DduruTheme.colors.gray700,
-            textStyle = DduruTheme.typography.Micro,
+            textStyle = DduruTheme.typography.Micro2,
             backgroundColor = DduruTheme.colors.gray100,
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
         )
@@ -76,7 +76,7 @@ private fun HomeHashtagDefaultPreview() {
             text = "일출",
             textColor = DduruTheme.colors.gray500,
             textStyle = DduruTheme.typography.Caption1,
-            backgroundColor = DduruTheme.colors.gray300,
+            backgroundColor = DduruTheme.colors.gray100,
             contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
         )
     }
