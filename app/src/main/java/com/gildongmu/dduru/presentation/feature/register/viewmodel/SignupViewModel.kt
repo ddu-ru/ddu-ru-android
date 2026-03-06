@@ -256,10 +256,6 @@ class SignupViewModel @Inject constructor(
             }.onFailure { e ->
                 uiState = uiState.copy(
                     isLoading = false
-//                    profileErrorMessage = ProfileInitErrorMapper.toMessage(
-//                        status = status,
-//                        serverMessage = e.message
-//                    )
                 )
             }
         }
