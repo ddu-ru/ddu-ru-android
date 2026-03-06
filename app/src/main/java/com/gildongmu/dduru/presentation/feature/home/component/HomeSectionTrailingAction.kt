@@ -3,7 +3,6 @@ package com.gildongmu.dduru.presentation.feature.home.component
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.KeyboardArrowRight
@@ -24,7 +23,6 @@ fun HomeSectionTrailingAction(
 ) {
     Row(
         modifier = modifier
-            .fillMaxWidth()
             .clickable(onClick = onClick)
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
@@ -47,8 +45,10 @@ fun HomeSectionTrailingAction(
 @Preview
 @Composable
 private fun HomeSectionTrailingActionPreview() {
-    HomeSectionTrailingAction(
-        text = "전체보기",
-        onClick = {}
-    )
+    DduruTheme {
+        HomeSectionTrailingAction(
+            text = "전체보기",
+            onClick = {}
+        )
+    }
 }
