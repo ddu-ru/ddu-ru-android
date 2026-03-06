@@ -6,9 +6,10 @@ import androidx.compose.animation.core.keyframes
 import androidx.compose.animation.core.rememberInfiniteTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun LoadingFlashingAnimation(
+fun loadingFlashingAnimation(
     dotCount: Int,
     minAlpha: Float = 0.1f,
     delayUnit: Int = 300
@@ -33,3 +34,10 @@ fun LoadingFlashingAnimation(
         alpha
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun LoadingFlashPreview() {
+    loadingFlashingAnimation(dotCount = 3)
+}
+
