@@ -35,7 +35,7 @@ fun HomeHashtag(
         Text(
             text = "#$text",
             color = textColor,
-            style = textStyle,
+            style = textStyle
         )
     }
 }
@@ -58,37 +58,40 @@ private fun OnboardingHashtagPreview() {
 @Composable
 private fun HomeHashtagRealtimePreview() {
     DduruTheme {
-    HomeHashtag(
-        text = "힐링",
-        textColor = DduruTheme.colors.gray700,
-        textStyle = DduruTheme.typography.Micro,
-        backgroundColor = DduruTheme.colors.gray100,
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-    )}
+        HomeHashtag(
+            text = "힐링",
+            textColor = DduruTheme.colors.gray700,
+            textStyle = DduruTheme.typography.Micro,
+            backgroundColor = DduruTheme.colors.gray100,
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+        )
+    }
 }
 
 @Preview(name = "HomeHashtag - 슈퍼호스트")
 @Composable
 private fun HomeHashtagDefaultPreview() {
     DduruTheme {
-    HomeHashtag(
-        text = "일출",
-        textColor = DduruTheme.colors.gray500,
-        textStyle = DduruTheme.typography.Caption1,
-        backgroundColor = DduruTheme.colors.gray300,
-        contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
-    )
-}}
+        HomeHashtag(
+            text = "일출",
+            textColor = DduruTheme.colors.gray500,
+            textStyle = DduruTheme.typography.Caption1,
+            backgroundColor = DduruTheme.colors.gray300,
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+        )
+    } 
+}
 
 @Preview(name = "HomeHashtag - AI추천여행지")
 @Composable
 private fun HomeHashtagAIPreview() {
     DduruTheme {
-    HomeHashtag(
-        text = "카페투어",
-        textColor = DduruTheme.colors.gray300,
-        textStyle = DduruTheme.typography.Caption2,
-        backgroundColor = DduruTheme.colors.gray300.copy(alpha = 0.3f),
-        contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
-    )
-}}
+        HomeHashtag(
+            text = "카페투어",
+            textColor = DduruTheme.colors.gray300,
+            textStyle = DduruTheme.typography.Caption2,
+            backgroundColor = DduruTheme.colors.gray300.copy(alpha = 0.3f),
+            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+        )
+    } 
+}
