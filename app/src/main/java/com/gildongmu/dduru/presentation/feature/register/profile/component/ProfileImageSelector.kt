@@ -12,6 +12,10 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,11 +47,13 @@ fun ProfileImageSelector(
                 .selectableGroup()
         ) {
             options.forEach { option ->
+                val optionLocked = isLocked && option.type == ProfileType.CHARACTER
+
                 Column(
                     Modifier.selectable(
                         selected = (option == selectedOption),
-                        onClick = { if (!isLocked) onOptionSelected(option) },
-                        enabled = !isLocked,
+                        onClick = { if (!optionLocked) onOptionSelected(option) },
+                        enabled = !optionLocked,
                         role = Role.RadioButton
                     )
                         .padding(8.dp),
@@ -64,13 +70,14 @@ fun ProfileImageSelector(
                         image = currentSource,
                         scale = option.scale,
                         backgroundColor = characterBackgroundColor,
-                        offsetRatio = option.offsetRatio
+                        offsetRatio = option.offsetRatio,
+                        isLocked = optionLocked
                     )
 
                     RadioButton(
                         selected = (option == selectedOption),
                         onClick = null,
-                        enabled = !isLocked
+                        enabled = !optionLocked
                     )
                 }
             }
@@ -93,25 +100,24 @@ fun ProfileImageSelector(
 @Preview(showBackground = true)
 @Composable
 fun ProfileImageSelectorPreview() {
-    ProfileImageSelector(
-        options = listOf(
-            ProfileImageCropOption(
-                R.drawable.img_penguin_personallity,
-                ProfileType.CHARACTER,
-                1.6f,
-                0.16f
-            ),
-            ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
-        ),
-        selectedOption = ProfileImageCropOption(
+    val options = listOf(
+        ProfileImageCropOption(
             R.drawable.img_penguin_personallity,
             ProfileType.CHARACTER,
             1.6f,
             0.16f
         ),
+        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
+    )
+    var selectedOption by remember { mutableStateOf(options.last()) }
+
+
+    ProfileImageSelector(
+        options = options,
+        selectedOption = selectedOption,
         selectedImageUri = "android.resource://com.gildongmu.dduru/drawable/img_blank_profile".toUri(),
         isLocked = false,
-        onOptionSelected = { },
+        onOptionSelected = { selectedOption = it },
         characterBackgroundColor = Color.White,
         onActionClick = {}
     )
@@ -121,25 +127,24 @@ fun ProfileImageSelectorPreview() {
 @Preview(showBackground = true)
 @Composable
 fun ProfileImageSelectorLockedPreview() {
-    ProfileImageSelector(
-        options = listOf(
-            ProfileImageCropOption(
-                R.drawable.img_penguin_personallity,
-                ProfileType.CHARACTER,
-                1.6f,
-                0.16f
-            ),
-            ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
-        ),
-        selectedOption = ProfileImageCropOption(
+    val options = listOf(
+        ProfileImageCropOption(
             R.drawable.img_penguin_personallity,
             ProfileType.CHARACTER,
             1.6f,
             0.16f
         ),
+        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
+    )
+    var selectedOption by remember { mutableStateOf(options.last()) }
+
+
+    ProfileImageSelector(
+        options = options,
+        selectedOption = selectedOption,
         selectedImageUri = "android.resource://com.gildongmu.dduru/drawable/img_blank_profile".toUri(),
         isLocked = true,
-        onOptionSelected = { },
+        onOptionSelected = { selectedOption = it },
         characterBackgroundColor = Color.White,
         onActionClick = {}
     )
