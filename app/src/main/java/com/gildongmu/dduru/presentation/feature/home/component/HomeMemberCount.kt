@@ -21,7 +21,7 @@ fun HomeMemberCount(
     max: Int,
     textColor: Color,
     textStyle: TextStyle,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
@@ -77,7 +77,6 @@ private fun HomeMemberCountPreview() {
         )
     }
 }
-
 
 @Preview(name = "HomeGroupMemberCount")
 @Composable

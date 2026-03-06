@@ -17,10 +17,10 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun HomeLocationCount(
-    location:String,
+    location: String,
     color: Color,
     textStyle: TextStyle,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
@@ -39,7 +39,6 @@ fun HomeLocationCount(
         )
     }
 }
-
 
 @Preview(name = "HomeAiLocation")
 @Composable
