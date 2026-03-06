@@ -22,26 +22,23 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.SpeechBubble
+import com.gildongmu.dduru.presentation.feature.register.profile.component.NicknameInput
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
 import com.gildongmu.dduru.presentation.feature.register.profile.component.rememberGalleryLauncher
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
-import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileType
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileType
+import com.gildongmu.dduru.presentation.feature.register.profile.util.surveyStatus
 
 @Composable
 fun ProfileSettingScreen(
     modifier: Modifier = Modifier
 ) {
     val viewModel: ProfileViewModel = hiltViewModel()
-    var showCharacterCustomScreen by remember { mutableStateOf(false) }
+    val state by viewModel.uiState.collectAsState()
 
-    val profileSelectedOption by viewModel.profileSelectedOption.collectAsState()
-    val selectedImageUri by viewModel.selectedImageUri.collectAsState()
-    val introduction by viewModel.introduction.collectAsState()
-    val savedBgColor by viewModel.savedBgColor.collectAsState()
-    val selectedBgColor by viewModel.selectedBgColor.collectAsState()
-    val characterImage by viewModel.characterImage.collectAsState()
+    var showCharacterCustomScreen by remember { mutableStateOf(false) }
 
     val galleryLauncher = rememberGalleryLauncher { uri -> viewModel.onImageSelected(uri) }
 
@@ -70,6 +67,7 @@ fun ProfileSettingScreen(
                 DduruButton(
                     text = "뚜르 시작하기",
                     onClick = {},
+                    enabled = state.canStart,
                     modifier = Modifier
                         .fillMaxWidth()
                         .padding(bottom = 78.dp)
@@ -94,12 +92,13 @@ fun ProfileSettingScreen(
 
             ProfileImageSelector(
                 options = viewModel.radioOptions,
-                selectedOption = profileSelectedOption,
-                selectedImageUri = selectedImageUri,
+                selectedOption = state.selectedOption ?: viewModel.radioOptions.last(),
+                selectedImageUri = state.selectedImageUri,
                 onOptionSelected = { viewModel.onProfileOptionSelected(it) },
-                characterBackgroundColor = savedBgColor,
+                characterBackgroundColor = state.savedBgColor,
+                isLocked = state.isSurveyComplete == surveyStatus.SKIPPED,
                 onActionClick = {
-                    if (profileSelectedOption.type == ProfileType.CHARACTER) {
+                    if (state.selectedOption?.type == ProfileType.CHARACTER) {
                         showCharacterCustomScreen = true
                     } else {
                         galleryLauncher.launch("image/*")
@@ -109,8 +108,8 @@ fun ProfileSettingScreen(
 
             if (showCharacterCustomScreen) {
                 ProfileCharacterCustomDialog(
-                    selectedBg = selectedBgColor,
-                    characterImage = characterImage,
+                    selectedBg = state.selectedBgColor,
+                    characterImage = viewModel.characterImageRes.value,
                     avatarName = "",
                     onBgColorSelected = viewModel::onBgColorSelected,
                     onConfirm = {
@@ -123,9 +122,17 @@ fun ProfileSettingScreen(
                 )
             }
 
+            NicknameInput(
+                modifier = Modifier,
+                enabled = true,
+                onRandomClick = viewModel::onRandomNickname,
+                value = state.nickname,
+                onValueChange = { viewModel.onNicknameChanged(it) },
+                validationMessage = state.nicknameErrorMessage?: "",
+            )
 
             ProfileIntroduction(
-                text = introduction,
+                text = state.introduction,
                 maxLength = viewModel.maxIntroLength,
                 onValueChange = { viewModel.onIntroductionChanged(it) },
                 modifier = Modifier.fillMaxWidth()
