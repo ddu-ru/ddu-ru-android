@@ -32,20 +32,20 @@ fun GenderSegment(
             enabledColors = if (maleSelected) {
                 filledEnabledColors
             } else {
-            whiteEnabledColors
-        },
+                whiteEnabledColors
+            }
         )
 
         DduruButton(
             modifier = Modifier.weight(1f),
             text = "여자",
-            enabled =  enabled,
+            enabled = enabled,
             onClick = { onSelect(Gender.FEMALE) },
             enabledColors = if (femaleSelected) {
                 filledEnabledColors
             } else {
                 whiteEnabledColors
-            },
+            }
         )
     }
 }
