@@ -5,66 +5,97 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
-import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileImageCropOption
-import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileType
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileType
+import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
+import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
+import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileState
+import com.gildongmu.dduru.presentation.feature.register.profile.util.surveyStatus
+import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class ProfileViewModel @Inject constructor() : ViewModel() {
 
+    private val _uiState = MutableStateFlow(ProfileState(
+        selectedBgColor = ProfileBackgroundColorList.first().color,
+        savedBgColor = ProfileBackgroundColorList.first().color)
+    )
+    val uiState = _uiState.asStateFlow()
+
+    private val _characterImageRes = MutableStateFlow(R.drawable.img_penguin_personallity)
+    val characterImageRes = _characterImageRes.asStateFlow()
+
     val radioOptions = listOf(
-        ProfileImageCropOption(
-            R.drawable.img_penguin_personallity,
-            ProfileType.CHARACTER,
-            1.6f,
-            0.16f
-        ),
+        ProfileImageCropOption(characterImageRes.value, ProfileType.CHARACTER, 1.6f, 0.16f),
         ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
     )
 
-    private val _profileSelectedOption = MutableStateFlow(radioOptions.first())
-    val profileSelectedOption = _profileSelectedOption.asStateFlow()
-
-    private val _characterImage = MutableStateFlow<Int>(R.drawable.img_penguin_personallity)
-    val characterImage = _characterImage.asStateFlow()
-
-    private val _selectedImageUri = MutableStateFlow<Uri?>(null)
-    val selectedImageUri = _selectedImageUri.asStateFlow()
-
-    private val _introduction = MutableStateFlow("")
-    val introduction = _introduction.asStateFlow()
-
+    val bgColors = ProfileBackgroundColorList
     val maxIntroLength = 60
 
+    init {
+        _uiState.update {
+            it.copy(
+                isSurveyComplete = surveyStatus.SKIPPED,
+                selectedOption = radioOptions.last()
+            )
+        }
+    }
+
+    fun onNicknameChanged(newNickname: String) {
+        val validationResult = NicknameValidator.validate(newNickname)
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                nickname = newNickname,
+                nicknameErrorMessage = if (newNickname.isEmpty()) null else validationResult.toMessage(),
+                isNicknameValid = (validationResult == NicknameValidationResult.VALID)
+            )
+        }
+
+        checkCanStart()
+    }
+
+    fun onRandomNickname() {
+        val adjectives = listOf("즐거운", "씩씩한", "똑똑한", "배고픈", "신비로운")
+        val nouns = listOf("펭귄", "뚜르", "모험가", "탐험대", "친구")
+
+        val randomName = "${adjectives.random()} ${nouns.random()}"
+
+        onNicknameChanged(randomName)
+    }
+
     fun onProfileOptionSelected(option: ProfileImageCropOption) {
-        _profileSelectedOption.value = option
-    }
-    val bgColors = ProfileBackgroundColorList
-
-    private val _selectedBgColor = MutableStateFlow(bgColors.first().color)
-    val selectedBgColor = _selectedBgColor.asStateFlow()
-
-    private val _savedBgColor = MutableStateFlow(bgColors.first().color)
-    val savedBgColor = _savedBgColor.asStateFlow()
-
-    fun onBgColorSelected(color: Color) {
-        _selectedBgColor.value = color
-    }
-
-    fun onImageSelected(uri: Uri?) {
-        _selectedImageUri.value = uri
-    }
-
-    fun commitBgColorSelection() {
-        _savedBgColor.value = _selectedBgColor.value
+        if (option.type == ProfileType.CHARACTER && _uiState.value.isSurveyComplete == surveyStatus.SKIPPED) return
+        _uiState.update { it.copy(selectedOption = option) }
     }
 
     fun onIntroductionChanged(newText: String) {
         if (newText.length <= maxIntroLength) {
-            _introduction.value = newText
+            _uiState.update { it.copy(introduction = newText) }
         }
+    }
+
+    fun onImageSelected(uri: Uri?) {
+        _uiState.update { it.copy(selectedImageUri = uri) }
+    }
+
+    fun onBgColorSelected(color: Color) {
+        _uiState.update { it.copy(selectedBgColor = color) }
+    }
+
+    fun commitBgColorSelection() {
+        _uiState.update { it.copy(savedBgColor = it.selectedBgColor) }
+    }
+
+    private fun checkCanStart() {
+        val state = _uiState.value
+        val isReady = state.isNicknameValid && state.nickname.isNotEmpty()
+        _uiState.update { it.copy(canStart = isReady) }
     }
 }
