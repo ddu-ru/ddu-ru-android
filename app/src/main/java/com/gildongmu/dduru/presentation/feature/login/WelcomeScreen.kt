@@ -110,6 +110,7 @@ fun WelcomeScreen(
         DduruButton(
             text = "네, 좋아요!",
             onClick = onNextClick,
+            textStyle = DduruTheme.typography.H1,
             modifier = Modifier.width(343.dp)
         )
 
