@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.register.nickname.component
+package com.gildongmu.dduru.presentation.feature.register.profile.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.height
@@ -9,20 +9,17 @@ import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.focus.FocusRequester
 import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.component.ValidationMessage
-import kotlinx.coroutines.delay
 
 @Composable
 fun NicknameInput(
@@ -31,19 +28,10 @@ fun NicknameInput(
     onValueChange: (String) -> Unit,
     enabled: Boolean,
     onRandomClick: () -> Unit,
-    shouldAutoFocus: Boolean = false,
     validationMessage: String
 ) {
     val focusRequester = remember { FocusRequester() }
-    val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(shouldAutoFocus) {
-        if (shouldAutoFocus && enabled) {
-            delay(200)
-            focusRequester.requestFocus()
-            keyboardController?.show()
-        }
-    }
     Column() {
         MaterialUnderlineTextField(
             modifier = modifier.focusRequester(focusRequester),
