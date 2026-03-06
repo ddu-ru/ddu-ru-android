@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.register.nickname.component
+package com.gildongmu.dduru.presentation.feature.register.profile.component
 
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
