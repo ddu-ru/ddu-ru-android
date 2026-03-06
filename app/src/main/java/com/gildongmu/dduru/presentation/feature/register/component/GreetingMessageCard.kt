@@ -17,6 +17,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -80,7 +81,6 @@ fun GreetingMessageCard(
             arrowWidth = 12.dp,
             containerColor = Color.White
         ) {
-            // 말풍선 내부 콘텐츠
             Column(
                 modifier = Modifier.fillMaxWidth(),
                 verticalArrangement = Arrangement.Center
@@ -113,3 +113,12 @@ fun GreetingMessageCard(
         )
     }
 }
+
+@Preview(showBackground = true)
+@Composable
+fun GreetingMessageCardPreview() {
+    GreetingMessageCard(
+        step = SignupStep.BIRTH
+    )
+}
+
