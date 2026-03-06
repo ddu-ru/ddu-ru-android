@@ -105,7 +105,6 @@ fun GreetingMessageCard(
             }
         }
 
-        // 4. 펭귄 이미지
         Image(
             painter = painterResource(id = R.drawable.haha),
             contentDescription = null,
