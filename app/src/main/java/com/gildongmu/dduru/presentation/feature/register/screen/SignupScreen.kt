@@ -5,15 +5,21 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.isImeVisible
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -36,6 +42,7 @@ import com.gildongmu.dduru.presentation.feature.register.viewmodel.SignupViewMod
 import java.util.Locale
 import kotlinx.coroutines.delay
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SignupScreen(
     viewModel: SignupViewModel = viewModel()
@@ -194,18 +201,35 @@ fun SignupScreen(
                 else -> Triple("", false, {})
             }
 
+            val isImeVisible = WindowInsets.isImeVisible
+            val horizontalPadding = if (isImeVisible) 0.dp else 24.dp
+            val bottomPadding = if (isImeVisible) {
+                0.dp
+            } else {
+                WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding() + 12.dp
+            }
+            val buttonShape = if (isImeVisible) {
+                RoundedCornerShape(0.dp)
+            } else {
+                RoundedCornerShape(16.dp)
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = horizontalPadding)
+                    .padding(bottom = bottomPadding)
             ) {
                 DduruButton(
                     text = buttonText,
                     enabled = buttonEnabled,
                     onClick = onButtonClick,
+                    shape = buttonShape,
                     modifier = Modifier.fillMaxWidth()
                 )
-                Spacer(modifier = Modifier.height(12.dp))
+                if (!isImeVisible) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                }
             }
         }
     }

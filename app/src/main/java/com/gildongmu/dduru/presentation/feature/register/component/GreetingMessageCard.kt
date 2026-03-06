@@ -121,4 +121,3 @@ fun GreetingMessageCardPreview() {
         step = SignupStep.BIRTH
     )
 }
-
