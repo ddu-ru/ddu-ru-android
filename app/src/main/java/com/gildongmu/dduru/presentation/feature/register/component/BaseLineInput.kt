@@ -21,7 +21,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.material3.Text
 import androidx.compose.ui.unit.Dp
@@ -127,27 +126,5 @@ fun InlineActionButton(
         Text(
             text = text,
         )
-    }
-}
-
-@Preview(showBackground = true)
-@Composable
-private fun RandomNicknameButtonPreview() {
-    DduruTheme {
-        Row(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
-            InlineActionButton(text = "인증요청", enabled = true, onClick = {})
-            InlineActionButton(
-                text = "재전송",
-                enabled = true,
-                onClick = {},
-                colors = ButtonDefaults.buttonColors(
-                    containerColor = Color.White,
-                    contentColor = Color.Black,
-                    disabledContainerColor = Color.White,
-                    disabledContentColor = Color.Black.copy(alpha = 0.4f)
-                ),
-                border = BorderStroke(1.dp, Color(0xFFD5DAE2))
-            )
-        }
     }
 }
