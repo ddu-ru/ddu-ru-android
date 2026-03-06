@@ -24,6 +24,7 @@ val Gray900 = Color(0xFF202124)
 val Gray928 = Color(0xFF17181B)
 val Gray958 = Color(0xFF0E1013)
 val Black = Color(0xFF000000)
+val ValidationRed = Color(0xFFFF2828)
 val KakaoYellow = Color(0xFFFEE500)
 val BlackAlpha14 = Color(0x24000000)
 val BlackAlpha10 = Color(0x1A000000)
@@ -56,6 +57,7 @@ data class DduruColors(
 
     val black: Color,
 
+    val validationRed: Color,
     val kakaoYellow: Color,
     val blackAlpha14: Color,
     val blackAlpha10: Color,
@@ -89,6 +91,7 @@ val defaultDduruColors = DduruColors(
     black = Black,
 
     kakaoYellow = KakaoYellow,
+    validationRed = ValidationRed,
 
     blackAlpha14 = BlackAlpha14,
     blackAlpha10 = BlackAlpha10,
