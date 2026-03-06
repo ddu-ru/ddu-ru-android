@@ -12,6 +12,7 @@ import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -20,9 +21,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
-import androidx.compose.ui.unit.dp
-import androidx.compose.material3.Text
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -119,11 +119,11 @@ fun InlineActionButton(
             containerColor = DduruTheme.colors.primary,
             contentColor = Color.White,
             disabledContainerColor = DduruTheme.colors.gray200,
-            disabledContentColor =  DduruTheme.colors.gray400
+            disabledContentColor = DduruTheme.colors.gray400
         )
     ) {
         Text(
-            text = text,
+            text = text
         )
     }
 }
