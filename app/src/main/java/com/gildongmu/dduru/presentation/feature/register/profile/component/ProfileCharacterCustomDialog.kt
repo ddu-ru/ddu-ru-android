@@ -84,7 +84,7 @@ fun ProfileCharacterCustomDialog(
                     )
                     DduruButton(
                         "완료",
-                        onConfirm,
+                        onConfirm
                     )
                 }
                 Column(

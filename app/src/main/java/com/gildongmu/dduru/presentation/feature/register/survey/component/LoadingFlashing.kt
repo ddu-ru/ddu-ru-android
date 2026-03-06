@@ -13,7 +13,7 @@ import androidx.compose.ui.unit.dp
 fun LoadingFlashing(
     modifier: Modifier = Modifier
 ) {
-    val alphas = loadingFlashingAnimation(dotCount = 3)
+    val alphas = LoadingFlashingAnimation(dotCount = 3)
 
     Row(
         modifier = modifier,

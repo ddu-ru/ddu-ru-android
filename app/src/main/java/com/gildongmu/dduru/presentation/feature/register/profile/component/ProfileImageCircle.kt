@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.register.profile.component
 
-import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -31,7 +30,7 @@ fun ProfileImageCircle(
     scale: Float = 1f,
     offsetRatio: Float = 0f,
     size: Dp = 100.dp,
-    isLocked: Boolean = false,
+    isLocked: Boolean = false
 ) {
     Box(
         modifier = modifier
@@ -56,7 +55,7 @@ fun ProfileImageCircle(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
+                    .background(Color.Black.copy(alpha = 0.5f))
             )
 
             Text(

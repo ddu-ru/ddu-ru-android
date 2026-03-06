@@ -9,7 +9,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.tooling.preview.Preview
 
 @Composable
-fun loadingFlashingAnimation(
+fun LoadingFlashingAnimation(
     dotCount: Int,
     minAlpha: Float = 0.1f,
     delayUnit: Int = 300
@@ -38,6 +38,5 @@ fun loadingFlashingAnimation(
 @Preview(showBackground = true)
 @Composable
 fun LoadingFlashPreview() {
-    loadingFlashingAnimation(dotCount = 3)
+    LoadingFlashingAnimation(dotCount = 3)
 }
-

@@ -6,7 +6,7 @@ enum class NicknameValidationResult {
     TOO_SHORT,
     TOO_LONG,
     NVALID_CHARACTERS,
-    CONTAINS_EMPTY,
+    CONTAINS_EMPTY
 }
 
 object NicknameValidator {

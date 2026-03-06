@@ -27,9 +27,9 @@ import com.gildongmu.dduru.presentation.feature.register.profile.component.Profi
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
 import com.gildongmu.dduru.presentation.feature.register.profile.component.rememberGalleryLauncher
-import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileType
 import com.gildongmu.dduru.presentation.feature.register.profile.util.surveyStatus
+import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 
 @Composable
 fun ProfileSettingScreen(
@@ -128,7 +128,7 @@ fun ProfileSettingScreen(
                 onRandomClick = viewModel::onRandomNickname,
                 value = state.nickname,
                 onValueChange = { viewModel.onNicknameChanged(it) },
-                validationMessage = state.nicknameErrorMessage?: "",
+                validationMessage = state.nicknameErrorMessage ?: ""
             )
 
             ProfileIntroduction(

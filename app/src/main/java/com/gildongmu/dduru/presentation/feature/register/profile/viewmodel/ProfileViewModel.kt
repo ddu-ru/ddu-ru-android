@@ -4,11 +4,11 @@ import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.gildongmu.dduru.R
-import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileType
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
+import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileState
 import com.gildongmu.dduru.presentation.feature.register.profile.util.surveyStatus
 import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
@@ -21,9 +21,11 @@ import kotlinx.coroutines.flow.update
 @HiltViewModel
 class ProfileViewModel @Inject constructor() : ViewModel() {
 
-    private val _uiState = MutableStateFlow(ProfileState(
-        selectedBgColor = ProfileBackgroundColorList.first().color,
-        savedBgColor = ProfileBackgroundColorList.first().color)
+    private val _uiState = MutableStateFlow(
+        ProfileState(
+            selectedBgColor = ProfileBackgroundColorList.first().color,
+            savedBgColor = ProfileBackgroundColorList.first().color
+        )
     )
     val uiState = _uiState.asStateFlow()
 

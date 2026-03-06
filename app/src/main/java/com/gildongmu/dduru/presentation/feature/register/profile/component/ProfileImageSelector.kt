@@ -22,11 +22,11 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.core.net.toUri
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileType
-import androidx.core.net.toUri
 
 @Composable
 fun ProfileImageSelector(
@@ -61,7 +61,7 @@ fun ProfileImageSelector(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     val currentSource: Any = if (option.type == ProfileType.CUSTOM) {
-                        selectedImageUri ?:R.drawable.img_blank_profile
+                        selectedImageUri ?: R.drawable.img_blank_profile
                     } else {
                         option.image
                     }
@@ -111,7 +111,6 @@ fun ProfileImageSelectorPreview() {
     )
     var selectedOption by remember { mutableStateOf(options.last()) }
 
-
     ProfileImageSelector(
         options = options,
         selectedOption = selectedOption,
@@ -122,7 +121,6 @@ fun ProfileImageSelectorPreview() {
         onActionClick = {}
     )
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -137,7 +135,6 @@ fun ProfileImageSelectorLockedPreview() {
         ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
     )
     var selectedOption by remember { mutableStateOf(options.last()) }
-
 
     ProfileImageSelector(
         options = options,

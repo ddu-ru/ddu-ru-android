@@ -4,7 +4,6 @@ import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 
-
 enum class ProfileType {
     AVATAR, UPLOADED, DEFAULT
 }
@@ -12,7 +11,6 @@ enum class ProfileType {
 enum class surveyStatus {
     COMPLETED, SKIPPED
 }
-
 
 data class ProfileState(
     val isSurveyComplete: surveyStatus = surveyStatus.SKIPPED,
