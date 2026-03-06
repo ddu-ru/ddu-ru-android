@@ -9,6 +9,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
+import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults.filledDisabledColors
+import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults.filledEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.state.Gender
 
@@ -18,13 +20,6 @@ fun GenderSegment(
     onSelect: (Gender) -> Unit,
     enabled: Boolean
 ) {
-    val unselectedColors = ButtonDefaults.buttonColors(
-        containerColor = Color.White,
-        contentColor = DduruTheme.colors.gray700,
-        disabledContainerColor = Color.White,
-        disabledContentColor = DduruTheme.colors.gray700
-    )
-
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
@@ -33,40 +28,20 @@ fun GenderSegment(
         DduruButton(
             modifier = Modifier.weight(1f),
             text = "남자",
-//            enabled = enabled,
+            enabled = enabled,
             onClick = { onSelect(Gender.MALE) },
-//            colors = if (isMaleSelected) {
-//                ButtonDefaults.buttonColors(
-//                    containerColor = DduruTheme.colors.primary,
-//                    contentColor = Color.White,
-//                    disabledContainerColor = DduruTheme.colors.primary.copy(alpha = 0.3f),
-//                    disabledContentColor = Color.White.copy(alpha = 0.7f)
-//                )
-//            } else {
-//                unselectedColors
-//            },
-//            borderColor = if (isMaleSelected) DduruTheme.colors.WhiteAlpha30 else DduruTheme.colors.Gray200,
-//            cornerSize = 16.dp
+            enabledColors = filledEnabledColors,
+            disabledColors = filledDisabledColors,
         )
 
         val isFemaleSelected = selected == Gender.FEMALE
-//        DduruButton(
-//            modifier = Modifier.weight(1f),
-//            text = "여자",
-//            enabled = enabled,
-//            onClick = { onSelect(Gender.FEMALE) },
-//            colors = if (isFemaleSelected) {
-//                ButtonDefaults.buttonColors(
-//                    containerColor = DduruTheme.colors.primary,
-//                    contentColor = Color.White,
-//                    disabledContainerColor = DduruTheme.colors.primary.copy(alpha = 0.3f),
-//                    disabledContentColor = Color.White.copy(alpha = 0.7f)
-//                )
-//            } else {
-//                unselectedColors
-//            },
-//            borderColor = if (isFemaleSelected) DduruTheme.colors.WhiteAlpha30 else DduruTheme.colors.Gray200,
-//            cornerSize = 16.dp
-//        )
+        DduruButton(
+            modifier = Modifier.weight(1f),
+            text = "여자",
+            enabled = enabled,
+            onClick = { onSelect(Gender.FEMALE) },
+            enabledColors = filledEnabledColors,
+            disabledColors = filledDisabledColors,
+        )
     }
 }
