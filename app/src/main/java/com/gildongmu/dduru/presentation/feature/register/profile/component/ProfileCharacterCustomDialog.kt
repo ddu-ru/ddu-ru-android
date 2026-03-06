@@ -93,7 +93,7 @@ fun ProfileCharacterCustomDialog(
                 ) {
                     ProfileImageCircle(
                         modifier = Modifier.padding(32.dp),
-                        characterImage = characterImage,
+                        image = characterImage,
                         backgroundColor = selectedBg,
                         scale = 1.6f,
                         offsetRatio = 0.16f,
@@ -132,7 +132,7 @@ fun ProfileCharacterCustomDialog(
                     ColorDotGrid(
                         modifier = Modifier.padding(bottom = 78.dp),
                         colors = ProfileBackgroundColorList.map { it.color },
-
+                        selectedColor = selectedBg,
                         onColorClick = onBgColorSelected
                     )
                 }
@@ -144,7 +144,7 @@ fun ProfileCharacterCustomDialog(
 @Preview(showBackground = true)
 @Composable
 fun ProfileCharacterCustomDialogPreview() {
-    var bg by remember { mutableStateOf(Color.Red) }
+    var bg by remember { mutableStateOf(ProfileBackgroundColorList.first().color) }
 
     ProfileCharacterCustomDialog(
         selectedBg = bg,

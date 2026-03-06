@@ -54,12 +54,14 @@ fun ProfileImageSelector(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    val currentUri =
-                        if (option.type == ProfileType.CUSTOM) selectedImageUri else null
+                    val currentSource: Any = if (option.type == ProfileType.CUSTOM) {
+                        selectedImageUri ?:R.drawable.img_blank_profile
+                    } else {
+                        option.image
+                    }
 
                     ProfileImageCircle(
-                        characterImage = option.resId,
-                        imageUri = currentUri,
+                        image = currentSource,
                         scale = option.scale,
                         backgroundColor = characterBackgroundColor,
                         offsetRatio = option.offsetRatio

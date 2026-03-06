@@ -5,7 +5,7 @@ enum class ProfileType {
 }
 
 data class ProfileImageCropOption(
-    val resId: Int,
+    val image: Any,
     val type: ProfileType,
     val scale: Float = 1f,
     val offsetRatio: Float = 0f

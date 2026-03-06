@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Color
@@ -20,15 +19,14 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun ProfileImageCircle(
     modifier: Modifier = Modifier,
-    characterImage: Int,
-    imageUri: Uri? = null,
+    image: Any = R.drawable.img_blank_profile,
     backgroundColor: Color,
     scale: Float = 1f,
     offsetRatio: Float = 0f,
@@ -42,8 +40,6 @@ fun ProfileImageCircle(
             .clip(CircleShape),
         contentAlignment = Alignment.Center
     ) {
-        val image = imageUri ?: characterImage
-
         AsyncImage(
             model = image,
             contentDescription = null,
@@ -60,13 +56,15 @@ fun ProfileImageCircle(
             Box(
                 modifier = Modifier
                     .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f))
+                    .background(Color.Black.copy(alpha = 0.5f)),
             )
 
             Text(
                 text = "추가설문 후\n선택 가능해요",
                 style = DduruTheme.typography.Caption1,
                 color = Color.White,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.align(Alignment.Center)
             )
         }
     }
