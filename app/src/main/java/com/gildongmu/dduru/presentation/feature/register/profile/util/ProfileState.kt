@@ -1,21 +1,32 @@
 package com.gildongmu.dduru.presentation.feature.register.profile.util
 
-import android.net.Uri
-import androidx.compose.ui.graphics.Color
-import com.gildongmu.dduru.presentation.feature.register.survey.model.ProfileImageCropOption
+
+enum class ProfileType {
+    AVATAR, UPLOADED, DEFAULT
+}
+
+enum class surveyStatus {
+    COMPLETED, SKIPPED
+}
+
 
 data class ProfileState(
-    val profileSelectedOption: ProfileImageCropOption,
-    val characterImage: Int,
-    val selectedImageUri: Uri? = null,
+    val isSurveyComplete: surveyStatus = surveyStatus.SKIPPED,
 
-    val introduction: String = "",
-    val maxIntroLength: Int = 60,
+    val profileType: ProfileType = ProfileType.UPLOADED,
+    val profileUploadedUrl: String? = null,
+    val profileAvatarUrl: String? = null,
 
     val nickname: String = "",
-    val nicknameErrorMessage: String? = null,
-    val maxNicknameLength: Int = 10,
 
-    val selectedBgColor: Color,
-    val savedBgColor: Color
+    val text: String = "",
+    val isValid: Boolean = false,
+    val errorMessage: String? = null,
+    val isDuplicationChecked: Boolean = false,
+    val isDuplicationChecking: Boolean = false,
+
+    val introduction: String = "",
+
+    val isNicknameValid: Boolean = true,
+    val canStart: Boolean = false
 )
