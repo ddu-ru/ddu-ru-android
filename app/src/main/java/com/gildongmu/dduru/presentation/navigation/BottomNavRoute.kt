@@ -5,8 +5,12 @@ import kotlinx.serialization.Serializable
 
 sealed interface BottomNavRoute : NavKey {
     @Serializable data object Home : BottomNavRoute
+
     @Serializable data object Matching : BottomNavRoute
+
     @Serializable data object MyPage : BottomNavRoute
+
     @Serializable data object Chat : BottomNavRoute
+
     @Serializable data object Board : BottomNavRoute
 }

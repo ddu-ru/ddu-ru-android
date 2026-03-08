@@ -27,7 +27,6 @@ fun RootNavigation(
             CircularProgressIndicator()
         }
     } else {
-
         val rootBackStack = rememberNavBackStack(startDestination!!)
 
         NavDisplay(
@@ -50,7 +49,6 @@ fun RootNavigation(
                                 rootBackStack.add(RootNavRoute.MainNavRoute)
                             }
 
-
                         )
                     }
 
@@ -66,8 +64,7 @@ fun RootNavigation(
                     is RootNavRoute.RegisterNavRoute -> NavEntry(route) {}
 
                     is RootNavRoute.MainNavRoute -> NavEntry(route) {
-                        MainScreen(
-                        )
+                        MainScreen()
                     }
 
                     else -> NavEntry(route) {}

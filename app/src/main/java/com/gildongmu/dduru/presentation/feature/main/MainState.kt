@@ -10,13 +10,13 @@ import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
 @Composable
 fun rememberMainAppState(
     bottomNavBackStack: NavBackStack<NavKey> = rememberNavBackStack(BottomNavRoute.Home)
-): MainAppState {
+): MainState {
     return remember(bottomNavBackStack) {
-        MainAppState(bottomNavBackStack)
+        MainState(bottomNavBackStack)
     }
 }
 
-class MainAppState(
+class MainState(
     val bottomNavBackStack: NavBackStack<NavKey>
 ) {
     val currentRoute: BottomNavRoute?

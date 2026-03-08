@@ -4,7 +4,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -32,7 +38,7 @@ fun BottomNavBar(
             .clip(RoundedCornerShape(99.dp))
             .padding(8.dp),
         horizontalArrangement = Arrangement.SpaceBetween,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         items.forEach { item ->
             val isSelected = item.key == currentRoute
@@ -97,7 +103,7 @@ private fun BottomNavBarItem(
         Text(
             text = item.title,
             color = contentColor,
-            style = DduruTheme.typography.Micro,
+            style = DduruTheme.typography.Micro
         )
     }
 }
@@ -110,7 +116,7 @@ private fun BottomNavBarSelectedPreview() {
         BottomNavItem(BottomNavRoute.Matching, "매칭", R.drawable.ic_bottom_nav_main),
         BottomNavItem(BottomNavRoute.Chat, "채팅", R.drawable.ic_bottom_nav_main),
         BottomNavItem(BottomNavRoute.MyPage, "마이", R.drawable.ic_bottom_nav_main),
-        BottomNavItem(BottomNavRoute.Board, "게시판", R.drawable.ic_bottom_nav_main),
+        BottomNavItem(BottomNavRoute.Board, "게시판", R.drawable.ic_bottom_nav_main)
     )
     val items = previewBottomNavItems
 

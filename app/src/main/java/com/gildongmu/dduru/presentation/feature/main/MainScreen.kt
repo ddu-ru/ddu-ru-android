@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.main
 
-import com.gildongmu.dduru.presentation.navigation.BottomNavBar
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -25,6 +24,7 @@ import androidx.compose.ui.unit.dp
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.presentation.navigation.BottomNavBar
 import com.gildongmu.dduru.presentation.navigation.BottomNavItem
 import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
 import dev.chrisbanes.haze.HazeState
@@ -32,24 +32,24 @@ import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 
-
 @Composable
 fun MainScreen(
-    appState: MainAppState = rememberMainAppState()
+    appState: MainState = rememberMainAppState()
 ) {
     val bottomNavItems = remember {
         listOf(
             BottomNavItem(BottomNavRoute.Home, "홈", R.drawable.ic_bottom_nav_main),
             BottomNavItem(BottomNavRoute.Matching, "매칭", R.drawable.ic_bottom_nav_main),
             BottomNavItem(BottomNavRoute.MyPage, "나의 여정", R.drawable.ic_bottom_nav_main),
-            BottomNavItem(BottomNavRoute.Chat, "채팅",R.drawable.ic_bottom_nav_main),
+            BottomNavItem(BottomNavRoute.Chat, "채팅", R.drawable.ic_bottom_nav_main),
             BottomNavItem(BottomNavRoute.Board, "커뮤니티", R.drawable.ic_bottom_nav_main)
         )
     }
 
     val hazeState = remember { HazeState() }
 
-    Box(modifier = Modifier.fillMaxSize()
+    Box(
+        modifier = Modifier.fillMaxSize()
     ) {
         NavDisplay(
             modifier = Modifier
@@ -58,7 +58,7 @@ fun MainScreen(
             backStack = appState.bottomNavBackStack,
             entryProvider = { route ->
                 when (route) {
-                    is BottomNavRoute.Home -> NavEntry(route) { Text("메인")}
+                    is BottomNavRoute.Home -> NavEntry(route) { Text("메인") }
                     is BottomNavRoute.Matching -> NavEntry(route) { Text("매칭") }
                     is BottomNavRoute.Board -> NavEntry(route) { Text("게시판") }
                     is BottomNavRoute.Chat -> NavEntry(route) { Text("채팅") }
@@ -95,8 +95,8 @@ fun MainScreen(
                     brush = Brush.verticalGradient(
                         colors = listOf(
                             Color.White.copy(alpha = .8f),
-                            Color.White.copy(alpha = .2f),
-                        ),
+                            Color.White.copy(alpha = .2f)
+                        )
                     ),
                     shape = RoundedCornerShape(99.dp)
                 )

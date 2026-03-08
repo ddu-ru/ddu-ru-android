@@ -25,7 +25,7 @@ sealed class LoginUiState {
 class LoginViewModel @Inject constructor(
     private val loginGoogleUseCase: LoginGoogleUseCase,
     private val loginKakaoUseCase: LoginKakaoUseCase,
-    private val kakaoAuthDataSource: KakaoAuthDataSource,
+    private val kakaoAuthDataSource: KakaoAuthDataSource
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
