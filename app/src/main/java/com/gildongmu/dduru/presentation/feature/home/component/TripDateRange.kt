@@ -17,8 +17,10 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun TripDateRange(
-    date: String, textColor: Color,
-    modifier: Modifier = Modifier, textStyle: TextStyle = DduruTheme.typography.Caption2
+    date: String,
+    textColor: Color,
+    modifier: Modifier = Modifier,
+    textStyle: TextStyle = DduruTheme.typography.Caption2
 ) {
     Row(
         modifier = modifier,
@@ -26,11 +28,15 @@ fun TripDateRange(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Icon(
-            painter = painterResource(R.drawable.ic_home_calendar), contentDescription = null, tint = textColor
+            painter = painterResource(R.drawable.ic_home_calendar),
+            contentDescription = null,
+            tint = textColor
         )
 
         Text(
-            text = date, color = textColor, style = textStyle
+            text = date,
+            color = textColor,
+            style = textStyle
         )
     }
 }
@@ -40,7 +46,8 @@ fun TripDateRange(
 private fun TripDateRangeWithYearPreview() {
     DduruTheme {
         TripDateRange(
-            date = "2026.03.15-03.18", textColor = DduruTheme.colors.gray600
+            date = "2026.03.15-03.18",
+            textColor = DduruTheme.colors.gray600
         )
     }
 }
@@ -50,7 +57,8 @@ private fun TripDateRangeWithYearPreview() {
 private fun TripDateRangeWithoutYearPreview() {
     DduruTheme {
         TripDateRange(
-            date = "03.15-03.18", textColor = DduruTheme.colors.gray500
+            date = "03.15-03.18",
+            textColor = DduruTheme.colors.gray500
         )
     }
 }

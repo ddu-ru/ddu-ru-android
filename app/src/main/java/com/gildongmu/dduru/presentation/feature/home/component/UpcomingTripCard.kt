@@ -59,7 +59,6 @@ fun UpcomingTripCard(
                 modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.Top
             ) {
-
                 Column {
                     Text(
                         text = "다가오는 여행",
@@ -90,7 +89,7 @@ fun UpcomingTripCard(
                     Text(
                         text = "D-$dDay",
                         color = DduruTheme.colors.gray0,
-                        style = DduruTheme.typography.Caption1,
+                        style = DduruTheme.typography.Caption1
                     )
                 }
             }
@@ -101,7 +100,6 @@ fun UpcomingTripCard(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-
                 TripDateRange(
                     date = "2026.03.15-03.18",
                     textColor = DduruTheme.colors.gray700
@@ -116,7 +114,9 @@ fun UpcomingTripCard(
             Spacer(Modifier.height(16.dp))
 
             HorizontalDivider(
-                Modifier, DividerDefaults.Thickness, color = DduruTheme.colors.gray0.copy(alpha = 0.3f)
+                Modifier,
+                DividerDefaults.Thickness,
+                color = DduruTheme.colors.gray0.copy(alpha = 0.3f)
             )
 
             Spacer(Modifier.height(16.dp))
@@ -128,7 +128,6 @@ fun UpcomingTripCard(
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Text(
                     text = "해야 하는 업무 ${taskCount}건",
                     style = DduruTheme.typography.Title3,
