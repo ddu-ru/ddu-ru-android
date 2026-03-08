@@ -39,10 +39,10 @@ fun MainScreen(
     val bottomNavItems = remember {
         listOf(
             BottomNavItem(BottomNavRoute.Home, "홈", R.drawable.ic_bottom_nav_main),
-            BottomNavItem(BottomNavRoute.Matching, "매칭", R.drawable.ic_bottom_nav_main),
-            BottomNavItem(BottomNavRoute.MyPage, "나의 여정", R.drawable.ic_bottom_nav_main),
-            BottomNavItem(BottomNavRoute.Chat, "채팅", R.drawable.ic_bottom_nav_main),
-            BottomNavItem(BottomNavRoute.Board, "커뮤니티", R.drawable.ic_bottom_nav_main)
+            BottomNavItem(BottomNavRoute.Matching, "매칭", R.drawable.ic_bottom_nav_matching),
+            BottomNavItem(BottomNavRoute.MyPage, "나의 여정", R.drawable.ic_bottom_nav_mypage),
+            BottomNavItem(BottomNavRoute.Chat, "채팅", R.drawable.ic_bottom_nav_chat),
+            BottomNavItem(BottomNavRoute.Board, "커뮤니티", R.drawable.ic_bottom_nav_board)
         )
     }
 
@@ -58,7 +58,9 @@ fun MainScreen(
             backStack = appState.bottomNavBackStack,
             entryProvider = { route ->
                 when (route) {
-                    is BottomNavRoute.Home -> NavEntry(route) { Text("메인") }
+                    is BottomNavRoute.Home -> NavEntry(route) {
+                        DummyHomeScreen()
+                    }
                     is BottomNavRoute.Matching -> NavEntry(route) { Text("매칭") }
                     is BottomNavRoute.Board -> NavEntry(route) { Text("게시판") }
                     is BottomNavRoute.Chat -> NavEntry(route) { Text("채팅") }
