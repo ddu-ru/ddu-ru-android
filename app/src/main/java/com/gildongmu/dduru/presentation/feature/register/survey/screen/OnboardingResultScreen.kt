@@ -96,7 +96,7 @@ fun OnboardingResultScreenPreview() {
             modifier = Modifier.fillMaxWidth(),
             uiState = SurveyResultState(
                 avatarName = "감성 펭귄",
-                avatarDescription = "혼자만의 여유를 즐기며 여행하는 타입이에요.",
+                avatarDescription = "혼자만의 여유를 즐기며 \n여행하는 타입이에요.",
                 imageUrl = R.drawable.img_penguin_personallity,
                 personality = "차분하고 섬세해요.",
                 strength = "계획 없이도 흐름을 잘 타요.",

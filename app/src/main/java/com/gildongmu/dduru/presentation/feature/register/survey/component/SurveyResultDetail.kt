@@ -1,7 +1,10 @@
 package com.gildongmu.dduru.presentation.feature.register.survey.component
 
 import androidx.compose.foundation.Image
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
@@ -53,14 +56,20 @@ fun SurveyResultDetail(
             style = DduruTheme.typography.H1,
             textAlign = TextAlign.Center
         )
-        Text(
-            modifier = Modifier
-                .padding(bottom = 24.dp),
-            text = uiModel.tags.joinToString(" ") { "#$it" },
-            style = DduruTheme.typography.Caption2,
-            textAlign = TextAlign.Center,
-            color = DduruTheme.colors.gray600
-        )
+        Row(
+            modifier = Modifier.padding(bottom = 19.dp),
+            horizontalArrangement = Arrangement.spacedBy(8.dp)
+        ) {
+            uiModel.tags.forEach { tag ->
+                HomeHashtag(
+                    text = tag,
+                    textColor = DduruTheme.colors.gray700,
+                    textStyle = DduruTheme.typography.Caption2,
+                    backgroundColor = DduruTheme.colors.gray300,
+                    contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
+                )
+            }
+        }
         ResultDescriptionBox(
             items = listOf(
                 uiModel.personality,
