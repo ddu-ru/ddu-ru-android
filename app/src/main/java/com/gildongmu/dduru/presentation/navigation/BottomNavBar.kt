@@ -13,7 +13,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.navigation.BottomNavItem
 import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
@@ -96,6 +98,27 @@ private fun BottomNavBarItem(
             text = item.title,
             color = contentColor,
             style = DduruTheme.typography.Micro,
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun BottomNavBarSelectedPreview() {
+    val previewBottomNavItems = listOf(
+        BottomNavItem(BottomNavRoute.Home, "홈", R.drawable.ic_bottom_nav_main),
+        BottomNavItem(BottomNavRoute.Matching, "매칭", R.drawable.ic_bottom_nav_main),
+        BottomNavItem(BottomNavRoute.Chat, "채팅", R.drawable.ic_bottom_nav_main),
+        BottomNavItem(BottomNavRoute.MyPage, "마이", R.drawable.ic_bottom_nav_main),
+        BottomNavItem(BottomNavRoute.Board, "게시판", R.drawable.ic_bottom_nav_main),
+    )
+    val items = previewBottomNavItems
+
+    DduruTheme {
+        BottomNavBar(
+            items = items,
+            currentRoute = BottomNavRoute.Home,
+            onItemClick = {}
         )
     }
 }
