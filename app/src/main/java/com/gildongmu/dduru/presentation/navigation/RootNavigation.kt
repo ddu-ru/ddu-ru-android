@@ -1,5 +1,8 @@
 package com.gildongmu.dduru.presentation.navigation
 
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.CircularProgressIndicator
@@ -31,6 +34,12 @@ fun RootNavigation(
 
         NavDisplay(
             backStack = rootBackStack,
+            transitionSpec = {
+                ContentTransform(EnterTransition.None, ExitTransition.None)
+            },
+            popTransitionSpec = {
+                ContentTransform(EnterTransition.None, ExitTransition.None)
+            },
             entryProvider = { route ->
                 when (route) {
                     is RootNavRoute.LoginNavRoute -> NavEntry(route) {

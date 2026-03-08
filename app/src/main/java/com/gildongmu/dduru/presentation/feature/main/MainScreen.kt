@@ -1,5 +1,8 @@
 package com.gildongmu.dduru.presentation.feature.main
 
+import androidx.compose.animation.ContentTransform
+import androidx.compose.animation.EnterTransition
+import androidx.compose.animation.ExitTransition
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.WindowInsets
@@ -56,11 +59,15 @@ fun MainScreen(
                 .fillMaxSize()
                 .haze(state = hazeState),
             backStack = appState.bottomNavBackStack,
+            transitionSpec = {
+                ContentTransform(EnterTransition.None, ExitTransition.None)
+            },
+            popTransitionSpec = {
+                ContentTransform(EnterTransition.None, ExitTransition.None)
+            },
             entryProvider = { route ->
                 when (route) {
-                    is BottomNavRoute.Home -> NavEntry(route) {
-                        DummyHomeScreen()
-                    }
+                    is BottomNavRoute.Home -> NavEntry(route) { Text("홈") }
                     is BottomNavRoute.Matching -> NavEntry(route) { Text("매칭") }
                     is BottomNavRoute.Board -> NavEntry(route) { Text("게시판") }
                     is BottomNavRoute.Chat -> NavEntry(route) { Text("채팅") }
