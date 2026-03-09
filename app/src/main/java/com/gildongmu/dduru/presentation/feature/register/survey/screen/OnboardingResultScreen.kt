@@ -35,6 +35,7 @@ fun OnboardingResultRoute(
         onNextClick = onNextClick
     )
 }
+
 @Composable
 fun OnboardingResultScreen(
     uiState: SurveyResultState,

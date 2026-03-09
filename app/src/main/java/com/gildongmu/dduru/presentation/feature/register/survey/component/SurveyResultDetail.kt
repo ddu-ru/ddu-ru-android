@@ -80,7 +80,6 @@ fun SurveyResultDetail(
     }
 }
 
-
 @Preview(showBackground = true, backgroundColor = 0xFFF7F7F7)
 @Composable
 private fun SurveyResultDetailPreview() {
