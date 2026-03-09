@@ -18,6 +18,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
@@ -58,7 +59,6 @@ fun WritingExpandedMenu(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically, // Top -> CenterVertically
                 modifier = Modifier
-                    .width(119.dp)
                     .wrapContentHeight()
                     .clickable(onClick = onCreateTravelRoom)
                     .padding(horizontal = 8.dp, vertical = 8.dp)
@@ -70,7 +70,7 @@ fun WritingExpandedMenu(
                     modifier = Modifier.size(16.dp)
                 )
                 Text(
-                    text = "여행방 생성",
+                    text = stringResource(id = R.string.writing_create_travel_room),
                     style = DduruTheme.typography.Caption2,
                     color = DduruTheme.colors.gray700
                 )
@@ -79,7 +79,6 @@ fun WritingExpandedMenu(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
                 verticalAlignment = Alignment.CenterVertically, // Top -> CenterVertically
                 modifier = Modifier
-                    .width(119.dp)
                     .wrapContentHeight()
                     .clickable(onClick = onWriteCommunity)
                     .padding(horizontal = 8.dp, vertical = 8.dp)
@@ -91,7 +90,7 @@ fun WritingExpandedMenu(
                     modifier = Modifier.size(16.dp)
                 )
                 Text(
-                    text = "커뮤니티 글 작성",
+                    text = stringResource(id = R.string.writing_write_community),
                     style = DduruTheme.typography.Caption2,
                     color = DduruTheme.colors.gray700
                 )
@@ -128,7 +127,7 @@ fun WritingExpandedMenu(
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_x),
-                contentDescription = "닫기",
+                contentDescription = stringResource(id = R.string.writing_close),
                 tint = DduruTheme.colors.gray700,
                 modifier = Modifier.size(24.dp)
             )
