@@ -3,4 +3,5 @@
     <string name="writing_create_travel_room">여행방 생성</string>
     <string name="writing_write_community">커뮤니티 글 작성</string>
     <string name="writing_close">닫기</string>
+    <string name="writing_button_label">글쓰기</string>
 </resources>

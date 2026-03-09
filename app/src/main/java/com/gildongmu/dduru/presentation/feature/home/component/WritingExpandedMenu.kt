@@ -7,11 +7,10 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -34,9 +33,7 @@ fun WritingExpandedMenu(
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top),
         horizontalAlignment = Alignment.End,
-        modifier = modifier
-            .width(135.dp)
-            .wrapContentHeight()
+        modifier = modifier.wrapContentHeight()
     ) {
         Column(
             verticalArrangement = Arrangement.spacedBy(0.dp, Alignment.Top),
@@ -47,27 +44,25 @@ fun WritingExpandedMenu(
                     color = DduruTheme.colors.gray200,
                     shape = RoundedCornerShape(16.dp)
                 )
-                .width(135.dp)
                 .wrapContentHeight()
                 .background(
                     color = DduruTheme.colors.gray0,
                     shape = RoundedCornerShape(16.dp)
                 )
-                .padding(start = 8.dp, top = 16.dp, end = 8.dp, bottom = 16.dp)
+                .padding(vertical = 16.dp, horizontal = 8.dp)
         ) {
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically, // Top -> CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .wrapContentHeight()
                     .clickable(onClick = onCreateTravelRoom)
                     .padding(horizontal = 8.dp, vertical = 8.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_plus),
+                    painter = painterResource(id = R.drawable.ic_write_plus),
                     contentDescription = null,
-                    tint = DduruTheme.colors.gray700,
-                    modifier = Modifier.size(16.dp)
+                    tint = DduruTheme.colors.gray700
                 )
                 Text(
                     text = stringResource(id = R.string.writing_create_travel_room),
@@ -77,7 +72,7 @@ fun WritingExpandedMenu(
             }
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically, // Top -> CenterVertically
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier
                     .wrapContentHeight()
                     .clickable(onClick = onWriteCommunity)
@@ -86,8 +81,7 @@ fun WritingExpandedMenu(
                 Icon(
                     painter = painterResource(id = R.drawable.ic_pencil),
                     contentDescription = null,
-                    tint = DduruTheme.colors.gray700,
-                    modifier = Modifier.size(16.dp)
+                    tint = DduruTheme.colors.gray700
                 )
                 Text(
                     text = stringResource(id = R.string.writing_write_community),
@@ -96,40 +90,35 @@ fun WritingExpandedMenu(
                 )
             }
         }
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
-            verticalAlignment = Alignment.CenterVertically,
+        IconButton(
+            onClick = onDismiss,
             modifier = Modifier
                 .shadow(
                     elevation = 16.dp,
                     shape = RoundedCornerShape(99.dp),
-                    spotColor = DduruTheme.colors.blackAlpha05,
-                    ambientColor = DduruTheme.colors.blackAlpha05
+                    spotColor = DduruTheme.colors.black.copy(alpha = 0.05f),
+                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.05f)
                 )
                 .shadow(
                     elevation = 4.dp,
                     shape = RoundedCornerShape(99.dp),
-                    spotColor = DduruTheme.colors.blackAlpha10,
-                    ambientColor = DduruTheme.colors.blackAlpha10
+                    spotColor = DduruTheme.colors.black.copy(alpha = 0.10f),
+                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.10f)
                 )
                 .border(
                     width = 1.dp,
-                    color = DduruTheme.colors.gray400.copy(alpha = 0.3f),
+                    color = DduruTheme.colors.gray9E.copy(alpha = 0.3f),
                     shape = RoundedCornerShape(99.dp)
                 )
-                .size(42.dp)
                 .background(
                     color = DduruTheme.colors.gray50,
                     shape = RoundedCornerShape(99.dp)
                 )
-                .clickable(onClick = onDismiss)
-                .padding(9.dp)
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_x),
-                contentDescription = stringResource(id = R.string.writing_close),
-                tint = DduruTheme.colors.gray700,
-                modifier = Modifier.size(24.dp)
+                painter = painterResource(id = R.drawable.ic_close),
+                contentDescription = null,
+                tint = DduruTheme.colors.gray700
             )
         }
     }

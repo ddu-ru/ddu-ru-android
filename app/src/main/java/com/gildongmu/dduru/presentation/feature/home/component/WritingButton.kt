@@ -5,10 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -17,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
@@ -34,16 +32,14 @@ fun WritingButton(
             .shadow(
                 elevation = 16.dp,
                 shape = RoundedCornerShape(99.dp),
-                spotColor = DduruTheme.colors.blackAlpha05,
-                ambientColor = DduruTheme.colors.blackAlpha05
+                spotColor = DduruTheme.colors.black.copy(alpha = 0.05f),
+                ambientColor = DduruTheme.colors.black.copy(alpha = 0.05f)
             )
             .border(
                 width = 1.dp,
-                color = DduruTheme.colors.gray400.copy(alpha = 0.3f),
+                color = DduruTheme.colors.gray9E.copy(alpha = 0.3f),
                 shape = RoundedCornerShape(99.dp)
             )
-            .width(108.dp)
-            .height(42.dp)
             .background(
                 color = DduruTheme.colors.gray50,
                 shape = RoundedCornerShape(99.dp)
@@ -52,13 +48,12 @@ fun WritingButton(
             .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Icon(
-            painter = painterResource(id = R.drawable.ic_plus),
+            painter = painterResource(id = R.drawable.ic_write_plus),
             contentDescription = null,
-            tint = DduruTheme.colors.gray700,
-            modifier = Modifier.size(14.dp)
+            tint = DduruTheme.colors.gray700
         )
         Text(
-            text = "글쓰기",
+            text = stringResource(id = R.string.writing_button_label),
             style = DduruTheme.typography.Title2,
             color = DduruTheme.colors.gray700
         )
