@@ -270,12 +270,12 @@ class SignupViewModel @Inject constructor(
         authTimerJob?.cancel()
         authTimerJob = viewModelScope.launch {
             var seconds = uiState.authTimerSeconds
-            if (seconds <= 0) seconds = 60
-            while (seconds >= 0) {
+            while (seconds > 0) {
                 updateState { copy(authTimerSeconds = seconds) }
                 delay(1000L)
                 seconds--
             }
+            uiState = uiState.copy(authTimerSeconds = 0)
         }
     }
 
