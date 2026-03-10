@@ -48,7 +48,7 @@ object NetworkModule {
         }
 
         return OkHttpClient.Builder()
-            .retryOnConnectionFailure(true)
+            .retryOnConnectionFailure(false)
             .addInterceptor(authInterceptor)
             .addInterceptor(logging)
             .connectTimeout(30, TimeUnit.SECONDS)
@@ -63,7 +63,6 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
         baseUrl: String
     ): Retrofit {
-        // Kotlinx Serialization 설정
         val json = Json {
             ignoreUnknownKeys = true
             coerceInputValues = true
