@@ -19,7 +19,6 @@ import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.LayoutDirection
 import androidx.compose.ui.unit.dp
 
-// 1. 방향을 정의하는 Enum 추가
 enum class BubbleArrowDirection {
     Bottom, Right
 }
