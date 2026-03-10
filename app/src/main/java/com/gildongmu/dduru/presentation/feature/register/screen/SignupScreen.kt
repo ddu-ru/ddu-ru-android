@@ -26,7 +26,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
@@ -42,7 +41,6 @@ import com.gildongmu.dduru.presentation.feature.register.component.PhoneInput
 import com.gildongmu.dduru.presentation.feature.register.state.Gender
 import com.gildongmu.dduru.presentation.feature.register.state.SignupStep
 import com.gildongmu.dduru.presentation.feature.register.state.SignupUiState
-import java.util.Locale
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -66,44 +64,14 @@ fun SignupScreen(
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val signupFlow = remember {
-        listOf(
-            SignupStep.BIRTH,
-            SignupStep.GENDER,
-            SignupStep.PHONE,
-            SignupStep.AUTH,
-            SignupStep.AUTH_VERIFICATION,
-            SignupStep.DONE
-        )
-    }
-
-    val visibleSteps = remember(currentStep) {
-        val idx = signupFlow.indexOf(currentStep).takeIf { it >= 0 } ?: 0
-        signupFlow.take(idx + 1)
-    }
-
-    val isBottomButtonVisible = when (currentStep) {
-        SignupStep.PHONE,
-        SignupStep.AUTH,
-        SignupStep.AUTH_VERIFICATION -> true
-        else -> false
-    }
-
     LaunchedEffect(currentStep) {
-        if (visibleSteps.isNotEmpty()) {
+        if (state.visibleSteps.isNotEmpty()) {
             delay(200)
-            listState.animateScrollToItem(visibleSteps.size - 1)
+            listState.animateScrollToItem(state.visibleSteps.size - 1)
         }
         if (currentStep == SignupStep.AUTH_VERIFICATION) {
             keyboardController?.hide()
         }
-    }
-
-    fun formatTimer(seconds: Int): String {
-        val safeSeconds = seconds.coerceAtLeast(0)
-        val minutes = safeSeconds / 60
-        val secs = safeSeconds % 60
-        return String.format(Locale.getDefault(), "%02d:%02d", minutes, secs)
     }
 
     Column(
@@ -132,7 +100,7 @@ fun SignupScreen(
             reverseLayout = true
         ) {
             items(
-                items = visibleSteps,
+                items = state.visibleSteps,
                 key = { it.name }
             ) { step ->
                 AnimatedVisibility(
@@ -180,14 +148,14 @@ fun SignupScreen(
                                 value = state.authCode,
                                 onValueChange = onAuthCodeChange,
                                 enabled = true,
-                                timerText = formatTimer(state.authTimerSeconds),
+                                timerText = state.timerText,
                                 shouldAutoFocus = currentStep == SignupStep.AUTH,
                                 onResendClick = onPhoneComplete,
                                 validationMessage = state.authCodeErrorMessage
                             )
                         }
 
-                        SignupStep.AUTH_VERIFICATION -> {}
+                        SignupStep.AUTH_VERIFICATION -> Unit
 
                         SignupStep.DONE -> {
                             Text(
@@ -201,24 +169,12 @@ fun SignupScreen(
             }
         }
 
-        if (isBottomButtonVisible) {
-            val (buttonText, buttonEnabled, onButtonClick) = when (currentStep) {
-                SignupStep.PHONE -> Triple(
-                    "인증번호 전송",
-                    state.phoneNumber.length >= 10,
-                    onPhoneComplete
-                )
-                SignupStep.AUTH -> Triple(
-                    "확인",
-                    state.authCode.isNotEmpty(),
-                    onAuthComplete
-                )
-                SignupStep.AUTH_VERIFICATION -> Triple(
-                    "다음",
-                    true,
-                    onRegisterComplete
-                )
-                else -> Triple("", false, {})
+        if (state.bottomButton.visible) {
+            val onBottomButtonClick = when (state.step) {
+                SignupStep.PHONE -> onPhoneComplete
+                SignupStep.AUTH -> onAuthComplete
+                SignupStep.AUTH_VERIFICATION -> onRegisterComplete
+                else -> ({})
             }
 
             val isImeVisible = WindowInsets.isImeVisible
@@ -241,9 +197,9 @@ fun SignupScreen(
                     .padding(bottom = bottomPadding)
             ) {
                 DduruButton(
-                    text = buttonText,
-                    enabled = buttonEnabled,
-                    onClick = onButtonClick,
+                    text = state.bottomButton.text,
+                    enabled = state.bottomButton.enabled,
+                    onClick = onBottomButtonClick,
                     shape = buttonShape,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -265,12 +221,12 @@ fun SignupScreenPreview() {
             years = (1990..2025).toList(),
             months = (1..12).toList(),
             days = (1..31).toList(),
-            onYearSelected = {},
-            onMonthSelected = {},
-            onDaySelected = {},
-            onGenderSelect = {},
-            onPhoneChange = {},
-            onAuthCodeChange = {},
+            onYearSelected = { _: Int -> },
+            onMonthSelected = { _: Int -> },
+            onDaySelected = { _: Int -> },
+            onGenderSelect = { _: Gender -> },
+            onPhoneChange = { _: String -> },
+            onAuthCodeChange = { _: String -> },
             onPhoneComplete = {},
             onAuthComplete = {},
             onRegisterComplete = {}

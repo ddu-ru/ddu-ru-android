@@ -32,6 +32,12 @@ data class CompletedItem(
     val value: String
 )
 
+data class SignupBottomButtonState(
+    val visible: Boolean = false,
+    val text: String = "",
+    val enabled: Boolean = false
+)
+
 data class SignupUiState(
     val step: SignupStep = SignupStep.BIRTH,
 
@@ -49,6 +55,7 @@ data class SignupUiState(
     val isPhoneRequested: Boolean = false,
     val phoneValidation: PhoneValidationResult = PhoneValidationResult.EMPTY,
     val phoneErrorMessage: String = "",
+
     val authCode: String = "",
     val isAuthVerified: Boolean = false,
     val authCodeValidation: AuthCodeValidationResult = AuthCodeValidationResult.EMPTY,
@@ -56,4 +63,8 @@ data class SignupUiState(
     val authTimerSeconds: Int = 0,
 
     val errorMessage: String? = null,
+
+    val visibleSteps: List<SignupStep> = listOf(SignupStep.BIRTH),
+    val bottomButton: SignupBottomButtonState = SignupBottomButtonState(),
+    val timerText: String = "00:00",
 )

@@ -15,6 +15,7 @@ import com.gildongmu.dduru.presentation.feature.register.state.AuthCodeValidatio
 import com.gildongmu.dduru.presentation.feature.register.state.CompletedItem
 import com.gildongmu.dduru.presentation.feature.register.state.Gender
 import com.gildongmu.dduru.presentation.feature.register.state.PhoneValidationResult
+import com.gildongmu.dduru.presentation.feature.register.state.SignupBottomButtonState
 import com.gildongmu.dduru.presentation.feature.register.state.SignupStep
 import com.gildongmu.dduru.presentation.feature.register.state.SignupUiState
 import com.gildongmu.dduru.presentation.feature.register.util.AuthCodeValidator
@@ -35,6 +36,50 @@ class SignupViewModel @Inject constructor(
 
     var uiState by mutableStateOf(SignupUiState())
         private set
+
+    private val signupFlow = listOf(
+        SignupStep.BIRTH,
+        SignupStep.GENDER,
+        SignupStep.PHONE,
+        SignupStep.AUTH,
+        SignupStep.AUTH_VERIFICATION,
+        SignupStep.DONE
+    )
+
+    private fun SignupUiState.withDerivedState(): SignupUiState {
+        val currentIndex = signupFlow.indexOf(step).takeIf { it >= 0 } ?: 0
+        val visibleSteps = signupFlow.take(currentIndex + 1)
+
+        val bottomButton = when (step) {
+            SignupStep.PHONE -> SignupBottomButtonState(
+                visible = true,
+                text = "인증번호 전송",
+                enabled = phoneNumber.length >= 10
+            )
+            SignupStep.AUTH -> SignupBottomButtonState(
+                visible = true,
+                text = "확인",
+                enabled = authCode.isNotEmpty()
+            )
+            SignupStep.AUTH_VERIFICATION -> SignupBottomButtonState(
+                visible = true,
+                text = "다음",
+                enabled = true
+            )
+            else -> SignupBottomButtonState()
+        }
+
+        val safeSeconds = authTimerSeconds.coerceAtLeast(0)
+        val minutes = safeSeconds / 60
+        val seconds = safeSeconds % 60
+        val timerText = "%02d:%02d".format(minutes, seconds)
+
+        return copy(
+            visibleSteps = visibleSteps,
+            bottomButton = bottomButton,
+            timerText = timerText
+        )
+    }
 
     val years = (1940..2024).toList().reversed()
     val months = (1..12).toList()
