@@ -23,10 +23,10 @@ import com.gildongmu.dduru.presentation.feature.register.util.PhoneValidator
 import com.gildongmu.dduru.presentation.feature.register.util.ValidationMessageMapper.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
-import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(

@@ -67,5 +67,5 @@ data class SignupUiState(
 
     val visibleSteps: List<SignupStep> = listOf(SignupStep.BIRTH),
     val bottomButton: SignupBottomButtonState = SignupBottomButtonState(),
-    val timerText: String = "00:00",
+    val timerText: String = "00:00"
 )

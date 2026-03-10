@@ -29,21 +29,21 @@ fun BirthInputRow(
             label = "년",
             selectedValue = year,
             items = years,
-            onItemSelected = onYearSelected,
+            onItemSelected = onYearSelected
         )
         YearDropdownField(
             modifier = Modifier.weight(1f),
             label = "월",
             selectedValue = month,
             items = months,
-            onItemSelected = onMonthSelected,
+            onItemSelected = onMonthSelected
         )
         YearDropdownField(
             modifier = Modifier.weight(1f),
             label = "일",
             selectedValue = day,
             items = days,
-            onItemSelected = onDaySelected,
+            onItemSelected = onDaySelected
         )
     }
 }

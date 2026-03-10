@@ -60,7 +60,7 @@ fun MaterialUnderlineNumberTextField(
                         ?.takeIf { it >= 0 }
                         ?.let { digitsOnly.take(it) }
                         ?: digitsOnly
-                        onValueChange(limited)
+                    onValueChange(limited)
                 },
                 enabled = enabled,
                 modifier = modifier.weight(1f),

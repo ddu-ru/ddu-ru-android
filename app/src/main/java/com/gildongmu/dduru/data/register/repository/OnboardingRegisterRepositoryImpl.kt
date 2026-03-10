@@ -6,8 +6,8 @@ import com.gildongmu.dduru.data.register.model.OnboardingRegisterRequest
 import com.gildongmu.dduru.domain.entity.ExceptionResponse
 import com.gildongmu.dduru.domain.register.OnboardingRegisterRepository
 import javax.inject.Inject
-import kotlinx.coroutines.flow.first
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.coroutines.flow.first
 
 class OnboardingRegisterRepositoryImpl @Inject constructor(
     private val api: OnboardingRegisterApi,

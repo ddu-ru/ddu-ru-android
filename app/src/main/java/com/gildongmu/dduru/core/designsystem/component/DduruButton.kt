@@ -57,7 +57,6 @@ fun DduruButton(
     enabled: Boolean = true,
     shape: Shape = RoundedCornerShape(16.dp)
 ) {
-
     val backgroundColor = if (enabled) enabledColors.backgroundColor else disabledColors.backgroundColor
     val textColor = if (enabled) enabledColors.textColor else disabledColors.textColor
     val borderColor = if (enabled) enabledColors.borderColor else disabledColors.borderColor
@@ -78,7 +77,6 @@ fun DduruButton(
         contentPadding = PaddingValues(horizontal = 18.dp, vertical = 13.dp),
         enabled = enabled
     ) {
-
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterHorizontally),
             verticalAlignment = Alignment.CenterVertically
