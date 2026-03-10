@@ -6,42 +6,44 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.gildongmu.dduru.presentation.feature.register.state.SignupUiState
-import com.gildongmu.dduru.presentation.feature.register.viewmodel.SignupViewModel
 
 @Composable
 fun BirthInputRow(
-    state: SignupUiState,
-    viewModel: SignupViewModel,
-    enabled: Boolean
+    year: Int?,
+    month: Int?,
+    day: Int?,
+    years: List<Int>,
+    months: List<Int>,
+    days: List<Int>,
+    onYearSelected: (Int) -> Unit,
+    onMonthSelected: (Int) -> Unit,
+    onDaySelected: (Int) -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         YearDropdownField(
             modifier = Modifier.weight(1f),
             label = "년",
-            selectedValue = state.year,
-            items = viewModel.years,
-            onItemSelected = viewModel::onYearSelected,
-            enabled = enabled
+            selectedValue = year,
+            items = years,
+            onItemSelected = onYearSelected,
         )
         YearDropdownField(
             modifier = Modifier.weight(1f),
             label = "월",
-            selectedValue = state.month,
-            items = viewModel.months,
-            onItemSelected = viewModel::onMonthSelected,
-            enabled = enabled
+            selectedValue = month,
+            items = months,
+            onItemSelected = onMonthSelected,
         )
         YearDropdownField(
             modifier = Modifier.weight(1f),
             label = "일",
-            selectedValue = state.day,
-            items = viewModel.days,
-            onItemSelected = viewModel::onDaySelected,
-            enabled = enabled
+            selectedValue = day,
+            items = days,
+            onItemSelected = onDaySelected,
         )
     }
 }

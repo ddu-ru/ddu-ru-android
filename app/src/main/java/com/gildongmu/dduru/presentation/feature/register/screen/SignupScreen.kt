@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.register.screen
 
+import android.R.attr.enabled
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -127,9 +128,15 @@ fun SignupScreen(
                     when (step) {
                         SignupStep.BIRTH -> {
                             BirthInputRow(
-                                state = state,
-                                viewModel = viewModel,
-                                enabled = true
+                                year = state.year,
+                                month = state.month,
+                                day = state.day,
+                                years = viewModel.years,
+                                months = viewModel.months,
+                                days = viewModel.days,
+                                onYearSelected = viewModel::onYearSelected,
+                                onMonthSelected = viewModel::onMonthSelected,
+                                onDaySelected = viewModel::onDaySelected
                             )
                         }
 
