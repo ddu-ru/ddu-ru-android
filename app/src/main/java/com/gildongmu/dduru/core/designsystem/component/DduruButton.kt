@@ -176,7 +176,7 @@ private fun DduruButtonPreview() {
                     onClick = {},
                     enabledColors = DduruButtonDefaults.outlinedEnabledColors,
                     disabledColors = DduruButtonDefaults.outlinedDisabledColors,
-                    iconRes = R.drawable.ic_heart_rounded,
+                    iconRes = R.drawable.ic_x_pass,
                     modifier = Modifier.weight(1f)
                 )
 
