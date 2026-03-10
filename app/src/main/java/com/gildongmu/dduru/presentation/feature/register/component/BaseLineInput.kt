@@ -56,8 +56,11 @@ fun MaterialUnderlineNumberTextField(
                 value = value,
                 onValueChange = { input ->
                     val digitsOnly = input.filter { it.isDigit() }
-                    val limited = maxLength?.let { digitsOnly.take(it) } ?: digitsOnly
-                    onValueChange(limited)
+                    val limited = maxLength
+                        ?.takeIf { it >= 0 }
+                        ?.let { digitsOnly.take(it) }
+                        ?: digitsOnly
+                        onValueChange(limited)
                 },
                 enabled = enabled,
                 modifier = modifier.weight(1f),
