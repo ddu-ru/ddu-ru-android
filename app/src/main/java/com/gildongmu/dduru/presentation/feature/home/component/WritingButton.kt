@@ -52,6 +52,7 @@ fun WritingButton(
             contentDescription = null,
             tint = DduruTheme.colors.gray700
         )
+
         Text(
             text = stringResource(id = R.string.writing_button_label),
             style = DduruTheme.typography.Title2,
