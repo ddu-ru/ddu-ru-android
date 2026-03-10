@@ -7,18 +7,18 @@ import com.gildongmu.dduru.domain.entity.ExceptionResponse
 import com.gildongmu.dduru.domain.register.OnboardingRegisterRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
+import kotlin.coroutines.cancellation.CancellationException
 
 class OnboardingRegisterRepositoryImpl @Inject constructor(
     private val api: OnboardingRegisterApi,
     private val verificationTokenLocalDataSource: PhoneVerificationTokenLocalDataSource
 ) : OnboardingRegisterRepository {
-
-    override suspend fun initProfile(
+    override suspend fun onboardingRegister(
         gender: String,
         phoneNumber: String,
         birthday: String
     ): Result<Unit> {
-        return runCatching {
+        return try {
             val verificationToken = verificationTokenLocalDataSource.verificationToken.first()
                 ?: throw IllegalStateException("인증 토큰이 없습니다.")
 
@@ -36,6 +36,11 @@ class OnboardingRegisterRepositoryImpl @Inject constructor(
                     status = response.status
                 )
             }
+            Result.success(Unit)
+        } catch (e: CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(e)
         }
     }
 }

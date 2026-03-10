@@ -9,6 +9,7 @@ import com.gildongmu.dduru.core.common.util.DateUtils
 import com.gildongmu.dduru.domain.entity.ExceptionResponse
 import com.gildongmu.dduru.domain.phone.PhoneVerificationErrorMapper
 import com.gildongmu.dduru.domain.phone.PhoneVerificationRepository
+import com.gildongmu.dduru.domain.register.OnboardingRegisterErrorMapper
 import com.gildongmu.dduru.domain.register.OnboardingRegisterRepository
 import com.gildongmu.dduru.presentation.feature.register.state.AuthCodeValidationResult
 import com.gildongmu.dduru.presentation.feature.register.state.CompletedItem
@@ -24,6 +25,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
@@ -219,7 +221,7 @@ class SignupViewModel @Inject constructor(
 
     fun onRegisterComplete() {
         viewModelScope.launch {
-            uiState = uiState.copy()
+            uiState = uiState.copy(isLoading = true)
 
             val genderValue = when (uiState.gender) {
                 Gender.MALE -> "M"
@@ -247,15 +249,30 @@ class SignupViewModel @Inject constructor(
 
             val birthday = "%04d-%02d-%02d".format(year, month, day)
 
-            onboardingRegisterRepository.initProfile(
+            onboardingRegisterRepository.onboardingRegister(
                 gender = genderValue,
                 phoneNumber = uiState.phoneNumber,
                 birthday = birthday
             ).onSuccess {
                 uiState = uiState.copy(isLoading = false, step = SignupStep.DONE)
             }.onFailure { e ->
+                if (e is CancellationException) throw e
+
+                val errorMessage = when (e) {
+                    is ExceptionResponse -> {
+                        OnboardingRegisterErrorMapper.toMessage(e.status)
+                    }
+                    is IllegalStateException -> {
+                        e.message ?: "프로필 설정에 실패했어요."
+                    }
+                    else -> {
+                        "프로필 설정에 실패했어요."
+                    }
+                }
+
                 uiState = uiState.copy(
-                    isLoading = false
+                    isLoading = false,
+                    errorMessage = errorMessage
                 )
             }
         }
