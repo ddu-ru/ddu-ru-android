@@ -1,6 +1,8 @@
 package com.gildongmu.dduru.presentation.feature.register.screen
 
-import android.R.attr.enabled
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.expandVertically
+import androidx.compose.animation.fadeIn
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -30,7 +32,6 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.component.AuthCodeInput
@@ -38,22 +39,34 @@ import com.gildongmu.dduru.presentation.feature.register.component.BirthInputRow
 import com.gildongmu.dduru.presentation.feature.register.component.GenderSegment
 import com.gildongmu.dduru.presentation.feature.register.component.GreetingMessageCard
 import com.gildongmu.dduru.presentation.feature.register.component.PhoneInput
+import com.gildongmu.dduru.presentation.feature.register.state.Gender
 import com.gildongmu.dduru.presentation.feature.register.state.SignupStep
-import com.gildongmu.dduru.presentation.feature.register.viewmodel.SignupViewModel
+import com.gildongmu.dduru.presentation.feature.register.state.SignupUiState
 import java.util.Locale
 import kotlinx.coroutines.delay
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun SignupScreen(
-    viewModel: SignupViewModel = viewModel()
+    state: SignupUiState,
+    years: List<Int>,
+    months: List<Int>,
+    days: List<Int>,
+    onYearSelected: (Int) -> Unit,
+    onMonthSelected: (Int) -> Unit,
+    onDaySelected: (Int) -> Unit,
+    onGenderSelect: (Gender) -> Unit,
+    onPhoneChange: (String) -> Unit,
+    onAuthCodeChange: (String) -> Unit,
+    onPhoneComplete: () -> Unit,
+    onAuthComplete: () -> Unit,
+    onRegisterComplete: () -> Unit
 ) {
-    val state = viewModel.uiState
     val currentStep = state.step
     val listState = rememberLazyListState()
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    val SIGNUP_FLOW = remember {
+    val signupFlow = remember {
         listOf(
             SignupStep.BIRTH,
             SignupStep.GENDER,
@@ -65,8 +78,8 @@ fun SignupScreen(
     }
 
     val visibleSteps = remember(currentStep) {
-        val idx = SIGNUP_FLOW.indexOf(currentStep).takeIf { it >= 0 } ?: 0
-        SIGNUP_FLOW.take(idx + 1)
+        val idx = signupFlow.indexOf(currentStep).takeIf { it >= 0 } ?: 0
+        signupFlow.take(idx + 1)
     }
 
     val isBottomButtonVisible = when (currentStep) {
@@ -92,6 +105,7 @@ fun SignupScreen(
         val secs = safeSeconds % 60
         return String.format(Locale.getDefault(), "%02d:%02d", minutes, secs)
     }
+
     Column(
         modifier = Modifier
             .fillMaxSize()
@@ -105,6 +119,7 @@ fun SignupScreen(
                 .padding(horizontal = 24.dp, vertical = 24.dp),
             step = state.step
         )
+
         Spacer(modifier = Modifier.height(8.dp))
 
         LazyColumn(
@@ -120,9 +135,9 @@ fun SignupScreen(
                 items = visibleSteps,
                 key = { it.name }
             ) { step ->
-                androidx.compose.animation.AnimatedVisibility(
+                AnimatedVisibility(
                     visible = true,
-                    enter = androidx.compose.animation.fadeIn() + androidx.compose.animation.expandVertically(),
+                    enter = fadeIn() + expandVertically(),
                     modifier = Modifier.animateItem()
                 ) {
                     when (step) {
@@ -131,19 +146,19 @@ fun SignupScreen(
                                 year = state.year,
                                 month = state.month,
                                 day = state.day,
-                                years = viewModel.years,
-                                months = viewModel.months,
-                                days = viewModel.days,
-                                onYearSelected = viewModel::onYearSelected,
-                                onMonthSelected = viewModel::onMonthSelected,
-                                onDaySelected = viewModel::onDaySelected
+                                years = years,
+                                months = months,
+                                days = days,
+                                onYearSelected = onYearSelected,
+                                onMonthSelected = onMonthSelected,
+                                onDaySelected = onDaySelected
                             )
                         }
 
                         SignupStep.GENDER -> {
                             GenderSegment(
                                 selected = state.gender,
-                                onSelect = viewModel::onGenderSelect,
+                                onSelect = onGenderSelect,
                                 enabled = true
                             )
                         }
@@ -152,9 +167,9 @@ fun SignupScreen(
                             PhoneInput(
                                 modifier = Modifier,
                                 value = state.phoneNumber,
-                                onValueChange = viewModel::onPhoneChange,
+                                onValueChange = onPhoneChange,
                                 enabled = true,
-                                shouldAutoFocus = (currentStep == SignupStep.PHONE),
+                                shouldAutoFocus = currentStep == SignupStep.PHONE,
                                 validationMessage = state.phoneErrorMessage
                             )
                         }
@@ -163,11 +178,11 @@ fun SignupScreen(
                             AuthCodeInput(
                                 modifier = Modifier,
                                 value = state.authCode,
-                                onValueChange = viewModel::onAuthCodeChange,
+                                onValueChange = onAuthCodeChange,
                                 enabled = true,
                                 timerText = formatTimer(state.authTimerSeconds),
-                                shouldAutoFocus = (currentStep == SignupStep.AUTH),
-                                onResendClick = viewModel::onPhoneComplete,
+                                shouldAutoFocus = currentStep == SignupStep.AUTH,
+                                onResendClick = onPhoneComplete,
                                 validationMessage = state.authCodeErrorMessage
                             )
                         }
@@ -176,7 +191,7 @@ fun SignupScreen(
 
                         SignupStep.DONE -> {
                             Text(
-                                "회원가입 완료 🎉",
+                                text = "회원가입 완료 🎉",
                                 color = Color.Blue,
                                 modifier = Modifier.padding(16.dp)
                             )
@@ -191,20 +206,18 @@ fun SignupScreen(
                 SignupStep.PHONE -> Triple(
                     "인증번호 전송",
                     state.phoneNumber.length >= 10,
-                    viewModel::onPhoneComplete
+                    onPhoneComplete
                 )
                 SignupStep.AUTH -> Triple(
                     "확인",
                     state.authCode.isNotEmpty(),
-                    viewModel::onAuthComplete
+                    onAuthComplete
                 )
-
                 SignupStep.AUTH_VERIFICATION -> Triple(
                     "다음",
                     true,
-                    viewModel::onRegisterComplete
+                    onRegisterComplete
                 )
-
                 else -> Triple("", false, {})
             }
 
@@ -246,6 +259,20 @@ fun SignupScreen(
 @Composable
 fun SignupScreenPreview() {
     DduruTheme {
-        SignupScreen()
+        SignupScreen(
+            state = SignupUiState(),
+            years = (1990..2025).toList(),
+            months = (1..12).toList(),
+            days = (1..31).toList(),
+            onYearSelected = {},
+            onMonthSelected = {},
+            onDaySelected = {},
+            onGenderSelect = {},
+            onPhoneChange = {},
+            onAuthCodeChange = {},
+            onPhoneComplete = {},
+            onAuthComplete = {},
+            onRegisterComplete = {}
+        )
     }
 }
