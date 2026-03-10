@@ -19,7 +19,6 @@ class AuthInterceptor @Inject constructor(
         }
 
         val requestBuilder = original.newBuilder()
-            .addHeader("Content-Type", "application/json")
 
         if (!token.isNullOrBlank()) {
             requestBuilder.addHeader(
