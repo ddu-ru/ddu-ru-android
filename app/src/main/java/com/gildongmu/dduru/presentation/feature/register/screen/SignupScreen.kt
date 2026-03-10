@@ -247,6 +247,7 @@ fun SignupScreen(
                     shape = buttonShape,
                     modifier = Modifier.fillMaxWidth()
                 )
+
                 if (!isImeVisible) {
                     Spacer(modifier = Modifier.height(12.dp))
                 }
