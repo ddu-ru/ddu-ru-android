@@ -19,6 +19,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -39,6 +40,11 @@ fun YearDropdownField(
     enabled: Boolean = true
 ) {
     var expanded by remember { mutableStateOf(false) }
+
+    LaunchedEffect(enabled) {
+        if (!enabled) expanded = false
+    }
+
     val textColor = if (enabled) Color.Black else Color.Black.copy(alpha = 0.4f)
 
     Column(modifier = modifier) {
@@ -52,10 +58,8 @@ fun YearDropdownField(
 
         Box {
             Column {
-                val clickableModifier = if (enabled) {
-                    Modifier.clickable { expanded = !expanded }
-                } else {
-                    Modifier
+                val clickableModifier = Modifier.clickable(enabled = enabled) {
+                    expanded = !expanded
                 }
                 Row(
                     modifier = Modifier

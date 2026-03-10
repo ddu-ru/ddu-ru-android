@@ -23,7 +23,7 @@ fun PhoneInput(
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
 
-    LaunchedEffect(shouldAutoFocus) {
+    LaunchedEffect(shouldAutoFocus, enabled) {
         if (shouldAutoFocus && enabled) {
             delay(200)
             focusRequester.requestFocus()
