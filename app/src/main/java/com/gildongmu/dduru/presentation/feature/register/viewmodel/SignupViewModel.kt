@@ -27,6 +27,7 @@ import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.time.LocalDate
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
@@ -85,7 +86,7 @@ class SignupViewModel @Inject constructor(
         )
     }
 
-    val years = (1940..2024).toList().reversed()
+    val years = (1940..LocalDate.now().minusYears(19).year).toList().reversed()
     val months = (1..12).toList()
     val days: List<Int>
         get() = DateUtils.getDayListInMonth(uiState.year, uiState.month)
