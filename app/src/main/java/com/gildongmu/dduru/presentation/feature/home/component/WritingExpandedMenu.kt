@@ -79,10 +79,11 @@ fun WritingExpandedMenu(
                     .padding(horizontal = 8.dp, vertical = 8.dp)
             ) {
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_pencil),
+                    painter = painterResource(id = R.drawable.ic_write_pencil),
                     contentDescription = null,
                     tint = DduruTheme.colors.gray700
                 )
+
                 Text(
                     text = stringResource(id = R.string.writing_write_community),
                     style = DduruTheme.typography.Caption2,
@@ -90,6 +91,7 @@ fun WritingExpandedMenu(
                 )
             }
         }
+
         IconButton(
             onClick = onDismiss,
             modifier = Modifier
