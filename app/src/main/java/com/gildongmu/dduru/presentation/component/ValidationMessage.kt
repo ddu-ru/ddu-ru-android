@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.register.component
+package com.gildongmu.dduru.presentation.component
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Text
