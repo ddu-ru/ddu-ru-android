@@ -18,7 +18,8 @@ enum class PhoneValidationResult {
     VALID,
     EMPTY,
     NOT_DIGITS,
-    INVALID_LENGTH
+    INVALID_LENGTH,
+    INVALID_FORMAT
 }
 
 enum class AuthCodeValidationResult {
