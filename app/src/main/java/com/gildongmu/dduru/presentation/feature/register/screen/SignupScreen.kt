@@ -217,7 +217,10 @@ fun SignupScreen(
 fun SignupScreenPreview() {
     DduruTheme {
         SignupScreen(
-            state = SignupUiState(),
+            state = SignupUiState(
+                visibleSteps = listOf(SignupStep.BIRTH),
+                timerText = "00:00"
+            ),
             years = (1990..2025).toList(),
             months = (1..12).toList(),
             days = (1..31).toList(),

@@ -34,9 +34,6 @@ class SignupViewModel @Inject constructor(
     private val onboardingRegisterRepository: OnboardingRegisterRepository
 ) : ViewModel() {
 
-    var uiState by mutableStateOf(SignupUiState())
-        private set
-
     private val signupFlow = listOf(
         SignupStep.BIRTH,
         SignupStep.GENDER,
@@ -45,6 +42,13 @@ class SignupViewModel @Inject constructor(
         SignupStep.AUTH_VERIFICATION,
         SignupStep.DONE
     )
+
+    var uiState by mutableStateOf(SignupUiState().withDerivedState())
+        private set
+
+    private fun updateState(reducer: SignupUiState.() -> SignupUiState) {
+        uiState = uiState.reducer().withDerivedState()
+    }
 
     private fun SignupUiState.withDerivedState(): SignupUiState {
         val currentIndex = signupFlow.indexOf(step).takeIf { it >= 0 } ?: 0
@@ -92,13 +96,15 @@ class SignupViewModel @Inject constructor(
         val currentMonth = uiState.month
         val currentDay = uiState.day
         if (currentMonth == null || currentDay == null) {
-            uiState = uiState.copy(year = value)
+            updateState { copy(year = value) }
         } else {
             val correctedDay = DateUtils.getCorrectedDay(value, currentMonth, currentDay)
-            uiState = uiState.copy(
-                year = value,
-                day = correctedDay
-            )
+            updateState {
+                copy(
+                    year = value,
+                    day = correctedDay
+                )
+            }
         }
         checkBirthCompletion()
     }
@@ -107,19 +113,21 @@ class SignupViewModel @Inject constructor(
         val currentYear = uiState.year
         val currentDay = uiState.day
         if (currentYear == null || currentDay == null) {
-            uiState = uiState.copy(month = value)
+            updateState { copy(month = value) }
         } else {
             val correctedDay = DateUtils.getCorrectedDay(currentYear, value, currentDay)
-            uiState = uiState.copy(
-                month = value,
-                day = correctedDay
-            )
+            updateState {
+                copy(
+                    month = value,
+                    day = correctedDay
+                )
+            }
         }
         checkBirthCompletion()
     }
 
     fun onDaySelected(value: Int) {
-        uiState = uiState.copy(day = value)
+        updateState { copy(day = value) }
         checkBirthCompletion()
     }
 
@@ -133,13 +141,15 @@ class SignupViewModel @Inject constructor(
     }
 
     fun onBirthComplete() {
-        uiState = uiState.copy(
-            completedItems = uiState.completedItems + CompletedItem(
-                label = "생년월일",
-                value = "${uiState.year}.${uiState.month}.${uiState.day}"
-            ),
-            step = SignupStep.GENDER
-        )
+        updateState {
+            copy(
+                completedItems = completedItems.filterNot { it.label == "생년월일" } + CompletedItem(
+                    label = "생년월일",
+                    value = "$year.$month.$day"
+                ),
+                step = SignupStep.GENDER
+            )
+        }
     }
 
     fun onGenderSelect(gender: Gender) {
@@ -153,27 +163,29 @@ class SignupViewModel @Inject constructor(
         } else {
             uiState.step
         }
-        uiState = uiState.copy(
-            gender = gender,
-            completedItems = updatedItems,
-            step = nextStep
-        )
+        updateState {
+            copy(
+                gender = gender,
+                completedItems = updatedItems,
+                step = nextStep
+            )
+        }
     }
 
     fun onPhoneChange(value: String) {
-        uiState = uiState.copy(phoneNumber = value)
+        updateState { copy(phoneNumber = value) }
     }
 
     fun onPhoneComplete() {
         val result = PhoneValidator.validate(uiState.phoneNumber)
 
         if (result != PhoneValidationResult.VALID) {
-            uiState = uiState.copy(phoneErrorMessage = result.toMessage())
+            updateState { copy(phoneErrorMessage = result.toMessage()) }
             return
         }
 
         viewModelScope.launch {
-            uiState = uiState.copy(phoneErrorMessage = "")
+            updateState { copy(phoneErrorMessage = "") }
 
             phoneVerificationRepository.sendVerificationCode(uiState.phoneNumber)
                 .onSuccess {
@@ -183,41 +195,45 @@ class SignupViewModel @Inject constructor(
                         value = uiState.phoneNumber
                     )
 
-                    uiState = uiState.copy(
-                        phoneErrorMessage = "",
-                        completedItems = updatedItems,
-                        step = SignupStep.AUTH,
-                        isPhoneRequested = true,
-                        authTimerSeconds = 180,
-                        authCode = ""
-                    )
+                    updateState {
+                        copy(
+                            phoneErrorMessage = "",
+                            completedItems = updatedItems,
+                            step = SignupStep.AUTH,
+                            isPhoneRequested = true,
+                            authTimerSeconds = 180,
+                            authCode = ""
+                        )
+                    }
                     startAuthTimer()
                 }
                 .onFailure { e ->
                     val status = (e as? ExceptionResponse)?.status
-                    uiState = uiState.copy(
-                        phoneErrorMessage = PhoneVerificationErrorMapper.sendErrorMessage(
-                            status = status
+                    updateState {
+                        copy(
+                            phoneErrorMessage = PhoneVerificationErrorMapper.sendErrorMessage(
+                                status = status
+                            )
                         )
-                    )
+                    }
                 }
         }
     }
 
     fun onAuthCodeChange(value: String) {
-        uiState = uiState.copy(authCode = value)
+        updateState { copy(authCode = value) }
     }
 
     fun onAuthComplete() {
         val result = AuthCodeValidator.validate(uiState.authCode, uiState.authTimerSeconds)
 
         if (result != AuthCodeValidationResult.VALID) {
-            uiState = uiState.copy(authCodeErrorMessage = result.toMessage())
+            updateState { copy(authCodeErrorMessage = result.toMessage()) }
             return
         }
 
         viewModelScope.launch {
-            uiState = uiState.copy(authCodeErrorMessage = "")
+            updateState { copy(authCodeErrorMessage = "") }
 
             phoneVerificationRepository.confirmVerificationCode(
                 phoneNumber = uiState.phoneNumber,
@@ -225,23 +241,27 @@ class SignupViewModel @Inject constructor(
             )
                 .onSuccess {
                     stopAuthTimer()
-                    uiState = uiState.copy(
-                        authCodeErrorMessage = "",
-                        completedItems = uiState.completedItems + CompletedItem(
-                            label = "인증번호",
-                            value = "완료"
-                        ),
-                        step = SignupStep.AUTH_VERIFICATION,
-                        authTimerSeconds = 0
-                    )
+                    updateState {
+                        copy(
+                            authCodeErrorMessage = "",
+                            completedItems = completedItems.filterNot { it.label == "인증번호" } + CompletedItem(
+                                label = "인증번호",
+                                value = "완료"
+                            ),
+                            step = SignupStep.AUTH_VERIFICATION,
+                            authTimerSeconds = 0
+                        )
+                    }
                 }
                 .onFailure { e ->
                     val status = (e as? ExceptionResponse)?.status
-                    uiState = uiState.copy(
-                        authCodeErrorMessage = PhoneVerificationErrorMapper.confirmErrorMessage(
-                            status = status
+                    updateState {
+                        copy(
+                            authCodeErrorMessage = PhoneVerificationErrorMapper.confirmErrorMessage(
+                                status = status
+                            )
                         )
-                    )
+                    }
                 }
         }
     }
@@ -252,7 +272,7 @@ class SignupViewModel @Inject constructor(
             var seconds = uiState.authTimerSeconds
             if (seconds <= 0) seconds = 60
             while (seconds >= 0) {
-                uiState = uiState.copy(authTimerSeconds = seconds)
+                updateState { copy(authTimerSeconds = seconds) }
                 delay(1000L)
                 seconds--
             }
@@ -266,29 +286,29 @@ class SignupViewModel @Inject constructor(
 
     fun onRegisterComplete() {
         viewModelScope.launch {
-            uiState = uiState.copy(isLoading = true)
+            updateState { copy(isLoading = true) }
 
             val genderValue = when (uiState.gender) {
                 Gender.MALE -> "M"
                 Gender.FEMALE -> "F"
                 null -> {
-                    uiState = uiState.copy(isLoading = false)
+                    updateState { copy(isLoading = false) }
                     return@launch
                 }
             }
 
             val year = uiState.year ?: run {
-                uiState = uiState.copy(isLoading = false)
+                updateState { copy(isLoading = false) }
                 return@launch
             }
 
             val month = uiState.month ?: run {
-                uiState = uiState.copy(isLoading = false)
+                updateState { copy(isLoading = false) }
                 return@launch
             }
 
             val day = uiState.day ?: run {
-                uiState = uiState.copy(isLoading = false)
+                updateState { copy(isLoading = false) }
                 return@launch
             }
 
@@ -299,7 +319,7 @@ class SignupViewModel @Inject constructor(
                 phoneNumber = uiState.phoneNumber,
                 birthday = birthday
             ).onSuccess {
-                uiState = uiState.copy(isLoading = false, step = SignupStep.DONE)
+                updateState { copy(isLoading = false, step = SignupStep.DONE) }
             }.onFailure { e ->
                 if (e is CancellationException) throw e
 
@@ -315,10 +335,12 @@ class SignupViewModel @Inject constructor(
                     }
                 }
 
-                uiState = uiState.copy(
-                    isLoading = false,
-                    errorMessage = errorMessage
-                )
+                updateState {
+                    copy(
+                        isLoading = false,
+                        errorMessage = errorMessage
+                    )
+                }
             }
         }
     }
