@@ -16,6 +16,7 @@ import retrofit2.Retrofit
 abstract class OnboardingRegisterModule {
 
     @Binds
+    @Singleton
     abstract fun bindProfileRepository(
         impl: OnboardingRegisterRepositoryImpl
     ): OnboardingRegisterRepository
