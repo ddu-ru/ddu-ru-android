@@ -34,9 +34,3 @@ fun LoadingFlashingAnimation(
         alpha
     }
 }
-
-@Preview(showBackground = true)
-@Composable
-fun LoadingFlashPreview() {
-    LoadingFlashingAnimation(dotCount = 3)
-}
