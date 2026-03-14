@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -26,9 +27,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
@@ -159,99 +158,99 @@ fun AiMatchingCard(
                 }
             }
 
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .drawBehind {
-                        drawLine(
-                            color = dividerColor,
-                            start = Offset(0f, size.height),
-                            end = Offset(size.width, size.height),
-                            strokeWidth = 1.dp.toPx()
-                        )
-                    }
-                    .padding(bottom = 8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+            // 프로필 + HorizontalDivider를 Column으로 묶어 8dp 간격 적용
+            Column(
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 Row(
+                    modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.SpaceBetween
                 ) {
-                    if (data.profileImageUrl != null) {
-                        SubcomposeAsyncImage(
-                            model = data.profileImageUrl,
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape),
-                            loading = {
-                                Box(
-                                    modifier = Modifier
-                                        .matchParentSize()
-                                        .background(DduruTheme.colors.gray400)
-                                )
-                            },
-                            error = {
-                                Image(
-                                    painter = painterResource(id = R.drawable.img_profile),
-                                    contentDescription = null,
-                                    contentScale = ContentScale.Crop,
-                                    modifier = Modifier.matchParentSize()
-                                )
-                            }
-                        )
-                    } else {
-                        Image(
-                            painter = painterResource(id = R.drawable.img_profile),
-                            contentDescription = null,
-                            contentScale = ContentScale.Crop,
-                            modifier = Modifier
-                                .size(32.dp)
-                                .clip(CircleShape)
-                        )
-                    }
-
-                    Column(
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Text(
-                            text = data.username,
-                            style = DduruTheme.typography.Title3,
-                            color = DduruTheme.colors.gray0
-                        )
-
-                        Row(
-                            horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
-                            verticalAlignment = Alignment.CenterVertically
-                        ) {
-                            Text(
-                                text = "${data.age}세",
-                                style = DduruTheme.typography.Caption2,
-                                color = DduruTheme.colors.gray400
-                            )
-
-                            Box(
+                        if (data.profileImageUrl != null) {
+                            SubcomposeAsyncImage(
+                                model = data.profileImageUrl,
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
                                 modifier = Modifier
-                                    .size(4.dp)
-                                    .background(DduruTheme.colors.gray400, CircleShape)
+                                    .size(32.dp)
+                                    .clip(CircleShape),
+                                loading = {
+                                    Box(
+                                        modifier = Modifier
+                                            .matchParentSize()
+                                            .background(DduruTheme.colors.gray400)
+                                    )
+                                },
+                                error = {
+                                    Image(
+                                        painter = painterResource(id = R.drawable.img_profile),
+                                        contentDescription = null,
+                                        contentScale = ContentScale.Crop,
+                                        modifier = Modifier.matchParentSize()
+                                    )
+                                }
                             )
-
-                            Text(
-                                text = data.gender,
-                                style = DduruTheme.typography.Caption2,
-                                color = DduruTheme.colors.gray400
+                        } else {
+                            Image(
+                                painter = painterResource(id = R.drawable.img_profile),
+                                contentDescription = null,
+                                contentScale = ContentScale.Crop,
+                                modifier = Modifier
+                                    .size(32.dp)
+                                    .clip(CircleShape)
                             )
                         }
+
+                        Column(
+                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                        ) {
+                            Text(
+                                text = data.username,
+                                style = DduruTheme.typography.Title3,
+                                color = DduruTheme.colors.gray0
+                            )
+
+                            Row(
+                                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
+                                verticalAlignment = Alignment.CenterVertically
+                            ) {
+                                Text(
+                                    text = "${data.age}세",
+                                    style = DduruTheme.typography.Caption2,
+                                    color = DduruTheme.colors.gray400
+                                )
+
+                                Box(
+                                    modifier = Modifier
+                                        .size(4.dp)
+                                        .background(DduruTheme.colors.gray400, CircleShape)
+                                )
+
+                                Text(
+                                    text = data.gender,
+                                    style = DduruTheme.typography.Caption2,
+                                    color = DduruTheme.colors.gray400
+                                )
+                            }
+                        }
                     }
+
+                    HomeMemberCount(
+                        current = data.currentMembers,
+                        max = data.maxMembers,
+                        textColor = DduruTheme.colors.gray400,
+                        textStyle = DduruTheme.typography.Caption2
+                    )
                 }
 
-                HomeMemberCount(
-                    current = data.currentMembers,
-                    max = data.maxMembers,
-                    textColor = DduruTheme.colors.gray400,
-                    textStyle = DduruTheme.typography.Caption2
+                HorizontalDivider(
+                    color = dividerColor,
+                    thickness = 1.dp
                 )
             }
 
