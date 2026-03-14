@@ -44,8 +44,8 @@ fun LoginButton(
             .shadow(
                 elevation = 8.dp,
                 shape = buttonShape,
-                spotColor = DduruTheme.colors.blackAlpha10,
-                ambientColor = DduruTheme.colors.blackAlpha10
+                spotColor = DduruTheme.colors.black.copy(alpha = 0.1f),
+                ambientColor = DduruTheme.colors.black.copy(alpha = 0.1f)
             )
             .then(
                 if (hasBorder) {
