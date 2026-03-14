@@ -23,13 +23,10 @@ val Gray868 = Color(0xFF282A2D)
 val Gray900 = Color(0xFF202124)
 val Gray928 = Color(0xFF17181B)
 val Gray958 = Color(0xFF0E1013)
+val GrayNeutral = Color(0xFF969696)
+val Gray9E = Color(0xFF9E9E9E)
 val Black = Color(0xFF000000)
 val KakaoYellow = Color(0xFFFEE500)
-val BlackAlpha14 = Color(0x24000000)
-val BlackAlpha10 = Color(0x1A000000)
-val BlackAlpha05 = Color(0x0D000000)
-val GrayAlpha30 = Color(0x4D969696)
-val WhiteAlpha30 = Color(0x4DFFFFFF)
 val GrayBorder = Color(0x80797479)
 
 @Immutable
@@ -54,15 +51,12 @@ data class DduruColors(
     val gray900: Color,
     val gray928: Color,
     val gray958: Color,
+    val grayNeutral: Color,
+    val gray9E: Color,
 
     val black: Color,
 
     val kakaoYellow: Color,
-    val blackAlpha14: Color,
-    val blackAlpha10: Color,
-    val blackAlpha05: Color,
-    val grayAlpha30: Color,
-    val whiteAlpha30: Color,
     val grayBorder: Color
 )
 
@@ -87,16 +81,12 @@ val defaultDduruColors = DduruColors(
     gray900 = Gray900,
     gray928 = Gray928,
     gray958 = Gray958,
+    grayNeutral = GrayNeutral,
+    gray9E = Gray9E,
 
     black = Black,
 
     kakaoYellow = KakaoYellow,
-
-    blackAlpha14 = BlackAlpha14,
-    blackAlpha10 = BlackAlpha10,
-    blackAlpha05 = BlackAlpha05,
-    grayAlpha30 = GrayAlpha30,
-    whiteAlpha30 = WhiteAlpha30,
     grayBorder = GrayBorder
 )
 
