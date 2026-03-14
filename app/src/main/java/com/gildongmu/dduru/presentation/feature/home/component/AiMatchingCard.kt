@@ -133,10 +133,10 @@ fun AiMatchingCard(
                         textStyle = DduruTheme.typography.Caption2
                     )
 
-                    Text(
-                        text = "•",
-                        color = DduruTheme.colors.gray200,
-                        style = DduruTheme.typography.Caption2
+                    Box(
+                        modifier = Modifier
+                            .size(4.dp)
+                            .background(DduruTheme.colors.gray200, CircleShape)
                     )
 
                     Row(
@@ -228,10 +228,10 @@ fun AiMatchingCard(
                                 color = DduruTheme.colors.gray400
                             )
 
-                            Text(
-                                text = "•",
-                                color = DduruTheme.colors.gray400,
-                                style = DduruTheme.typography.Caption2
+                            Box(
+                                modifier = Modifier
+                                    .size(4.dp)
+                                    .background(DduruTheme.colors.gray400, CircleShape)
                             )
 
                             Text(
