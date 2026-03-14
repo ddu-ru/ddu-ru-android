@@ -120,7 +120,7 @@ object DduruButtonDefaults {
         get() = DduruButtonEnabledColors(
             backgroundColor = DduruTheme.colors.grayAlpha30,
             textColor = DduruTheme.colors.gray200,
-            borderColor = DduruTheme.colors.grayBorderAlpha10
+            borderColor = DduruTheme.colors.grayBorder.copy(alpha = 0.1f)
         )
 
     val outlinedDisabledColors: DduruButtonDisabledColors
@@ -128,7 +128,7 @@ object DduruButtonDefaults {
         get() = DduruButtonDisabledColors(
             backgroundColor = DduruTheme.colors.grayAlpha30.copy(alpha = 0.5f),
             textColor = DduruTheme.colors.gray200.copy(alpha = 0.5f),
-            borderColor = DduruTheme.colors.grayBorderAlpha10.copy(alpha = 0.5f)
+            borderColor = DduruTheme.colors.grayBorder.copy(alpha = 0.05f)
         )
 
     val whiteEnabledColors: DduruButtonEnabledColors
@@ -136,7 +136,7 @@ object DduruButtonDefaults {
         get() = DduruButtonEnabledColors(
             backgroundColor = DduruTheme.colors.gray0,
             textColor = DduruTheme.colors.gray700,
-            borderColor = DduruTheme.colors.grayBorderAlpha10
+            borderColor = DduruTheme.colors.grayBorder.copy(alpha = 0.1f)
         )
 
     val whiteDisabledColors: DduruButtonDisabledColors

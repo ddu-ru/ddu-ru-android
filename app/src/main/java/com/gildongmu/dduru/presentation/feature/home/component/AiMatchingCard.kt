@@ -3,6 +3,7 @@ package com.gildongmu.dduru.presentation.feature.home.component
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
+import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -10,14 +11,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -27,13 +27,13 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.AsyncImage
+import coil.compose.SubcomposeAsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
@@ -52,7 +52,7 @@ data class AiMatchingCardData(
     val currentMembers: Int,
     val maxMembers: Int,
     val description: String,
-    val hashtags: List<String>
+    val hashtags: List<String>,
 )
 
 @Composable
@@ -60,140 +60,194 @@ fun AiMatchingCard(
     data: AiMatchingCardData,
     onPass: () -> Unit,
     onAccept: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
 ) {
     var overlayType by remember { mutableStateOf<OverlayType?>(null) }
+    val dividerColor = DduruTheme.colors.gray0.copy(alpha = 0.3f)
+    val badgeBorderColor = DduruTheme.colors.gray0.copy(alpha = 0.05f)
+    val badgeBackgroundColor = DduruTheme.colors.black.copy(alpha = 0.1f)
+    val overlayBackgroundColor = DduruTheme.colors.black.copy(alpha = 0.6f)
+    val overlayCircleColor = if (overlayType == OverlayType.ACCEPT) {
+        DduruTheme.colors.secondary
+    } else {
+        DduruTheme.colors.gray200
+    }
+    val overlayIconRes = if (overlayType == OverlayType.ACCEPT) {
+        R.drawable.ic_heart_rounded
+    } else {
+        R.drawable.ic_pass
+    }
 
     Box(
-        modifier = modifier
-            .width(343.dp)
-            .height(456.dp)
-            .clip(RoundedCornerShape(16.dp))
+        modifier = modifier.clip(RoundedCornerShape(16.dp)),
     ) {
-        if (data.imageUrl != null) {
-            AsyncImage(
-                model = data.imageUrl,
-                contentDescription = null,
-                contentScale = ContentScale.Crop,
-                modifier = Modifier.fillMaxSize()
-            )
-        } else {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(DduruTheme.colors.gray700)
-            )
-        }
+        SubcomposeAsyncImage(
+            model = data.imageUrl,
+            contentDescription = null,
+            contentScale = ContentScale.Crop,
+            modifier = Modifier.matchParentSize(),
+            loading = {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(DduruTheme.colors.gray700),
+                )
+            },
+            error = {
+                Box(
+                    modifier = Modifier
+                        .matchParentSize()
+                        .background(DduruTheme.colors.gray700),
+                )
+            },
+        )
+
         Box(
             modifier = Modifier
-                .fillMaxSize()
-                .background(DduruTheme.colors.black.copy(alpha = 0.4f))
+                .matchParentSize()
+                .background(DduruTheme.colors.black.copy(alpha = 0.4f)),
         )
+
         Column(
             modifier = Modifier
-                .fillMaxSize()
+                .matchParentSize()
                 .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom)
+            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom),
         ) {
-            Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
+            Column(
+                verticalArrangement = Arrangement.spacedBy(4.dp),
+            ) {
                 Text(
                     text = data.title,
                     style = DduruTheme.typography.H1,
-                    color = DduruTheme.colors.gray0
+                    color = DduruTheme.colors.gray0,
                 )
+
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    verticalAlignment = Alignment.CenterVertically,
                 ) {
                     HomeLocationCount(
                         location = data.location,
                         color = DduruTheme.colors.gray200,
-                        textStyle = DduruTheme.typography.Caption2
+                        textStyle = DduruTheme.typography.Caption2,
                     )
-                    Box(
-                        modifier = Modifier
-                            .size(3.dp)
-                            .background(DduruTheme.colors.gray200, CircleShape)
-                    )
+
                     Text(
-                        text = "⊡ ${data.dateRange}",
+                        text = "•",
+                        color = DduruTheme.colors.gray200,
                         style = DduruTheme.typography.Caption2,
-                        color = DduruTheme.colors.gray200
                     )
+
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(4.dp),
+                        verticalAlignment = Alignment.CenterVertically,
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_ai_calendar),
+                            contentDescription = null,
+                            tint = DduruTheme.colors.gray200,
+                            modifier = Modifier.size(12.dp),
+                        )
+                        Text(
+                            text = data.dateRange,
+                            style = DduruTheme.typography.Caption2,
+                            color = DduruTheme.colors.gray200,
+                        )
+                    }
                 }
             }
 
-            val borderColor = DduruTheme.colors.gray0.copy(alpha = 0.3f)
+            HorizontalDivider(
+                color = dividerColor,
+                thickness = 1.dp,
+            )
+
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .drawBehind {
-                        drawLine(
-                            color = borderColor,
-                            start = Offset(0f, size.height),
-                            end = Offset(size.width, size.height),
-                            strokeWidth = 1.dp.toPx()
-                        )
-                    }
                     .padding(bottom = 8.dp),
                 verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.SpaceBetween
+                horizontalArrangement = Arrangement.SpaceBetween,
             ) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                 ) {
                     if (data.profileImageUrl != null) {
-                        AsyncImage(
+                        SubcomposeAsyncImage(
                             model = data.profileImageUrl,
                             contentDescription = null,
                             contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .size(32.dp)
-                                .clip(CircleShape)
+                                .clip(CircleShape),
+                            loading = {
+                                Box(
+                                    modifier = Modifier
+                                        .matchParentSize()
+                                        .background(DduruTheme.colors.gray400),
+                                )
+                            },
+                            error = {
+                                Image(
+                                    painter = painterResource(id = R.drawable.img_profile),
+                                    contentDescription = null,
+                                    contentScale = ContentScale.Crop,
+                                    modifier = Modifier.matchParentSize(),
+                                )
+                            },
                         )
                     } else {
-                        Box(
+                        Image(
+                            painter = painterResource(id = R.drawable.img_profile),
+                            contentDescription = null,
+                            contentScale = ContentScale.Crop,
                             modifier = Modifier
                                 .size(32.dp)
-                                .clip(CircleShape)
-                                .background(DduruTheme.colors.gray400)
+                                .clip(CircleShape),
                         )
                     }
 
-                    Column(verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    Column(
+                        verticalArrangement = Arrangement.spacedBy(2.dp),
+                    ) {
                         Text(
                             text = data.username,
                             style = DduruTheme.typography.Title3,
-                            color = DduruTheme.colors.gray0
+                            color = DduruTheme.colors.gray0,
                         )
+
                         Row(
                             horizontalArrangement = Arrangement.spacedBy(4.dp),
-                            verticalAlignment = Alignment.CenterVertically
+                            verticalAlignment = Alignment.CenterVertically,
                         ) {
                             Text(
                                 text = "${data.age}세",
                                 style = DduruTheme.typography.Caption2,
-                                color = DduruTheme.colors.gray400
+                                color = DduruTheme.colors.gray400,
                             )
-                            Box(
-                                modifier = Modifier
-                                    .size(3.dp)
-                                    .background(DduruTheme.colors.gray400, CircleShape)
+
+                            Text(
+                                text = "•",
+                                color = DduruTheme.colors.gray400,
+                                style = DduruTheme.typography.Caption2,
                             )
+
                             Text(
                                 text = data.gender,
                                 style = DduruTheme.typography.Caption2,
-                                color = DduruTheme.colors.gray400
+                                color = DduruTheme.colors.gray400,
                             )
                         }
                     }
                 }
+
                 HomeMemberCount(
                     current = data.currentMembers,
                     max = data.maxMembers,
                     textColor = DduruTheme.colors.gray400,
-                    textStyle = DduruTheme.typography.Caption2
+                    textStyle = DduruTheme.typography.Caption2,
                 )
             }
 
@@ -201,24 +255,26 @@ fun AiMatchingCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .padding(bottom = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 Text(
                     text = data.description,
                     style = DduruTheme.typography.Caption2,
                     color = DduruTheme.colors.gray0,
                     maxLines = 2,
-                    overflow = TextOverflow.Ellipsis
+                    overflow = TextOverflow.Ellipsis,
                 )
 
-                Row(horizontalArrangement = Arrangement.spacedBy(6.dp)) {
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                ) {
                     data.hashtags.forEach { tag ->
                         HomeHashtag(
                             text = tag,
                             textColor = DduruTheme.colors.gray300,
                             textStyle = DduruTheme.typography.Caption2,
                             backgroundColor = DduruTheme.colors.grayBorder.copy(alpha = 0.3f),
-                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp)
+                            contentPadding = PaddingValues(horizontal = 12.dp, vertical = 8.dp),
                         )
                     }
                 }
@@ -226,7 +282,7 @@ fun AiMatchingCard(
 
             Row(
                 modifier = Modifier.fillMaxWidth(),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
             ) {
                 DduruButton(
                     text = "패스",
@@ -237,8 +293,8 @@ fun AiMatchingCard(
                     enabledColors = DduruButtonDefaults.outlinedEnabledColors,
                     disabledColors = DduruButtonDefaults.outlinedDisabledColors,
                     textStyle = DduruTheme.typography.Title1,
-                    iconRes = R.drawable.ic_x_pass,
-                    modifier = Modifier.weight(1f)
+                    iconRes = R.drawable.ic_pass,
+                    modifier = Modifier.weight(1f),
                 )
 
                 DduruButton(
@@ -249,7 +305,7 @@ fun AiMatchingCard(
                     },
                     textStyle = DduruTheme.typography.Title1,
                     iconRes = R.drawable.ic_heart_rounded,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f),
                 )
             }
         }
@@ -259,50 +315,73 @@ fun AiMatchingCard(
                 .align(Alignment.TopEnd)
                 .padding(top = 16.dp, end = 16.dp)
                 .background(
-                    color = DduruTheme.colors.black.copy(alpha = 0.1f),
-                    shape = RoundedCornerShape(99.dp)
+                    color = badgeBackgroundColor,
+                    shape = RoundedCornerShape(99.dp),
                 )
                 .border(
                     width = 1.dp,
-                    color = DduruTheme.colors.gray0.copy(alpha = 0.3f),
-                    shape = RoundedCornerShape(99.dp)
+                    color = badgeBorderColor,
+                    shape = RoundedCornerShape(99.dp),
                 )
-                .padding(horizontal = 8.dp, vertical = 4.dp)
+                .padding(horizontal = 8.dp, vertical = 4.dp),
         ) {
-            Text(
-                text = "✨ ${data.matchPercent}% 일치",
-                style = DduruTheme.typography.Caption1,
-                color = DduruTheme.colors.gray0
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically,
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_ai_star),
+                    contentDescription = null,
+                    tint = DduruTheme.colors.gray0,
+                    modifier = Modifier.size(12.dp),
+                )
+                Text(
+                    text = "${data.matchPercent}% 일치",
+                    style = DduruTheme.typography.Caption1,
+                    color = DduruTheme.colors.gray0,
+                )
+            }
         }
 
         AnimatedVisibility(
             visible = overlayType != null,
             enter = fadeIn(),
-            exit = fadeOut()
+            exit = fadeOut(),
         ) {
             Box(
                 modifier = Modifier
-                    .fillMaxSize()
+                    .matchParentSize()
                     .background(
-                        color = DduruTheme.colors.navyDark.copy(alpha = 0.6f),
-                        shape = RoundedCornerShape(16.dp)
+                        color = overlayBackgroundColor,
+                        shape = RoundedCornerShape(16.dp),
                     ),
-                contentAlignment = Alignment.Center
+                contentAlignment = Alignment.Center,
             ) {
                 Box(
                     modifier = Modifier
                         .size(72.dp)
+                        .shadow(
+                            elevation = 32.dp,
+                            shape = CircleShape,
+                            spotColor = DduruTheme.colors.black.copy(alpha = 0.9f),
+                            ambientColor = DduruTheme.colors.black.copy(alpha = 0.9f),
+                        )
                         .background(
-                            color = DduruTheme.colors.secondary,
-                            shape = CircleShape
+                            color = overlayCircleColor,
+                            shape = CircleShape,
+                        )
+                        .padding(
+                            start = 16.2.dp,
+                            top = 19.8.dp,
+                            end = 16.2.dp,
+                            bottom = 19.8.dp,
                         ),
-                    contentAlignment = Alignment.Center
+                    contentAlignment = Alignment.Center,
                 ) {
-                    Text(
-                        text = if (overlayType == OverlayType.ACCEPT) "♡" else "✕",
-                        style = DduruTheme.typography.H1,
-                        color = DduruTheme.colors.primary
+                    Icon(
+                        painter = painterResource(id = overlayIconRes),
+                        contentDescription = null,
+                        tint = DduruTheme.colors.primary,
                     )
                 }
             }
@@ -317,10 +396,8 @@ private enum class OverlayType { PASS, ACCEPT }
 private fun AiMatchingCardPreview() {
     DduruTheme {
         Box(
-            modifier = Modifier
-                .fillMaxSize()
-                .padding(16.dp),
-            contentAlignment = Alignment.Center
+            modifier = Modifier.padding(16.dp),
+            contentAlignment = Alignment.Center,
         ) {
             AiMatchingCard(
                 data = AiMatchingCardData(
@@ -336,10 +413,11 @@ private fun AiMatchingCardPreview() {
                     currentMembers = 3,
                     maxMembers = 4,
                     description = "제주 서쪽 해안을 따라 느긋하게 드라이브하며 숨은 카페들을 찾아가는 여행입니다. 사진 찍는 것을 좋아하시는 분이면 더 좋아요!",
-                    hashtags = listOf("카페투어", "사진")
+                    hashtags = listOf("카페투어", "사진"),
                 ),
                 onPass = {},
-                onAccept = {}
+                onAccept = {},
+                modifier = Modifier.size(width = 343.dp, height = 456.dp),
             )
         }
     }
