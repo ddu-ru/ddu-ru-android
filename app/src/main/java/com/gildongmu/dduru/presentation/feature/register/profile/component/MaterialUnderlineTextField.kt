@@ -67,7 +67,8 @@ fun MaterialUnderlineTextField(
 
                     cursorColor = DduruTheme.colors.primary,
                     focusedTextColor = labelColor,
-                    unfocusedTextColor = labelColor
+                    unfocusedTextColor = labelColor,
+                    disabledTextColor = labelColor
                 )
             )
 
