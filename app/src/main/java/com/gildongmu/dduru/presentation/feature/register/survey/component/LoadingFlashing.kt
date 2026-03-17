@@ -56,7 +56,7 @@ private fun LoadingDot(
 
 @Preview(showBackground = true)
 @Composable
-fun LoadingFlashPreview() {
+private fun LoadingFlashPreview() {
     DduruTheme {
         LoadingFlashing()
     }
