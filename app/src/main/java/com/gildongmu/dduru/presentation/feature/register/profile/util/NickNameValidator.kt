@@ -14,7 +14,7 @@ object NicknameValidator {
     private const val MIN_LENGTH = 2
     private const val MAX_LENGTH = 12
 
-    private val NICKNAME_REGEX = "^[가-힣a-zA-Z0-9]+( [가-힣a-zA-Z0-9]+)*$".toRegex()
+    private val NICKNAME_REGEX = "^[가-힣a-zA-Z0-9]+$".toRegex()
 
     fun validate(nickname: String): NicknameValidationResult {
         return when {
@@ -24,10 +24,8 @@ object NicknameValidator {
 
             nickname.length > MAX_LENGTH -> NicknameValidationResult.TOO_LONG
 
-            nickname.contains(" ") || !nickname.matches(NICKNAME_REGEX) ->
+            !nickname.matches(NICKNAME_REGEX) ->
                 NicknameValidationResult.INVALID_CHARACTERS
-
-            nickname.contains(" ") -> NicknameValidationResult.CONTAINS_EMPTY
 
             else -> NicknameValidationResult.VALID
         }
