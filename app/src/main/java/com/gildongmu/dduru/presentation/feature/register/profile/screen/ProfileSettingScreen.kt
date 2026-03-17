@@ -109,7 +109,7 @@ fun ProfileSettingScreen(
             if (showCharacterCustomScreen) {
                 ProfileCharacterCustomDialog(
                     selectedBg = state.selectedBgColor,
-                    characterImage = viewModel.characterImageRes.value,
+                    characterImage = viewModel.characterImageRes.collectAsState().value,
                     avatarName = "",
                     onBgColorSelected = viewModel::onBgColorSelected,
                     onConfirm = {

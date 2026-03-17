@@ -64,8 +64,14 @@ private fun OnboardingResultScreen(
         )
 
         SurveyResultDetail(
-            modifier = Modifier.weight(1f),
-            uiModel = uiState
+                modifier = Modifier.weight(1f),
+                avatarName = uiState.avatarName,
+                avatarDescription = uiState.avatarDescription,
+                imageUrl = uiState.imageUrl,
+                personality = uiState.personality,
+                strength = uiState.strength,
+                tip = uiState.tip,
+                tags = uiState.tags
         )
 
         DduruButton(
@@ -87,7 +93,7 @@ private fun OnboardingResultScreenPreview() {
             uiState = SurveyResultState(
                 avatarName = "감성 펭귄",
                 avatarDescription = "혼자만의 여유를 즐기며 \n여행하는 타입이에요.",
-                imageUrl = R.drawable.img_penguin_personallity,
+                imageUrl = "https://i.postimg.cc/MTD5tQ1Y/img-penguin-personallity.png",
                 personality = "차분하고 섬세해요.",
                 strength = "계획 없이도 흐름을 잘 타요.",
                 tip = "너무 혼자만 다니지 않기!",
