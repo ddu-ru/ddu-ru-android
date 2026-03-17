@@ -5,12 +5,12 @@ import androidx.compose.ui.graphics.Color
 import androidx.lifecycle.ViewModel
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
-import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileType
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileState
-import com.gildongmu.dduru.presentation.feature.register.profile.util.surveyStatus
+import com.gildongmu.dduru.presentation.feature.register.profile.util.SurveyStatus
 import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -33,8 +33,8 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     val characterImageRes = _characterImageRes.asStateFlow()
 
     val radioOptions = listOf(
-        ProfileImageCropOption(characterImageRes.value, ProfileType.CHARACTER, 1.6f, 0.16f),
-        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
+        ProfileImageCropOption(characterImageRes.value, ProfileEditOption.CHARACTER, 1.6f, 0.16f),
+        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileEditOption.CUSTOM)
     )
 
     val bgColors = ProfileBackgroundColorList
@@ -43,8 +43,8 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     init {
         _uiState.update {
             it.copy(
-                isSurveyComplete = surveyStatus.SKIPPED,
-                selectedOption = radioOptions.last()
+                isSurveyComplete = SurveyStatus.SKIPPED,
+                selectedOption = radioOptions.last().type
             )
         }
     }
@@ -73,8 +73,8 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onProfileOptionSelected(option: ProfileImageCropOption) {
-        if (option.type == ProfileType.CHARACTER && _uiState.value.isSurveyComplete == surveyStatus.SKIPPED) return
-        _uiState.update { it.copy(selectedOption = option) }
+        if (option.type == ProfileEditOption.CHARACTER && _uiState.value.isSurveyComplete == SurveyStatus.SKIPPED) return
+        _uiState.update { it.copy(selectedOption = option.type) }
     }
 
     fun onIntroductionChanged(newText: String) {
