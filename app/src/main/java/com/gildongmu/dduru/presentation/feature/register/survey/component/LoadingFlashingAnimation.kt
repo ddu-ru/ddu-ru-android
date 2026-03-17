@@ -13,7 +13,8 @@ fun LoadingFlashingAnimation(
     dotCount: Int,
     minAlpha: Float = 0.1f,
     delayUnit: Int = 300
-): List<Float> {
+):
+    List<Float> {
     val infiniteTransition = rememberInfiniteTransition()
     val duration = delayUnit * (dotCount + 1)
 
