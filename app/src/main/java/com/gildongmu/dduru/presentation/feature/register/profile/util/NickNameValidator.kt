@@ -5,7 +5,7 @@ enum class NicknameValidationResult {
     EMPTY,
     TOO_SHORT,
     TOO_LONG,
-    NVALID_CHARACTERS,
+    INVALID_CHARACTERS,
     CONTAINS_EMPTY
 }
 
@@ -25,7 +25,7 @@ object NicknameValidator {
             nickname.length > MAX_LENGTH -> NicknameValidationResult.TOO_LONG
 
             nickname.contains(" ") || !nickname.matches(NICKNAME_REGEX) ->
-                NicknameValidationResult.NVALID_CHARACTERS
+                NicknameValidationResult.INVALID_CHARACTERS
 
             nickname.contains(" ") -> NicknameValidationResult.CONTAINS_EMPTY
 
@@ -40,7 +40,7 @@ fun NicknameValidationResult.toMessage(): String {
         NicknameValidationResult.EMPTY -> "닉네임을 입력해주세요."
         NicknameValidationResult.TOO_SHORT -> "닉네임은 2자 이상 입력해주세요."
         NicknameValidationResult.TOO_LONG -> "닉네임은 최대 12자까지 입력할 수 있어요."
-        NicknameValidationResult.NVALID_CHARACTERS -> "한글, 영어, 숫자만 사용 가능해요."
+        NicknameValidationResult.INVALID_CHARACTERS -> "한글, 영어, 숫자만 사용 가능해요."
         NicknameValidationResult.CONTAINS_EMPTY -> "닉네임은 공백을 포함할 수 없어요."
     }
 }
