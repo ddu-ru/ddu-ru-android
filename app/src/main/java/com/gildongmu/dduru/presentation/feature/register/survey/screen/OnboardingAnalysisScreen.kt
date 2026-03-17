@@ -4,6 +4,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
@@ -64,9 +65,9 @@ fun OnboardingAnalysisScreen(
             painter = painterResource(id = R.drawable.img_penguin_ver3),
             contentDescription = null,
             modifier = Modifier
-                .width(211.dp)
-                .height(277.dp),
-            contentScale = ContentScale.FillBounds
+                .fillMaxWidth()
+                .padding(horizontal = 29.dp),
+            contentScale = ContentScale.FillWidth
         )
     }
 }
