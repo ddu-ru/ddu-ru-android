@@ -20,6 +20,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
@@ -50,12 +52,31 @@ fun ProfileImageSelector(
                 val optionLocked = isLocked && option.type == ProfileEditOption.CHARACTER
 
                 Column(
-                    Modifier.selectable(
-                        selected = option.type == selectedOption,
-                        onClick = { if (!optionLocked) onOptionSelected(option) },
-                        enabled = !optionLocked,
-                        role = Role.RadioButton
-                    )
+                    Modifier
+                        .selectable(
+                            selected = option.type == selectedOption,
+                            onClick = { if (!optionLocked) onOptionSelected(option) },
+                            enabled = !optionLocked,
+                            role = Role.RadioButton
+                        )
+                        .semantics {
+                            contentDescription = buildString {
+                                append(
+                                    if (option.type == ProfileEditOption.CHARACTER)
+                                        "아바타 프로필"
+                                    else
+                                        "사진 프로필"
+                                )
+
+                                if (optionLocked) {
+                                    append(", 선택 불가")
+                                }
+
+                                if (option.type == selectedOption) {
+                                    append(", 선택됨")
+                                }
+                            }
+                        }
                         .padding(8.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
@@ -89,7 +110,7 @@ fun ProfileImageSelector(
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(
-                text = if (selectedOption == ProfileEditOption.CHARACTER) "아바타 편집" else "사진 변경",
+                text = if (selectedOption == ProfileEditOption.CHARACTER) "배경 색상 선택" else "사진 변경",
                 style = DduruTheme.typography.Body2,
                 color = DduruTheme.colors.gray700
             )
