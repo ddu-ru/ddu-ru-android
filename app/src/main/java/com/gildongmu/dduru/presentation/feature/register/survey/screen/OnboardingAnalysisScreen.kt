@@ -3,12 +3,11 @@ package com.gildongmu.dduru.presentation.feature.register.survey.screen
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -25,26 +24,36 @@ import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.register.survey.component.LoadingFlashing
 
 @Composable
-fun OnboardingAnalysisScreen() {
+fun OnboardingAnalysisScreen(
+    username: String,
+    modifier: Modifier = Modifier
+) {
     Column(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxSize()
-            .statusBarsPadding()
-            .navigationBarsPadding()
-            .padding(16.dp),
+            .padding(25.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
         SpeechBubble(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 25.dp)
         ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+
+            Column(
+                modifier = Modifier
+                    .padding(vertical = 16.dp, horizontal = 75.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+
                 LoadingFlashing()
+
+                Spacer(Modifier.height(12.dp))
+
                 Text(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
-                    text = "답변하신 내용을 바탕으로\n 여행 성격을 분석하고 있어요!",
+                    modifier = Modifier.padding(),
+                    text = "답변하신 내용을 바탕으로 ${username}의 여행 성격을 분석하고 있어요!",
                     style = DduruTheme.typography.Body1,
                     textAlign = TextAlign.Center
                 )
@@ -52,8 +61,8 @@ fun OnboardingAnalysisScreen() {
         }
 
         Image(
-            painter = painterResource(id = R.drawable.img_penguin_3),
-            contentDescription = "뚜비 캐릭터",
+            painter = painterResource(id = R.drawable.img_penguin_ver3),
+            contentDescription = null,
             modifier = Modifier
                 .width(211.dp)
                 .height(277.dp),
@@ -64,8 +73,10 @@ fun OnboardingAnalysisScreen() {
 
 @Preview(showBackground = true)
 @Composable
-fun OnboardingAnalysisScreenPreview() {
+private fun OnboardingAnalysisScreenPreview() {
     DduruTheme {
-        OnboardingAnalysisScreen()
+        OnboardingAnalysisScreen(
+            username = "겨울이오길"
+        )
     }
 }
