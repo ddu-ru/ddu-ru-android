@@ -74,10 +74,11 @@ class ProfileViewModel @Inject constructor() : ViewModel() {
 
     fun onProfileOptionSelected(option: ProfileImageCropOption) {
         if (
-            option.type == ProfileEditOption.CHARACTER
-            && _uiState.value.isSurveyComplete == SurveyStatus.SKIPPED
-            )
+            option.type == ProfileEditOption.CHARACTER &&
+            _uiState.value.isSurveyComplete == SurveyStatus.SKIPPED
+        ) {
             return
+        }
         _uiState.update { it.copy(selectedOption = option.type) }
     }
 
