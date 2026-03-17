@@ -2,8 +2,10 @@ package com.gildongmu.dduru.presentation.feature.register.survey.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -43,51 +45,36 @@ private fun OnboardingResultScreen(
     modifier: Modifier = Modifier,
     onNextClick: () -> Unit
 ) {
-    Scaffold(
-        modifier = Modifier.fillMaxSize(),
-        containerColor = DduruTheme.colors.gray50,
-        bottomBar = {
+    Column(
+        modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp) ,
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.SpaceEvenly
+    ) {
 
-            Column(
-                Modifier
-                    .fillMaxWidth()
-                    .navigationBarsPadding()
-                    .padding(16.dp)
-            ) {
+        Spacer(modifier = Modifier.height(16.dp))
 
-                DduruButton(
-                    text = "네 맞아요!",
-                    onClick = onNextClick,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                )
-            }
-        }
-    ) { innerPadding ->
+        Text(
+            modifier = Modifier
+                .padding(top = 16.dp),
+            text = "내 여행 성격",
+            style = DduruTheme.typography.H1,
+            textAlign = TextAlign.Center
+        )
 
-        Column(
-            modifier = modifier
-                .fillMaxSize()
-                .padding(innerPadding)
-                .padding(16.dp),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.SpaceEvenly
-        ) {
+        SurveyResultDetail(
+            modifier = Modifier.weight(1f),
+            uiModel = uiState
+        )
 
-            Text(
-                modifier = Modifier
-                    .padding(top = 16.dp)
-                    .weight(1f),
-                text = "내 여행 성격",
-                style = DduruTheme.typography.H1,
-                textAlign = TextAlign.Center
-            )
-
-            SurveyResultDetail(
-                modifier = Modifier.weight(3f),
-                uiModel = uiState
-            )
-        }
+        DduruButton(
+            text = "네 맞아요!",
+            onClick = onNextClick,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 94.dp)
+        )
     }
 }
 
