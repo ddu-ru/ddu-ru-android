@@ -27,8 +27,8 @@ import com.gildongmu.dduru.presentation.feature.register.profile.component.Profi
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
 import com.gildongmu.dduru.presentation.feature.register.profile.component.rememberGalleryLauncher
-import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileType
-import com.gildongmu.dduru.presentation.feature.register.profile.util.surveyStatus
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
+import com.gildongmu.dduru.presentation.feature.register.profile.util.SurveyStatus
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 
 @Composable
@@ -92,13 +92,13 @@ fun ProfileSettingScreen(
 
             ProfileImageSelector(
                 options = viewModel.radioOptions,
-                selectedOption = state.selectedOption ?: viewModel.radioOptions.last(),
+                selectedOption = state.selectedOption,
                 selectedImageUri = state.selectedImageUri,
                 onOptionSelected = { viewModel.onProfileOptionSelected(it) },
                 characterBackgroundColor = state.savedBgColor,
-                isLocked = state.isSurveyComplete == surveyStatus.SKIPPED,
+                isLocked = state.isSurveyComplete == SurveyStatus.SKIPPED,
                 onActionClick = {
-                    if (state.selectedOption?.type == ProfileType.CHARACTER) {
+                    if (state.selectedOption == ProfileEditOption.CHARACTER) {
                         showCharacterCustomScreen = true
                     } else {
                         galleryLauncher.launch("image/*")

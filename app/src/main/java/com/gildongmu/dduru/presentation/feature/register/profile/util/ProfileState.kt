@@ -2,22 +2,23 @@ package com.gildongmu.dduru.presentation.feature.register.profile.util
 
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 
 enum class ProfileType {
     AVATAR, UPLOADED, DEFAULT
 }
 
-enum class surveyStatus {
+enum class SurveyStatus {
     COMPLETED, SKIPPED
 }
 
 data class ProfileState(
-    val isSurveyComplete: surveyStatus = surveyStatus.SKIPPED,
+    val isSurveyComplete: SurveyStatus = SurveyStatus.SKIPPED,
 
-    val profileType: ProfileType = ProfileType.UPLOADED,
-    val selectedOption: ProfileImageCropOption? = null,
+    val selectedOption: ProfileEditOption = ProfileEditOption.CUSTOM,
     val selectedImageUri: Uri? = null,
+
     val selectedBgColor: Color,
     val savedBgColor: Color,
 
@@ -33,4 +34,19 @@ data class ProfileState(
     val introduction: String = "",
 
     val canStart: Boolean = false
-)
+) {
+
+    val profileType: ProfileType
+        get() = when (selectedOption) {
+            ProfileEditOption.CHARACTER -> ProfileType.AVATAR
+
+            ProfileEditOption.CUSTOM ->
+                if (selectedImageUri != null) {
+                    ProfileType.UPLOADED
+                } else {
+                    ProfileType.DEFAULT
+                }
+
+            else -> ProfileType.DEFAULT
+        }
+}

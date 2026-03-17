@@ -26,12 +26,12 @@ import androidx.core.net.toUri
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
-import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileType
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 
 @Composable
 fun ProfileImageSelector(
     options: List<ProfileImageCropOption>,
-    selectedOption: ProfileImageCropOption,
+    selectedOption: ProfileEditOption,
     selectedImageUri: Uri?,
     characterBackgroundColor: Color,
     isLocked: Boolean,
@@ -47,11 +47,11 @@ fun ProfileImageSelector(
                 .selectableGroup()
         ) {
             options.forEach { option ->
-                val optionLocked = isLocked && option.type == ProfileType.CHARACTER
+                val optionLocked = isLocked && option.type == ProfileEditOption.CHARACTER
 
                 Column(
                     Modifier.selectable(
-                        selected = (option == selectedOption),
+                        selected = option.type == selectedOption,
                         onClick = { if (!optionLocked) onOptionSelected(option) },
                         enabled = !optionLocked,
                         role = Role.RadioButton
@@ -60,7 +60,7 @@ fun ProfileImageSelector(
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
-                    val currentSource: Any = if (option.type == ProfileType.CUSTOM) {
+                    val currentSource: Any = if (option.type == ProfileEditOption.CUSTOM) {
                         selectedImageUri ?: R.drawable.img_blank_profile
                     } else {
                         option.image
@@ -75,7 +75,7 @@ fun ProfileImageSelector(
                     )
 
                     RadioButton(
-                        selected = (option == selectedOption),
+                        selected = option.type == selectedOption,
                         onClick = null,
                         enabled = !optionLocked
                     )
@@ -89,7 +89,7 @@ fun ProfileImageSelector(
             modifier = Modifier.padding(top = 16.dp)
         ) {
             Text(
-                text = if (selectedOption.type == ProfileType.CHARACTER) "아바타 편집" else "사진 변경",
+                text = if (selectedOption == ProfileEditOption.CHARACTER) "아바타 편집" else "사진 변경",
                 style = DduruTheme.typography.Body2,
                 color = DduruTheme.colors.gray700
             )
@@ -103,20 +103,20 @@ fun ProfileImageSelectorPreview() {
     val options = listOf(
         ProfileImageCropOption(
             R.drawable.img_penguin_personallity,
-            ProfileType.CHARACTER,
+            ProfileEditOption.CHARACTER,
             1.6f,
             0.16f
         ),
-        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
+        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileEditOption.CUSTOM)
     )
-    var selectedOption by remember { mutableStateOf(options.last()) }
+    var selectedOption by remember { mutableStateOf(options.last().type) }
 
     ProfileImageSelector(
         options = options,
         selectedOption = selectedOption,
         selectedImageUri = "android.resource://com.gildongmu.dduru/drawable/img_blank_profile".toUri(),
         isLocked = false,
-        onOptionSelected = { selectedOption = it },
+        onOptionSelected = { selectedOption = it.type },
         characterBackgroundColor = Color.White,
         onActionClick = {}
     )
@@ -128,20 +128,20 @@ fun ProfileImageSelectorLockedPreview() {
     val options = listOf(
         ProfileImageCropOption(
             R.drawable.img_penguin_personallity,
-            ProfileType.CHARACTER,
+            ProfileEditOption.CHARACTER,
             1.6f,
             0.16f
         ),
-        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileType.CUSTOM)
+        ProfileImageCropOption(R.drawable.img_blank_profile, ProfileEditOption.CUSTOM)
     )
-    var selectedOption by remember { mutableStateOf(options.last()) }
+    var selectedOption by remember { mutableStateOf(options.last().type) }
 
     ProfileImageSelector(
         options = options,
         selectedOption = selectedOption,
         selectedImageUri = "android.resource://com.gildongmu.dduru/drawable/img_blank_profile".toUri(),
         isLocked = true,
-        onOptionSelected = { selectedOption = it },
+        onOptionSelected = { selectedOption = it.type },
         characterBackgroundColor = Color.White,
         onActionClick = {}
     )

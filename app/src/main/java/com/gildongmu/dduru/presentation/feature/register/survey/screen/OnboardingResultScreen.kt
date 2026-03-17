@@ -2,14 +2,10 @@ package com.gildongmu.dduru.presentation.feature.register.survey.screen
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.statusBarsPadding
-import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -18,8 +14,6 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.viewmodel.compose.viewModel
-import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.survey.component.SurveyResultDetail
@@ -28,12 +22,14 @@ import com.gildongmu.dduru.presentation.feature.register.survey.viewmodel.Onboar
 
 @Composable
 fun OnboardingResultRoute(
+    paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
     viewModel: OnboardingResultViewModel = hiltViewModel(),
     onNextClick: () -> Unit
 ) {
     OnboardingResultScreen(
         modifier = modifier,
+        paddingValues = paddingValues,
         uiState = viewModel.uiState,
         onNextClick = onNextClick
     )
@@ -42,18 +38,18 @@ fun OnboardingResultRoute(
 @Composable
 private fun OnboardingResultScreen(
     uiState: SurveyResultState,
+    paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
     onNextClick: () -> Unit
 ) {
     Column(
         modifier
             .fillMaxSize()
-            .padding(horizontal = 16.dp) ,
+            .padding(horizontal = 16.dp)
+            .padding(paddingValues),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-
-        Spacer(modifier = Modifier.height(16.dp))
 
         Text(
             modifier = Modifier
@@ -64,7 +60,6 @@ private fun OnboardingResultScreen(
         )
 
         SurveyResultDetail(
-                modifier = Modifier.weight(1f),
                 avatarName = uiState.avatarName,
                 avatarDescription = uiState.avatarDescription,
                 imageUrl = uiState.imageUrl,
@@ -99,6 +94,7 @@ private fun OnboardingResultScreenPreview() {
                 tip = "너무 혼자만 다니지 않기!",
                 tags = listOf("감성", "힐링", "자유")
             ),
+            paddingValues = PaddingValues(),
             onNextClick = {}
         )
     }
