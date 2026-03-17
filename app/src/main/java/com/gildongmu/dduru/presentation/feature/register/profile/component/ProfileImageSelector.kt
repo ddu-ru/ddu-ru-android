@@ -27,8 +27,8 @@ import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 
 @Composable
 fun ProfileImageSelector(
@@ -62,10 +62,11 @@ fun ProfileImageSelector(
                         .semantics {
                             contentDescription = buildString {
                                 append(
-                                    if (option.type == ProfileEditOption.CHARACTER)
+                                    if (option.type == ProfileEditOption.CHARACTER) {
                                         "아바타 프로필"
-                                    else
+                                    } else {
                                         "사진 프로필"
+                                    }
                                 )
 
                                 if (optionLocked) {

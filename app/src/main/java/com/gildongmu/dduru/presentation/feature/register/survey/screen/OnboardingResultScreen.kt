@@ -50,7 +50,6 @@ private fun OnboardingResultScreen(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.SpaceEvenly
     ) {
-
         Text(
             modifier = Modifier
                 .padding(top = 16.dp),
@@ -60,13 +59,13 @@ private fun OnboardingResultScreen(
         )
 
         SurveyResultDetail(
-                avatarName = uiState.avatarName,
-                avatarDescription = uiState.avatarDescription,
-                imageUrl = uiState.imageUrl,
-                personality = uiState.personality,
-                strength = uiState.strength,
-                tip = uiState.tip,
-                tags = uiState.tags
+            avatarName = uiState.avatarName,
+            avatarDescription = uiState.avatarDescription,
+            imageUrl = uiState.imageUrl,
+            personality = uiState.personality,
+            strength = uiState.strength,
+            tip = uiState.tip,
+            tags = uiState.tags
         )
 
         DduruButton(

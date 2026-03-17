@@ -3,7 +3,6 @@ package com.gildongmu.dduru.presentation.feature.register.profile.util
 import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
-import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 
 enum class ProfileType {
     AVATAR, UPLOADED, DEFAULT
