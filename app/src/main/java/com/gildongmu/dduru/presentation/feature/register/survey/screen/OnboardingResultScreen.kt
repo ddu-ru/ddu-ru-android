@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
@@ -26,7 +27,7 @@ import com.gildongmu.dduru.presentation.feature.register.survey.viewmodel.Onboar
 @Composable
 fun OnboardingResultRoute(
     modifier: Modifier = Modifier,
-    viewModel: OnboardingResultViewModel = viewModel(),
+    viewModel: OnboardingResultViewModel = hiltViewModel(),
     onNextClick: () -> Unit
 ) {
     OnboardingResultScreen(
@@ -37,7 +38,7 @@ fun OnboardingResultRoute(
 }
 
 @Composable
-fun OnboardingResultScreen(
+private fun OnboardingResultScreen(
     uiState: SurveyResultState,
     modifier: Modifier = Modifier,
     onNextClick: () -> Unit
@@ -46,32 +47,33 @@ fun OnboardingResultScreen(
         modifier = Modifier.fillMaxSize(),
         containerColor = DduruTheme.colors.gray50,
         bottomBar = {
+
             Column(
                 Modifier
                     .fillMaxWidth()
                     .navigationBarsPadding()
-                    .padding(horizontal = 16.dp)
+                    .padding(16.dp)
             ) {
+
                 DduruButton(
                     text = "네 맞아요!",
                     onClick = onNextClick,
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(bottom = 94.dp)
                 )
             }
         }
     ) { innerPadding ->
+
         Column(
             modifier = modifier
                 .fillMaxSize()
-                .statusBarsPadding()
-                .navigationBarsPadding()
                 .padding(innerPadding)
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.SpaceEvenly
         ) {
+
             Text(
                 modifier = Modifier
                     .padding(top = 16.dp)
@@ -91,7 +93,7 @@ fun OnboardingResultScreen(
 
 @Preview(showBackground = true)
 @Composable
-fun OnboardingResultScreenPreview() {
+private fun OnboardingResultScreenPreview() {
     DduruTheme {
         OnboardingResultScreen(
             modifier = Modifier.fillMaxWidth(),
