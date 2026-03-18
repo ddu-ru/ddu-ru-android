@@ -33,7 +33,7 @@ fun LoginButton(
     contentColor: Color,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
-    hasBorder: Boolean = false // 구글 버튼 등 테두리가 필요할 때를 대비
+    hasBorder: Boolean = false
 ) {
     val buttonShape = RoundedCornerShape(16.dp)
 
@@ -44,8 +44,8 @@ fun LoginButton(
             .shadow(
                 elevation = 8.dp,
                 shape = buttonShape,
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.1f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.1f)
+                spotColor = DduruTheme.colors.black.copy(alpha = 0.08f),
+                ambientColor = DduruTheme.colors.black.copy(alpha = 0.08f)
             )
             .then(
                 if (hasBorder) {
