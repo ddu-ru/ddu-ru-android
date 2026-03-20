@@ -26,11 +26,11 @@ import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBac
 
 @Composable
 fun ColorDotGrid(
-    modifier: Modifier = Modifier,
     colors: List<Color>,
+    modifier: Modifier = Modifier,
     columnCount: Int = 8,
     selectedColor: Color? = null,
-    onColorClick: (Color) -> Unit = {}
+    onColorClick: (Color) -> Unit = {},
 ) {
     LazyVerticalGrid(
         modifier = modifier,
