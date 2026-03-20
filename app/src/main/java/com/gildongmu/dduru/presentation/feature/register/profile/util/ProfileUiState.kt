@@ -4,15 +4,11 @@ import android.net.Uri
 import androidx.compose.ui.graphics.Color
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 
-enum class ProfileType {
-    AVATAR, UPLOADED, DEFAULT
-}
-
 enum class SurveyStatus {
     COMPLETED, SKIPPED
 }
 
-data class ProfileState(
+data class ProfileUiState(
     val isSurveyComplete: SurveyStatus = SurveyStatus.SKIPPED,
 
     val selectedOption: ProfileEditOption = ProfileEditOption.CUSTOM,
@@ -33,19 +29,4 @@ data class ProfileState(
     val introduction: String = "",
 
     val canStart: Boolean = false
-) {
-
-    val profileType: ProfileType
-        get() = when (selectedOption) {
-            ProfileEditOption.CHARACTER -> ProfileType.AVATAR
-
-            ProfileEditOption.CUSTOM ->
-                if (selectedImageUri != null) {
-                    ProfileType.UPLOADED
-                } else {
-                    ProfileType.DEFAULT
-                }
-
-            else -> ProfileType.DEFAULT
-        }
-}
+)
