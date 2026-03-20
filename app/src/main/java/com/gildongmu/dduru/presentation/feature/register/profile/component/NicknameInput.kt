@@ -1,21 +1,19 @@
 package com.gildongmu.dduru.presentation.feature.register.profile.component
 
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.text.BasicTextField
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.focus.FocusRequester
-import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -23,31 +21,70 @@ import com.gildongmu.dduru.presentation.feature.register.component.ValidationMes
 
 @Composable
 fun NicknameInput(
-    modifier: Modifier,
     value: String,
+    validationMessage: String,
+    modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
-    enabled: Boolean,
     onRandomClick: () -> Unit,
-    validationMessage: String
 ) {
-    val focusRequester = remember { FocusRequester() }
 
-    Column() {
-        MaterialUnderlineTextField(
-            modifier = modifier.focusRequester(focusRequester),
-            label = "닉네임",
-            value = value,
-            placeholder = "닉네임 입력",
-            onValueChange = onValueChange,
-            enabled = enabled,
-            actionContent = {
-                RandomNicknameButton(
-                    enabled = enabled,
-                    onClick = onRandomClick
-                )
-            }
+    Column(
+        modifier = modifier.fillMaxWidth()
+    ) {
+
+        Text(
+            text = "닉네임",
+            style = DduruTheme.typography.Body2,
+            color = DduruTheme.colors.gray900
         )
+
+        Spacer(Modifier.height(8.dp))
+
+        Row(verticalAlignment = Alignment.CenterVertically) {
+
+            BasicTextField(
+                value = value,
+                onValueChange = onValueChange,
+                singleLine = true,
+                textStyle = DduruTheme.typography.BodyMain.copy(
+                    color = DduruTheme.colors.gray800
+                ),
+                modifier = Modifier.weight(1f),
+                decorationBox = { innerTextField ->
+
+                    Column {
+
+                        Box(
+                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 13.dp)
+                        ) {
+                            if (value.isEmpty()) {
+
+                                Text(
+                                    text = "닉네임 입력",
+                                    style = DduruTheme.typography.BodyMain,
+                                    color = DduruTheme.colors.gray400
+                                )
+                            }
+
+                            innerTextField()
+                        }
+
+                        HorizontalDivider(
+                            color = DduruTheme.colors.gray100,
+                            thickness = 2.dp
+                        )
+                    }
+                }
+            )
+
+            Spacer(Modifier.width(12.dp))
+
+            RandomNicknameButton(
+                onClick = onRandomClick
+            )
+        }
         if (validationMessage.isNotBlank()) {
+
             ValidationMessage(
                 text = validationMessage
             )
@@ -56,34 +93,75 @@ fun NicknameInput(
 }
 
 @Composable
-fun RandomNicknameButton(
-    enabled: Boolean,
+private fun RandomNicknameButton(
+    modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
-    Button(
+
+    Surface(
+        modifier = modifier,
         onClick = onClick,
-        enabled = enabled,
-        modifier = Modifier.height(36.dp),
-        shape = RoundedCornerShape(18.dp),
-        colors = ButtonDefaults.buttonColors(
-            containerColor = Color.White,
-            contentColor = Color.Black,
-            disabledContainerColor = Color.White,
-            disabledContentColor = Color.Black
+        shape = RoundedCornerShape(16.dp),
+        color = Color.Transparent,
+        border = BorderStroke(
+            width = 1.dp,
+            color = DduruTheme.colors.gray958.copy(alpha = 0.1f)
         )
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_random),
-            contentDescription = "랜덤 닉네임 생성",
-            modifier = Modifier.size(16.dp).padding(1.dp),
-            tint = DduruTheme.colors.gray700
-        )
 
-        Text(
-            modifier = Modifier.padding(1.dp),
-            text = "랜덤",
-            style = DduruTheme.typography.H2,
-            color = DduruTheme.colors.gray700
+        Row(
+            modifier = Modifier.padding(vertical = 16.dp, horizontal = 32.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+
+            Icon(
+                painter = painterResource(R.drawable.ic_random),
+                contentDescription = null,
+                //modifier = Modifier.size(12.dp),
+                tint = DduruTheme.colors.gray700
+            )
+
+            Spacer(Modifier.width(8.dp))
+
+            Text(
+                text = "랜덤",
+                style = DduruTheme.typography.Title,
+                color = DduruTheme.colors.gray700
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NicknameInputPreview() {
+
+    var nickname by remember { mutableStateOf("") }
+
+    DduruTheme {
+        NicknameInput(
+            modifier = Modifier.padding(16.dp),
+            value = nickname,
+            onValueChange = { nickname = it },
+            onRandomClick = { nickname = "뚜르" },
+            validationMessage = ""
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun NicknameInputValidationMessagePreview() {
+
+    var nickname by remember { mutableStateOf("") }
+
+    DduruTheme {
+        NicknameInput(
+            modifier = Modifier.padding(16.dp),
+            value = nickname,
+            onValueChange = { nickname = it },
+            onRandomClick = { nickname = "뚜르" },
+            validationMessage = "닉네임을 입력해주세요"
         )
     }
 }
