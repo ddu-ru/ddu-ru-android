@@ -11,7 +11,6 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -21,7 +20,7 @@ import com.gildongmu.dduru.presentation.feature.register.component.ValidationMes
 
 @Composable
 fun NicknameInput(
-    value: String,
+    text: String,
     validationMessage: String,
     modifier: Modifier = Modifier,
     onValueChange: (String) -> Unit,
@@ -35,7 +34,7 @@ fun NicknameInput(
         Text(
             text = "닉네임",
             style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray900
+            color = DduruTheme.colors.gray800
         )
 
         Spacer(Modifier.height(8.dp))
@@ -43,7 +42,7 @@ fun NicknameInput(
         Row(verticalAlignment = Alignment.CenterVertically) {
 
             BasicTextField(
-                value = value,
+                value = text,
                 onValueChange = onValueChange,
                 singleLine = true,
                 textStyle = DduruTheme.typography.BodyMain.copy(
@@ -57,7 +56,7 @@ fun NicknameInput(
                         Box(
                             modifier = Modifier.padding(horizontal = 6.dp, vertical = 13.dp)
                         ) {
-                            if (value.isEmpty()) {
+                            if (text.isEmpty()) {
 
                                 Text(
                                     text = "닉네임 입력",
@@ -102,7 +101,7 @@ private fun RandomNicknameButton(
         modifier = modifier,
         onClick = onClick,
         shape = RoundedCornerShape(16.dp),
-        color = Color.Transparent,
+        color = DduruTheme.colors.gray0,
         border = BorderStroke(
             width = 1.dp,
             color = DduruTheme.colors.gray958.copy(alpha = 0.1f)
@@ -141,7 +140,7 @@ private fun NicknameInputPreview() {
     DduruTheme {
         NicknameInput(
             modifier = Modifier.padding(16.dp),
-            value = nickname,
+            text = nickname,
             onValueChange = { nickname = it },
             onRandomClick = { nickname = "뚜르" },
             validationMessage = ""
@@ -158,7 +157,7 @@ private fun NicknameInputValidationMessagePreview() {
     DduruTheme {
         NicknameInput(
             modifier = Modifier.padding(16.dp),
-            value = nickname,
+            text = nickname,
             onValueChange = { nickname = it },
             onRandomClick = { nickname = "뚜르" },
             validationMessage = "닉네임을 입력해주세요"

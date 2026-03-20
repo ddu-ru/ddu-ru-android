@@ -4,7 +4,9 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,20 +27,26 @@ fun ProfileIntroduction(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.Start
+        modifier = modifier.fillMaxWidth(),
     ) {
+
         Text(
-            modifier = Modifier
-                .padding(8.dp, bottom = 16.dp),
             text = "자기소개",
-            style = DduruTheme.typography.Body2
+            style = DduruTheme.typography.Body2,
+            color = DduruTheme.colors.gray800,
         )
+
+        Spacer(Modifier.height(8.dp))
+
         Box(
             modifier = Modifier
-                .border(1.dp, DduruTheme.colors.gray300, RoundedCornerShape(16.dp))
+                .border(
+                    1.dp,
+                    DduruTheme.colors.gray958.copy(alpha = 0.1f),
+                    RoundedCornerShape(16.dp))
                 .background(Color.White)
         ) {
+
             BasicTextField(
                 value = text,
                 onValueChange = onValueChange,
