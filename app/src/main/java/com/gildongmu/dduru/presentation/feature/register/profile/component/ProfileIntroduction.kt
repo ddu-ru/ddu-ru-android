@@ -27,13 +27,12 @@ fun ProfileIntroduction(
     modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
     ) {
-
         Text(
             text = "자기소개",
             style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray800,
+            color = DduruTheme.colors.gray800
         )
 
         Spacer(Modifier.height(8.dp))
@@ -43,10 +42,10 @@ fun ProfileIntroduction(
                 .border(
                     1.dp,
                     DduruTheme.colors.gray958.copy(alpha = 0.1f),
-                    RoundedCornerShape(16.dp))
+                    RoundedCornerShape(16.dp)
+                )
                 .background(Color.White)
         ) {
-
             BasicTextField(
                 value = text,
                 onValueChange = onValueChange,

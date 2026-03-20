@@ -30,7 +30,7 @@ fun ColorDotGrid(
     modifier: Modifier = Modifier,
     columnCount: Int = 8,
     selectedColor: Color? = null,
-    onColorClick: (Color) -> Unit = {},
+    onColorClick: (Color) -> Unit = {}
 ) {
     LazyVerticalGrid(
         modifier = modifier,

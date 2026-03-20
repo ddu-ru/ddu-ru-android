@@ -98,13 +98,11 @@ fun ProfileSettingScreen(
     onDismissCharacterCustom: () -> Unit,
     onStartClick: () -> Unit
 ) {
-
     Scaffold(
         modifier = modifier.fillMaxSize(),
         containerColor = DduruTheme.colors.gray50,
 
         bottomBar = {
-
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -112,12 +110,10 @@ fun ProfileSettingScreen(
                     .padding(horizontal = 16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 SpeechBubble(
                     modifier = Modifier.padding(bottom = 7.dp),
                     shadowElevation = 3.dp
                 ) {
-
                     Text(
                         text = "모든 정보가 맞나요? 이제 시작해요!",
                         style = DduruTheme.typography.Title2,
@@ -145,7 +141,6 @@ fun ProfileSettingScreen(
                 .padding(16.dp),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
-
             Spacer(Modifier.height(16.dp))
 
             Column(
@@ -154,7 +149,6 @@ fun ProfileSettingScreen(
                     .weight(1f),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 Spacer(Modifier.weight(24f))
 
                 Text(
@@ -195,15 +189,15 @@ fun ProfileSettingScreen(
             }
         }
 
-            if (showCharacterCustomScreen) {
-                ProfileCharacterCustomDialog(
-                    selectedBg = state.selectedBgColor,
-                    characterImage = characterImageRes,
-                    avatarName = "",
-                    onBgColorSelected = onBgColorSelected,
-                    onConfirm = onConfirmCharacterCustom,
-                    onDismiss = onDismissCharacterCustom
-                )
+        if (showCharacterCustomScreen) {
+            ProfileCharacterCustomDialog(
+                selectedBg = state.selectedBgColor,
+                characterImage = characterImageRes,
+                avatarName = "",
+                onBgColorSelected = onBgColorSelected,
+                onConfirm = onConfirmCharacterCustom,
+                onDismiss = onDismissCharacterCustom
+            )
         }
     }
 }
