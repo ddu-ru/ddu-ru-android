@@ -32,6 +32,7 @@ fun ProfileImageCircle(
     size: Dp = 100.dp,
     isLocked: Boolean = false
 ) {
+
     Box(
         modifier = modifier
             .background(backgroundColor, CircleShape)
