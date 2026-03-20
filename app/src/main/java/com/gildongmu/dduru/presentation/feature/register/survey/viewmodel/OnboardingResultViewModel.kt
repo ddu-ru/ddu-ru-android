@@ -4,14 +4,14 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.setValue
 import androidx.lifecycle.ViewModel
-import com.gildongmu.dduru.presentation.feature.register.survey.state.SurveyResultState
+import com.gildongmu.dduru.presentation.feature.register.survey.state.SurveyResultUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 
 @HiltViewModel
 class OnboardingResultViewModel @Inject constructor() : ViewModel() {
 
-    var uiState by mutableStateOf(SurveyResultState())
+    var uiState by mutableStateOf(SurveyResultUiState())
         private set
 
     init {

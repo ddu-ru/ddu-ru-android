@@ -17,7 +17,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.survey.component.SurveyResultDetail
-import com.gildongmu.dduru.presentation.feature.register.survey.state.SurveyResultState
+import com.gildongmu.dduru.presentation.feature.register.survey.state.SurveyResultUiState
 import com.gildongmu.dduru.presentation.feature.register.survey.viewmodel.OnboardingResultViewModel
 
 @Composable
@@ -37,7 +37,7 @@ fun OnboardingResultRoute(
 
 @Composable
 private fun OnboardingResultScreen(
-    uiState: SurveyResultState,
+    uiState: SurveyResultUiState,
     paddingValues: PaddingValues,
     modifier: Modifier = Modifier,
     onNextClick: () -> Unit
@@ -84,7 +84,7 @@ private fun OnboardingResultScreenPreview() {
     DduruTheme {
         OnboardingResultScreen(
             modifier = Modifier.fillMaxWidth(),
-            uiState = SurveyResultState(
+            uiState = SurveyResultUiState(
                 avatarName = "감성 펭귄",
                 avatarDescription = "혼자만의 여유를 즐기며 \n여행하는 타입이에요.",
                 imageUrl = "https://i.postimg.cc/MTD5tQ1Y/img-penguin-personallity.png",

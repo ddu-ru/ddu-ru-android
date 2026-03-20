@@ -1,6 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.register.survey.state
 
-data class SurveyResultState(
+data class SurveyResultUiState(
     val avatarName: String = "",
     val avatarDescription: String = "",
     val imageUrl: String = "",
