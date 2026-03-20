@@ -9,7 +9,7 @@ import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileIm
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
-import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileState
+import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileUiState
 import com.gildongmu.dduru.presentation.feature.register.profile.util.SurveyStatus
 import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -22,7 +22,7 @@ import kotlinx.coroutines.flow.update
 class ProfileViewModel @Inject constructor() : ViewModel() {
 
     private val _uiState = MutableStateFlow(
-        ProfileState(
+        ProfileUiState(
             selectedBgColor = ProfileBackgroundColorList.first().color,
             savedBgColor = ProfileBackgroundColorList.first().color
         )
