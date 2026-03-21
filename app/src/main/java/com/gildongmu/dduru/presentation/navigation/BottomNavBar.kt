@@ -2,7 +2,6 @@ package com.gildongmu.dduru.presentation.navigation
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -11,6 +10,8 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -21,6 +22,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.semantics.semantics
+import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
@@ -33,15 +37,18 @@ fun BottomNavBar(
     onItemClick: (BottomNavRoute) -> Unit,
     modifier: Modifier = Modifier
 ) {
+
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(99.dp))
-            .padding(8.dp),
+            .padding(8.dp)
+            .selectableGroup(),
         horizontalArrangement = Arrangement.SpaceBetween,
         verticalAlignment = Alignment.CenterVertically
     ) {
         items.forEach { item ->
             val isSelected = item.key == currentRoute
+
             BottomNavBarItem(
                 item = item,
                 isSelected = isSelected,
@@ -62,7 +69,6 @@ private fun BottomNavBarItem(
     val activeColor = DduruTheme.colors.primary
     val inactiveColor = DduruTheme.colors.gray500
     val contentColor = if (isSelected) activeColor else inactiveColor
-
     val backgroundColor = if (isSelected) DduruTheme.colors.blackAlpha05 else Color.Transparent
 
     Column(
@@ -80,18 +86,24 @@ private fun BottomNavBarItem(
                     Modifier
                 }
             )
-            .clickable(
+            .selectable(
+                selected = isSelected,
                 onClick = onClick,
+                role = Role.Tab,
                 interactionSource = remember { MutableInteractionSource() },
                 indication = null
             )
+            .semantics {
+                stateDescription = if (isSelected) "선택됨" else "선택 안 됨"
+            }
             .padding(vertical = 7.dp),
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
+
         Icon(
             painter = painterResource(id = item.icon),
-            contentDescription = item.title,
+            contentDescription = null,
             tint = contentColor,
             modifier = Modifier
                 .width(18.dp)
@@ -118,11 +130,11 @@ private fun BottomNavBarSelectedPreview() {
         BottomNavItem(BottomNavRoute.MyPage, "마이", R.drawable.ic_bottom_nav_main),
         BottomNavItem(BottomNavRoute.Board, "게시판", R.drawable.ic_bottom_nav_main)
     )
-    val items = previewBottomNavItems
 
     DduruTheme {
+
         BottomNavBar(
-            items = items,
+            items = previewBottomNavItems,
             currentRoute = BottomNavRoute.Home,
             onItemClick = {}
         )
