@@ -37,7 +37,6 @@ fun BottomNavBar(
     onItemClick: (BottomNavRoute) -> Unit,
     modifier: Modifier = Modifier
 ) {
-
     Row(
         modifier = modifier
             .clip(RoundedCornerShape(99.dp))
@@ -100,7 +99,6 @@ private fun BottomNavBarItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Icon(
             painter = painterResource(id = item.icon),
             contentDescription = null,
@@ -132,7 +130,6 @@ private fun BottomNavBarSelectedPreview() {
     )
 
     DduruTheme {
-
         BottomNavBar(
             items = previewBottomNavItems,
             currentRoute = BottomNavRoute.Home,

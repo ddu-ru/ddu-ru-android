@@ -13,7 +13,6 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
 
-// UI 상태 정의
 sealed class LoginUiState {
     object Idle : LoginUiState()
     object Loading : LoginUiState()

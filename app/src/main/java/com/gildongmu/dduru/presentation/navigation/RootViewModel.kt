@@ -6,12 +6,12 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
-import kotlin.coroutines.cancellation.CancellationException
 
 @HiltViewModel
 class RootViewModel @Inject constructor(
@@ -34,10 +34,8 @@ class RootViewModel @Inject constructor(
                 } else {
                     RootNavRoute.MainNavRoute
                 }
-
             } catch (e: CancellationException) {
                 throw e
-
             } catch (e: Exception) {
                 Log.e("RootViewModel", "Failed to resolve start destination", e)
 
