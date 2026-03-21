@@ -77,7 +77,7 @@ private class UniversalSpeechBubbleShape(
 @Composable
 fun SpeechBubble(
     modifier: Modifier = Modifier,
-    direction: BubbleArrowDirection = BubbleArrowDirection.Bottom, // 방향 인자 추가
+    direction: BubbleArrowDirection = BubbleArrowDirection.Bottom,
     cornerRadius: Dp = 24.dp,
     arrowWidth: Dp = 22.dp,
     arrowHeight: Dp = 12.dp,
