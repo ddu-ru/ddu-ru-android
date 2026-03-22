@@ -20,6 +20,8 @@ object NicknameValidator {
         return when {
             nickname.isBlank() -> NicknameValidationResult.EMPTY
 
+            nickname.contains(" ") -> NicknameValidationResult.CONTAINS_EMPTY
+
             nickname.length < MIN_LENGTH -> NicknameValidationResult.TOO_SHORT
 
             nickname.length > MAX_LENGTH -> NicknameValidationResult.TOO_LONG
