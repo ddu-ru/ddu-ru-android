@@ -17,7 +17,7 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.presentation.feature.login.screen.WelcomeScreen
 import com.gildongmu.dduru.presentation.feature.login.screen.LoginRoute
-import com.gildongmu.dduru.presentation.feature.main.MainScreen
+import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
 
 @Composable
 fun RootNavigation(

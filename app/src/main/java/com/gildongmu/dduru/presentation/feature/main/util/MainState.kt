@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.main
+package com.gildongmu.dduru.presentation.feature.main.util
 
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember

@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.main
+package com.gildongmu.dduru.presentation.feature.main.screen
 
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
@@ -15,6 +15,8 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.presentation.feature.main.util.MainState
+import com.gildongmu.dduru.presentation.feature.main.util.rememberMainAppState
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar
 import com.gildongmu.dduru.presentation.navigation.BottomNavItem
 import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
