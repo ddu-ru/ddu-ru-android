@@ -69,7 +69,6 @@ fun LoginRoute(
     )
 }
 
-
 @Composable
 fun LoginScreen(
     isLoading: Boolean,
@@ -135,7 +134,6 @@ fun LoginScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-
                 LoginButton(
                     iconResId = R.drawable.img_kakao_icon,
                     text = "카카오로 시작하기",

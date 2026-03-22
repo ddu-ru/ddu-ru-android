@@ -41,13 +41,11 @@ fun WelcomeScreen(
             .padding(top = 100.dp, bottom = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Box(
             modifier = Modifier
                 .width(340.dp)
                 .wrapContentHeight()
         ) {
-
             Image(
                 painter = painterResource(id = R.drawable.img_message),
                 contentDescription = null,
