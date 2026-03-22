@@ -130,13 +130,12 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(95.dp))
 
-            // 2. 버튼 영역
             Column(
                 modifier = Modifier.width(343.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 카카오 로그인
+
                 LoginButton(
                     iconResId = R.drawable.img_kakao_icon,
                     text = "카카오로 시작하기",
@@ -145,7 +144,6 @@ fun LoginScreen(
                     onClick = onKakaoClick
                 )
 
-                // 구글 로그인
                 LoginButton(
                     iconResId = R.drawable.img_google_icon,
                     text = "구글로 시작하기",
@@ -158,7 +156,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(25.dp))
 
-            // 3. 가입 없이 둘러볼래요
             Text(
                 text = "가입 없이 둘러볼래요",
                 modifier = Modifier.clickable { onGuestClick() },
