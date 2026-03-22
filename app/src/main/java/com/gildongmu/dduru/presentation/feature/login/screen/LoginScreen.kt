@@ -35,8 +35,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.LoginButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.login.util.LoginUiState
+import com.gildongmu.dduru.presentation.feature.login.util.LoginUiEvent
 import com.gildongmu.dduru.presentation.feature.login.viewmodel.LoginViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun LoginRoute(
@@ -47,24 +48,23 @@ fun LoginRoute(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    LaunchedEffect(uiState) {
-        when (val state = uiState) {
-            is LoginUiState.Success -> {
-                onLoginSuccess(state.isNewUser)
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collectLatest { event ->
+            when (event) {
+                is LoginUiEvent.LoginSuccess -> {
+                    onLoginSuccess(event.isNewUser)
+                }
+                is LoginUiEvent.ShowError -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
             }
-            is LoginUiState.Error -> {
-                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
-            }
-            else -> {}
         }
     }
 
     LoginScreen(
-        isLoading = (uiState is LoginUiState.Loading),
+        isLoading = uiState.isLoading,
         onKakaoClick = { viewModel.startKakaoLogin() },
-        onGoogleClick = {
-            viewModel.startGoogleLogin(context)
-        },
+        onGoogleClick = { viewModel.startGoogleLogin(context) },
         onGuestClick = onGuestClick
     )
 }

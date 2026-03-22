@@ -7,11 +7,16 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
 import com.gildongmu.dduru.domain.usecase.LoginGoogleUseCase
 import com.gildongmu.dduru.domain.usecase.LoginKakaoUseCase
+import com.gildongmu.dduru.presentation.feature.login.util.LoginUiEvent
 import com.gildongmu.dduru.presentation.feature.login.util.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -21,57 +26,65 @@ class LoginViewModel @Inject constructor(
     private val kakaoAuthDataSource: KakaoAuthDataSource
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
-    val uiState: StateFlow<LoginUiState> = _uiState
+    private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
+
+    private val _uiEvent = MutableSharedFlow<LoginUiEvent>()
+    val uiEvent: SharedFlow<LoginUiEvent> = _uiEvent.asSharedFlow()
 
     fun startGoogleLogin(context: Context) {
         viewModelScope.launch {
-            _uiState.value = LoginUiState.Loading
+            updateLoading(true)
 
             val result = loginGoogleUseCase(context)
 
             result.onSuccess { isNewUser ->
-                _uiState.value = LoginUiState.Success(isNewUser)
+                updateLoading(false)
+                _uiEvent.emit(LoginUiEvent.LoginSuccess(isNewUser))
             }.onFailure { e ->
                 Log.e("LoginViewModel", "Google Login failed: ${e.message}", e)
-                _uiState.value = LoginUiState.Error("구글 로그인 실패")
+                updateLoading(false)
+                _uiEvent.emit(LoginUiEvent.ShowError("구글 로그인 실패"))
             }
         }
     }
 
     fun startKakaoLogin() {
         viewModelScope.launch {
-            _uiState.value = LoginUiState.Loading
+            updateLoading(true)
 
             val idToken = kakaoAuthDataSource.getIdToken()
             if (idToken.isNullOrBlank()) {
-                _uiState.value = LoginUiState.Idle
+                updateLoading(false)
+                _uiEvent.emit(LoginUiEvent.ShowError("카카오 로그인에 실패했습니다. 다시 시도해주세요."))
                 return@launch
             }
 
-            val result = loginKakaoUseCase(idToken)
-
-            result.onSuccess { isNewUser ->
-                _uiState.value = LoginUiState.Success(isNewUser)
-            }.onFailure { e ->
-                Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
-                _uiState.value = LoginUiState.Error("카카오 로그인 실패: ${e.message}")
-            }
+            loginKakao(idToken)
         }
     }
 
     fun loginWithKakao(idToken: String) {
         viewModelScope.launch {
-            _uiState.value = LoginUiState.Loading
-
-            val result = loginKakaoUseCase(idToken)
-
-            result.onSuccess { isNewUser ->
-                _uiState.value = LoginUiState.Success(isNewUser)
-            }.onFailure { e ->
-                Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
-                _uiState.value = LoginUiState.Error("카카오 로그인 실패")
-            }
+            updateLoading(true)
+            loginKakao(idToken)
         }
+    }
+
+    private suspend fun loginKakao(idToken: String) {
+        val result = loginKakaoUseCase(idToken)
+
+        result.onSuccess { isNewUser ->
+            updateLoading(false)
+            _uiEvent.emit(LoginUiEvent.LoginSuccess(isNewUser))
+        }.onFailure { e ->
+            Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
+            updateLoading(false)
+            _uiEvent.emit(LoginUiEvent.ShowError("카카오 로그인 실패"))
+        }
+    }
+
+    private fun updateLoading(isLoading: Boolean) {
+        _uiState.value = _uiState.value.copy(isLoading = isLoading)
     }
 }
