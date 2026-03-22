@@ -92,8 +92,7 @@ private fun BottomNavBackground(
     ) {
         Box(
             modifier = Modifier
-                .fillMaxWidth()
-                .align(Alignment.TopCenter)
+                .matchParentSize()
                 .blur(4.dp)
                 .background(
                     DduruTheme.colors.gray50.copy(alpha = 0.08f)
