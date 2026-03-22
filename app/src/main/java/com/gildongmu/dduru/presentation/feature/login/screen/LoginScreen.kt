@@ -1,5 +1,6 @@
-package com.gildongmu.dduru.presentation.feature.login
+package com.gildongmu.dduru.presentation.feature.login.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,19 +17,58 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.LoginButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.login.viewmodel.LoginUiState
+import com.gildongmu.dduru.presentation.feature.login.viewmodel.LoginViewModel
+
+@Composable
+fun LoginRoute(
+    onLoginSuccess: (Boolean) -> Unit,
+    onGuestClick: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(uiState) {
+        when (val state = uiState) {
+            is LoginUiState.Success -> {
+                onLoginSuccess(state.isNewUser)
+            }
+            is LoginUiState.Error -> {
+                Toast.makeText(context, state.message, Toast.LENGTH_SHORT).show()
+            }
+            else -> {}
+        }
+    }
+
+    LoginScreen(
+        isLoading = (uiState is LoginUiState.Loading),
+        onKakaoClick = { viewModel.startKakaoLogin() },
+        onGoogleClick = {
+            viewModel.startGoogleLogin(context)
+        },
+        onGuestClick = onGuestClick
+    )
+}
+
 
 @Composable
 fun LoginScreen(
@@ -137,7 +177,7 @@ fun LoginScreen(
     }
 }
 
-@Preview(showBackground = true, device = "spec:width=375dp,height=812dp")
+@Preview(showBackground = true)
 @Composable
 private fun LoginScreenPreview() {
     DduruTheme {

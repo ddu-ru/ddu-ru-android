@@ -15,8 +15,8 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
-import com.gildongmu.dduru.presentation.feature.login.LoginBinder
-import com.gildongmu.dduru.presentation.feature.login.WelcomeScreen
+import com.gildongmu.dduru.presentation.feature.login.screen.WelcomeScreen
+import com.gildongmu.dduru.presentation.feature.login.screen.LoginRoute
 import com.gildongmu.dduru.presentation.feature.main.MainScreen
 
 @Composable
@@ -43,7 +43,7 @@ fun RootNavigation(
             entryProvider = { route ->
                 when (route) {
                     is RootNavRoute.LoginNavRoute -> NavEntry(route) {
-                        LoginBinder(
+                        LoginRoute(
                             onLoginSuccess = { isNewUser ->
                                 if (isNewUser) {
                                     rootBackStack.clear()
