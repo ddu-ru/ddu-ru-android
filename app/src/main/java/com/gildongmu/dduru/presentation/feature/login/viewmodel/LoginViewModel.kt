@@ -7,18 +7,12 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
 import com.gildongmu.dduru.domain.usecase.LoginGoogleUseCase
 import com.gildongmu.dduru.domain.usecase.LoginKakaoUseCase
+import com.gildongmu.dduru.presentation.feature.login.util.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.launch
-
-sealed class LoginUiState {
-    object Idle : LoginUiState()
-    object Loading : LoginUiState()
-    data class Success(val isNewUser: Boolean) : LoginUiState()
-    data class Error(val message: String) : LoginUiState()
-}
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
