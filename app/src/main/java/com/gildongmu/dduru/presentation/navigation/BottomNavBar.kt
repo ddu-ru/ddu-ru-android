@@ -26,16 +26,15 @@ import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.unit.dp
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.remember
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -43,6 +42,7 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import dev.chrisbanes.haze.HazeState
@@ -57,13 +57,11 @@ fun BottomNavBar(
     hazeState: HazeState,
     modifier: Modifier = Modifier
 ) {
-
     Box(
         modifier = modifier
             .fillMaxWidth(),
         contentAlignment = Alignment.BottomCenter
     ) {
-
         BottomNavBackground(
             modifier = Modifier
                 .fillMaxWidth()
@@ -87,13 +85,11 @@ fun BottomNavBar(
 private fun BottomNavBackground(
     modifier: Modifier = Modifier
 ) {
-
     Box(
         modifier = modifier
             .fillMaxWidth()
             .height(108.dp)
     ) {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
@@ -178,7 +174,6 @@ private fun FloatingTabBar(
         )
 
         Box(modifier = Modifier.fillMaxSize()) {
-
             Box(
                 modifier = Modifier
                     .graphicsLayer {
@@ -228,7 +223,7 @@ private fun FloatingTabBarItem(
 
     val contentColor by animateColorAsState(
         targetValue = if (isSelected) activeColor else inactiveColor,
-        animationSpec = tween(durationMillis = 220),
+        animationSpec = tween(durationMillis = 220)
     )
 
     val itemScale by animateFloatAsState(
@@ -236,7 +231,7 @@ private fun FloatingTabBarItem(
         animationSpec = spring(
             dampingRatio = 0.85f,
             stiffness = Spring.StiffnessMediumLow
-        ),
+        )
     )
 
     Column(
@@ -261,12 +256,11 @@ private fun FloatingTabBarItem(
         horizontalAlignment = Alignment.CenterHorizontally,
         verticalArrangement = Arrangement.Center
     ) {
-
         Icon(
             painter = painterResource(id = item.icon),
             contentDescription = null,
             tint = contentColor,
-            modifier = Modifier,
+            modifier = Modifier
         )
 
         Spacer(modifier = Modifier.height(4.dp))
@@ -282,14 +276,12 @@ private fun FloatingTabBarItem(
 @Preview(showBackground = true)
 @Composable
 private fun BottomNavBackgroundPreview() {
-
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(240.dp)
             .background(DduruTheme.colors.gray958)
     ) {
-
         BottomNavBackground(
             modifier = Modifier
                 .align(Alignment.BottomCenter)
@@ -311,14 +303,12 @@ private fun FloatingTabBarPreview() {
     val hazeState = remember { HazeState() }
 
     DduruTheme {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(180.dp)
                 .background(Color(0xFF151515))
         ) {
-
             FloatingTabBar(
                 items = previewBottomNavItems,
                 currentRoute = BottomNavRoute.Chat,
@@ -332,7 +322,6 @@ private fun FloatingTabBarPreview() {
         }
     }
 }
-
 
 @Preview(showBackground = true, backgroundColor = 0xFF151515)
 @Composable
@@ -348,14 +337,12 @@ private fun BottomNavBarPreview() {
     val hazeState = remember { HazeState() }
 
     DduruTheme {
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()
                 .height(220.dp)
                 .background(DduruTheme.colors.black)
         ) {
-
             BottomNavBar(
                 items = previewBottomNavItems,
                 currentRoute = BottomNavRoute.Chat,
