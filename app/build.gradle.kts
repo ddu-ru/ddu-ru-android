@@ -37,10 +37,12 @@ fun readLocalPropertyQuoted(
 
 android {
     namespace = "com.gildongmu.dduru"
+    testNamespace = "com.gildongmu.dduru.test"
     compileSdk = libs.versions.compileSdk.get().toInt()
 
     defaultConfig {
         applicationId = "com.gildongmu.dduru"
+        testApplicationId = "com.gildongmu.dduru.test"
         minSdk = libs.versions.minSdk.get().toInt()
         targetSdk = libs.versions.targetSdk.get().toInt()
         versionCode = libs.versions.versionCode.get().toInt()
