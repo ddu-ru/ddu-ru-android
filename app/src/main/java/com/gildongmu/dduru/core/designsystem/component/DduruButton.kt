@@ -45,12 +45,12 @@ fun DduruButton(
     enabledColors: DduruButtonEnabledColors = DduruButtonEnabledColors(
         backgroundColor = DduruTheme.colors.primary,
         textColor = DduruTheme.colors.gray0,
-        borderColor = DduruTheme.colors.whiteAlpha30
+        borderColor = DduruTheme.colors.gray0.copy(alpha = 0.3f)
     ),
     disabledColors: DduruButtonDisabledColors = DduruButtonDisabledColors(
         backgroundColor = DduruTheme.colors.primary.copy(alpha = 0.5f),
         textColor = DduruTheme.colors.gray0.copy(alpha = 0.5f),
-        borderColor = DduruTheme.colors.whiteAlpha30.copy(alpha = 0.5f)
+        borderColor = DduruTheme.colors.gray0.copy(alpha = 0.15f)
     ),
     textStyle: TextStyle = DduruTheme.typography.Title1,
     iconRes: Int? = null,
@@ -106,7 +106,7 @@ object DduruButtonDefaults {
         get() = DduruButtonEnabledColors(
             backgroundColor = DduruTheme.colors.primary,
             textColor = DduruTheme.colors.gray0,
-            borderColor = DduruTheme.colors.whiteAlpha30
+            borderColor = DduruTheme.colors.gray0.copy(alpha = 0.3f)
         )
 
     val filledDisabledColors: DduruButtonDisabledColors
@@ -114,23 +114,23 @@ object DduruButtonDefaults {
         get() = DduruButtonDisabledColors(
             backgroundColor = DduruTheme.colors.primary.copy(alpha = 0.5f),
             textColor = DduruTheme.colors.gray0.copy(alpha = 0.5f),
-            borderColor = DduruTheme.colors.whiteAlpha30.copy(alpha = 0.5f)
+            borderColor = DduruTheme.colors.gray0.copy(alpha = 0.15f)
         )
 
     val outlinedEnabledColors: DduruButtonEnabledColors
         @Composable
         get() = DduruButtonEnabledColors(
-            backgroundColor = DduruTheme.colors.grayAlpha30,
+            backgroundColor = DduruTheme.colors.grayNeutral.copy(alpha = 0.3f),
             textColor = DduruTheme.colors.gray200,
-            borderColor = DduruTheme.colors.grayBorderAlpha10
+            borderColor = DduruTheme.colors.gray958.copy(alpha = 0.1f)
         )
 
     val outlinedDisabledColors: DduruButtonDisabledColors
         @Composable
         get() = DduruButtonDisabledColors(
-            backgroundColor = DduruTheme.colors.grayAlpha30.copy(alpha = 0.5f),
+            backgroundColor = DduruTheme.colors.grayNeutral.copy(alpha = 0.15f),
             textColor = DduruTheme.colors.gray200.copy(alpha = 0.5f),
-            borderColor = DduruTheme.colors.grayBorderAlpha10.copy(alpha = 0.5f)
+            borderColor = DduruTheme.colors.gray958.copy(alpha = 0.1f)
         )
 
     val whiteEnabledColors: DduruButtonEnabledColors
@@ -138,7 +138,7 @@ object DduruButtonDefaults {
         get() = DduruButtonEnabledColors(
             backgroundColor = DduruTheme.colors.gray0,
             textColor = DduruTheme.colors.gray700,
-            borderColor = DduruTheme.colors.grayBorderAlpha10
+            borderColor = DduruTheme.colors.gray958.copy(alpha = 0.1f)
         )
 
     val whiteDisabledColors: DduruButtonDisabledColors
