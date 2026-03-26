@@ -24,6 +24,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -31,8 +32,6 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun UpcomingTripCard(
     title: String,
-    startDate: String,
-    endDate: String,
     currentMember: Int,
     maxMember: Int,
     dDay: Int,
@@ -104,11 +103,14 @@ fun UpcomingTripCard(
                     date = "2026.03.15-03.18",
                     textColor = DduruTheme.colors.gray700
                 )
-// 추후 머지 예정
-//                HomeMemberCount(
-//                    current = currentMember,
-//                    max = maxMember
-//                )
+
+                HomeMemberCount(
+                    current = currentMember,
+                    max = maxMember,
+                    textColor = DduruTheme.colors.gray700 ,
+                    textStyle= DduruTheme.typography.Caption2
+
+                )
             }
 
             Spacer(Modifier.height(16.dp))
@@ -152,8 +154,6 @@ private fun UpcomingTripCardPreview() {
     DduruTheme {
         UpcomingTripCard(
             title = "제주도 힐링 여행",
-            startDate = "2026.03.15",
-            endDate = "03.18",
             currentMember = 3,
             maxMember = 4,
             dDay = 12,
