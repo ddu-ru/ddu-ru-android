@@ -109,9 +109,7 @@ class MainActivity : ComponentActivity() {
                         }
 
                         Screen.Home -> {
-                            Box(modifier = modifier, contentAlignment = Alignment.Center) {
-                                Text("여기가 메인 홈 화면입니다! 🏠")
-                            }
+//                            ProfileSettingScreen()
                         }
                     }
                 }
