@@ -96,7 +96,7 @@ fun WelcomeScreen(
             )
 
             Image(
-                painter = painterResource(id = R.drawable.img_penguin_2),
+                painter = painterResource(id = R.drawable.img_penguin_ver2),
                 contentDescription = "뚜비 캐릭터",
                 modifier = Modifier
                     .width(180.dp)
