@@ -14,8 +14,6 @@ import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxHeight
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -152,7 +150,7 @@ private fun FloatingTabBar(
             )
             .padding(8.dp)
     ) {
-        val selectedIndex = items.indexOfFirst { it.key == currentRoute }
+        val selectedIndex = items.indexOfFirst { it.route == currentRoute }
             .let { if (it < 0) 0 else it }
 
         val density = LocalDensity.current
@@ -193,12 +191,12 @@ private fun FloatingTabBar(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEach { item ->
-                    val isSelected = item.key == currentRoute
+                    val isSelected = item.route == currentRoute
 
                     FloatingTabBarItem(
                         item = item,
                         isSelected = isSelected,
-                        onClick = { onItemClick(item.key) },
+                        onClick = { onItemClick(item.route) },
                         modifier = Modifier.weight(1f)
                     )
                 }
