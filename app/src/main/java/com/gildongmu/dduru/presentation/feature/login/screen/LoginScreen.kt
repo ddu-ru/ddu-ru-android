@@ -35,7 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.LoginButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.login.util.LoginUiEvent
+import com.gildongmu.dduru.presentation.feature.login.util.LoginSideEffect
 import com.gildongmu.dduru.presentation.feature.login.viewmodel.LoginViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -51,10 +51,10 @@ fun LoginRoute(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collectLatest { event ->
             when (event) {
-                is LoginUiEvent.LoginSuccess -> {
+                is LoginSideEffect.LoginSuccess -> {
                     onLoginSuccess(event.isNewUser)
                 }
-                is LoginUiEvent.ShowError -> {
+                is LoginSideEffect.ShowError -> {
                     Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
                 }
             }
@@ -70,7 +70,7 @@ fun LoginRoute(
 }
 
 @Composable
-fun LoginScreen(
+private fun LoginScreen(
     isLoading: Boolean,
     onKakaoClick: () -> Unit,
     onGoogleClick: () -> Unit,
