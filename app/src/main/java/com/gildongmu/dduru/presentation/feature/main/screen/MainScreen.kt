@@ -13,6 +13,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.NavEntry
+import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar
@@ -20,7 +21,6 @@ import com.gildongmu.dduru.presentation.navigation.BottomNavItem
 import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
-import androidx.navigation3.runtime.rememberNavBackStack
 
 @Composable
 fun MainScreen() {
