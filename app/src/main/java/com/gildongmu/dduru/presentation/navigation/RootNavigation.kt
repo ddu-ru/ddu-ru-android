@@ -42,37 +42,37 @@ fun RootNavigation(
             },
             entryProvider = { route ->
                 when (route) {
-                    is RootNavRoute.LoginNavRoute -> NavEntry(route) {
+                    is RootNavRoute.Login -> NavEntry(route) {
                         LoginRoute(
                             onLoginSuccess = { isNewUser ->
                                 if (isNewUser) {
                                     rootBackStack.clear()
-                                    rootBackStack.add(RootNavRoute.WelcomeNavRoute)
+                                    rootBackStack.add(RootNavRoute.Welcome)
                                 } else {
                                     rootBackStack.clear()
-                                    rootBackStack.add(RootNavRoute.MainNavRoute)
+                                    rootBackStack.add(RootNavRoute.Main)
                                 }
                             },
                             onGuestClick = {
                                 rootBackStack.clear()
-                                rootBackStack.add(RootNavRoute.MainNavRoute)
+                                rootBackStack.add(RootNavRoute.Main)
                             }
 
                         )
                     }
 
-                    is RootNavRoute.WelcomeNavRoute -> NavEntry(route) {
+                    is RootNavRoute.Welcome -> NavEntry(route) {
                         WelcomeScreen(
                             onNextClick = {
                                 rootBackStack.clear()
-                                rootBackStack.add(RootNavRoute.RegisterNavRoute)
+                                rootBackStack.add(RootNavRoute.Register)
                             }
                         )
                     }
 
-                    is RootNavRoute.RegisterNavRoute -> NavEntry(route) {}
+                    is RootNavRoute.Register -> NavEntry(route) {}
 
-                    is RootNavRoute.MainNavRoute -> NavEntry(route) {
+                    is RootNavRoute.Main -> NavEntry(route) {
                         MainScreen()
                     }
 

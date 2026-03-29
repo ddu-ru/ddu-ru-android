@@ -30,16 +30,16 @@ class RootViewModel @Inject constructor(
                 val accessToken = tokenLocalDataSource.accessToken.first()
 
                 if (accessToken.isNullOrBlank()) {
-                    RootNavRoute.LoginNavRoute
+                    RootNavRoute.Login
                 } else {
-                    RootNavRoute.MainNavRoute
+                    RootNavRoute.Main
                 }
             } catch (e: CancellationException) {
                 throw e
             } catch (e: Exception) {
                 Log.e("RootViewModel", "Failed to resolve start destination", e)
 
-                RootNavRoute.LoginNavRoute
+                RootNavRoute.Login
             }
         }
     }
