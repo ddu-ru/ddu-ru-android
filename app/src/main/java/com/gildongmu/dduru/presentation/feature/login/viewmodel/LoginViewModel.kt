@@ -29,22 +29,23 @@ class LoginViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(LoginUiState())
     val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    private val _uiEvent = MutableSharedFlow<LoginUiEvent>()
-    val uiEvent: SharedFlow<LoginUiEvent> = _uiEvent.asSharedFlow()
+    private val _sideEffect = MutableSharedFlow<LoginUiEvent>()
+    val sideEffect: SharedFlow<LoginUiEvent> = _sideEffect.asSharedFlow()
 
     fun startGoogleLogin(context: Context) {
         viewModelScope.launch {
             updateLoading(true)
+            try {
+                val result = loginGoogleUseCase(context)
 
-            val result = loginGoogleUseCase(context)
-
-            result.onSuccess { isNewUser ->
+                result.onSuccess { isNewUser ->
+                    _sideEffect.emit(LoginUiEvent.LoginSuccess(isNewUser))
+                }.onFailure { e ->
+                    Log.e("LoginViewModel", "Google Login failed: ${e.message}", e)
+                    _sideEffect.emit(LoginUiEvent.ShowError("구글 로그인에 실패했습니다. 다시 시도해주세요."))
+                }
+            } finally {
                 updateLoading(false)
-                _uiEvent.emit(LoginUiEvent.LoginSuccess(isNewUser))
-            }.onFailure { e ->
-                Log.e("LoginViewModel", "Google Login failed: ${e.message}", e)
-                updateLoading(false)
-                _uiEvent.emit(LoginUiEvent.ShowError("구글 로그인 실패"))
             }
         }
     }
@@ -52,22 +53,28 @@ class LoginViewModel @Inject constructor(
     fun startKakaoLogin() {
         viewModelScope.launch {
             updateLoading(true)
+            try {
+                val idToken = kakaoAuthDataSource.getIdToken()
+                if (idToken.isNullOrBlank()) {
+                    _sideEffect.emit(LoginUiEvent.ShowError("카카오 로그인에 실패했습니다. 다시 시도해주세요."))
+                    return@launch
+                }
 
-            val idToken = kakaoAuthDataSource.getIdToken()
-            if (idToken.isNullOrBlank()) {
+                loginKakao(idToken)
+            } finally {
                 updateLoading(false)
-                _uiEvent.emit(LoginUiEvent.ShowError("카카오 로그인에 실패했습니다. 다시 시도해주세요."))
-                return@launch
             }
-
-            loginKakao(idToken)
         }
     }
 
     fun loginWithKakao(idToken: String) {
         viewModelScope.launch {
             updateLoading(true)
-            loginKakao(idToken)
+            try {
+                loginKakao(idToken)
+            } finally {
+                updateLoading(false)
+            }
         }
     }
 
@@ -75,12 +82,10 @@ class LoginViewModel @Inject constructor(
         val result = loginKakaoUseCase(idToken)
 
         result.onSuccess { isNewUser ->
-            updateLoading(false)
-            _uiEvent.emit(LoginUiEvent.LoginSuccess(isNewUser))
+            _sideEffect.emit(LoginUiEvent.LoginSuccess(isNewUser))
         }.onFailure { e ->
             Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
-            updateLoading(false)
-            _uiEvent.emit(LoginUiEvent.ShowError("카카오 로그인 실패"))
+            _sideEffect.emit(LoginUiEvent.ShowError("카카오 로그인에 실패했습니다. 다시 시도해주세요."))
         }
     }
 

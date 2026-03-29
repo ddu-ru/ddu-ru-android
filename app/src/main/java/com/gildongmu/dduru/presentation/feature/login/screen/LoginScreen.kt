@@ -49,7 +49,7 @@ fun LoginRoute(
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
-        viewModel.uiEvent.collectLatest { event ->
+        viewModel.sideEffect.collectLatest { event ->
             when (event) {
                 is LoginUiEvent.LoginSuccess -> {
                     onLoginSuccess(event.isNewUser)
