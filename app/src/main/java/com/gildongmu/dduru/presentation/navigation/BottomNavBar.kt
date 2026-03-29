@@ -1,5 +1,3 @@
-@file:JvmName("BottomNavBarKt")
-
 package com.gildongmu.dduru.presentation.navigation
 
 import androidx.compose.animation.animateColorAsState
@@ -128,7 +126,6 @@ private fun FloatingTabBar(
     BoxWithConstraints(
         modifier = modifier
             .fillMaxWidth()
-            .height(68.dp)
             .clip(containerShape)
             .hazeChild(
                 state = hazeState,
@@ -172,7 +169,7 @@ private fun FloatingTabBar(
             )
         )
 
-        Box(modifier = Modifier.fillMaxSize()) {
+        Box(modifier = Modifier.fillMaxWidth()) {
             Box(
                 modifier = Modifier
                     .graphicsLayer {
@@ -192,7 +189,7 @@ private fun FloatingTabBar(
             )
 
             Row(
-                modifier = Modifier.fillMaxSize(),
+                modifier = Modifier.fillMaxWidth(),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 items.forEach { item ->
@@ -235,7 +232,6 @@ private fun FloatingTabBarItem(
 
     Column(
         modifier = modifier
-            .fillMaxHeight()
             .clip(RoundedCornerShape(99.dp))
             .selectable(
                 selected = isSelected,
