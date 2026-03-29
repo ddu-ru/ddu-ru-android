@@ -119,7 +119,7 @@ fun LoginScreen(
                 )
 
                 Image(
-                    painter = painterResource(id = R.drawable.img_penguin_1),
+                    painter = painterResource(id = R.drawable.img_penguin_ver1),
                     contentDescription = "뚜루 캐릭터",
                     contentScale = ContentScale.FillBounds,
                     modifier = Modifier

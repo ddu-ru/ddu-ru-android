@@ -1,3 +1,11 @@
 <resources>
     <string name="app_name">dduru_android</string>
+    <string name="profile_image_option_character">아바타 프로필</string>
+    <string name="profile_image_option_custom">내 사진</string>
+    <string name="profile_image_option_selected">선택됨</string>
+    <string name="profile_image_option_not_selected">선택 안 됨</string>
+    <string name="writing_create_travel_room">여행방 생성</string>
+    <string name="writing_write_community">커뮤니티 글 작성</string>
+    <string name="writing_close">닫기</string>
+    <string name="writing_button_label">글쓰기</string>
 </resources>

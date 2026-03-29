@@ -8,7 +8,7 @@ val Primary = Color(0xFF289BFF)
 val Secondary = Color(0xFFC8E5FF)
 val Secondary100 = Color(0xFFE3F2FF)
 
-val Gray0 = Color(0xFFFFFFFF) // White
+val Gray0 = Color(0xFFFFFFFF)
 val Gray50 = Color(0xFFF8F9FA)
 val Gray100 = Color(0xFFF1F3F4)
 val Gray200 = Color(0xFFE8EAED)
@@ -23,15 +23,12 @@ val Gray868 = Color(0xFF282A2D)
 val Gray900 = Color(0xFF202124)
 val Gray928 = Color(0xFF17181B)
 val Gray958 = Color(0xFF0E1013)
+val GrayNeutral = Color(0xFF969696)
+val GrayBorder = Color(0xFF797479)
+val Gray9E = Color(0xFF9E9E9E)
 val Black = Color(0xFF000000)
+val ValidationRed = Color(0xFFFF2828)
 val KakaoYellow = Color(0xFFFEE500)
-val BlackAlpha14 = Color(0x24000000)
-val BlackAlpha10 = Color(0x1A000000)
-val BlackAlpha05 = Color(0x0D000000)
-val GrayAlpha30 = Color(0x4D969696)
-val WhiteAlpha30 = Color(0x4DFFFFFF)
-val GrayBorder = Color(0x80797479)
-val GrayBorderAlpha10 = Color(0x1A0E1013)
 
 @Immutable
 data class DduruColors(
@@ -55,17 +52,14 @@ data class DduruColors(
     val gray900: Color,
     val gray928: Color,
     val gray958: Color,
+    val grayNeutral: Color,
+    val grayBorder: Color,
+    val gray9E: Color,
 
     val black: Color,
 
-    val kakaoYellow: Color,
-    val blackAlpha14: Color,
-    val blackAlpha10: Color,
-    val blackAlpha05: Color,
-    val grayAlpha30: Color,
-    val whiteAlpha30: Color,
-    val grayBorder: Color,
-    val grayBorderAlpha10: Color
+    val validationRed: Color,
+    val kakaoYellow: Color
 )
 
 val defaultDduruColors = DduruColors(
@@ -73,7 +67,6 @@ val defaultDduruColors = DduruColors(
     secondary = Secondary,
     secondary100 = Secondary100,
 
-    // GrayScale
     gray0 = Gray0,
     gray50 = Gray50,
     gray100 = Gray100,
@@ -89,18 +82,14 @@ val defaultDduruColors = DduruColors(
     gray900 = Gray900,
     gray928 = Gray928,
     gray958 = Gray958,
+    grayNeutral = GrayNeutral,
+    grayBorder = GrayBorder,
+    gray9E = Gray9E,
 
     black = Black,
 
     kakaoYellow = KakaoYellow,
-
-    blackAlpha14 = BlackAlpha14,
-    blackAlpha10 = BlackAlpha10,
-    blackAlpha05 = BlackAlpha05,
-    grayAlpha30 = GrayAlpha30,
-    whiteAlpha30 = WhiteAlpha30,
-    grayBorder = GrayBorder,
-    grayBorderAlpha10 = GrayBorderAlpha10
+    validationRed = ValidationRed
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }
