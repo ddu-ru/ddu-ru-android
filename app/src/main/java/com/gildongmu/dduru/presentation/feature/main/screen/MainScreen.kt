@@ -15,18 +15,15 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
-import com.gildongmu.dduru.presentation.feature.main.util.MainState
-import com.gildongmu.dduru.presentation.feature.main.util.rememberMainAppState
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar
 import com.gildongmu.dduru.presentation.navigation.BottomNavItem
 import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
+import androidx.navigation3.runtime.rememberNavBackStack
 
 @Composable
-fun MainScreen(
-    appState: MainState = rememberMainAppState()
-) {
+fun MainScreen() {
     val bottomNavItems = remember {
         listOf(
             BottomNavItem(BottomNavRoute.Home, "홈", R.drawable.ic_bottom_nav_main),
@@ -37,6 +34,9 @@ fun MainScreen(
         )
     }
 
+    val bottomNavBackStack = rememberNavBackStack(BottomNavRoute.Home)
+    val currentRoute = bottomNavBackStack.lastOrNull() as? BottomNavRoute
+        ?: BottomNavRoute.Home
     val hazeState = remember { HazeState() }
 
     Box(
@@ -46,7 +46,7 @@ fun MainScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .haze(state = hazeState),
-            backStack = appState.bottomNavBackStack,
+            backStack = bottomNavBackStack,
             transitionSpec = {
                 ContentTransform(EnterTransition.None, ExitTransition.None)
             },
@@ -67,8 +67,13 @@ fun MainScreen(
 
         BottomNavBar(
             items = bottomNavItems,
-            currentRoute = appState.currentRoute,
-            onItemClick = appState::navigate,
+            currentRoute = currentRoute,
+            onItemClick = { route ->
+                if (currentRoute != route) {
+                    bottomNavBackStack.clear()
+                    bottomNavBackStack.add(route)
+                }
+            },
             hazeState = hazeState,
             modifier = Modifier
                 .fillMaxWidth()
