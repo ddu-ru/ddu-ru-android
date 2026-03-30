@@ -1,6 +1,8 @@
 package com.gildongmu.dduru.data.di
 
 import com.gildongmu.dduru.BuildConfig
+import com.gildongmu.dduru.data.local.TokenLocalDataSource
+import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
 import com.gildongmu.dduru.data.remote.service.AuthService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
@@ -25,17 +27,29 @@ object NetworkModule {
 
     @Provides
     @Singleton
-    fun provideOkHttpClient(): OkHttpClient {
+    fun provideAuthInterceptor(
+        tokenLocalDataSource: TokenLocalDataSource
+    ): AuthInterceptor {
+        return AuthInterceptor(tokenLocalDataSource)
+    }
+
+    @Provides
+    @Singleton
+    fun provideOkHttpClient(
+        authInterceptor: AuthInterceptor
+    ): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) {
                 HttpLoggingInterceptor.Level.BODY
             } else {
                 HttpLoggingInterceptor.Level.NONE
             }
+            redactHeader("Authorization")
         }
 
         return OkHttpClient.Builder()
-            .retryOnConnectionFailure(true)
+            .retryOnConnectionFailure(false)
+            .addInterceptor(authInterceptor)
             .addInterceptor(logging)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -49,7 +63,6 @@ object NetworkModule {
         okHttpClient: OkHttpClient,
         baseUrl: String
     ): Retrofit {
-        // Kotlinx Serialization 설정
         val json = Json {
             ignoreUnknownKeys = true
             coerceInputValues = true
