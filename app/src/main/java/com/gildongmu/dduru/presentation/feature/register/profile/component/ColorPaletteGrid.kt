@@ -35,8 +35,8 @@ fun ColorDotGrid(
     LazyVerticalGrid(
         modifier = modifier,
         columns = GridCells.Fixed(columnCount),
-        horizontalArrangement = Arrangement.SpaceBetween,
-        verticalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(16.dp),
+        verticalArrangement = Arrangement.SpaceBetween,
         contentPadding = PaddingValues(0.dp),
         userScrollEnabled = false
     ) {
@@ -47,7 +47,7 @@ fun ColorDotGrid(
             ) {
                 Box(
                     modifier = Modifier
-                        .size(28.dp)
+                        .size(48.dp)
                         .background(color, CircleShape)
                         .clickable { onColorClick(color) }
                         .then(
