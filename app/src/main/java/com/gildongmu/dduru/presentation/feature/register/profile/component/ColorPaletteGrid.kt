@@ -6,6 +6,7 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.grid.GridCells
@@ -28,7 +29,7 @@ import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBac
 fun ColorDotGrid(
     colors: List<Color>,
     modifier: Modifier = Modifier,
-    columnCount: Int = 8,
+    columnCount: Int = 5,
     selectedColor: Color? = null,
     onColorClick: (Color) -> Unit = {}
 ) {
@@ -43,6 +44,7 @@ fun ColorDotGrid(
         items(colors) { color ->
             val isSelected = selectedColor != null && color == selectedColor
             Box(
+                modifier = Modifier.aspectRatio(1f),
                 contentAlignment = Alignment.Center
             ) {
                 Box(
