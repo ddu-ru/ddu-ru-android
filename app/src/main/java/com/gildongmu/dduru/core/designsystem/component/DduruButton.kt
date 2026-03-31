@@ -16,6 +16,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
@@ -53,7 +54,8 @@ fun DduruButton(
     ),
     textStyle: TextStyle = DduruTheme.typography.Title1,
     iconRes: Int? = null,
-    enabled: Boolean = true
+    enabled: Boolean = true,
+    shape: Shape = RoundedCornerShape(16.dp)
 ) {
     val backgroundColor = if (enabled) enabledColors.backgroundColor else disabledColors.backgroundColor
     val textColor = if (enabled) enabledColors.textColor else disabledColors.textColor
@@ -65,13 +67,13 @@ fun DduruButton(
             .border(
                 width = 1.dp,
                 color = borderColor,
-                shape = RoundedCornerShape(16.dp)
+                shape = shape
             ),
         colors = ButtonDefaults.buttonColors(
             containerColor = backgroundColor,
             disabledContainerColor = disabledColors.backgroundColor
         ),
-        shape = RoundedCornerShape(16.dp),
+        shape = shape,
         contentPadding = PaddingValues(horizontal = 18.dp, vertical = 13.dp),
         enabled = enabled
     ) {
@@ -172,7 +174,7 @@ private fun DduruButtonPreview() {
                     onClick = {},
                     enabledColors = DduruButtonDefaults.outlinedEnabledColors,
                     disabledColors = DduruButtonDefaults.outlinedDisabledColors,
-                    iconRes = R.drawable.ic_heart_rounded,
+                    iconRes = R.drawable.ic_x_pass,
                     modifier = Modifier.weight(1f)
                 )
 
