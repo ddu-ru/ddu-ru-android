@@ -18,9 +18,9 @@ fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isPolicySheetVisible by viewModel.isPolicySheetVisible.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
-    //  상태 관찰
     LaunchedEffect(uiState) {
         when (val state = uiState) {
             is LoginUiState.Success -> {
@@ -33,13 +33,15 @@ fun LoginRoute(
         }
     }
 
-    // UI 표시
     LoginScreen(
         isLoading = (uiState is LoginUiState.Loading),
         onKakaoClick = { viewModel.startKakaoLogin() },
         onGoogleClick = {
             viewModel.startGoogleLogin(context)
         },
-        onGuestClick = onGuestClick
+        onGuestClick = onGuestClick,
+        onPolicyClick = viewModel::onPolicyClick,
+        isPolicySheetVisible = isPolicySheetVisible,
+        onDismissPolicySheet = viewModel::onDismissPolicySheet
     )
 }

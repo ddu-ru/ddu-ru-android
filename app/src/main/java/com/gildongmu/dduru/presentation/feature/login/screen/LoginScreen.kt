@@ -29,6 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.LoginButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.login.component.PolicyButton
+import com.gildongmu.dduru.presentation.feature.login.component.PolicyBottomSheet
 
 @Composable
 fun LoginScreen(
@@ -36,6 +38,9 @@ fun LoginScreen(
     onKakaoClick: () -> Unit,
     onGoogleClick: () -> Unit,
     onGuestClick: () -> Unit,
+    onPolicyClick: () -> Unit,
+    isPolicySheetVisible: Boolean,
+    onDismissPolicySheet: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -53,7 +58,6 @@ fun LoginScreen(
         ) {
             Spacer(modifier = Modifier.height(170.dp))
 
-            // 1. 캐릭터
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
@@ -90,13 +94,11 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(95.dp))
 
-            // 2. 버튼 영역
             Column(
                 modifier = Modifier.width(343.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 카카오 로그인
                 LoginButton(
                     iconResId = R.drawable.img_kakao_icon,
                     text = "카카오로 시작하기",
@@ -105,7 +107,6 @@ fun LoginScreen(
                     onClick = onKakaoClick
                 )
 
-                // 구글 로그인
                 LoginButton(
                     iconResId = R.drawable.img_google_icon,
                     text = "구글로 시작하기",
@@ -118,13 +119,19 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(25.dp))
 
-            // 3. 가입 없이 둘러볼래요
             Text(
                 text = "가입 없이 둘러볼래요",
                 modifier = Modifier.clickable { onGuestClick() },
                 style = DduruTheme.typography.Body3,
                 color = DduruTheme.colors.gray500,
                 textAlign = TextAlign.Center
+            )
+
+            Spacer(modifier = Modifier.height(46.dp))
+
+            PolicyButton(
+                modifier = Modifier.padding(top = 8.dp),
+                onClick = onPolicyClick
             )
         }
 
@@ -134,10 +141,15 @@ fun LoginScreen(
                 modifier = Modifier.align(Alignment.Center)
             )
         }
+
+        PolicyBottomSheet(
+            visible = isPolicySheetVisible,
+            onDismiss = onDismissPolicySheet
+        )
     }
 }
 
-@Preview(showBackground = true, device = "spec:width=375dp,height=812dp")
+@Preview(showBackground = true)
 @Composable
 private fun LoginScreenPreview() {
     DduruTheme {
@@ -145,7 +157,10 @@ private fun LoginScreenPreview() {
             isLoading = false,
             onKakaoClick = { },
             onGoogleClick = { },
-            onGuestClick = { }
+            onGuestClick = { },
+            onPolicyClick = { },
+            isPolicySheetVisible = true,
+            onDismissPolicySheet = { }
         )
     }
 }
