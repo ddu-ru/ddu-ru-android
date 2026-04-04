@@ -35,7 +35,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.LoginButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.login.util.LoginSideEffect
+import com.gildongmu.dduru.presentation.feature.login.effect.LoginSideEffect
 import com.gildongmu.dduru.presentation.feature.login.viewmodel.LoginViewModel
 import kotlinx.coroutines.flow.collectLatest
 

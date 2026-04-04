@@ -7,8 +7,8 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
 import com.gildongmu.dduru.domain.usecase.LoginGoogleUseCase
 import com.gildongmu.dduru.domain.usecase.LoginKakaoUseCase
-import com.gildongmu.dduru.presentation.feature.login.util.LoginSideEffect
-import com.gildongmu.dduru.presentation.feature.login.util.LoginUiState
+import com.gildongmu.dduru.presentation.feature.login.effect.LoginSideEffect
+import com.gildongmu.dduru.presentation.feature.login.state.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
