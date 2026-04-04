@@ -29,8 +29,8 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.LoginButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.login.component.PolicyButton
 import com.gildongmu.dduru.presentation.feature.login.component.PolicyBottomSheet
+import com.gildongmu.dduru.presentation.feature.login.component.PolicyButton
 
 @Composable
 fun LoginScreen(

@@ -15,8 +15,8 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun PolicyButton(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-){
+    modifier: Modifier = Modifier
+) {
     val interactionSource = remember { MutableInteractionSource() }
 
     Text(

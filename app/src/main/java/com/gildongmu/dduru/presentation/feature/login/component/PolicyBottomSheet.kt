@@ -35,7 +35,7 @@ import kotlinx.coroutines.launch
 fun PolicyBottomSheet(
     visible: Boolean,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     if (!visible) return
 
@@ -66,7 +66,7 @@ fun PolicyBottomSheet(
 @Composable
 private fun PolicyBottomSheetContent(
     onClose: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -88,10 +88,10 @@ private fun PolicyBottomSheetContent(
             IconButton(
                 onClick = onClose,
                 modifier =
-                    Modifier.size(24.dp)
+                Modifier.size(24.dp)
             ) {
                 Icon(
-                    painter = painterResource( R.drawable.ic_x_pass),
+                    painter = painterResource(R.drawable.ic_x_pass),
                     contentDescription = "닫기",
                     tint = DduruTheme.colors.gray500
                 )
@@ -117,7 +117,7 @@ private fun PolicyBottomSheetContent(
                 modifier = Modifier
                     .fillMaxWidth()
                     .fillMaxHeight()
-                    .verticalScroll(rememberScrollState()),
+                    .verticalScroll(rememberScrollState())
             ) {
                 Text(
                     text = """
