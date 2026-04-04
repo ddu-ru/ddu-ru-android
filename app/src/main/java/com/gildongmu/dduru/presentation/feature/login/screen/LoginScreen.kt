@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.login
+package com.gildongmu.dduru.presentation.feature.login.screen
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background

@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.login
+package com.gildongmu.dduru.presentation.feature.login.viewmodel
 
 import android.content.Context
 import android.util.Log

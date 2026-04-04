@@ -7,9 +7,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.platform.LocalContext
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.gildongmu.dduru.presentation.feature.login.LoginScreen
-import com.gildongmu.dduru.presentation.feature.login.LoginUiState
-import com.gildongmu.dduru.presentation.feature.login.LoginViewModel
+import com.gildongmu.dduru.presentation.feature.login.screen.LoginScreen
+import com.gildongmu.dduru.presentation.feature.login.viewmodel.LoginUiState
+import com.gildongmu.dduru.presentation.feature.login.viewmodel.LoginViewModel
 
 @Composable
 fun LoginRoute(
