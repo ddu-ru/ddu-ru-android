@@ -22,9 +22,8 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.entity.Question
 import com.gildongmu.dduru.domain.entity.QuestionOption
 import com.gildongmu.dduru.domain.entity.QuestionType
-import com.gildongmu.dduru.presentation.feature.register.survey.components.SurveyGridOptionButton
-import com.gildongmu.dduru.presentation.feature.register.survey.components.SurveyOptionButton
-import com.gildongmu.dduru.presentation.feature.register.survey.components.SurveyQuestionLayout
+import com.gildongmu.dduru.presentation.feature.register.survey.component.SurveyOptionButton
+import com.gildongmu.dduru.presentation.feature.register.survey.component.SurveyQuestionLayout
 
 @Composable
 fun SurveyQuestionScreen(
@@ -113,11 +112,15 @@ private fun MultiSelectContent(
                 ) {
                     rowOptions.forEach { option ->
                         val index = options.indexOf(option)
-                        SurveyGridOptionButton(
+                        SurveyOptionButton(
                             text = "${option.icon} ${option.text}",
                             isSelected = selectedOptions.contains(option.code),
                             onClick = { onOptionToggled(index) },
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(1f),
+                            outerVerticalPadding = 0.dp,
+                            innerVerticalPadding = 20.dp,
+                            innerHorizontalPadding = 8.dp,
+                            maxLines = 2
                         )
                     }
                     if (rowOptions.size == 1) {
