@@ -41,6 +41,9 @@ class LoginViewModel @Inject constructor(
     private val _startScreen = MutableStateFlow<Screen>(Screen.Splash)
     val startScreen: StateFlow<Screen> = _startScreen
 
+    private val _isPolicySheetVisible = MutableStateFlow(false)
+    val isPolicySheetVisible: StateFlow<Boolean> = _isPolicySheetVisible
+
     init {
         checkLoginStatus()
     }
@@ -105,5 +108,12 @@ class LoginViewModel @Inject constructor(
                 _uiState.value = LoginUiState.Error("카카오 로그인 실패")
             }
         }
+    }
+    fun onPolicyClick() {
+        _isPolicySheetVisible.value = true
+    }
+
+    fun onDismissPolicySheet() {
+        _isPolicySheetVisible.value = false
     }
 }
