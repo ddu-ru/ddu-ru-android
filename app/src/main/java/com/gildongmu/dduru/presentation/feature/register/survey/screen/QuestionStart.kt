@@ -7,22 +7,13 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.draw.blur
-import androidx.compose.ui.draw.scale
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -31,6 +22,10 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.BubbleArrowDirection
+import com.gildongmu.dduru.presentation.component.SpeechBubble
+import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.draw.blur
 
 @Composable
 fun QuestionStart(
@@ -45,52 +40,37 @@ fun QuestionStart(
             .padding(top = 100.dp, bottom = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        Box(
-            modifier = Modifier
-                .width(340.dp)
-                .wrapContentHeight()
+        SpeechBubble(
+            modifier = Modifier.width(325.dp),
+            direction = BubbleArrowDirection.Bottom,
+            cornerRadius = 24.dp,
+            containerColor = DduruTheme.colors.gray0
         ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_survey_message),
-                contentDescription = null,
-                modifier = Modifier
-                    .matchParentSize()
-                    .offset(y = 9.dp)
-                    .blur(radius = 17.dp)
-                    .alpha(0.3f),
-                contentScale = ContentScale.Fit,
-                colorFilter = ColorFilter.tint(Color.Black)
-            )
-
-            Image(
-                painter = painterResource(id = R.drawable.ic_survey_message),
-                contentDescription = "설문을 해주세요",
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .wrapContentHeight(),
-                contentScale = ContentScale.Fit
+            Text(
+                text = "뚜르에서 더 나은 매칭을 위해\n재밌는 설문이 필요해요. 금방 끝난답니다!",
+                style = DduruTheme.typography.Body1,
+                color = DduruTheme.colors.black,
+                textAlign = TextAlign.Center,
+                modifier = Modifier.padding(start = 8.dp, end = 8.dp, bottom = 12.dp)
             )
         }
+
         Spacer(modifier = Modifier.height(20.dp))
 
         Box(
             contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier.width(230.dp)
+            modifier = Modifier.width(267.dp).height(267.dp)
         ) {
-            Box(
+            Image(
+                painter = painterResource(id = R.drawable.ic_shadow),
+                contentDescription = null,
+                contentScale = ContentScale.None,
                 modifier = Modifier
-                    .padding(bottom = 12.dp)
-                    .width(200.dp)
-                    .height(20.dp)
-                    .scale(scaleX = 1f, scaleY = 0.3f)
-                    .background(
-                        brush = Brush.radialGradient(
-                            colors = listOf(
-                                DduruTheme.colors.black.copy(alpha = 0.2f),
-                                Color.Transparent
-                            )
-                        )
-                    )
+                    .alpha(0.3f)
+                    .blur(radius = 15.dp)
+                    .padding(1.dp)
+                    .width(70.dp)
+                    .height(8.dp)
             )
 
             Image(
@@ -98,10 +78,11 @@ fun QuestionStart(
                 contentDescription = "뚜비 캐릭터",
                 modifier = Modifier
                     .width(278.dp)
-                    .height(252.dp),
-                contentScale = ContentScale.FillBounds
+                    .height(278.dp),
+                contentScale = ContentScale.Crop
             )
         }
+
         Spacer(modifier = Modifier.height(83.dp))
 
         DduruButton(
