@@ -84,12 +84,20 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onRandomNickname() {
-        val adjectives = listOf("즐거운", "씩씩한", "똑똑한", "배고픈", "신비로운")
-        val nouns = listOf("펭귄", "뚜르", "모험가", "탐험대", "친구")
-
-        val randomName = "${adjectives.random()} ${nouns.random()}"
-
-        onNicknameChanged(randomName)
+        viewModelScope.launch {
+            nicknameRepository.getRandomNickname()
+                .onSuccess { randomNickname ->
+                    onNicknameChanged(randomNickname)
+                }
+                .onFailure { e ->
+                    _uiState.update {
+                        it.copy(
+                            nicknameErrorMessage = e.message ?: "랜덤 닉네임을 받아오지 못했어요."
+                        )
+                    }
+                    checkCanStart()
+                }
+        }
     }
 
     fun onProfileOptionSelected(option: ProfileImageCropOption) {
