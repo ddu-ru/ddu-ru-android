@@ -49,6 +49,7 @@ class MainActivity : ComponentActivity() {
                         if (currentScreen == Screen.Splash && startScreen != Screen.Splash) {
                             currentScreen = startScreen
                             if (startScreen == Screen.Home) {
+                                // TODO: 개발용 자동로그인 확인 토스트, 배포 전 제거 필요
                                 Toast.makeText(
                                     applicationContext,
                                     "자동 로그인 성공",
