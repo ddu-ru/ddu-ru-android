@@ -19,9 +19,7 @@ class ProfileRepositoryImpl @Inject constructor(
                     profileImageType = payload.profileImageType,
                     uploadedImageUrl = payload.uploadedImageUrl,
                     bgColorId = payload.bgColorId,
-                    bio = payload.bio,
-                    bgColorIdValid = payload.bgColorIdValid,
-                    uploadedImageUrlValid = payload.uploadedImageUrlValid
+                    bio = payload.bio
                 )
             )
 

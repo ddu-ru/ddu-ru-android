@@ -8,7 +8,5 @@ data class ProfileRequest(
     val profileImageType: String,
     val uploadedImageUrl: String? = null,
     val bgColorId: Int? = null,
-    val bio: String? = null,
-    val bgColorIdValid: Boolean? = null,
-    val uploadedImageUrlValid: Boolean? = null
+    val bio: String? = null
 )

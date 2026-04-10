@@ -160,9 +160,7 @@ class ProfileViewModel @Inject constructor(
                 },
                 uploadedImageUrl = uploadedImageUrl,
                 bgColorId = bgColorId,
-                bio = latestFormState.introduction.takeIf { it.isNotBlank() },
-                bgColorIdValid = if (isAvatar) true else null,
-                uploadedImageUrlValid = if (hasCustomImage) uploadedImageUrl?.isNotBlank() else false
+                bio = latestFormState.introduction.takeIf { it.isNotBlank() }
             )
             val result = profileRepository.updateProfile(payload)
 
@@ -230,6 +228,19 @@ class ProfileViewModel @Inject constructor(
             onboardingStatusRepository.getSurveyStatus()
                 .onSuccess { surveyStatus ->
                     _uiState.update { it.copy(surveyStatus = surveyStatus) }
+                    if (surveyStatus != SurveyStatus.COMPLETED &&
+                        _formState.value.selectedOption == ProfileEditOption.CHARACTER
+                    ) {
+                        _formState.update { it.copy(selectedOption = ProfileEditOption.CUSTOM) }
+                    }
+                    checkCanStart()
+                }
+                .onFailure {
+                    _uiState.update { it.copy(surveyStatus = SurveyStatus.NOT_STARTED) }
+                    if (_formState.value.selectedOption == ProfileEditOption.CHARACTER) {
+                        _formState.update { it.copy(selectedOption = ProfileEditOption.CUSTOM) }
+                    }
+                    checkCanStart()
                 }
         }
     }
