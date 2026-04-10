@@ -30,10 +30,11 @@ class OnboardingRegisterRepositoryImpl @Inject constructor(
                     verificationToken = verificationToken
                 )
             )
+            val responseBody = response.body()
 
-            if (response.status != 200) {
+            if (!response.isSuccessful) {
                 throw ExceptionResponse(
-                    status = response.status
+                    status = response.code()
                 )
             }
             Result.success(Unit)

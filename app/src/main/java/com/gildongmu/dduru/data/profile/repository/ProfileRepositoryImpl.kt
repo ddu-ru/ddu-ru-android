@@ -22,9 +22,10 @@ class ProfileRepositoryImpl @Inject constructor(
                     bio = payload.bio
                 )
             )
+            val responseBody = response.body()
 
-            if (response.status != 200) {
-                throw ExceptionResponse(status = response.status)
+            if (!response.isSuccessful) {
+                throw ExceptionResponse(status = response.code())
             }
 
             Result.success(Unit)

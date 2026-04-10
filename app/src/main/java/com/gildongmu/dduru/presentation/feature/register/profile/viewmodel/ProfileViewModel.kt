@@ -150,16 +150,19 @@ class ProfileViewModel @Inject constructor(
                     return@launch
                 }
             }
-            val bgColorId = bgColors.firstOrNull { it.color == latestFormState.savedBgColor }?.id ?: 0
             val payload = ProfileUpdateModel(
                 nickname = latestFormState.nickname,
                 profileImageType = when {
                     isAvatar -> "AVATAR"
-                    hasCustomImage -> "UPLOAD"
+                    hasCustomImage -> "UPLOADED"
                     else -> "DEFAULT"
                 },
                 uploadedImageUrl = uploadedImageUrl,
-                bgColorId = bgColorId,
+                bgColorId = if (isAvatar) {
+                    bgColors.firstOrNull { it.color == latestFormState.savedBgColor }?.id ?: 0
+                } else {
+                    null
+                },
                 bio = latestFormState.introduction.takeIf { it.isNotBlank() }
             )
             val result = profileRepository.updateProfile(payload)
