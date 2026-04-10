@@ -13,11 +13,11 @@ import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
 import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
-import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileFormState
+import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
-import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileUiState
+import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
 import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -91,7 +91,6 @@ class ProfileViewModel @Inject constructor(
                     else -> validationResult.toMessage()
                 },
                 isNicknameValid = isValid,
-                submitErrorMessage = null,
                 isDuplicationChecked = false,
                 isDuplicationChecking = false
             )
@@ -136,7 +135,8 @@ class ProfileViewModel @Inject constructor(
 
             val latestFormState = _formState.value
             val isAvatar = latestFormState.selectedOption == ProfileEditOption.CHARACTER
-            val uploadedImageUrl = if (isAvatar) {
+            val hasCustomImage = latestFormState.selectedImageUri != null
+            val uploadedImageUrl = if (isAvatar || !hasCustomImage) {
                 null
             } else {
                 uploadSelectedImageIfNeeded(latestFormState.selectedImageUri).getOrElse { e ->
@@ -154,12 +154,16 @@ class ProfileViewModel @Inject constructor(
             val bgColorId = bgColors.firstOrNull { it.color == latestFormState.savedBgColor }?.id ?: 0
             val payload = ProfileUpdateModel(
                 nickname = latestFormState.nickname,
-                profileImageType = if (isAvatar) "AVATAR" else "UPLOAD",
+                profileImageType = when {
+                    isAvatar -> "AVATAR"
+                    hasCustomImage -> "UPLOAD"
+                    else -> "DEFAULT"
+                },
                 uploadedImageUrl = uploadedImageUrl,
                 bgColorId = bgColorId,
                 bio = latestFormState.introduction.takeIf { it.isNotBlank() },
                 bgColorIdValid = if (isAvatar) true else null,
-                uploadedImageUrlValid = uploadedImageUrl?.isNotBlank()
+                uploadedImageUrlValid = if (hasCustomImage) uploadedImageUrl?.isNotBlank() else false
             )
             val result = profileRepository.updateProfile(payload)
 
@@ -246,7 +250,7 @@ class ProfileViewModel @Inject constructor(
 
         _uiState.update { it.copy(isDuplicationChecking = true, isDuplicationChecked = false) }
 
-        val result = nicknameRepository.sanitizeNickname(nickname)
+        val result = nicknameRepository.checkNicknameAvailability(nickname)
         if (_formState.value.nickname != nickname) return
 
         result.onSuccess {
@@ -273,17 +277,12 @@ class ProfileViewModel @Inject constructor(
     private fun checkCanStart() {
         val uiState = _uiState.value
         val formState = _formState.value
-        val hasRequiredProfileImage = when (formState.selectedOption) {
-            ProfileEditOption.CHARACTER -> true
-            ProfileEditOption.CUSTOM -> formState.selectedImageUri != null
-        }
         val isReady = uiState.isNicknameValid &&
             formState.nickname.isNotEmpty() &&
             uiState.isDuplicationChecked &&
             !uiState.isDuplicationChecking &&
             !uiState.isImageUploading &&
-            !uiState.isSubmitting &&
-            hasRequiredProfileImage
+            !uiState.isSubmitting
         _uiState.update { it.copy(canStart = isReady) }
     }
 
