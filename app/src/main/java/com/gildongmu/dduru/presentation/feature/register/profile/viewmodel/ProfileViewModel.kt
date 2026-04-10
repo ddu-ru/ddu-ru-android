@@ -61,7 +61,6 @@ class ProfileViewModel @Inject constructor(
         )
 
     val bgColors = ProfileBackgroundColorList
-    val maxIntroLength = 60
     private var nicknameCheckJob: Job? = null
 
     init {
@@ -198,9 +197,7 @@ class ProfileViewModel @Inject constructor(
     }
 
     fun onIntroductionChanged(newText: String) {
-        if (newText.length <= maxIntroLength) {
-            _formState.update { it.copy(introduction = newText) }
-        }
+        _formState.update { it.copy(introduction = newText) }
     }
 
     fun onImageSelected(uri: Uri?) {

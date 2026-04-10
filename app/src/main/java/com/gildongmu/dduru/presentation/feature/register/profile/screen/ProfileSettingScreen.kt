@@ -32,6 +32,7 @@ import com.gildongmu.dduru.presentation.feature.register.profile.component.Nickn
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
+import com.gildongmu.dduru.presentation.feature.register.profile.component.PROFILE_INTRODUCTION_MAX_LENGTH
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
@@ -204,7 +205,7 @@ fun ProfileSettingScreen(
 
                 ProfileIntroduction(
                     text = formState.introduction,
-                    maxLength = 20,
+                    maxLength = PROFILE_INTRODUCTION_MAX_LENGTH,
                     onValueChange = onIntroductionChange,
                     modifier = Modifier.fillMaxWidth()
                 )
