@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.register.profile.util
+package com.gildongmu.dduru.presentation.feature.register.profile.state
 
 import android.net.Uri
 import androidx.compose.ui.graphics.Color

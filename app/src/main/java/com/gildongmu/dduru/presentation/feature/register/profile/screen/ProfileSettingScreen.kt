@@ -34,8 +34,8 @@ import com.gildongmu.dduru.presentation.feature.register.profile.component.Profi
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
-import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileFormState
-import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileUiState
+import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
+import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
 import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.presentation.feature.register.profile.util.rememberGalleryLauncher
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel

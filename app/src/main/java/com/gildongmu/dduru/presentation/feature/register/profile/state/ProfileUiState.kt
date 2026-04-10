@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.register.profile.util
+package com.gildongmu.dduru.presentation.feature.register.profile.state
 
 import com.gildongmu.dduru.domain.register.model.SurveyStatus
 
