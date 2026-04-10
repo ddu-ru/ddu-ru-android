@@ -18,7 +18,7 @@ class NicknameService @Inject constructor(
     }
 
     suspend fun checkNicknameAvailability(nickname: String): ApiResponse<Boolean> {
-        val response = nicknameApi.sanitizeNickname(nickname)
+        val response = nicknameApi.checkNicknameAvailability(nickname)
         return ApiResponse(
             status = response.status,
             data = response.data?.sanitizedNickname?.isNotBlank() == true

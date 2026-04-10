@@ -12,7 +12,7 @@ interface NicknameApi {
     suspend fun getRandomNickname(): ApiResponse<RandomNicknameResponse>
 
     @GET("api/v1/nicknames/{nickname}/availability")
-    suspend fun sanitizeNickname(
+    suspend fun checkNicknameAvailability(
         @Path("nickname") nickname: String
     ): ApiResponse<SanitizeNicknameResponse>
 }

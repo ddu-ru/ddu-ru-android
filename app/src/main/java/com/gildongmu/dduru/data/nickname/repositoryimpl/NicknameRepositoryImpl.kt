@@ -22,7 +22,7 @@ class NicknameRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun sanitizeNickname(nickname: String): Result<Boolean> {
+    override suspend fun checkNicknameAvailability(nickname: String): Result<Boolean> {
         return try {
             val response = nicknameService.checkNicknameAvailability(nickname)
             val isAvailable = response.status == 200 && response.data != false
