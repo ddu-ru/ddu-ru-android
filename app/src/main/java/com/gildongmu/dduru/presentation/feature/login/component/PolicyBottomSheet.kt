@@ -116,7 +116,6 @@ private fun PolicyBottomSheetContent(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .fillMaxHeight()
                     .verticalScroll(rememberScrollState())
             ) {
                 Text(
