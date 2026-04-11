@@ -8,10 +8,12 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
@@ -56,13 +58,13 @@ fun LoginScreen(
             horizontalAlignment = Alignment.CenterHorizontally,
             verticalArrangement = Arrangement.Top
         ) {
-            Spacer(modifier = Modifier.height(170.dp))
+            Spacer(modifier = Modifier.weight(152f))
 
             Box(
                 contentAlignment = Alignment.BottomCenter,
                 modifier = Modifier
-                    .width(244.dp)
-                    .height(267.dp)
+                    .fillMaxWidth()
+                    .padding(horizontal = 38.dp)
             ) {
                 Image(
                     painter = painterResource(id = R.drawable.bg_welcome_shadow),
@@ -70,7 +72,6 @@ fun LoginScreen(
                     contentScale = ContentScale.None,
                     modifier = Modifier
                         .padding(bottom = 10.dp)
-                        .size(95.dp)
                         .scale(scaleX = 1f, scaleY = 0.2f)
                         .background(
                             brush = Brush.radialGradient(
@@ -86,13 +87,14 @@ fun LoginScreen(
                 Image(
                     painter = painterResource(id = R.drawable.img_penguin_ver1),
                     contentDescription = "뚜루 캐릭터",
-                    contentScale = ContentScale.FillBounds,
+                    contentScale = ContentScale.FillWidth,
                     modifier = Modifier
-                        .matchParentSize()
+                        .fillMaxWidth()
+                        .wrapContentHeight()
                 )
             }
 
-            Spacer(modifier = Modifier.height(95.dp))
+            Spacer(modifier = Modifier.weight(103f))
 
             Column(
                 modifier = Modifier.width(343.dp),
@@ -117,7 +119,7 @@ fun LoginScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(25.dp))
+            Spacer(modifier = Modifier.weight(25f))
 
             Text(
                 text = "가입 없이 둘러볼래요",
@@ -130,7 +132,8 @@ fun LoginScreen(
             Spacer(modifier = Modifier.height(46.dp))
 
             PolicyButton(
-                modifier = Modifier.padding(top = 8.dp),
+                modifier = Modifier
+                    .padding(top = 8.dp, bottom = 60.dp),
                 onClick = onPolicyClick
             )
         }
@@ -159,7 +162,7 @@ private fun LoginScreenPreview() {
             onGoogleClick = { },
             onGuestClick = { },
             onPolicyClick = { },
-            isPolicySheetVisible = true,
+            isPolicySheetVisible = false,
             onDismissPolicySheet = { }
         )
     }
