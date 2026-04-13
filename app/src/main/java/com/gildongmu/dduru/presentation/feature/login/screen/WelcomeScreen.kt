@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,14 +41,11 @@ fun WelcomeScreen(
             .padding(top = 100.dp, bottom = 40.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        val bubbleShape = RoundedCornerShape(24.dp)
-        // 1. 말풍선 영역
         Box(
             modifier = Modifier
                 .width(340.dp)
                 .wrapContentHeight()
         ) {
-            // 그림자
             Image(
                 painter = painterResource(id = R.drawable.img_message),
                 contentDescription = null,
@@ -61,7 +57,7 @@ fun WelcomeScreen(
                 contentScale = ContentScale.Fit,
                 colorFilter = ColorFilter.tint(Color.Black)
             )
-            // 원본 이미지
+
             Image(
                 painter = painterResource(id = R.drawable.img_message),
                 contentDescription = "뚜르에 오신 것을 환영해요! ...",
@@ -73,12 +69,10 @@ fun WelcomeScreen(
         }
         Spacer(modifier = Modifier.height(20.dp))
 
-        // 2. 캐릭터 이미지
         Box(
             contentAlignment = Alignment.BottomCenter,
             modifier = Modifier.width(180.dp)
         ) {
-            // 그림자
             Box(
                 modifier = Modifier
                     .padding(bottom = 12.dp)
@@ -106,7 +100,6 @@ fun WelcomeScreen(
         }
         Spacer(modifier = Modifier.height(83.dp))
 
-        // 4. 버튼
         DduruButton(
             text = "네, 좋아요!",
             onClick = onNextClick,

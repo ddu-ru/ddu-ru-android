@@ -9,21 +9,17 @@ import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.usecase.LoginGoogleUseCase
 import com.gildongmu.dduru.domain.usecase.LoginKakaoUseCase
-import com.gildongmu.dduru.presentation.feature.main.Screen
+import com.gildongmu.dduru.presentation.feature.login.effect.LoginSideEffect
+import com.gildongmu.dduru.presentation.feature.login.state.LoginUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-
-// UI 상태 정의
-sealed class LoginUiState {
-    object Idle : LoginUiState()
-    object Loading : LoginUiState()
-    data class Success(val isNewUser: Boolean) : LoginUiState()
-    data class Error(val message: String) : LoginUiState()
-}
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
@@ -31,86 +27,78 @@ class LoginViewModel @Inject constructor(
     private val loginGoogleUseCase: LoginGoogleUseCase,
     private val loginKakaoUseCase: LoginKakaoUseCase,
     private val kakaoAuthDataSource: KakaoAuthDataSource,
-    private val tokenLocalDataSource: TokenLocalDataSource
 ) : ViewModel() {
 
-    private val _uiState = MutableStateFlow<LoginUiState>(LoginUiState.Idle)
-    val uiState: StateFlow<LoginUiState> = _uiState
+    private val _uiState = MutableStateFlow(LoginUiState())
+    val uiState: StateFlow<LoginUiState> = _uiState.asStateFlow()
 
-    // 앱 시작시 이동할 화면 상태 관리
-    private val _startScreen = MutableStateFlow<Screen>(Screen.Splash)
-    val startScreen: StateFlow<Screen> = _startScreen
-
+    private val _sideEffect = MutableSharedFlow<LoginSideEffect>()
+    val sideEffect: SharedFlow<LoginSideEffect> = _sideEffect.asSharedFlow()
     private val _isPolicySheetVisible = MutableStateFlow(false)
     val isPolicySheetVisible: StateFlow<Boolean> = _isPolicySheetVisible
 
-    init {
-        checkLoginStatus()
-    }
-    private fun checkLoginStatus() {
-        viewModelScope.launch {
-            val accessToken = tokenLocalDataSource.accessToken.first()
-            if (!accessToken.isNullOrBlank()) {
-                _startScreen.value = Screen.Home
-            } else {
-                _startScreen.value = Screen.Login
-            }
-        }
-    }
-
     fun startGoogleLogin(context: Context) {
         viewModelScope.launch {
-            _uiState.value = LoginUiState.Loading
+            updateLoading(true)
+            try {
+                val result = loginGoogleUseCase(context)
 
-            // UseCase를 통해 바로 로그인 진행
-            val result = loginGoogleUseCase(context)
-
-            result.onSuccess { isNewUser ->
-                _uiState.value = LoginUiState.Success(isNewUser)
-            }.onFailure { e ->
-                Log.e("LoginViewModel", "Google Login failed: ${e.message}", e)
-                _uiState.value = LoginUiState.Error("구글 로그인 실패")
+                result.onSuccess { isNewUser ->
+                    _sideEffect.emit(LoginSideEffect.LoginSuccess(isNewUser))
+                }.onFailure { e ->
+                    Log.e("LoginViewModel", "Google Login failed: ${e.message}", e)
+                    _sideEffect.emit(LoginSideEffect.ShowError("구글 로그인에 실패했습니다. 다시 시도해주세요."))
+                }
+            } finally {
+                updateLoading(false)
             }
         }
     }
 
     fun startKakaoLogin() {
         viewModelScope.launch {
-            _uiState.value = LoginUiState.Loading
+            updateLoading(true)
+            try {
+                val idToken = kakaoAuthDataSource.getIdToken()
+                if (idToken.isNullOrBlank()) {
+                    _sideEffect.emit(LoginSideEffect.ShowError("카카오 로그인에 실패했습니다. 다시 시도해주세요."))
+                    return@launch
+                }
 
-            val idToken = kakaoAuthDataSource.getIdToken()
-            if (idToken.isNullOrBlank()) {
-                _uiState.value = LoginUiState.Idle
-                return@launch
-            }
-
-            val result = loginKakaoUseCase(idToken)
-
-            result.onSuccess { isNewUser ->
-                _uiState.value = LoginUiState.Success(isNewUser)
-            }.onFailure { e ->
-                Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
-                _uiState.value = LoginUiState.Error("카카오 로그인 실패: ${e.message}")
+                loginKakao(idToken)
+            } finally {
+                updateLoading(false)
             }
         }
     }
 
     fun loginWithKakao(idToken: String) {
         viewModelScope.launch {
-            _uiState.value = LoginUiState.Loading
-
-            val result = loginKakaoUseCase(idToken)
-
-            result.onSuccess { isNewUser ->
-                _uiState.value = LoginUiState.Success(isNewUser)
-            }.onFailure { e ->
-                Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
-                _uiState.value = LoginUiState.Error("카카오 로그인 실패")
+            updateLoading(true)
+            try {
+                loginKakao(idToken)
+            } finally {
+                updateLoading(false)
             }
+        }
+    }
+
+    private suspend fun loginKakao(idToken: String) {
+        val result = loginKakaoUseCase(idToken)
+
+        result.onSuccess { isNewUser ->
+            _sideEffect.emit(LoginSideEffect.LoginSuccess(isNewUser))
+        }.onFailure { e ->
+            Log.e("LoginViewModel", "Kakao Login failed: ${e.message}", e)
+            _sideEffect.emit(LoginSideEffect.ShowError("카카오 로그인에 실패했습니다. 다시 시도해주세요."))
         }
     }
     fun onPolicyClick() {
         _isPolicySheetVisible.value = true
+    }
+
+    private fun updateLoading(isLoading: Boolean) {
+        _uiState.value = _uiState.value.copy(isLoading = isLoading)
     }
 
     fun onDismissPolicySheet() {
