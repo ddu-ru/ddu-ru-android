@@ -72,7 +72,7 @@ fun LoginRoute(
         onGuestClick = onGuestClick,
         onPolicyClick = viewModel::onPolicyClick,
         isPolicySheetVisible = isPolicySheetVisible,
-        onDismissPolicySheet = viewModel::onDismissPolicySheet,
+        onDismissPolicySheet = viewModel::onDismissPolicySheet
     )
 }
 

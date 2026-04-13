@@ -4,7 +4,6 @@ import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.usecase.LoginGoogleUseCase
@@ -26,7 +25,7 @@ class LoginViewModel @Inject constructor(
     private val authRepository: AuthRepository,
     private val loginGoogleUseCase: LoginGoogleUseCase,
     private val loginKakaoUseCase: LoginKakaoUseCase,
-    private val kakaoAuthDataSource: KakaoAuthDataSource,
+    private val kakaoAuthDataSource: KakaoAuthDataSource
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(LoginUiState())
