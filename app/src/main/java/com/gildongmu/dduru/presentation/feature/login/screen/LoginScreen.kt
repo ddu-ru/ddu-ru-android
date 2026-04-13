@@ -12,7 +12,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.shape.CircleShape
@@ -50,6 +49,7 @@ fun LoginRoute(
     viewModel: LoginViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val isPolicySheetVisible by viewModel.isPolicySheetVisible.collectAsStateWithLifecycle()
     val context = LocalContext.current
 
     LaunchedEffect(Unit) {
@@ -69,7 +69,10 @@ fun LoginRoute(
         isLoading = uiState.isLoading,
         onKakaoClick = { viewModel.startKakaoLogin() },
         onGoogleClick = { viewModel.startGoogleLogin(context) },
-        onGuestClick = onGuestClick
+        onGuestClick = onGuestClick,
+        onPolicyClick = viewModel::onPolicyClick,
+        isPolicySheetVisible = isPolicySheetVisible,
+        onDismissPolicySheet = viewModel::onDismissPolicySheet,
     )
 }
 
