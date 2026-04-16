@@ -26,18 +26,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.register.component.ValidationMessage
 import com.gildongmu.dduru.presentation.feature.register.profile.component.NicknameInput
+import com.gildongmu.dduru.presentation.feature.register.profile.component.PROFILE_INTRODUCTION_MAX_LENGTH
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
-import com.gildongmu.dduru.presentation.feature.register.profile.component.PROFILE_INTRODUCTION_MAX_LENGTH
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
-import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.presentation.feature.register.profile.util.rememberGalleryLauncher
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 

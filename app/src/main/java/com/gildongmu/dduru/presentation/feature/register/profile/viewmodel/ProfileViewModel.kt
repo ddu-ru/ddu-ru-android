@@ -6,18 +6,18 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.data.entity.image.ImagePresignedUrlUploader
-import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.register.model.SurveyStatus
+import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.register.profile.model.ProfileUpdateModel
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
 import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
+import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
-import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
 import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -79,7 +79,7 @@ class ProfileViewModel @Inject constructor(
 
         _formState.update { currentState ->
             currentState.copy(
-                nickname = newNickname,
+                nickname = newNickname
             )
         }
         _uiState.update {
@@ -274,13 +274,13 @@ class ProfileViewModel @Inject constructor(
             }
         }.onFailure { e ->
             _uiState.update {
-                    it.copy(
-                        isDuplicationChecking = false,
-                        isDuplicationChecked = false,
-                        nicknameErrorMessage = e.message ?: "네트워크 문제가 발생했어요"
-                    )
-                }
+                it.copy(
+                    isDuplicationChecking = false,
+                    isDuplicationChecked = false,
+                    nicknameErrorMessage = e.message ?: "네트워크 문제가 발생했어요"
+                )
             }
+        }
 
         checkCanStart()
     }

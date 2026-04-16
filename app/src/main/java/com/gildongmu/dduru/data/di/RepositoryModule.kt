@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.data.di
 
-import com.gildongmu.dduru.data.repositoryimpl.AuthRepositoryImpl
 import com.gildongmu.dduru.data.nickname.repositoryimpl.NicknameRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.AuthRepositoryImpl
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import dagger.Binds

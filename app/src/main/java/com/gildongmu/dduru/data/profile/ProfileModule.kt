@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.data.profile
 
-import com.gildongmu.dduru.data.profile.api.ProfileApi
 import com.gildongmu.dduru.data.entity.image.api.ImagePresignedUrlApi
+import com.gildongmu.dduru.data.profile.api.ProfileApi
 import com.gildongmu.dduru.data.profile.repository.ProfileRepositoryImpl
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
 import dagger.Binds
@@ -9,9 +9,9 @@ import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
 import dagger.hilt.components.SingletonComponent
-import javax.inject.Singleton
-import javax.inject.Named
 import java.util.concurrent.TimeUnit
+import javax.inject.Named
+import javax.inject.Singleton
 import okhttp3.OkHttpClient
 import retrofit2.Retrofit
 

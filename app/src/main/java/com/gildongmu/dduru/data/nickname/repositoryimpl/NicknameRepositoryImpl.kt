@@ -3,8 +3,8 @@ package com.gildongmu.dduru.data.nickname.repositoryimpl
 import com.gildongmu.dduru.data.nickname.service.NicknameService
 import com.gildongmu.dduru.domain.register.nickname.entity.NicknameErrorMapper
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
-import retrofit2.HttpException
 import javax.inject.Inject
+import retrofit2.HttpException
 
 class NicknameRepositoryImpl @Inject constructor(
     private val nicknameService: NicknameService

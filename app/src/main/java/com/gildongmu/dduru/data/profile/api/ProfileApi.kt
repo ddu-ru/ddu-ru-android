@@ -2,9 +2,9 @@ package com.gildongmu.dduru.data.profile.api
 
 import com.gildongmu.dduru.data.profile.model.ProfileRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.PATCH
-import retrofit2.Response
 
 interface ProfileApi {
     @PATCH("api/v1/users/me/profile")
