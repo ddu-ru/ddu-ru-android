@@ -1,5 +1,6 @@
-package com.gildongmu.dduru.presentation.feature.login
+package com.gildongmu.dduru.presentation.feature.login.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -16,22 +17,60 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.scale
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.LoginButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.login.effect.LoginSideEffect
+import com.gildongmu.dduru.presentation.feature.login.viewmodel.LoginViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun LoginScreen(
+fun LoginRoute(
+    onLoginSuccess: (Boolean) -> Unit,
+    onGuestClick: () -> Unit,
+    viewModel: LoginViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collectLatest { event ->
+            when (event) {
+                is LoginSideEffect.LoginSuccess -> {
+                    onLoginSuccess(event.isNewUser)
+                }
+                is LoginSideEffect.ShowError -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
+            }
+        }
+    }
+
+    LoginScreen(
+        isLoading = uiState.isLoading,
+        onKakaoClick = { viewModel.startKakaoLogin() },
+        onGoogleClick = { viewModel.startGoogleLogin(context) },
+        onGuestClick = onGuestClick
+    )
+}
+
+@Composable
+private fun LoginScreen(
     isLoading: Boolean,
     onKakaoClick: () -> Unit,
     onGoogleClick: () -> Unit,
@@ -90,13 +129,11 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(95.dp))
 
-            // 2. 버튼 영역
             Column(
                 modifier = Modifier.width(343.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
-                // 카카오 로그인
                 LoginButton(
                     iconResId = R.drawable.img_kakao_icon,
                     text = "카카오로 시작하기",
@@ -105,7 +142,6 @@ fun LoginScreen(
                     onClick = onKakaoClick
                 )
 
-                // 구글 로그인
                 LoginButton(
                     iconResId = R.drawable.img_google_icon,
                     text = "구글로 시작하기",
@@ -118,7 +154,6 @@ fun LoginScreen(
 
             Spacer(modifier = Modifier.height(25.dp))
 
-            // 3. 가입 없이 둘러볼래요
             Text(
                 text = "가입 없이 둘러볼래요",
                 modifier = Modifier.clickable { onGuestClick() },
@@ -137,7 +172,7 @@ fun LoginScreen(
     }
 }
 
-@Preview(showBackground = true, device = "spec:width=375dp,height=812dp")
+@Preview(showBackground = true)
 @Composable
 private fun LoginScreenPreview() {
     DduruTheme {
