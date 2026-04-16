@@ -19,14 +19,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
-const val PROFILE_INTRODUCTION_MAX_LENGTH = 20
+const val PROFILE_INTRODUCTION_MAX_LENGTH = 60
 
 @Composable
 fun ProfileIntroduction(
     text: String,
+    modifier: Modifier = Modifier,
     maxLength: Int = PROFILE_INTRODUCTION_MAX_LENGTH,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
