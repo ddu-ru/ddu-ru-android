@@ -18,7 +18,7 @@ val ProfileBackgroundColorList: List<ProfileBackgroundColor> = listOf(
 
     ProfileBackgroundColor(11, Color(0xFFDCCDFC)),
     ProfileBackgroundColor(12, Color(0xFFF2C49B)),
-    ProfileBackgroundColor(13, Color(0xFFB5D2A8)),
+    ProfileBackgroundColor(13, Color(0xFF9BC289)),
     ProfileBackgroundColor(14, Color(0xFFB8CCFF)),
     ProfileBackgroundColor(15, Color(0xFFB2B2B2))
 )
