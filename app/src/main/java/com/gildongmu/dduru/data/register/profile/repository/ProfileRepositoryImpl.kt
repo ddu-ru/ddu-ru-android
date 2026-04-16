@@ -23,7 +23,7 @@ class ProfileRepositoryImpl @Inject constructor(
                 )
             )
 
-            if ( response.code() != 204 ) {
+            if (response.code() != 204) {
                 throw ExceptionResponse(status = response.code())
             }
 

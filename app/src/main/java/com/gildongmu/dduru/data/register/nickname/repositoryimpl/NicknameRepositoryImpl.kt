@@ -4,8 +4,8 @@ import com.gildongmu.dduru.data.register.nickname.service.NicknameService
 import com.gildongmu.dduru.domain.register.nickname.entity.NicknameErrorMapper
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import javax.inject.Inject
-import retrofit2.HttpException
 import kotlin.coroutines.cancellation.CancellationException
+import retrofit2.HttpException
 
 class NicknameRepositoryImpl @Inject constructor(
     private val nicknameService: NicknameService

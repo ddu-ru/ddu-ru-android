@@ -26,7 +26,7 @@ fun ProfileIntroduction(
     text: String,
     modifier: Modifier = Modifier,
     maxLength: Int = PROFILE_INTRODUCTION_MAX_LENGTH,
-    onValueChange: (String) -> Unit,
+    onValueChange: (String) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
