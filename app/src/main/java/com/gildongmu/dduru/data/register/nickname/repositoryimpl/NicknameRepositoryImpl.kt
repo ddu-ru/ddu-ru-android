@@ -1,6 +1,6 @@
-package com.gildongmu.dduru.data.nickname.repositoryimpl
+package com.gildongmu.dduru.data.register.nickname.repositoryimpl
 
-import com.gildongmu.dduru.data.nickname.service.NicknameService
+import com.gildongmu.dduru.data.register.nickname.service.NicknameService
 import com.gildongmu.dduru.domain.register.nickname.entity.NicknameErrorMapper
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import javax.inject.Inject

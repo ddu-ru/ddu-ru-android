@@ -1,7 +1,7 @@
-package com.gildongmu.dduru.data.nickname.api
+package com.gildongmu.dduru.data.register.nickname.api
 
-import com.gildongmu.dduru.data.nickname.model.RandomNicknameResponse
-import com.gildongmu.dduru.data.nickname.model.SanitizeNicknameResponse
+import com.gildongmu.dduru.data.register.nickname.model.RandomNicknameResponse
+import com.gildongmu.dduru.data.register.nickname.model.SanitizeNicknameResponse
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import retrofit2.http.GET
 import retrofit2.http.Path

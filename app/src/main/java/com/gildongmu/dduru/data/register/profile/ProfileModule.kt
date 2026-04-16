@@ -1,8 +1,8 @@
-package com.gildongmu.dduru.data.profile
+package com.gildongmu.dduru.data.register.profile
 
 import com.gildongmu.dduru.data.entity.image.api.ImagePresignedUrlApi
-import com.gildongmu.dduru.data.profile.api.ProfileApi
-import com.gildongmu.dduru.data.profile.repository.ProfileRepositoryImpl
+import com.gildongmu.dduru.data.register.profile.api.ProfileApi
+import com.gildongmu.dduru.data.register.profile.repository.ProfileRepositoryImpl
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
 import dagger.Binds
 import dagger.Module

@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.data.nickname.model
+package com.gildongmu.dduru.data.register.nickname.model
 
 import kotlinx.serialization.Serializable
 

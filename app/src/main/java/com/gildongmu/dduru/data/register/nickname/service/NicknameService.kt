@@ -1,6 +1,6 @@
-package com.gildongmu.dduru.data.nickname.service
+package com.gildongmu.dduru.data.register.nickname.service
 
-import com.gildongmu.dduru.data.nickname.api.NicknameApi
+import com.gildongmu.dduru.data.register.nickname.api.NicknameApi
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import javax.inject.Inject
 import javax.inject.Singleton

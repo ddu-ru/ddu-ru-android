@@ -1,6 +1,6 @@
-package com.gildongmu.dduru.data.profile.api
+package com.gildongmu.dduru.data.register.profile.api
 
-import com.gildongmu.dduru.data.profile.model.ProfileRequest
+import com.gildongmu.dduru.data.register.profile.model.ProfileRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import retrofit2.Response
 import retrofit2.http.Body

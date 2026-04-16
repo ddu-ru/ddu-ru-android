@@ -1,7 +1,7 @@
-package com.gildongmu.dduru.data.profile.repository
+package com.gildongmu.dduru.data.register.profile.repository
 
-import com.gildongmu.dduru.data.profile.api.ProfileApi
-import com.gildongmu.dduru.data.profile.model.ProfileRequest
+import com.gildongmu.dduru.data.register.profile.api.ProfileApi
+import com.gildongmu.dduru.data.register.profile.model.ProfileRequest
 import com.gildongmu.dduru.domain.entity.ExceptionResponse
 import com.gildongmu.dduru.domain.register.profile.model.ProfileUpdateModel
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository

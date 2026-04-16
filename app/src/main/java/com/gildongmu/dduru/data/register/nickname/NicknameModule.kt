@@ -1,6 +1,6 @@
-package com.gildongmu.dduru.data.nickname
+package com.gildongmu.dduru.data.register.nickname
 
-import com.gildongmu.dduru.data.nickname.api.NicknameApi
+import com.gildongmu.dduru.data.register.nickname.api.NicknameApi
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
