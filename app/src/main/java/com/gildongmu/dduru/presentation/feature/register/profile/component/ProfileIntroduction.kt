@@ -51,9 +51,7 @@ fun ProfileIntroduction(
             BasicTextField(
                 value = text,
                 onValueChange = { newValue ->
-                    if (newValue.length <= maxLength) {
-                        onValueChange(newValue)
-                    }
+                    onValueChange(newValue.take(maxLength))
                 },
                 maxLines = 4,
                 textStyle = DduruTheme.typography.Body1.copy(
