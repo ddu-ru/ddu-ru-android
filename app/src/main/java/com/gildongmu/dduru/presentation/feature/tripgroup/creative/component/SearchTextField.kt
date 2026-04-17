@@ -1,13 +1,13 @@
 package com.gildongmu.dduru.presentation.feature.tripgroup.creative.component
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.text.KeyboardActions
-import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -34,7 +34,7 @@ fun SearchTextField(
     onValueChange: (String) -> Unit,
     onSearchClick: () -> Unit,
     placeholderMessage: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -46,7 +46,7 @@ fun SearchTextField(
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray200,
-                shape = RoundedCornerShape(99.dp),
+                shape = RoundedCornerShape(99.dp)
             ),
         placeholder = {
             Text(
@@ -56,25 +56,25 @@ fun SearchTextField(
             )
         },
         keyboardOptions = KeyboardOptions(
-            imeAction = ImeAction.Search,
+            imeAction = ImeAction.Search
         ),
         keyboardActions = KeyboardActions(
             onSearch = {
                 focusManager.clearFocus()
                 onSearchClick()
-            },
+            }
         ),
         trailingIcon = {
             IconButton(
                 onClick = {
                     focusManager.clearFocus()
                     onSearchClick()
-                },
+                }
             ) {
                 Icon(
                     painter = painterResource(id = R.drawable.ic_matching_searching),
                     contentDescription = "검색",
-                    tint = DduruTheme.colors.gray500,
+                    tint = DduruTheme.colors.gray500
                 )
             }
         },
@@ -87,7 +87,7 @@ fun SearchTextField(
             unfocusedContainerColor = DduruTheme.colors.gray0,
             focusedIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f),
             unfocusedIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f),
-            disabledIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f),
+            disabledIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f)
         )
 
     )
@@ -103,13 +103,13 @@ private fun SearchTextFieldPreview() {
             modifier = Modifier
                 .size(width = 360.dp, height = 200.dp)
                 .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             SearchTextField(
                 value = search,
                 onValueChange = { search = it },
                 onSearchClick = {},
-                placeholderMessage = "여행지 선택",
+                placeholderMessage = "여행지 선택"
             )
         }
     }
