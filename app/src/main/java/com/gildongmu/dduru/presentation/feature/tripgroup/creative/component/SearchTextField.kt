@@ -68,7 +68,7 @@ fun SearchTextField(
                 )
             }
         },
-        maxLines = 1,
+        maxLines = 1
     )
 }
 

@@ -9,6 +9,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Text
 import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -23,8 +24,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import androidx.compose.material3.Text
-
 
 @Composable
 fun RoundedMatchingTextField(
@@ -36,7 +35,7 @@ fun RoundedMatchingTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    maxLines: Int = 1,
+    maxLines: Int = 1
 ) {
     TextField(
         value = value,
@@ -46,13 +45,13 @@ fun RoundedMatchingTextField(
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray200,
-                shape =  RoundedCornerShape(99.dp),
+                shape = RoundedCornerShape(99.dp)
             ),
         placeholder = placeholder,
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         maxLines = maxLines,
-        shape =  RoundedCornerShape(99.dp),
+        shape = RoundedCornerShape(99.dp),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
         colors = TextFieldDefaults.colors(
@@ -62,8 +61,8 @@ fun RoundedMatchingTextField(
             unfocusedContainerColor = DduruTheme.colors.gray0,
             focusedIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f),
             unfocusedIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f),
-            disabledIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f),
-        ),
+            disabledIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f)
+        )
     )
 }
 
@@ -77,7 +76,7 @@ private fun RoundedSearchTextFieldPreview() {
             modifier = Modifier
                 .size(width = 360.dp, height = 200.dp)
                 .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             RoundedMatchingTextField(
                 value = text,
@@ -86,16 +85,16 @@ private fun RoundedSearchTextFieldPreview() {
                     Text(
                         text = "여행지 선택",
                         color = DduruTheme.colors.gray500,
-                        style = DduruTheme.typography.Body1,
+                        style = DduruTheme.typography.Body1
                     )
                 },
                 trailingIcon = {
                     Icon(
                         painter = painterResource(id = R.drawable.ic_matching_searching),
                         contentDescription = null,
-                        tint = DduruTheme.colors.gray500,
+                        tint = DduruTheme.colors.gray500
                     )
-                },
+                }
             )
         }
     }
@@ -111,7 +110,7 @@ private fun RoundedHashtagTextFieldPreview() {
             modifier = Modifier
                 .size(width = 360.dp, height = 200.dp)
                 .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             RoundedMatchingTextField(
                 value = text,
@@ -120,16 +119,16 @@ private fun RoundedHashtagTextFieldPreview() {
                     Text(
                         text = "해시태그 입력..",
                         color = DduruTheme.colors.gray500,
-                        style = DduruTheme.typography.Body1,
+                        style = DduruTheme.typography.Body1
                     )
                 },
                 leadingIcon = {
                     Text(
                         text = "#",
                         color = DduruTheme.colors.gray500,
-                        style = DduruTheme.typography.Body1,
+                        style = DduruTheme.typography.Body1
                     )
-                },
+                }
             )
         }
     }
@@ -145,7 +144,7 @@ private fun RoundedHashtagTextFieldLongDescriptionPreview() {
             modifier = Modifier
                 .size(width = 360.dp, height = 200.dp)
                 .padding(horizontal = 16.dp),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             RoundedMatchingTextField(
                 value = text,
@@ -154,16 +153,16 @@ private fun RoundedHashtagTextFieldLongDescriptionPreview() {
                     Text(
                         text = "한글 4자 또는 영문/숫자 7자 이하로 입력해 주세요.",
                         color = DduruTheme.colors.gray500,
-                        style = DduruTheme.typography.Caption2,
+                        style = DduruTheme.typography.Caption2
                     )
                 },
                 leadingIcon = {
                     Text(
                         text = "#",
                         color = DduruTheme.colors.gray500,
-                        style = DduruTheme.typography.Body1,
+                        style = DduruTheme.typography.Body1
                     )
-                },
+                }
             )
         }
     }
