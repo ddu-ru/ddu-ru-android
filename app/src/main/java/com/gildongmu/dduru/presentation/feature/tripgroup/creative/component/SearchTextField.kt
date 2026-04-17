@@ -1,18 +1,14 @@
 package com.gildongmu.dduru.presentation.feature.tripgroup.creative.component
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
-import androidx.compose.material3.TextField
-import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -38,16 +34,10 @@ fun SearchTextField(
 ) {
     val focusManager = LocalFocusManager.current
 
-    TextField(
+    RoundedMatchingTextField(
         value = value,
         onValueChange = onValueChange,
-        modifier = modifier
-            .fillMaxWidth()
-            .border(
-                width = 1.dp,
-                color = DduruTheme.colors.gray200,
-                shape = RoundedCornerShape(99.dp)
-            ),
+        modifier = modifier.fillMaxWidth(),
         placeholder = {
             Text(
                 text = placeholderMessage,
@@ -79,17 +69,6 @@ fun SearchTextField(
             }
         },
         maxLines = 1,
-        shape = RoundedCornerShape(99.dp),
-        colors = TextFieldDefaults.colors(
-            focusedTextColor = DduruTheme.colors.gray900,
-            unfocusedTextColor = DduruTheme.colors.gray600, // Todo() 나중에 바뀔 가능성 있음,
-            focusedContainerColor = DduruTheme.colors.gray0,
-            unfocusedContainerColor = DduruTheme.colors.gray0,
-            focusedIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f),
-            unfocusedIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f),
-            disabledIndicatorColor = DduruTheme.colors.gray0.copy(alpha = 0f)
-        )
-
     )
 }
 
