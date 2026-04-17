@@ -41,7 +41,6 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.model.AiMatchingCardData
 
-
 @Composable
 fun AiMatchingCard(
     data: AiMatchingCardData,
