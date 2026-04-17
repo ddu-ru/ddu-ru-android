@@ -29,13 +29,13 @@ fun NoSearchResults(modifier: Modifier = Modifier) {
     ) {
         BoxWithConstraints(
             modifier = Modifier.fillMaxWidth(),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             Image(
                 painter = painterResource(R.drawable.img_penguin_ver1),
                 contentDescription = null,
                 modifier = Modifier.width(maxWidth * 0.12f),
-                contentScale = ContentScale.Fit,
+                contentScale = ContentScale.Fit
             )
         }
 
@@ -58,7 +58,6 @@ fun NoSearchResults(modifier: Modifier = Modifier) {
             style = DduruTheme.typography.Caption2,
             textAlign = TextAlign.Center
         )
-
     }
 }
 
