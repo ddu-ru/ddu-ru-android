@@ -67,13 +67,12 @@ private fun WhereToLeavePreview() {
                 uiModel = StepHeaderUiModel(
                     step = 1,
                     title = "어디로 떠나시나요?",
-                    subtitle = "여행지를 선택해 주세요",
-                ),
+                    subtitle = "여행지를 선택해 주세요"
+                )
             )
         }
     }
 }
-
 
 @Preview(showBackground = true)
 @Composable
@@ -85,8 +84,8 @@ private fun WhenToLeavePreview() {
                 uiModel = StepHeaderUiModel(
                     step = 2,
                     title = "언제 떠나시나요?",
-                    subtitle = "날짜를 선택해 주세요",
-                ),
+                    subtitle = "날짜를 선택해 주세요"
+                )
             )
         }
     }
