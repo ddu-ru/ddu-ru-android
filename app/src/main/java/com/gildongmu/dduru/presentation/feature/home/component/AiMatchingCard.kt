@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,22 +39,8 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.home.model.AiMatchingCardData
 
-data class AiMatchingCardData(
-    val imageUrl: String? = null,
-    val matchPercent: Int,
-    val title: String,
-    val location: String,
-    val dateRange: String,
-    val profileImageUrl: String? = null,
-    val username: String,
-    val age: Int,
-    val gender: String,
-    val currentMembers: Int,
-    val maxMembers: Int,
-    val description: String,
-    val hashtags: List<String>
-)
 
 @Composable
 fun AiMatchingCard(
@@ -79,7 +66,9 @@ fun AiMatchingCard(
     }
 
     Box(
-        modifier = modifier.clip(RoundedCornerShape(16.dp))
+        modifier = modifier
+            .aspectRatio(343f / 456f)
+            .clip(RoundedCornerShape(16.dp))
     ) {
         SubcomposeAsyncImage(
             model = data.imageUrl,
