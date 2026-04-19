@@ -33,7 +33,7 @@ fun OptionalCheckbox(
     checked: Boolean,
     onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
-    text: String,
+    text: String
 ) {
     val iconBackgroundColor = if (checked) {
         DduruTheme.colors.primary
@@ -58,28 +58,26 @@ fun OptionalCheckbox(
             .fillMaxWidth()
             .clickable(
                 indication = null,
-                interactionSource = remember { MutableInteractionSource() },
+                interactionSource = remember { MutableInteractionSource() }
             ) {
                 onCheckedChange(!checked)
             },
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
         Box(
             modifier = Modifier
                 .size(20.dp)
                 .background(
                     color = iconBackgroundColor,
-                    shape = CircleShape,
+                    shape = CircleShape
                 ),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
-
             Icon(
                 painter = painterResource(R.drawable.ic_check),
                 contentDescription = if (checked) "선택됨" else "선택 안 됨",
                 tint = checkIconColor,
-                modifier = Modifier.width(10.dp),
+                modifier = Modifier.width(10.dp)
             )
         }
 
@@ -88,7 +86,7 @@ fun OptionalCheckbox(
         Text(
             text = text,
             style = DduruTheme.typography.Title2,
-            color = textColor,
+            color = textColor
         )
     }
 }
@@ -100,7 +98,6 @@ private fun OptionalCheckboxPreview() {
     var checkedAge by remember { mutableStateOf(false) }
 
     Column {
-
         OptionalCheckbox(
             checked = checkedCo,
             onCheckedChange = { checkedCo = it },
@@ -116,6 +113,5 @@ private fun OptionalCheckboxPreview() {
             modifier = Modifier.padding(16.dp),
             text = "나이는 상관 없어요"
         )
-
     }
 }
