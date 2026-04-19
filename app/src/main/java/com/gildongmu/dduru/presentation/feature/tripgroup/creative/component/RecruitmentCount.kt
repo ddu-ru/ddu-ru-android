@@ -4,12 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
@@ -43,23 +42,21 @@ import com.gildongmu.dduru.presentation.feature.tripgroup.creative.uistate.Recru
 fun RecruitmentCount(
     uiState: RecruitmentCountUiState,
     onCountChange: (Int) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
-
         Row(
             modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceEvenly,
+            horizontalArrangement = Arrangement.SpaceEvenly
         ) {
-
             CountCircleButton(
                 enabled = uiState.canDecrease,
                 isPlus = false,
-                onClick = { onCountChange(uiState.count - 1) },
+                onClick = { onCountChange(uiState.count - 1) }
             )
 
             CountText(count = uiState.count)
@@ -67,7 +64,7 @@ fun RecruitmentCount(
             CountCircleButton(
                 enabled = uiState.canIncrease,
                 isPlus = true,
-                onClick = { onCountChange(uiState.count + 1) },
+                onClick = { onCountChange(uiState.count + 1) }
             )
         }
 
@@ -77,7 +74,7 @@ fun RecruitmentCount(
             text = uiState.recruitmentCountMessage,
             style = DduruTheme.typography.Body2,
             color = DduruTheme.colors.gray400,
-            textAlign = TextAlign.Center,
+            textAlign = TextAlign.Center
         )
     }
 }
@@ -85,22 +82,21 @@ fun RecruitmentCount(
 @Composable
 private fun CountText(
     count: Int,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
-
         Text(
             text = count.toString(),
             style = TextStyle(
                 fontFamily = Pretendard,
                 fontWeight = FontWeight.Bold,
                 fontSize = 48.sp,
-                lineHeight = 48.sp,
+                lineHeight = 48.sp
             ),
-            color = DduruTheme.colors.gray868,
+            color = DduruTheme.colors.gray868
         )
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -108,7 +104,7 @@ private fun CountText(
         Text(
             text = "명",
             style = DduruTheme.typography.Body1,
-            color = DduruTheme.colors.gray600,
+            color = DduruTheme.colors.gray600
         )
     }
 }
@@ -118,7 +114,7 @@ private fun CountCircleButton(
     enabled: Boolean,
     isPlus: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val containerColor = if (enabled) DduruTheme.colors.gray0 else DduruTheme.colors.gray100
     val borderColor = if (enabled) DduruTheme.colors.gray200 else DduruTheme.colors.gray100
@@ -134,21 +130,20 @@ private fun CountCircleButton(
             .border(
                 width = 1.dp,
                 color = borderColor,
-                shape = CircleShape,
+                shape = CircleShape
             ),
         colors = IconButtonDefaults.iconButtonColors(
             contentColor = iconTint,
-            disabledContentColor = iconTint,
-        ),
+            disabledContentColor = iconTint
+        )
     ) {
-
         Icon(
             painter = painterResource(
-                id = if (isPlus) R.drawable.ic_write_plus else R.drawable.ic_minus,
+                id = if (isPlus) R.drawable.ic_write_plus else R.drawable.ic_minus
             ),
             contentDescription = if (isPlus) "인원 증가" else "인원 감소",
             tint = iconTint,
-            modifier = Modifier.height(17.dp),
+            modifier = Modifier.height(17.dp)
         )
     }
 }
@@ -160,19 +155,18 @@ private fun RecruitmentCountSelectorPreview() {
 
     Surface(
         color = Color.White,
-        modifier = Modifier.padding(vertical = 40.dp),
+        modifier = Modifier.padding(vertical = 40.dp)
     ) {
-
         RecruitmentCount(
             uiState = uiState,
             onCountChange = { newCount ->
                 uiState = uiState.copy(
                     count = newCount.coerceIn(
                         RecruitmentCountNum.MIN,
-                        RecruitmentCountNum.MAX,
-                    ),
+                        RecruitmentCountNum.MAX
+                    )
                 )
-            },
+            }
         )
     }
 }
