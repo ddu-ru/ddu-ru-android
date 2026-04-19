@@ -29,7 +29,7 @@ fun TransparentButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 6.dp),
+    contentPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
 ) {
     val containerShape = RoundedCornerShape(99.dp)
 
@@ -41,27 +41,26 @@ fun TransparentButton(
                 style = HazeStyle(
                     tint = DduruTheme.colors.gray50.copy(alpha = 0.14f),
                     blurRadius = 8.dp,
-                    noiseFactor = 0f,
-                ),
+                    noiseFactor = 0f
+                )
             )
             .background(color = Color.Transparent, shape = containerShape)
             .border(
                 width = 0.8.dp,
                 color = DduruTheme.colors.gray0.copy(alpha = 0.2f),
-                shape = containerShape,
+                shape = containerShape
             )
             .clickable(
                 enabled = enabled,
-                onClick = onClick,
+                onClick = onClick
             ),
-        contentAlignment = Alignment.Center,
-    ){
-
+        contentAlignment = Alignment.Center
+    ) {
         Text(
             text = text,
             modifier = Modifier.padding(contentPadding),
             style = DduruTheme.typography.Micro,
-            color = DduruTheme.colors.gray0,
+            color = DduruTheme.colors.gray0
         )
     }
 }
@@ -73,19 +72,19 @@ private fun TransparentButtonPreview() {
 
     Box(
         modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center,
+        contentAlignment = Alignment.Center
     ) {
         Box(
             modifier = Modifier
                 .matchParentSize()
                 .background(Color(0xFF5A6F95))
-                .haze(hazeState),
+                .haze(hazeState)
         )
 
         TransparentButton(
             text = "사진 변경",
             hazeState = hazeState,
-            onClick = {},
+            onClick = {}
         )
     }
 }
