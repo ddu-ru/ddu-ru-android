@@ -29,7 +29,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 fun CustomToast(
     title: String,
     message: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val toastShape = RoundedCornerShape(16.dp)
 
@@ -46,22 +46,20 @@ fun CustomToast(
             }
             .background(
                 color = DduruTheme.colors.gray928.copy(alpha = 0.4f),
-                shape = toastShape,
+                shape = toastShape
             )
             .border(
                 width = 1.dp,
-                color =  DduruTheme.colors.gray0.copy(alpha = 0.3f),
+                color = DduruTheme.colors.gray0.copy(alpha = 0.3f),
                 shape = toastShape
-            ),
-        )
-    {
+            )
+    ) {
         Row(
             modifier = Modifier
                 .padding(horizontal = 16.dp, vertical = 12.dp)
                 .fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-
             Box(
                 modifier = Modifier
                     .size(40.dp)
@@ -100,10 +98,10 @@ fun CustomToast(
 @Preview(showBackground = true, backgroundColor = 0xFFFFFFFF)
 @Composable
 private fun CustomToastPreview() {
-        CustomToast(
-            title = "게시글 업로드 완료",
-            message = "동행 시작을 기다리고 있어요",
-            modifier = Modifier
-                .padding(top = 60.dp, start = 16.dp, end = 16.dp, bottom = 60.dp)
-        )
+    CustomToast(
+        title = "게시글 업로드 완료",
+        message = "동행 시작을 기다리고 있어요",
+        modifier = Modifier
+            .padding(top = 60.dp, start = 16.dp, end = 16.dp, bottom = 60.dp)
+    )
 }
