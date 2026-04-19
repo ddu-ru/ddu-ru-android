@@ -41,8 +41,11 @@ fun DduruCalendar(
 ) {
     var currentYearMonth by remember {
         mutableStateOf(
-            if (selectedStartDate != null) YearMonth.from(selectedStartDate)
-            else YearMonth.now()
+            if (selectedStartDate != null) {
+                YearMonth.from(selectedStartDate)
+            } else {
+                YearMonth.now()
+            }
         )
     }
     val hasRange = selectedStartDate != null && selectedEndDate != null
@@ -181,10 +184,16 @@ private fun CalendarDayCell(
 
     val rangeBackground: Pair<androidx.compose.ui.graphics.Color, RoundedCornerShape>? = when {
         isStart && hasRange && !isEnd -> DduruTheme.colors.secondary to RoundedCornerShape(
-            topStart = 99.dp, topEnd = 0.dp, bottomStart = 99.dp, bottomEnd = 0.dp
+            topStart = 99.dp,
+            topEnd = 0.dp,
+            bottomStart = 99.dp,
+            bottomEnd = 0.dp
         )
         isEnd && !isStart -> DduruTheme.colors.secondary to RoundedCornerShape(
-            topStart = 0.dp, topEnd = 99.dp, bottomStart = 0.dp, bottomEnd = 99.dp
+            topStart = 0.dp,
+            topEnd = 99.dp,
+            bottomStart = 0.dp,
+            bottomEnd = 99.dp
         )
         isInRange -> DduruTheme.colors.secondary to RoundedCornerShape(0.dp)
         else -> null
@@ -203,12 +212,14 @@ private fun CalendarDayCell(
         contentAlignment = Alignment.Center
     ) {
         val circleModifier: Modifier = when {
-            (isStart || isEnd) && hasRange -> Modifier
-                .size(44.dp)
-                .background(color = DduruTheme.colors.primary, shape = RoundedCornerShape(99.dp))
-            isPendingStart -> Modifier
-                .size(44.dp)
-                .border(width = 1.dp, color = DduruTheme.colors.primary, shape = RoundedCornerShape(99.dp))
+            (isStart || isEnd) && hasRange ->
+                Modifier
+                    .size(44.dp)
+                    .background(color = DduruTheme.colors.primary, shape = RoundedCornerShape(99.dp))
+            isPendingStart ->
+                Modifier
+                    .size(44.dp)
+                    .border(width = 1.dp, color = DduruTheme.colors.primary, shape = RoundedCornerShape(99.dp))
             else -> Modifier
         }
 
@@ -231,6 +242,7 @@ private fun CalendarDayCell(
         }
     }
 }
+
 @Preview(showBackground = true)
 @Composable
 private fun DduruCalendarNoSelectionPreview() {
@@ -263,7 +275,7 @@ private fun DduruCalendarRangeSelectedPreview() {
     DduruTheme {
         DduruCalendar(
             selectedStartDate = LocalDate.of(2026, 7, 17),
-            selectedEndDate = LocalDate.of(2026, 7, 22),
+            selectedEndDate = LocalDate.of(2026, 7, 23),
             onDateSelected = {},
             modifier = Modifier.padding(16.dp)
         )
