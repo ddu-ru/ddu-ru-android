@@ -66,7 +66,7 @@ fun AgeRangeBar(
     val endIndex = selectedEnd?.let { ages.indexOf(it) } ?: -1
 
     val ageRangeText = if (selectedStart != null && selectedEnd != null) {
-        "${selectedStart}-${selectedEnd}세"
+        "$selectedStart-${selectedEnd}세"
     } else {
         "선택해주세요"
     }
@@ -100,7 +100,7 @@ fun AgeRangeBar(
     Column(modifier = modifier) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Text(
                 text = "함께하고 싶은 연령대",
