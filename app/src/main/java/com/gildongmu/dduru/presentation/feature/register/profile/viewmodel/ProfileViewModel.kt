@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.data.entity.image.ImagePresignedUrlUploader
 import com.gildongmu.dduru.domain.register.model.SurveyStatus
+import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.register.profile.model.ProfileUpdateModel
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
@@ -153,9 +154,9 @@ class ProfileViewModel @Inject constructor(
             val payload = ProfileUpdateModel(
                 nickname = latestFormState.nickname,
                 profileImageType = when {
-                    isAvatar -> "AVATAR"
-                    hasCustomImage -> "UPLOADED"
-                    else -> "DEFAULT"
+                    isAvatar -> ProfileImageType.AVATAR
+                    hasCustomImage -> ProfileImageType.UPLOADED
+                    else -> ProfileImageType.DEFAULT
                 },
                 uploadedImageUrl = uploadedImageUrl,
                 bgColorId = if (isAvatar) {

@@ -16,7 +16,7 @@ class ProfileRepositoryImpl @Inject constructor(
             val response = api.updateProfile(
                 ProfileRequest(
                     nickname = payload.nickname,
-                    profileImageType = payload.profileImageType,
+                    profileImageType = payload.profileImageType.apiValue,
                     uploadedImageUrl = payload.uploadedImageUrl,
                     bgColorId = payload.bgColorId,
                     bio = payload.bio
