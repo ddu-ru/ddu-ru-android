@@ -31,7 +31,7 @@ fun TripDatePickerBox(
                 color = DduruTheme.colors.gray200,
                 shape = RoundedCornerShape(size = 16.dp)
             )
-            .padding(start = 12.dp, top = 12.dp, end = 12.dp, bottom = 12.dp)
+            .padding(12.dp)
             .clickable { onClick() },
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
         horizontalAlignment = Alignment.CenterHorizontally
@@ -48,7 +48,7 @@ fun TripDatePickerBox(
             )
             Text(
                 text = selectedDate ?: "선택해주세요",
-                style = DduruTheme.typography.Body4,
+                style = DduruTheme.typography.Body2,
                 color = if (selectedDate != null) {
                     DduruTheme.colors.gray868
                 } else {
