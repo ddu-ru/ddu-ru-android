@@ -117,7 +117,7 @@ fun DduruCalendar(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .height(20.dp),
+                            .padding(vertical = 4.dp),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
