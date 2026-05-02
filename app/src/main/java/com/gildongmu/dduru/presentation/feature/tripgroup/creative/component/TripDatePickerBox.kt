@@ -4,7 +4,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -25,19 +26,18 @@ fun TripDatePickerBox(
 ) {
     Column(
         modifier = modifier
-            .width(163.dp)
-            .height(61.dp)
+            .aspectRatio(163f / 61f)
             .background(
                 color = DduruTheme.colors.gray200,
                 shape = RoundedCornerShape(size = 16.dp)
             )
             .padding(12.dp)
-            .clickable { onClick() },
+            .clickable(onClick = onClick),
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.CenterVertically),
-        horizontalAlignment = Alignment.CenterHorizontally
+        horizontalAlignment = Alignment.Start
     ) {
         Column(
-            modifier = Modifier.width(139.dp),
+            modifier = Modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
             horizontalAlignment = Alignment.Start
         ) {
@@ -66,7 +66,8 @@ private fun TripDatePickerBoxEmptyPreview() {
         TripDatePickerBox(
             label = "출발 날짜",
             selectedDate = null,
-            onClick = {}
+            onClick = {},
+            modifier = Modifier.width(163.dp)
         )
     }
 }
@@ -78,7 +79,8 @@ private fun TripDatePickerBoxSelectedPreview() {
         TripDatePickerBox(
             label = "출발 날짜",
             selectedDate = "2025년 10월 06일",
-            onClick = {}
+            onClick = {},
+            modifier = Modifier.width(163.dp)
         )
     }
 }
@@ -90,7 +92,8 @@ private fun TripDatePickerBoxArrivalPreview() {
         TripDatePickerBox(
             label = "도착 날짜",
             selectedDate = "2025년 10월 10일",
-            onClick = {}
+            onClick = {},
+            modifier = Modifier.width(163.dp)
         )
     }
 }
