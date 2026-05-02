@@ -92,7 +92,7 @@ fun DduruCalendar(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_chevron_left),
-                    contentDescription = "이전 달",
+                    contentDescription = null,
                     tint = DduruTheme.colors.black,
                     modifier = Modifier
                         .size(16.dp)
@@ -105,7 +105,7 @@ fun DduruCalendar(
                 )
                 Icon(
                     painter = painterResource(R.drawable.ic_chevron_right),
-                    contentDescription = "다음 달",
+                    contentDescription = null,
                     tint = DduruTheme.colors.black,
                     modifier = Modifier
                         .size(16.dp)
