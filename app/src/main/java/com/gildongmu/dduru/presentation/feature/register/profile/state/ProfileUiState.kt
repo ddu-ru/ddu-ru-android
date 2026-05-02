@@ -4,6 +4,7 @@ import com.gildongmu.dduru.domain.register.model.SurveyStatus
 
 data class ProfileUiState(
     val surveyStatus: SurveyStatus = SurveyStatus.NOT_STARTED,
+    val isSurveyStatusFetchFailed: Boolean = false,
     val isImageUploading: Boolean = false,
     val isSubmitting: Boolean = false,
     val isNicknameValid: Boolean = false,

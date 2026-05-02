@@ -190,7 +190,10 @@ class ProfileViewModel @Inject constructor(
     fun onProfileOptionSelected(option: ProfileImageCropOption) {
         if (
             option.type == ProfileEditOption.CHARACTER &&
-            _uiState.value.surveyStatus != SurveyStatus.COMPLETED
+            (
+                _uiState.value.surveyStatus != SurveyStatus.COMPLETED ||
+                    _uiState.value.isSurveyStatusFetchFailed
+                )
         ) {
             return
         }
@@ -231,7 +234,12 @@ class ProfileViewModel @Inject constructor(
         viewModelScope.launch {
             onboardingStatusRepository.getSurveyStatus()
                 .onSuccess { surveyStatus ->
-                    _uiState.update { it.copy(surveyStatus = surveyStatus) }
+                    _uiState.update {
+                        it.copy(
+                            surveyStatus = surveyStatus,
+                            isSurveyStatusFetchFailed = false
+                        )
+                    }
                     if (surveyStatus != SurveyStatus.COMPLETED &&
                         _formState.value.selectedOption == ProfileEditOption.CHARACTER
                     ) {
@@ -240,7 +248,7 @@ class ProfileViewModel @Inject constructor(
                     checkCanStart()
                 }
                 .onFailure {
-                    _uiState.update { it.copy(surveyStatus = SurveyStatus.NOT_STARTED) }
+                    _uiState.update { it.copy(isSurveyStatusFetchFailed = true) }
                     if (_formState.value.selectedOption == ProfileEditOption.CHARACTER) {
                         _formState.update { it.copy(selectedOption = ProfileEditOption.CUSTOM) }
                     }

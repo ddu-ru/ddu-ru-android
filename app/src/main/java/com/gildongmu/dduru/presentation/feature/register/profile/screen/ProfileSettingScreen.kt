@@ -178,7 +178,8 @@ fun ProfileSettingScreen(
                     selectedImageUri = formState.selectedImageUri,
                     onOptionSelected = onOptionSelected,
                     characterBackgroundColor = formState.savedBgColor,
-                    isLocked = state.surveyStatus != SurveyStatus.COMPLETED,
+                    isLocked = state.surveyStatus != SurveyStatus.COMPLETED ||
+                        state.isSurveyStatusFetchFailed,
                     onActionClick = onActionClick
                 )
 
