@@ -48,9 +48,23 @@ fun DduruCalendar(
             }
         )
     }
-    val hasRange = selectedStartDate != null && selectedEndDate != null
+
+    val normalizedStartDate =
+        if (selectedStartDate != null && selectedEndDate != null && selectedStartDate.isAfter(selectedEndDate)) {
+            selectedEndDate
+        } else {
+            selectedStartDate
+        }
+    val normalizedEndDate =
+        if (selectedStartDate != null && selectedEndDate != null && selectedStartDate.isAfter(selectedEndDate)) {
+            selectedStartDate
+        } else {
+            selectedEndDate
+        }
+
+    val hasRange = normalizedStartDate != null && normalizedEndDate != null
     val statusText = if (hasRange) {
-        val nights = ChronoUnit.DAYS.between(selectedStartDate, selectedEndDate).toInt()
+        val nights = ChronoUnit.DAYS.between(normalizedStartDate, normalizedEndDate).toInt()
         "총 ${nights}박 ${nights + 1}일"
     } else {
         "날짜를 선택하세요"
@@ -131,7 +145,7 @@ fun DduruCalendar(
             }
 
             val firstDay = currentYearMonth.atDay(1)
-            val startOffset = firstDay.dayOfWeek.value - 1 // Mon=0 … Sun=6
+            val startOffset = (firstDay.dayOfWeek.value - 1) % 7
             val daysInMonth = currentYearMonth.lengthOfMonth()
             val prevMonth = currentYearMonth.minusMonths(1)
             val nextMonth = currentYearMonth.plusMonths(1)
@@ -155,8 +169,8 @@ fun DduruCalendar(
                         CalendarDayCell(
                             date = date,
                             isCurrentMonth = isCurrentMonth,
-                            startDate = selectedStartDate,
-                            endDate = selectedEndDate,
+                            startDate = normalizedStartDate,
+                            endDate = normalizedEndDate,
                             onClick = { if (isCurrentMonth) onDateSelected(date) },
                             modifier = Modifier.weight(1f)
                         )
