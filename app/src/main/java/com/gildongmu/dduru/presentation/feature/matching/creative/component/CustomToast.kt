@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.tripgroup.creative.component
+package com.gildongmu.dduru.presentation.feature.matching.creative.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,7 +21,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.wear.compose.material.Text
+import androidx.compose.material3.Text
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
