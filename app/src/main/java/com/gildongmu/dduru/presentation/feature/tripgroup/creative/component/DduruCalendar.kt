@@ -171,7 +171,7 @@ fun DduruCalendar(
                             isCurrentMonth = isCurrentMonth,
                             startDate = normalizedStartDate,
                             endDate = normalizedEndDate,
-                            onClick = { if (isCurrentMonth) onDateSelected(date) },
+                            onClick = { onDateSelected(date) },
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -222,7 +222,7 @@ private fun CalendarDayCell(
                 } ?: Modifier
             )
             .then(if (!isCurrentMonth) Modifier.alpha(0.1f) else Modifier)
-            .noRippleClickable(onClick = onClick),
+            .then(if (isCurrentMonth) Modifier.noRippleClickable(onClick = onClick) else Modifier),
         contentAlignment = Alignment.Center
     ) {
         val circleModifier: Modifier = when {
