@@ -30,9 +30,9 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun OptionalCheckbox(
-    checked: Boolean,
-    onCheckedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier,
+    checked: Boolean = false,
+    onCheckedChange: (Boolean) -> Unit,
     text: String
 ) {
     val iconBackgroundColor = if (checked) {
