@@ -37,6 +37,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import kotlin.math.floor
 import kotlin.math.roundToInt
 
 @Composable
@@ -92,8 +93,8 @@ fun AgeRangeBar(
 
         if (segmentWidthPx <= 0f) return 0
 
-        return ((x - capWidthPx) / segmentWidthPx)
-            .roundToInt()
+        return floor((x - capWidthPx) / segmentWidthPx)
+            .toInt()
             .coerceIn(0, ages.lastIndex - 1)
     }
 
