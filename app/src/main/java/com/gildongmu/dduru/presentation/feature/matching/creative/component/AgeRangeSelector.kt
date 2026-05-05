@@ -140,7 +140,6 @@ fun AgeRangeBar(
                         onDragStart = { offset ->
                             val index = xToIndex(offset.x)
                             dragStartIndex = index
-                            onRangeChanged(ages[index], ages[index + 1])
                         },
                         onDrag = { change, _ ->
                             val start = dragStartIndex ?: return@detectDragGestures
