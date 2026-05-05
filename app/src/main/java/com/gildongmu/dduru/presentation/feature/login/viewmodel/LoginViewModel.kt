@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
+import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.usecase.LoginGoogleUseCase
 import com.gildongmu.dduru.domain.usecase.LoginKakaoUseCase
 import com.gildongmu.dduru.presentation.feature.login.effect.LoginSideEffect
@@ -21,6 +22,7 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class LoginViewModel @Inject constructor(
+    private val authRepository: AuthRepository,
     private val loginGoogleUseCase: LoginGoogleUseCase,
     private val loginKakaoUseCase: LoginKakaoUseCase,
     private val kakaoAuthDataSource: KakaoAuthDataSource
@@ -31,6 +33,8 @@ class LoginViewModel @Inject constructor(
 
     private val _sideEffect = MutableSharedFlow<LoginSideEffect>()
     val sideEffect: SharedFlow<LoginSideEffect> = _sideEffect.asSharedFlow()
+    private val _isPolicySheetVisible = MutableStateFlow(false)
+    val isPolicySheetVisible: StateFlow<Boolean> = _isPolicySheetVisible
 
     fun startGoogleLogin(context: Context) {
         viewModelScope.launch {
@@ -88,8 +92,15 @@ class LoginViewModel @Inject constructor(
             _sideEffect.emit(LoginSideEffect.ShowError("카카오 로그인에 실패했습니다. 다시 시도해주세요."))
         }
     }
+    fun onPolicyClick() {
+        _isPolicySheetVisible.value = true
+    }
 
     private fun updateLoading(isLoading: Boolean) {
         _uiState.value = _uiState.value.copy(isLoading = isLoading)
+    }
+
+    fun onDismissPolicySheet() {
+        _isPolicySheetVisible.value = false
     }
 }
