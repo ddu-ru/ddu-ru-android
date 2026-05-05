@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.tripgroup.creative.component
+package com.gildongmu.dduru.presentation.feature.matching.creative.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -35,8 +35,8 @@ import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.core.designsystem.typography.Pretendard
-import com.gildongmu.dduru.presentation.feature.tripgroup.creative.uistate.RecruitmentCountNum
-import com.gildongmu.dduru.presentation.feature.tripgroup.creative.uistate.RecruitmentCountUiState
+import com.gildongmu.dduru.presentation.feature.matching.creative.uistate.RecruitmentCountNum
+import com.gildongmu.dduru.presentation.feature.matching.creative.uistate.RecruitmentCountUiState
 
 @Composable
 fun RecruitmentCount(

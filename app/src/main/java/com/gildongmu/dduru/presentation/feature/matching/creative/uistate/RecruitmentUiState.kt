@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.tripgroup.creative.uistate
+package com.gildongmu.dduru.presentation.feature.matching.creative.uistate
 
 object RecruitmentCountNum {
     const val MIN = 2
