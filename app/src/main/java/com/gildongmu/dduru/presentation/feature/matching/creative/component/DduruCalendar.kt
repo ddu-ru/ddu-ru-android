@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.tripgroup.creative.component
+package com.gildongmu.dduru.presentation.feature.matching.creative.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -21,6 +21,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -196,7 +197,7 @@ private fun CalendarDayCell(
     val isInRange = hasRange && date.isAfter(startDate) && date.isBefore(endDate)
     val isPendingStart = isStart && !hasRange
 
-    val rangeBackground: Pair<androidx.compose.ui.graphics.Color, RoundedCornerShape>? = when {
+    val rangeBackground: Pair<Color, RoundedCornerShape>? = when {
         isStart && hasRange && !isEnd -> DduruTheme.colors.secondary to RoundedCornerShape(
             topStart = 99.dp,
             topEnd = 0.dp,
