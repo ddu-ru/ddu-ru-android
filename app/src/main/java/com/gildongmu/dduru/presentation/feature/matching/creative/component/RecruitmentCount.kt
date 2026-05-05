@@ -142,7 +142,6 @@ private fun CountCircleButton(
                 id = if (isPlus) R.drawable.ic_write_plus else R.drawable.ic_minus
             ),
             contentDescription = if (isPlus) "인원 증가" else "인원 감소",
-            tint = iconTint,
             modifier = Modifier.height(17.dp)
         )
     }
