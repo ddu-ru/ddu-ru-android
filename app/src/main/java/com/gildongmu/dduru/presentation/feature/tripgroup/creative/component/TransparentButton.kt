@@ -23,6 +23,13 @@ import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 
 @Composable
+private fun transparentButtonHazeStyle(): HazeStyle = HazeStyle(
+    tint = DduruTheme.colors.gray50.copy(alpha = 0.14f),
+    blurRadius = 8.dp,
+    noiseFactor = 0f
+)
+
+@Composable
 fun TransparentButton(
     text: String,
     hazeState: HazeState,
@@ -34,15 +41,11 @@ fun TransparentButton(
     val containerShape = RoundedCornerShape(99.dp)
 
     Box(
-        modifier = Modifier
+        modifier = modifier
             .hazeChild(
                 state = hazeState,
                 shape = containerShape,
-                style = HazeStyle(
-                    tint = DduruTheme.colors.gray50.copy(alpha = 0.14f),
-                    blurRadius = 8.dp,
-                    noiseFactor = 0f
-                )
+                style = transparentButtonHazeStyle()
             )
             .background(color = Color.Transparent, shape = containerShape)
             .border(
