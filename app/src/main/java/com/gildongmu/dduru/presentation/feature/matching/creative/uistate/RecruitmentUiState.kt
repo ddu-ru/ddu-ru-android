@@ -7,8 +7,13 @@ object RecruitmentCountNum {
 }
 
 data class RecruitmentCountUiState(
-    val count: Int = RecruitmentCountNum.DEFAULT
+    private val rawCount: Int = RecruitmentCountNum.DEFAULT
 ) {
+    val count: Int = rawCount.coerceIn(
+        RecruitmentCountNum.MIN,
+        RecruitmentCountNum.MAX
+    )
+
     val canIncrease: Boolean
         get() = count < RecruitmentCountNum.MAX
 
