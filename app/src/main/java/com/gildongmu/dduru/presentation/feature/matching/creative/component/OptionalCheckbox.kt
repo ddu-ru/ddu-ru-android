@@ -75,7 +75,7 @@ fun OptionalCheckbox(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_check),
-                contentDescription = if (checked) "선택됨" else "선택 안 됨",
+                contentDescription = null,
                 tint = checkIconColor,
                 modifier = Modifier.width(10.dp)
             )
