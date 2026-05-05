@@ -153,20 +153,22 @@ private fun CountCircleButton(
 private fun RecruitmentCountSelectorPreview() {
     var uiState by remember { mutableStateOf(RecruitmentCountUiState()) }
 
-    Surface(
-        color = Color.White,
-        modifier = Modifier.padding(vertical = 40.dp)
-    ) {
-        RecruitmentCount(
-            uiState = uiState,
-            onCountChange = { newCount ->
-                uiState = uiState.copy(
-                    count = newCount.coerceIn(
-                        RecruitmentCountNum.MIN,
-                        RecruitmentCountNum.MAX
+    DduruTheme {
+        Surface(
+            color = Color.White,
+            modifier = Modifier.padding(vertical = 40.dp)
+        ) {
+            RecruitmentCount(
+                uiState = uiState,
+                onCountChange = { newCount ->
+                    uiState = uiState.copy(
+                        rawCount = newCount.coerceIn(
+                            RecruitmentCountNum.MIN,
+                            RecruitmentCountNum.MAX
+                        )
                     )
-                )
-            }
-        )
+                }
+            )
+        }
     }
 }
