@@ -31,9 +31,9 @@ class OnboardingRegisterRepositoryImpl @Inject constructor(
                 )
             )
 
-            if (response.status != 200) {
+            if (response.code() != 204) {
                 throw ExceptionResponse(
-                    status = response.status
+                    status = response.code()
                 )
             }
             Result.success(Unit)
