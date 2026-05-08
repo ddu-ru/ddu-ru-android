@@ -19,12 +19,14 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
+const val PROFILE_INTRODUCTION_MAX_LENGTH = 60
+
 @Composable
 fun ProfileIntroduction(
     text: String,
-    maxLength: Int,
-    onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    maxLength: Int = PROFILE_INTRODUCTION_MAX_LENGTH,
+    onValueChange: (String) -> Unit
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -48,7 +50,9 @@ fun ProfileIntroduction(
         ) {
             BasicTextField(
                 value = text,
-                onValueChange = onValueChange,
+                onValueChange = { newValue ->
+                    onValueChange(newValue.take(maxLength))
+                },
                 maxLines = 4,
                 textStyle = DduruTheme.typography.Body1.copy(
                     color = Color.Black
