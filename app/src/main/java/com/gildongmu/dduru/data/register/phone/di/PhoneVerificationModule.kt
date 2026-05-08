@@ -1,9 +1,9 @@
-package com.gildongmu.dduru.data.phone.di
+package com.gildongmu.dduru.data.register.phone.di
 
 import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSource
 import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSourceImpl
-import com.gildongmu.dduru.data.phone.api.PhoneVerificationApi
-import com.gildongmu.dduru.data.phone.repository.PhoneVerificationRepositoryImpl
+import com.gildongmu.dduru.data.register.phone.api.PhoneVerificationApi
+import com.gildongmu.dduru.data.register.phone.repository.PhoneVerificationRepositoryImpl
 import com.gildongmu.dduru.domain.phone.PhoneVerificationRepository
 import dagger.Binds
 import dagger.Module

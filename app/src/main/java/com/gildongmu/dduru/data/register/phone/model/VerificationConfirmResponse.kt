@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.data.phone.model
+package com.gildongmu.dduru.data.register.phone.model
 
 import kotlinx.serialization.Serializable
 
