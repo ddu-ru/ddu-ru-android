@@ -1,9 +1,9 @@
-package com.gildongmu.dduru.data.phone.repository
+package com.gildongmu.dduru.data.register.phone.repository
 
 import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSource
-import com.gildongmu.dduru.data.phone.api.PhoneVerificationApi
-import com.gildongmu.dduru.data.phone.model.VerificationConfirmRequest
-import com.gildongmu.dduru.data.phone.model.VerificationSendRequest
+import com.gildongmu.dduru.data.register.phone.api.PhoneVerificationApi
+import com.gildongmu.dduru.data.register.phone.model.VerificationConfirmRequest
+import com.gildongmu.dduru.data.register.phone.model.VerificationSendRequest
 import com.gildongmu.dduru.domain.entity.ExceptionResponse
 import com.gildongmu.dduru.domain.phone.PhoneVerificationRepository
 import javax.inject.Inject

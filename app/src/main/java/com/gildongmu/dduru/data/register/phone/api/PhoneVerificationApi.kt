@@ -1,9 +1,9 @@
-package com.gildongmu.dduru.data.phone.api
+package com.gildongmu.dduru.data.register.phone.api
 
-import com.gildongmu.dduru.data.phone.model.VerificationConfirmRequest
-import com.gildongmu.dduru.data.phone.model.VerificationConfirmResponse
-import com.gildongmu.dduru.data.phone.model.VerificationSendRequest
-import com.gildongmu.dduru.data.phone.model.VerificationSendResponse
+import com.gildongmu.dduru.data.register.phone.model.VerificationConfirmRequest
+import com.gildongmu.dduru.data.register.phone.model.VerificationConfirmResponse
+import com.gildongmu.dduru.data.register.phone.model.VerificationSendRequest
+import com.gildongmu.dduru.data.register.phone.model.VerificationSendResponse
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import retrofit2.http.Body
 import retrofit2.http.PATCH
