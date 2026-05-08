@@ -26,15 +26,18 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.presentation.component.SpeechBubble
+import com.gildongmu.dduru.presentation.feature.register.component.ValidationMessage
 import com.gildongmu.dduru.presentation.feature.register.profile.component.NicknameInput
+import com.gildongmu.dduru.presentation.feature.register.profile.component.PROFILE_INTRODUCTION_MAX_LENGTH
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
-import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileUiState
-import com.gildongmu.dduru.presentation.feature.register.profile.util.SurveyStatus
+import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
+import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
 import com.gildongmu.dduru.presentation.feature.register.profile.util.rememberGalleryLauncher
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 
@@ -44,6 +47,7 @@ fun ProfileSettingRoute(
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
+    val formState by viewModel.formState.collectAsState()
     val characterImageRes by viewModel.characterImageRes.collectAsState()
 
     var showCharacterCustomScreen by remember { mutableStateOf(false) }
@@ -55,6 +59,7 @@ fun ProfileSettingRoute(
     ProfileSettingScreen(
         modifier = modifier,
         state = state,
+        formState = formState,
         options = viewModel.radioOptions,
         characterImageRes = characterImageRes,
         onRandomClick = viewModel::onRandomNickname,
@@ -62,7 +67,7 @@ fun ProfileSettingRoute(
         onIntroductionChange = viewModel::onIntroductionChanged,
         onOptionSelected = viewModel::onProfileOptionSelected,
         onActionClick = {
-            if (state.selectedOption == ProfileEditOption.CHARACTER) {
+            if (formState.selectedOption == ProfileEditOption.CHARACTER) {
                 showCharacterCustomScreen = true
             } else {
                 galleryLauncher.launch("image/*")
@@ -77,13 +82,14 @@ fun ProfileSettingRoute(
         onDismissCharacterCustom = {
             showCharacterCustomScreen = false
         },
-        onStartClick = {}
+        onStartClick = viewModel::onStartClick
     )
 }
 
 @Composable
 fun ProfileSettingScreen(
     state: ProfileUiState,
+    formState: ProfileFormState,
     options: List<ProfileImageCropOption>,
     characterImageRes: Int,
     modifier: Modifier = Modifier,
@@ -119,6 +125,15 @@ fun ProfileSettingScreen(
                         style = DduruTheme.typography.Title2,
                         textAlign = TextAlign.Center,
                         color = DduruTheme.colors.gray700
+                    )
+                }
+
+                if (!state.submitErrorMessage.isNullOrBlank()) {
+                    ValidationMessage(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(bottom = 8.dp),
+                        text = state.submitErrorMessage
                     )
                 }
 
@@ -159,20 +174,30 @@ fun ProfileSettingScreen(
 
                 ProfileImageSelector(
                     options = options,
-                    selectedOption = state.selectedOption,
-                    selectedImageUri = state.selectedImageUri,
+                    selectedOption = formState.selectedOption,
+                    selectedImageUri = formState.selectedImageUri,
                     onOptionSelected = onOptionSelected,
-                    characterBackgroundColor = state.savedBgColor,
-                    isLocked = state.isSurveyComplete == SurveyStatus.SKIPPED,
+                    characterBackgroundColor = formState.savedBgColor,
+                    isLocked = state.surveyStatus != SurveyStatus.COMPLETED ||
+                        state.isSurveyStatusFetchFailed,
                     onActionClick = onActionClick
                 )
+
+                if (!state.imageErrorMessage.isNullOrBlank()) {
+                    ValidationMessage(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(top = 8.dp),
+                        text = state.imageErrorMessage
+                    )
+                }
 
                 Spacer(Modifier.weight(24f))
 
                 NicknameInput(
                     modifier = Modifier,
                     onRandomClick = onRandomClick,
-                    text = state.nickname,
+                    text = formState.nickname,
                     onValueChange = onNicknameChange,
                     validationMessage = state.nicknameErrorMessage ?: ""
                 )
@@ -180,8 +205,8 @@ fun ProfileSettingScreen(
                 Spacer(Modifier.weight(32f))
 
                 ProfileIntroduction(
-                    text = state.introduction,
-                    maxLength = 20,
+                    text = formState.introduction,
+                    maxLength = PROFILE_INTRODUCTION_MAX_LENGTH,
                     onValueChange = onIntroductionChange,
                     modifier = Modifier.fillMaxWidth()
                 )
@@ -191,7 +216,7 @@ fun ProfileSettingScreen(
 
         if (showCharacterCustomScreen) {
             ProfileCharacterCustomDialog(
-                selectedBg = state.selectedBgColor,
+                selectedBg = formState.selectedBgColor,
                 characterImage = characterImageRes,
                 avatarName = "",
                 onBgColorSelected = onBgColorSelected,
@@ -208,13 +233,17 @@ private fun ProfileScreenPreview() {
     DduruTheme {
         ProfileSettingScreen(
             state = ProfileUiState(
+                nicknameErrorMessage = null,
+                imageErrorMessage = null,
+                submitErrorMessage = null,
+                canStart = true
+            ),
+            formState = ProfileFormState(
                 selectedOption = ProfileEditOption.CUSTOM,
                 selectedBgColor = Color.White,
                 savedBgColor = Color.White,
                 nickname = "",
-                introduction = "",
-                nicknameErrorMessage = null,
-                canStart = true
+                introduction = ""
             ),
             options = listOf(
                 ProfileImageCropOption(
