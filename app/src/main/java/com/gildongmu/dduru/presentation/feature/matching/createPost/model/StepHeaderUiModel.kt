@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.matching.creative.model
+package com.gildongmu.dduru.presentation.feature.matching.createPost.model
 
 data class StepHeaderUiModel(
     val step: Int,

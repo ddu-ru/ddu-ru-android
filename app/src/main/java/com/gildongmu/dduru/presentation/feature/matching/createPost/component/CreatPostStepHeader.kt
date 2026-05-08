@@ -1,6 +1,5 @@
-package com.gildongmu.dduru.presentation.feature.matching.creative.component
+package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -14,17 +13,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.creative.model.StepHeaderUiModel
+import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 
 @Composable
-fun CreativeStepHeader(
+fun CreatePostStepHeader(
     uiModel: StepHeaderUiModel,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .background(DduruTheme.colors.gray0)
     ) {
         Surface(
             color = DduruTheme.colors.secondary100,
@@ -42,7 +40,7 @@ fun CreativeStepHeader(
 
         Text(
             text = uiModel.title,
-            color = DduruTheme.colors.black,
+            color = DduruTheme.colors.gray868,
             style = DduruTheme.typography.H1
         )
 
@@ -62,7 +60,7 @@ fun CreativeStepHeader(
 private fun WhereToLeavePreview() {
     DduruTheme {
         Surface(color = DduruTheme.colors.gray0) {
-            CreativeStepHeader(
+            CreatePostStepHeader(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 52.dp),
                 uiModel = StepHeaderUiModel(
                     step = 1,
@@ -79,7 +77,7 @@ private fun WhereToLeavePreview() {
 private fun WhenToLeavePreview() {
     DduruTheme {
         Surface(color = DduruTheme.colors.gray0) {
-            CreativeStepHeader(
+            CreatePostStepHeader(
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 52.dp),
                 uiModel = StepHeaderUiModel(
                     step = 2,
