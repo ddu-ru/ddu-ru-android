@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.tripgroup.creative.component
+package com.gildongmu.dduru.presentation.feature.tripgroup.createPost.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Arrangement
