@@ -1,0 +1,29 @@
+package com.gildongmu.dduru.presentation.feature.matching.creative.uistate
+
+object RecruitmentCountNum {
+    const val MIN = 2
+    const val MAX = 10
+    const val DEFAULT = 2
+}
+
+data class RecruitmentCountUiState(
+    private val rawCount: Int = RecruitmentCountNum.DEFAULT
+) {
+    val count: Int = rawCount.coerceIn(
+        RecruitmentCountNum.MIN,
+        RecruitmentCountNum.MAX
+    )
+
+    val canIncrease: Boolean
+        get() = count < RecruitmentCountNum.MAX
+
+    val canDecrease: Boolean
+        get() = count > RecruitmentCountNum.MIN
+
+    val recruitmentCountMessage: String
+        get() = if (count >= RecruitmentCountNum.MAX) {
+            "10명 이상 설정할 수 없어요"
+        } else {
+            "나를 포함한 총 모집 인원이에요.\n2명 이상 설정해 주세요"
+        }
+}
