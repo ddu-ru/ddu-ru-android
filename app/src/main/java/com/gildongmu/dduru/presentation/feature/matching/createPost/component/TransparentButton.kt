@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.tripgroup.creative.component
+package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
