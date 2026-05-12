@@ -1,9 +1,9 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,7 +34,7 @@ fun RecruitmentCountSection(
     val stepHeaderRecruitmentCount = StepHeaderUiModel(
         step = 3,
         title = "모집 인원과 동행 형태를 설정해 주세요",
-        subtitle = "몇 명이 함께할지, 어떤 방식으로 동행할지 선택해 주세요",
+        subtitle = "몇 명이 함께할지, 어떤 방식으로 동행할지 선택해 주세요"
     )
     val selectedButtonColors = DduruButtonEnabledColors(
         backgroundColor = DduruTheme.colors.secondary,
@@ -53,6 +53,15 @@ fun RecruitmentCountSection(
         borderColor = DduruTheme.colors.gray300
     )
     val isCompanionTypeSelectionEnabled = !uiState.isCompanionTypeOptional
+    val isFullSelected =
+        uiState.selectedCompanionType == CompanionType.FULL &&
+            !uiState.isCompanionTypeOptional
+    val isPartialSelected =
+        uiState.selectedCompanionType == CompanionType.PARTIAL &&
+            !uiState.isCompanionTypeOptional
+    val isMealSelected =
+        uiState.selectedCompanionType == CompanionType.MEAL &&
+            !uiState.isCompanionTypeOptional
 
     Column(
         modifier = modifier
@@ -100,12 +109,10 @@ fun RecruitmentCountSection(
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         ) {
-
             DduruButton(
-                modifier = Modifier
-                    .weight(1f),
+                modifier = Modifier.weight(1f),
                 text = "전체 동행",
                 onClick = {
                     uiState = uiState.copy(
@@ -114,7 +121,7 @@ fun RecruitmentCountSection(
                     )
                 },
                 enabled = isCompanionTypeSelectionEnabled,
-                enabledColors = if (uiState.selectedCompanionType == CompanionType.FULL && !uiState.isCompanionTypeOptional) {
+                enabledColors = if (isFullSelected) {
                     selectedButtonColors
                 } else {
                     unselectedButtonColors
@@ -134,7 +141,7 @@ fun RecruitmentCountSection(
                     )
                 },
                 enabled = isCompanionTypeSelectionEnabled,
-                enabledColors = if (uiState.selectedCompanionType == CompanionType.PARTIAL && !uiState.isCompanionTypeOptional) {
+                enabledColors = if (isPartialSelected) {
                     selectedButtonColors
                 } else {
                     unselectedButtonColors
@@ -152,7 +159,7 @@ fun RecruitmentCountSection(
                     )
                 },
                 enabled = isCompanionTypeSelectionEnabled,
-                enabledColors = if (uiState.selectedCompanionType == CompanionType.MEAL && !uiState.isCompanionTypeOptional) {
+                enabledColors = if (isMealSelected) {
                     selectedButtonColors
                 } else {
                     unselectedButtonColors
@@ -163,8 +170,7 @@ fun RecruitmentCountSection(
 
         uiState.companionTypeGuideMessage?.let { guideMessage ->
             Text(
-                modifier = Modifier
-                    .padding(top = 16.dp),
+                modifier = Modifier.padding(top = 16.dp),
                 text = guideMessage,
                 style = DduruTheme.typography.Body2,
                 color = DduruTheme.colors.gray400
@@ -178,16 +184,18 @@ fun RecruitmentCountSection(
             onCheckedChange = { isChecked ->
                 uiState = uiState.copy(
                     isCompanionTypeOptional = isChecked,
-                    selectedCompanionType = if (isChecked) null else uiState.selectedCompanionType
+                    selectedCompanionType = if (isChecked) {
+                        null
+                    } else {
+                        uiState.selectedCompanionType
+                    }
                 )
             },
             text = "동행 형태는 상관없어요."
         )
 
         Spacer(modifier = Modifier.weight(130f))
-
     }
-
 }
 
 @Preview(showBackground = true)
