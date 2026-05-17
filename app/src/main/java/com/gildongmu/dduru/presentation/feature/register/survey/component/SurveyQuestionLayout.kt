@@ -26,6 +26,7 @@ import com.gildongmu.dduru.presentation.feature.register.survey.SurveyViewModel
 @Composable
 fun SurveyQuestionLayout(
     questionNumber: Int,
+    totalQuestions: Int,
     questionTitle: String,
     imageUrl: String?,
     onBackClick: () -> Unit,
@@ -65,6 +66,7 @@ fun SurveyQuestionLayout(
         ) {
             QuestionCard(
                 questionNumber = questionNumber,
+                totalQuestions = totalQuestions,
                 questionTitle = questionTitle,
                 imageUrl = imageUrl,
                 token = token,

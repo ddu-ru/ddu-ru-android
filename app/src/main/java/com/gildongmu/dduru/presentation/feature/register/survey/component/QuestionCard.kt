@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.register.survey.component
 
-import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -24,6 +23,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun QuestionCard(
     questionNumber: Int,
+    totalQuestions: Int,
     questionTitle: String,
     imageUrl: String?,
     token: String?,
@@ -67,22 +67,20 @@ fun QuestionCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                QuestionNumberBadge(currentQuestion = questionNumber)
+                QuestionNumberBadge(currentQuestion = questionNumber, totalQuestions = totalQuestions)
                 QuestionTitle(text = questionTitle)
             }
 
-            if (shouldShowImage) {
+            if (shouldShowImage && token != null) {
                 val fullUrl = if (imageUrl!!.startsWith("http")) {
                     imageUrl
                 } else {
                     "${BuildConfig.BASE_URL.trimEnd('/')}/$imageUrl"
                 }
-                Log.d("QuestionCard", "imageUrl: $fullUrl")
-                Log.d("QuestionCard", "token: $token")
                 AsyncImage(
                     model = ImageRequest.Builder(context)
                         .data(fullUrl)
-                        .addHeader("Authorization", "Bearer ${token ?: ""}")
+                        .addHeader("Authorization", "Bearer $token")
                         .build(),
                     contentDescription = null,
                     modifier = Modifier.size(180.dp)

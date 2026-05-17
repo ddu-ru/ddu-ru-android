@@ -18,7 +18,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun QuestionNumberBadge(
     currentQuestion: Int,
-    totalQuestions: Int = 11,
+    totalQuestions: Int,
     label: String = "Question",
     modifier: Modifier = Modifier
 ) {

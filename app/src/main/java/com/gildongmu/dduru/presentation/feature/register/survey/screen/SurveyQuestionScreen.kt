@@ -28,6 +28,7 @@ import com.gildongmu.dduru.presentation.feature.register.survey.component.Survey
 @Composable
 fun SurveyQuestionScreen(
     question: Question,
+    totalQuestions: Int,
     selectedOption: Int?,
     selectedOptions: Set<Int>,
     onOptionSelected: (Int) -> Unit,
@@ -40,6 +41,7 @@ fun SurveyQuestionScreen(
 
     SurveyQuestionLayout(
         questionNumber = question.displayOrder,
+        totalQuestions = totalQuestions,
         questionTitle = question.questionText,
         imageUrl = question.imageUrl,
         onBackClick = onBackClick,

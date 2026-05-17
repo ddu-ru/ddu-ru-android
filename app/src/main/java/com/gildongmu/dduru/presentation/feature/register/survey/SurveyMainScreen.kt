@@ -101,6 +101,7 @@ fun SurveyMainScreen(
 
                     SurveyQuestionScreen(
                         question = question,
+                        totalQuestions = questions.size,
                         selectedOption = selectedOption,
                         selectedOptions = selectedOptions,
                         onOptionSelected = { answer ->
