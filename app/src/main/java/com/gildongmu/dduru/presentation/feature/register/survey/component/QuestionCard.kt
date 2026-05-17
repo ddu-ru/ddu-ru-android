@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.register.survey.component
 
+import android.util.Log
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -13,8 +14,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.gildongmu.dduru.BuildConfig
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -22,13 +26,14 @@ fun QuestionCard(
     questionNumber: Int,
     questionTitle: String,
     imageUrl: String?,
+    token: String?,
     modifier: Modifier = Modifier
 ) {
     val cardShape = remember { RoundedCornerShape(24.dp) }
+    val context = LocalContext.current
 
     val shouldShowImage = !imageUrl.isNullOrEmpty() &&
-        imageUrl != "survey/q7.png" &&
-        !imageUrl.contains("q7")
+        !imageUrl.contains("activity_tags")
 
     Box(
         modifier = modifier
@@ -67,8 +72,18 @@ fun QuestionCard(
             }
 
             if (shouldShowImage) {
+                val fullUrl = if (imageUrl!!.startsWith("http")) {
+                    imageUrl
+                } else {
+                    "${BuildConfig.BASE_URL.trimEnd('/')}/$imageUrl"
+                }
+                Log.d("QuestionCard", "imageUrl: $fullUrl")
+                Log.d("QuestionCard", "token: $token")
                 AsyncImage(
-                    model = imageUrl,
+                    model = ImageRequest.Builder(context)
+                        .data(fullUrl)
+                        .addHeader("Authorization", "Bearer ${token ?: ""}")
+                        .build(),
                     contentDescription = null,
                     modifier = Modifier.size(180.dp)
                 )

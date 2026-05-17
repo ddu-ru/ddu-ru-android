@@ -33,14 +33,9 @@ fun SurveyMainScreen(
 
     BackHandler(enabled = true) {
         when {
-            uiState is SurveyUiState.Success -> {
-            }
-            currentQuestion > 0 -> {
-                viewModel.previousQuestion()
-            }
-            else -> {
-                onBackPressed()
-            }
+            uiState is SurveyUiState.Success -> { /* 결과 화면에서는 뒤로 막기 */ }
+            currentQuestion > 0 -> viewModel.previousQuestion()
+            else -> onBackPressed()
         }
     }
 
@@ -58,9 +53,7 @@ fun SurveyMainScreen(
             }
 
             questionsLoading -> {
-                CircularProgressIndicator(
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
             }
 
             questions.isEmpty() -> {
@@ -83,22 +76,33 @@ fun SurveyMainScreen(
                     val question = questions[questionIndex]
                     val isLastQuestion = currentQuestion == questions.size
 
+                    val selectedOption: Int? = when (question.id) {
+                        "rhythm_q1" -> surveyState.rhythmQ1
+                        "rhythm_q2" -> surveyState.rhythmQ2
+                        "rhythm_q3" -> surveyState.rhythmQ3
+                        "consumption_q1" -> surveyState.consumptionQ1
+                        "consumption_q2" -> surveyState.consumptionQ2
+                        "consumption_q3" -> surveyState.consumptionQ3
+                        "energy_q1" -> surveyState.energyQ1
+                        "energy_q2" -> surveyState.energyQ2
+                        "energy_q3" -> surveyState.energyQ3
+                        "decision_q1" -> surveyState.decisionQ1
+                        "decision_q2" -> surveyState.decisionQ2
+                        "decision_q3" -> surveyState.decisionQ3
+                        "record_style" -> surveyState.recordStyle
+                        else -> null
+                    }
+
+                    val selectedOptions: Set<Int> = if (question.id == "activity_tags") {
+                        surveyState.activityTags
+                    } else {
+                        emptySet()
+                    }
+
                     SurveyQuestionScreen(
                         question = question,
-                        selectedOption = when (question.id) {
-                            "q1" -> surveyState.q1
-                            "q2" -> surveyState.q2
-                            "q3" -> surveyState.q3
-                            "q4" -> surveyState.q4
-                            "q5" -> surveyState.q5
-                            "q6" -> surveyState.q6
-                            "q8" -> surveyState.q8
-                            "q9" -> surveyState.q9
-                            "q10" -> surveyState.q10
-                            "q11" -> surveyState.q11
-                            else -> null
-                        },
-                        selectedOptions = if (question.id == "q7") surveyState.q7 else emptySet(),
+                        selectedOption = selectedOption,
+                        selectedOptions = selectedOptions,
                         onOptionSelected = { answer ->
                             viewModel.updateAnswer(question.id, answer)
                             if (isLastQuestion) {
@@ -108,12 +112,12 @@ fun SurveyMainScreen(
                             }
                         },
                         onOptionToggled = { answer ->
-                            if (question.id == "q7") {
-                                viewModel.toggleQ7Answer(answer)
+                            if (question.id == "activity_tags") {
+                                viewModel.toggleActivityTag(answer)
                             }
                         },
                         onNextClick = {
-                            if (isLastQuestion && question.id == "q7") {
+                            if (isLastQuestion) {
                                 viewModel.submitSurvey()
                             } else {
                                 viewModel.nextQuestion()

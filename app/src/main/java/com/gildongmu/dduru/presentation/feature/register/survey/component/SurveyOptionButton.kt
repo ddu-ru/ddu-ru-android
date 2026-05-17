@@ -2,6 +2,7 @@ package com.gildongmu.dduru.presentation.feature.register.survey.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -13,7 +14,6 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
-import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -44,7 +44,7 @@ fun SurveyOptionButton(
                 },
                 shape = RoundedCornerShape(size = 16.dp)
             )
-            .noRippleClickable(onClick = onClick)
+            .clickable(onClick = onClick)
             .padding(vertical = innerVerticalPadding, horizontal = innerHorizontalPadding),
         contentAlignment = Alignment.Center
     ) {

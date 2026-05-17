@@ -1,15 +1,18 @@
 package com.gildongmu.dduru.domain.entity
 
 data class SurveyAnswers(
-    val q1: Int,
-    val q2: Int,
-    val q3: Int,
-    val q4: Int,
-    val q5: Int,
-    val q6: Int,
-    val q7: List<Int>,
-    val q8: Int,
-    val q9: Int,
-    val q10: Int,
-    val q11: Int
+    val rhythmQ1: Int,
+    val rhythmQ2: Int,
+    val rhythmQ3: Int,
+    val activityTags: List<Int>,
+    val consumptionQ1: Int,
+    val consumptionQ2: Int,
+    val consumptionQ3: Int,
+    val energyQ1: Int,
+    val energyQ2: Int,
+    val energyQ3: Int,
+    val decisionQ1: Int,
+    val decisionQ2: Int,
+    val decisionQ3: Int,
+    val recordStyle: Int
 )

@@ -79,7 +79,7 @@ private fun SingleSelectContent(
             SurveyOptionButton(
                 text = "${option.icon} ${option.text}",
                 isSelected = selectedOption == option.code,
-                onClick = { onOptionSelected(index) }
+                onClick = { onOptionSelected(option.code - 1) }
             )
         }
     }
