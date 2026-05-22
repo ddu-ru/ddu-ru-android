@@ -18,7 +18,6 @@ import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.presentation.feature.login.screen.LoginRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.WelcomeScreen
 import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
-import com.gildongmu.dduru.presentation.feature.register.survey.SurveyMainScreen
 
 @Composable
 fun RootNavigation(
@@ -71,18 +70,7 @@ fun RootNavigation(
                         )
                     }
 
-                    // is RootNavRoute.Register -> NavEntry(route) {}
-                    is RootNavRoute.Register -> NavEntry(route) {
-                        SurveyMainScreen(
-                            onSurveyComplete = {
-                                rootBackStack.clear()
-                                rootBackStack.add(RootNavRoute.Main)
-                            },
-                            onBackPressed = {
-                                rootBackStack.removeLastOrNull()
-                            }
-                        )
-                    }
+                    is RootNavRoute.Register -> NavEntry(route) {}
 
                     is RootNavRoute.Main -> NavEntry(route) {
                         MainScreen()
