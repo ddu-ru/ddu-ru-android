@@ -45,6 +45,8 @@ fun AgeRangeBar(
     selectedStart: Int?,
     selectedEnd: Int?,
     onRangeChanged: (Int, Int) -> Unit,
+    enabled: Boolean = true,
+    isAgeIrrelevant: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val ages = listOf(20, 25, 30, 35, 40, 45, 50, 55, 60)
@@ -52,6 +54,8 @@ fun AgeRangeBar(
     val primary = DduruTheme.colors.primary
     val secondary = DduruTheme.colors.secondary
     val gray0 = DduruTheme.colors.gray0
+    val gray100 = DduruTheme.colors.gray100
+    val gray200 = DduruTheme.colors.gray200
     val gray300 = DduruTheme.colors.gray300
 
     val capWidth = 24.dp
@@ -66,7 +70,9 @@ fun AgeRangeBar(
     val startIndex = selectedStart?.let { ages.indexOf(it) } ?: -1
     val endIndex = selectedEnd?.let { ages.indexOf(it) } ?: -1
 
-    val ageRangeText = if (selectedStart != null && selectedEnd != null) {
+    val ageRangeText = if (isAgeIrrelevant) {
+        "연령무관"
+    } else if (selectedStart != null && selectedEnd != null) {
         "$selectedStart-${selectedEnd}세"
     } else {
         "선택해주세요"
@@ -113,7 +119,7 @@ fun AgeRangeBar(
             Text(
                 text = ageRangeText,
                 style = DduruTheme.typography.Title3,
-                color = if (selectedStart != null && selectedEnd != null) {
+                color = if (isAgeIrrelevant || (selectedStart != null && selectedEnd != null)) {
                     primary
                 } else {
                     DduruTheme.colors.gray500
@@ -128,32 +134,39 @@ fun AgeRangeBar(
             modifier = Modifier
                 .fillMaxWidth()
                 .onSizeChanged { containerWidthPx = it.width.toFloat() }
-                .pointerInput(Unit) {
-                    detectTapGestures(
-                        onTap = { offset ->
-                            val index = xToIndex(offset.x)
-                            onRangeChanged(ages[index], ages[index + 1])
-                        }
-                    )
-                }
-                .pointerInput(Unit) {
-                    detectDragGestures(
-                        onDragStart = { offset ->
-                            val index = xToIndex(offset.x)
-                            dragStartIndex = index
-                        },
-                        onDrag = { change, _ ->
-                            val start = dragStartIndex ?: return@detectDragGestures
-                            val current = xToIndex(change.position.x)
+                .let { baseModifier ->
+                    if (!enabled) {
+                        baseModifier
+                    } else {
+                        baseModifier
+                            .pointerInput(Unit) {
+                                detectTapGestures(
+                                    onTap = { offset ->
+                                        val index = xToIndex(offset.x)
+                                        onRangeChanged(ages[index], ages[index + 1])
+                                    }
+                                )
+                            }
+                            .pointerInput(Unit) {
+                                detectDragGestures(
+                                    onDragStart = { offset ->
+                                        val index = xToIndex(offset.x)
+                                        dragStartIndex = index
+                                    },
+                                    onDrag = { change, _ ->
+                                        val start = dragStartIndex ?: return@detectDragGestures
+                                        val current = xToIndex(change.position.x)
 
-                            val from = minOf(start, current)
-                            val to = maxOf(start, current)
+                                        val from = minOf(start, current)
+                                        val to = maxOf(start, current)
 
-                            onRangeChanged(ages[from], ages[to + 1])
-                        },
-                        onDragEnd = { dragStartIndex = null },
-                        onDragCancel = { dragStartIndex = null }
-                    )
+                                        onRangeChanged(ages[from], ages[to + 1])
+                                    },
+                                    onDragEnd = { dragStartIndex = null },
+                                    onDragCancel = { dragStartIndex = null }
+                                )
+                            }
+                    }
                 }
         ) {
             Column(modifier = Modifier.fillMaxWidth()) {
@@ -185,10 +198,10 @@ fun AgeRangeBar(
 
                     drawPath(
                         path = barPath,
-                        color = gray0
+                        color = if (isAgeIrrelevant) gray100 else gray0
                     )
 
-                    if (startIndex >= 0 && endIndex >= 0) {
+                    if (startIndex >= 0 && endIndex >= 0 && !isAgeIrrelevant) {
                         val selectedLeftXPx = tickX(
                             index = startIndex,
                             capWidthPx = capWidthPx,
@@ -224,7 +237,7 @@ fun AgeRangeBar(
                         )
 
                         drawLine(
-                            color = gray300,
+                            color = if (isAgeIrrelevant) gray200 else gray300,
                             start = Offset(x, 0f),
                             end = Offset(x, barHeightPx),
                             strokeWidth = 1.dp.toPx()
@@ -233,7 +246,7 @@ fun AgeRangeBar(
 
                     drawPath(
                         path = barPath,
-                        color = gray300,
+                        color = if (isAgeIrrelevant) gray200 else gray300,
                         style = Stroke(width = 1.dp.toPx())
                     )
                 }
@@ -273,7 +286,13 @@ fun AgeRangeBar(
                                     .padding(vertical = 8.dp),
                                 textAlign = TextAlign.Center,
                                 style = DduruTheme.typography.Caption2,
-                                color = if (isSelected) primary else DduruTheme.colors.gray500
+                                color = if (isAgeIrrelevant) {
+                                    DduruTheme.colors.gray400
+                                } else if (isSelected) {
+                                    primary
+                                } else {
+                                    DduruTheme.colors.gray500
+                                }
                             )
                         }
                     }
