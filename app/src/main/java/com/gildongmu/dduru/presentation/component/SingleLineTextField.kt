@@ -27,7 +27,7 @@ fun SingleLineTextField(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier,
     maxLength: Int,
-    placeholder: String,
+    placeholder: String
 ) {
     BasicTextField(
         value = value,
@@ -48,7 +48,7 @@ fun SingleLineTextField(
                 Row(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(start = 16.dp,top = 13.dp, bottom = 13.dp),
+                        .padding(start = 16.dp, top = 13.dp, bottom = 13.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Box(
