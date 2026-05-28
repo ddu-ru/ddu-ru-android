@@ -50,7 +50,7 @@ fun ThumbnailImageCard(
             modifier = Modifier
                 .fillMaxSize()
                 .haze(hazeState),
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Crop
 
         )
 
@@ -58,7 +58,7 @@ fun ThumbnailImageCard(
             modifier = Modifier
                 .fillMaxSize()
                 .background(
-                    color = DduruTheme.colors.black.copy(alpha = 0.3f),
+                    color = DduruTheme.colors.black.copy(alpha = 0.3f)
                 )
         )
 
