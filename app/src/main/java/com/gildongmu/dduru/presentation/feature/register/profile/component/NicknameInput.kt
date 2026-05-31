@@ -27,6 +27,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.SingleLineTextField
 import com.gildongmu.dduru.presentation.feature.register.component.ValidationMessage
 
 @Composable
@@ -49,37 +50,12 @@ fun NicknameInput(
         Spacer(Modifier.height(8.dp))
 
         Row(verticalAlignment = Alignment.CenterVertically) {
-            BasicTextField(
+            SingleLineTextField(
                 value = text,
                 onValueChange = onValueChange,
-                singleLine = true,
-                textStyle = DduruTheme.typography.BodyMain.copy(
-                    color = DduruTheme.colors.gray800
-                ),
                 modifier = Modifier.weight(1f),
-                decorationBox = { innerTextField ->
-
-                    Column {
-                        Box(
-                            modifier = Modifier.padding(horizontal = 6.dp, vertical = 13.dp)
-                        ) {
-                            if (text.isEmpty()) {
-                                Text(
-                                    text = "닉네임 입력",
-                                    style = DduruTheme.typography.BodyMain,
-                                    color = DduruTheme.colors.gray400
-                                )
-                            }
-
-                            innerTextField()
-                        }
-
-                        HorizontalDivider(
-                            color = DduruTheme.colors.gray100,
-                            thickness = 2.dp
-                        )
-                    }
-                }
+                maxLength = 10,
+                placeholder = "닉네임을 입력하세요"
             )
 
             Spacer(Modifier.width(12.dp))
