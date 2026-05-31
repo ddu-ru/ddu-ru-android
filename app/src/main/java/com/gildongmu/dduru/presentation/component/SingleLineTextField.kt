@@ -27,7 +27,7 @@ fun SingleLineTextField(
     onValueChange: (String) -> Unit,
     maxLength: Int,
     placeholder: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     BasicTextField(
         value = value,

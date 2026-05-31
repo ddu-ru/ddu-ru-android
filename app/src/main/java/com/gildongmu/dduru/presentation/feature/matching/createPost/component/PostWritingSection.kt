@@ -4,9 +4,9 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
-import androidx.compose.material3.Text
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -36,7 +36,7 @@ fun PostWritingSection(
     }
 
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
     ) {
         CreatePostStepHeader(
             uiModel = stepHeaderPostWriting,
@@ -75,7 +75,7 @@ fun PostWritingSection(
             value = uiState.content,
             onValueChange = { uiState = uiState.copy(content = it) },
             maxLength = 1000,
-            placeholder = "어떤 여행을 하고 싶은지 자유롭게 작성해 보세요. \n최소 20자 이상 작성해 주세요.",
+            placeholder = "어떤 여행을 하고 싶은지 자유롭게 작성해 보세요. \n최소 20자 이상 작성해 주세요."
         )
 
         Spacer(modifier = Modifier.weight(100f))
