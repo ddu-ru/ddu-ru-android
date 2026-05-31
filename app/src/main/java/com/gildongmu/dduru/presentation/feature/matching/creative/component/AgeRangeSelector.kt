@@ -47,7 +47,7 @@ fun AgeRangeBar(
     onRangeChanged: (Int, Int) -> Unit,
     modifier: Modifier = Modifier,
     enabled: Boolean = true,
-    isAgeIrrelevant: Boolean = false,
+    isAgeIrrelevant: Boolean = false
 ) {
     val ages = listOf(20, 25, 30, 35, 40, 45, 50, 55, 60)
 
@@ -147,7 +147,7 @@ fun AgeRangeBar(
                                     }
                                 )
                             }
-                                .pointerInput(enabled, onRangeChanged) {
+                            .pointerInput(enabled, onRangeChanged) {
                                 detectDragGestures(
                                     onDragStart = { offset ->
                                         val index = xToIndex(offset.x)
