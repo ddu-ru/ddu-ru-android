@@ -34,7 +34,7 @@ fun LocationSearchCardComponent(
     country: String,
     modifier: Modifier = Modifier,
     imageResId: Int? = null,
-    onClick: () -> Unit = {},
+    onClick: () -> Unit = {}
 ) {
     val hasImage = imageResId != null
     val resolvedImageResId = imageResId ?: R.drawable.ic_home_location
