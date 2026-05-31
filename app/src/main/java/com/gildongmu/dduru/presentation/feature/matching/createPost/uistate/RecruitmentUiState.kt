@@ -13,7 +13,7 @@ enum class CompanionType {
 }
 
 data class RecruitmentCountUiState(
-    private val rawCount: Int = RecruitmentCountNum.DEFAULT
+    val rawCount: Int = RecruitmentCountNum.DEFAULT
 ) {
     val count: Int = rawCount.coerceIn(
         RecruitmentCountNum.MIN,
