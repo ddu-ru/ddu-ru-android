@@ -4,6 +4,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -41,7 +42,9 @@ fun ProfileIntroduction(
             onValueChange = { newValue ->
                 onValueChange(newValue.take(maxLength))
             },
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier
+                .fillMaxWidth()
+                .heightIn(min = 120.dp),
             maxLength = maxLength,
             placeholder = "나를 소개하는 한마디를 작성해주세요!"
         )
@@ -60,4 +63,3 @@ private fun ProfileIntroductionPreview() {
         )
     }
 }
-
