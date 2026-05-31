@@ -25,9 +25,9 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 fun SingleLineTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
     maxLength: Int,
-    placeholder: String
+    placeholder: String,
+    modifier: Modifier = Modifier
 ) {
     BasicTextField(
         value = value,
