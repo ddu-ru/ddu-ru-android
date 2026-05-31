@@ -25,7 +25,7 @@ import dev.chrisbanes.haze.hazeChild
 
 @Composable
 private fun transparentButtonHazeStyle(): HazeStyle = HazeStyle(
-    tint = DduruTheme.colors.gray50.copy(alpha = 0.14f),
+    tint = DduruTheme.colors.gray50.copy(alpha = 0.22f),
     blurRadius = 8.dp,
     noiseFactor = 0f
 )
@@ -43,12 +43,6 @@ fun TransparentButton(
 
     Box(
         modifier = modifier
-            .hazeChild(
-                state = hazeState,
-                shape = containerShape,
-                style = transparentButtonHazeStyle()
-            )
-            .background(color = Color.Transparent, shape = containerShape)
             .border(
                 width = 0.8.dp,
                 color = DduruTheme.colors.gray0.copy(alpha = 0.2f),
@@ -61,6 +55,20 @@ fun TransparentButton(
             ),
         contentAlignment = Alignment.Center
     ) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .hazeChild(
+                    state = hazeState,
+                    shape = containerShape,
+                    style = transparentButtonHazeStyle()
+                )
+                .background(
+                    color = DduruTheme.colors.gray0.copy(alpha = 0.10f),
+                    shape = containerShape
+                )
+        )
+
         Text(
             text = text,
             modifier = Modifier.padding(contentPadding),
