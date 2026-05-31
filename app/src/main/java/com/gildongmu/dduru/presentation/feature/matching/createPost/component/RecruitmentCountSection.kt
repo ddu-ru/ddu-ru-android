@@ -103,7 +103,7 @@ fun RecruitmentCountSection(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp),
-            text = "동행형태",
+            text = "동행 형태",
             style = DduruTheme.typography.Title3,
             color = DduruTheme.colors.gray800
         )
