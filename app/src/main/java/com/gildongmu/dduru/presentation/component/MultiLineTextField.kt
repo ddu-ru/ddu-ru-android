@@ -28,9 +28,9 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 fun MultiLineTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
     maxLength: Int,
-    placeholder: String
+    placeholder: String,
+    modifier: Modifier = Modifier,
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -47,14 +47,14 @@ fun MultiLineTextField(
                 if (it.length <= maxLength) onValueChange(it)
             },
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 17.dp),
             textStyle = DduruTheme.typography.Body2.copy(
                 color = DduruTheme.colors.gray958
             ),
             decorationBox = { innerTextField ->
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(
