@@ -3,7 +3,10 @@ package com.gildongmu.dduru.presentation.feature.home.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -23,7 +26,8 @@ fun HomeHashtag(
     textStyle: TextStyle,
     backgroundColor: Color,
     contentPadding: PaddingValues,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    trailingIcon: (@Composable (() -> Unit))? = null
 ) {
     Box(
         modifier = modifier
@@ -32,11 +36,20 @@ fun HomeHashtag(
             .padding(contentPadding),
         contentAlignment = Alignment.Center
     ) {
-        Text(
-            text = "#$text",
-            color = textColor,
-            style = textStyle
-        )
+        Row(
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "#$text",
+                color = textColor,
+                style = textStyle
+            )
+
+            trailingIcon?.let {
+                Spacer(modifier = Modifier.width(8.dp))
+                it()
+            }
+        }
     }
 }
 
