@@ -35,7 +35,8 @@ fun RoundedMatchingTextField(
     trailingIcon: @Composable (() -> Unit)? = null,
     keyboardOptions: KeyboardOptions = KeyboardOptions.Default,
     keyboardActions: KeyboardActions = KeyboardActions.Default,
-    maxLines: Int = 1
+    maxLines: Int = 1,
+    singleLine: Boolean = true
 ) {
     TextField(
         value = value,
@@ -51,6 +52,7 @@ fun RoundedMatchingTextField(
         leadingIcon = leadingIcon,
         trailingIcon = trailingIcon,
         maxLines = maxLines,
+        singleLine = singleLine,
         shape = RoundedCornerShape(99.dp),
         keyboardOptions = keyboardOptions,
         keyboardActions = keyboardActions,
