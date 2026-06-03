@@ -94,7 +94,7 @@ fun MatchingCreatePostScaffold(
                     color = DduruTheme.colors.black
                 )
 
-                if (region != null || country != null) {
+                if (!isNowStepOne && (region != null || country != null)) {
                     Spacer(modifier = Modifier.height(4.dp))
                     Row(
                         verticalAlignment = Alignment.CenterVertically,
