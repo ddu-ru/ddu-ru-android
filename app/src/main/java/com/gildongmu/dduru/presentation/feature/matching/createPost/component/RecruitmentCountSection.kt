@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -31,11 +32,14 @@ fun RecruitmentCountSection(
 ) {
     var uiState by remember { mutableStateOf(RecruitmentScreenUiState()) }
 
-    val stepHeaderRecruitmentCount = StepHeaderUiModel(
-        step = 3,
-        title = "모집 인원과 동행 형태를 설정해 주세요",
-        subtitle = "몇 명이 함께할지, 어떤 방식으로 동행할지 선택해 주세요"
-    )
+    val stepHeaderRecruitmentCount = remember {
+        StepHeaderUiModel(
+            step = 3,
+            title = "모집 인원과 동행 형태를 설정해 주세요",
+            subtitle = "몇 명이 함께할지, 어떤 방식으로 동행할지 선택해 주세요"
+        )
+    }
+
     val selectedButtonColors = DduruButtonEnabledColors(
         backgroundColor = DduruTheme.colors.secondary,
         textColor = DduruTheme.colors.primary,
@@ -47,25 +51,29 @@ fun RecruitmentCountSection(
         textColor = DduruTheme.colors.gray500,
         borderColor = DduruTheme.colors.gray200
     )
+
     val disabledButtonColors = DduruButtonDisabledColors(
         backgroundColor = DduruTheme.colors.gray200,
         textColor = DduruTheme.colors.gray400,
         borderColor = DduruTheme.colors.gray300
     )
+
     val isCompanionTypeSelectionEnabled = !uiState.isCompanionTypeOptional
+
     val isFullSelected =
         uiState.selectedCompanionType == CompanionType.FULL &&
-            !uiState.isCompanionTypeOptional
+            isCompanionTypeSelectionEnabled
+
     val isPartialSelected =
         uiState.selectedCompanionType == CompanionType.PARTIAL &&
-            !uiState.isCompanionTypeOptional
+            isCompanionTypeSelectionEnabled
+
     val isMealSelected =
         uiState.selectedCompanionType == CompanionType.MEAL &&
-            !uiState.isCompanionTypeOptional
+            isCompanionTypeSelectionEnabled
 
     Column(
-        modifier = modifier
-            .padding(horizontal = 16.dp),
+        modifier = modifier.padding(horizontal = 16.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CreatePostStepHeader(
@@ -109,7 +117,8 @@ fun RecruitmentCountSection(
         )
 
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             DduruButton(
                 modifier = Modifier.weight(1f),
@@ -130,9 +139,7 @@ fun RecruitmentCountSection(
             )
 
             DduruButton(
-                modifier = Modifier
-                    .weight(1f)
-                    .padding(horizontal = 6.dp),
+                modifier = Modifier.weight(1f),
                 text = "부분 동행",
                 onClick = {
                     uiState = uiState.copy(

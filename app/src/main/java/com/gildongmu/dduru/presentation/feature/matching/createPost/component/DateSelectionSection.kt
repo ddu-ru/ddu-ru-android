@@ -25,8 +25,6 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSelectionTarget
-import com.gildongmu.dduru.presentation.feature.matching.creative.component.DduruCalendar
-import com.gildongmu.dduru.presentation.feature.matching.creative.component.TripDatePickerBox
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 

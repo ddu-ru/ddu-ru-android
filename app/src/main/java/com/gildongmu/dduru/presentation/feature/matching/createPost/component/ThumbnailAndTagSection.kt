@@ -34,7 +34,6 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
-import com.gildongmu.dduru.presentation.feature.tripgroup.createPost.component.RoundedMatchingTextField
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
