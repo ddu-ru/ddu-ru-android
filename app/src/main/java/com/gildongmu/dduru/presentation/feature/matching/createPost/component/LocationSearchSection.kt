@@ -51,7 +51,7 @@ fun LocationSearchSection(
     LocationSearchContent(
         uiState = uiState,
         onUiStateChange = { uiState = it },
-        modifier = modifier,
+        modifier = modifier
     )
 }
 
@@ -63,7 +63,6 @@ fun LocationSearchContent(
     onSearchClick: () -> Unit = {},
     onLocationClick: (LocationSearchItemUiState) -> Unit = {}
 ) {
-
     val stepHeaderLocationSearch = remember {
         StepHeaderUiModel(
             step = 1,
@@ -79,12 +78,11 @@ fun LocationSearchContent(
     }
 
     Column(
-        modifier = modifier,
+        modifier = modifier
     ) {
-
         CreatePostStepHeader(
             uiModel = stepHeaderLocationSearch,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Spacer(modifier = Modifier.weight(24f))
@@ -110,11 +108,9 @@ fun LocationSearchContent(
                     modifier = Modifier.aspectRatio(266f / 123f)
                 )
             }
-
         } else {
-
             Row(
-                modifier = Modifier.fillMaxWidth(),
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Icon(
                     painter = painterResource(id = sectionIconRes),
@@ -140,7 +136,7 @@ fun LocationSearchContent(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 items(
-                    items = uiState.visibleLocations,
+                    items = uiState.visibleLocations
                 ) { location ->
                     LocationSearchCardComponent(
                         region = location.city,
@@ -150,7 +146,6 @@ fun LocationSearchContent(
                 }
             }
         }
-
     }
 }
 
@@ -194,7 +189,7 @@ private fun LocationSearchSectionPreview() {
                     LocationSearchItemUiState(countryName = "일본", city = "후쿠오카"),
                     LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
                     LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-                    LocationSearchItemUiState(countryName = "태국", city = "방콕"),
+                    LocationSearchItemUiState(countryName = "태국", city = "방콕")
                 )
             )
         }
