@@ -48,7 +48,6 @@ fun MatchingCreatePostScaffold(
         modifier = modifier
             .statusBarsPadding()
     ) {
-
         Box(
             modifier = Modifier.fillMaxWidth()
         ) {
@@ -92,7 +91,7 @@ fun MatchingCreatePostScaffold(
                 Text(
                     text = "여행방 생성",
                     style = DduruTheme.typography.H1,
-                    color = DduruTheme.colors.black,
+                    color = DduruTheme.colors.black
                 )
 
                 if (region != null || country != null) {
@@ -105,7 +104,7 @@ fun MatchingCreatePostScaffold(
                             Text(
                                 text = it,
                                 style = DduruTheme.typography.Micro,
-                                color = DduruTheme.colors.gray400,
+                                color = DduruTheme.colors.gray400
                             )
                         }
 
@@ -121,7 +120,7 @@ fun MatchingCreatePostScaffold(
                             Text(
                                 text = it,
                                 style = DduruTheme.typography.Micro,
-                                color = DduruTheme.colors.gray400,
+                                color = DduruTheme.colors.gray400
                             )
                         }
                     }
@@ -160,7 +159,7 @@ fun MatchingCreatePostScaffold(
                 )
             }
         }
-        Spacer(modifier  = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(40.dp))
     }
 }
 
