@@ -25,8 +25,6 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentGenderOption
-import com.gildongmu.dduru.presentation.feature.matching.creative.component.AgeRangeBar
-import com.gildongmu.dduru.presentation.feature.matching.creative.component.OptionalCheckbox
 
 @Composable
 fun RecruitmentAgeSection(

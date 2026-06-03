@@ -4,16 +4,14 @@
     <selectionStates>
       <SelectionState runConfigName="app">
         <option name="selectionMode" value="DROPDOWN" />
+        <DialogSelection />
       </SelectionState>
-      <SelectionState runConfigName="SearchTextFieldPreview">
+      <SelectionState runConfigName="ProfileIntroductionPreview">
         <option name="selectionMode" value="DROPDOWN" />
-        <DropdownSelection timestamp="2026-04-17T15:38:12.042014Z">
-          <Target type="DEFAULT_BOOT">
-            <handle>
-              <DeviceId pluginId="LocalEmulator" identifier="path=/Users/hyem/.android/avd/Medium_Phone_2.avd" />
-            </handle>
-          </Target>
-        </DropdownSelection>
+        <DialogSelection />
+      </SelectionState>
+      <SelectionState runConfigName="ProfileScreenPreview">
+        <option name="selectionMode" value="DROPDOWN" />
         <DialogSelection />
       </SelectionState>
     </selectionStates>
