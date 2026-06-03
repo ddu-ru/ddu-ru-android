@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -49,7 +50,7 @@ fun LocationSearchCardComponent(
                 color = DduruTheme.colors.gray200,
                 shape = RoundedCornerShape(16.dp)
             )
-            .clickable(onClick = onClick)
+            .noRippleClickable(onClick = onClick)
             .padding(all = 17.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
