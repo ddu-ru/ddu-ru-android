@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -28,9 +27,9 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 fun MultiLineTextField(
     value: String,
     onValueChange: (String) -> Unit,
-    modifier: Modifier = Modifier,
     maxLength: Int,
-    placeholder: String
+    placeholder: String,
+    modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
@@ -47,14 +46,14 @@ fun MultiLineTextField(
                 if (it.length <= maxLength) onValueChange(it)
             },
             modifier = Modifier
-                .fillMaxSize()
+                .fillMaxWidth()
                 .padding(horizontal = 16.dp, vertical = 17.dp),
             textStyle = DduruTheme.typography.Body2.copy(
                 color = DduruTheme.colors.gray958
             ),
             decorationBox = { innerTextField ->
                 Column(
-                    modifier = Modifier.fillMaxSize(),
+                    modifier = Modifier.fillMaxWidth(),
                     verticalArrangement = Arrangement.SpaceBetween
                 ) {
                     Box(
