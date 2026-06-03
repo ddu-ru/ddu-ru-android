@@ -80,7 +80,6 @@ fun QuestionCard(
                 AsyncImage(
                     model = ImageRequest.Builder(context)
                         .data(fullUrl)
-                        .addHeader("Authorization", "Bearer $token")
                         .build(),
                     contentDescription = null,
                     modifier = Modifier.size(180.dp)

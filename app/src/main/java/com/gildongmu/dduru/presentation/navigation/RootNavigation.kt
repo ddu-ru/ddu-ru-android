@@ -50,7 +50,7 @@ fun RootNavigation(
                                     rootBackStack.add(RootNavRoute.Welcome)
                                 } else {
                                     rootBackStack.clear()
-                                    rootBackStack.add(RootNavRoute.Register)
+                                    rootBackStack.add(RootNavRoute.Main)
                                 }
                             },
                             onGuestClick = {
