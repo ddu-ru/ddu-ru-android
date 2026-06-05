@@ -3,7 +3,6 @@ package com.gildongmu.dduru.presentation.feature.home.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,39 +10,40 @@ import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.widthIn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Immutable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import coil.compose.SubcomposeAsyncImage
+import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.model.HomePopularDestinationUiModel
 import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun HomeRealtimePopularDestinationSection(
-    items: List<HomePopularDestinationUiModel>,
+    items: ImmutableList<HomePopularDestinationUiModel>,
     updatedText: String,
     onRefreshClick: () -> Unit,
     onItemClick: (HomePopularDestinationUiModel) -> Unit,
@@ -58,43 +58,44 @@ fun HomeRealtimePopularDestinationSection(
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                Text(
-                    text = "✈\uFE0F"
-                )
+                Text(text = "✈\uFE0F") // DS 적용
 
                 Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
-                    text = "실시간 인기", // semi ,+ 8 font
-                    style = DduruTheme.typography.Title1, color = DduruTheme.colors.black
+                    text = "실시간 인기", // DS 적용
+                    style = DduruTheme.typography.Title1,
+                    color = DduruTheme.colors.black
                 )
             }
 
             Spacer(modifier = Modifier.width(8.dp))
 
             RefreshButton(
-                updatedText = updatedText, onClick = onRefreshClick, modifier = Modifier.padding(horizontal = 16.dp)
+                updatedText = updatedText,
+                onClick = onRefreshClick
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         LazyRow(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(
                 items = items, key = { it.id }) { item ->
-                HomeRealtimePopularDestinationCard(
+                HomeBasicCard(
                     rank = item.rank,
-                    destinationName = item.destinationName,
-                    waitingMateCount = item.waitingMateCount,
-                    whyHotText = item.whyHotText,
+                    destination = item.destinationName,
+                    travelerCount = item.waitingMateCount,
                     hashtags = item.hashtags,
+                    companionCount = item.waitingMateCount,
                     imageUrl = item.imageUrl,
                     onClick = { onItemClick(item) },
+                    onJoinClick = { onItemClick(item) },
                     modifier = Modifier
-                        .fillParentMaxWidth(0.52f)
-                        .widthIn(max = 200.dp)
+                        .width(267.dp)
+                        .aspectRatio(267f / 166f)
                 )
             }
         }
@@ -103,15 +104,135 @@ fun HomeRealtimePopularDestinationSection(
 
 @Composable
 private fun HomeBasicCard(
+    imageUrl: String,
     rank: Int,
-    location: String,
-    waitingMateCount: Int,
+    destination: String,
+    travelerCount: Int,
     hashtags: ImmutableList<String>,
     companionCount: Int,
+    modifier: Modifier = Modifier,
+    onClick: () -> Unit = {},
+    onJoinClick: () -> Unit = {},
+) {
 
+    Box(
+        modifier = modifier
+                .clip(RoundedCornerShape(24.dp))
+                .noRippleClickable(onClick = onClick)
     ) {
 
+        AsyncImage(
+            model = imageUrl.takeIf { it.isNotBlank() },
+            contentDescription = null,
+            modifier = Modifier
+                .matchParentSize()
+                .background(DduruTheme.colors.secondary100),
+            contentScale = ContentScale.Crop,
+        )
+
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .background(
+                    Brush.verticalGradient(
+                        colors = listOf(
+                            Color.Black.copy(alpha = 0.7f),
+                            Color.Black.copy(alpha = 0f),
+                        ),
+                    ),
+                ),
+        )
+
+        Column(
+            modifier = Modifier
+                .matchParentSize()
+                .padding(12.dp),
+        ) {
+            Column {
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                ) {
+                    Text(
+                        text = rank.toString(),
+                        color = DduruTheme.colors.gray0,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.ExtraBold, // DS 적용예정
+                    )
+
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Text(
+                        text ="|",
+                        color = DduruTheme.colors.gray0,
+                        fontSize = 28.sp,
+                        fontWeight = FontWeight.ExtraBold, // DS 적용예정
+                    )
+
+                    Box(
+                        modifier = Modifier
+                            .width(1.dp)
+                            .height(38.dp) // 이거 바꾸기 (디자인관련 무늬 나무니,,)
+                            .background(DduruTheme.colors.gray0),
+                    )
+
+                    Spacer(modifier = Modifier.width(8.dp))
+
+                    Column {
+                        Text(
+                            text = destination,
+                            color = DduruTheme.colors.gray0,
+                            style = DduruTheme.typography.Body1
+                        )
+
+                        Text(
+                            text = "${travelerCount}명이 찾는 여행지",
+                            color = DduruTheme.colors.gray400,
+                            style = DduruTheme.typography.Micro2
+                        )
+
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(8.dp))
+
+                HomeHashtags(
+                    hashtags = hashtags,
+                )
+            }
+
+            Spacer(modifier = Modifier.weight(1f))
+
+            HomeCompanionJoinBar(
+                companionCount = companionCount,
+                onJoin = onJoinClick,
+            )
+        }
+
+    }
 }
+
+@Composable
+private fun HomeHashtags(
+    hashtags: ImmutableList<String>,
+    modifier: Modifier = Modifier,
+) {
+    FlowRow(
+        modifier = modifier,
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+    ) {
+        hashtags.take(3).forEach { hashtag ->
+            HomeHashtag(
+                text = hashtag.removePrefix("#"),
+                textColor = DduruTheme.colors.gray0,
+                textStyle = DduruTheme.typography.Micro2, // DS 다시 적용
+                backgroundColor = DduruTheme.colors.gray0.copy(alpha = 0.3f),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+            )
+        }
+    }
+}
+
 
 @Composable
 private fun HomeCompanionJoinBar(
@@ -137,7 +258,8 @@ private fun HomeCompanionJoinBar(
                 horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    "🔥", style = DduruTheme.typography.Micro2
+                    text = "🔥",
+                    style = DduruTheme.typography.Micro2
                 )
 
                 Text(
@@ -173,185 +295,27 @@ private fun HomeCompanionJoinBar(
 }
 
 @Composable
-fun HomeRealtimePopularDestinationCard(
-    rank: Int,
-    destinationName: String,
-    waitingMateCount: Int,
-    whyHotText: String,
-    hashtags: List<String>,
-    imageUrl: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .clip(RoundedCornerShape(16.dp))
-            .background(DduruTheme.colors.gray0)
-            .border(
-                width = 1.dp, color = DduruTheme.colors.gray200, shape = RoundedCornerShape(16.dp)
-            )
-            .clickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 13.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            DestinationThumbnail(
-                imageUrl = imageUrl
-            )
-
-            Spacer(modifier = Modifier.width(8.dp))
-
-            Column(
-                modifier = Modifier.weight(1f)
-            ) {
-                Row(
-                    modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = "#$rank",
-                        style = DduruTheme.typography.Caption1,
-                        color = DduruTheme.colors.primary,
-                        maxLines = 1,
-                        softWrap = false
-                    )
-
-                    Spacer(modifier = Modifier.width(4.dp))
-
-                    Text(
-                        text = destinationName,
-                        style = DduruTheme.typography.Caption2,
-                        color = DduruTheme.colors.black,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
-                }
-
-                Spacer(modifier = Modifier.height(2.dp))
-
-                Text(
-                    text = "${waitingMateCount}명의 메이트 대기중",
-                    style = DduruTheme.typography.Caption2,
-                    color = DduruTheme.colors.gray400,
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        WhyHotBox(
-            text = whyHotText
-        )
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        FlowRow(
-            horizontalArrangement = Arrangement.spacedBy(4.dp)
-        ) {
-            hashtags.forEach { hashtag ->
-                HomeHashtag(
-                    text = hashtag,
-                    textColor = DduruTheme.colors.gray700,
-                    textStyle = DduruTheme.typography.Micro2,
-                    backgroundColor = DduruTheme.colors.gray100,
-                    contentPadding = PaddingValues(
-                        horizontal = 8.dp, vertical = 4.dp
-                    )
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun WhyHotBox(
-    text: String,
-    modifier: Modifier = Modifier,
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .clip(RoundedCornerShape(8.dp))
-            .background(DduruTheme.colors.secondary100)
-            .padding(all = 8.dp)
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Image(
-                painter = painterResource(id = R.drawable.ic_home_twinkle), contentDescription = null
-            )
-
-            Spacer(modifier = Modifier.width(4.dp))
-
-            Text(
-                text = "WHY HOT?", style = DduruTheme.typography.Micro, color = DduruTheme.colors.primary
-            )
-        }
-
-        Spacer(modifier = Modifier.height(8.dp))
-
-        Text(
-            text = "\"$text\"", style = DduruTheme.typography.Caption2, color = DduruTheme.colors.gray846
-        )
-    }
-}
-
-@Composable
-private fun DestinationThumbnail(
-    imageUrl: String,
-    modifier: Modifier = Modifier,
-) {
-    val thumbnailModifier = modifier
-        .size(32.dp)
-        .clip(CircleShape)
-
-    if (imageUrl.isNotBlank()) {
-        SubcomposeAsyncImage(
-            model = imageUrl,
-            contentDescription = null,
-            contentScale = ContentScale.Crop,
-            modifier = thumbnailModifier,
-            loading = {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(DduruTheme.colors.secondary100)
-                )
-            },
-            error = {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(DduruTheme.colors.secondary100)
-                )
-            })
-    } else {
-        Box(
-            modifier = thumbnailModifier.background(DduruTheme.colors.secondary100)
-        )
-    }
-}
-
-@Composable
 private fun RefreshButton(
     updatedText: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
 ) {
     Row(
-        modifier = modifier.clickable(onClick = onClick), verticalAlignment = Alignment.CenterVertically
+        modifier = modifier
+            .noRippleClickable(onClick = onClick),
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Image(
-            painter = painterResource(id = R.drawable.ic_home_arrowscounterclockwise), contentDescription = null
+            painter = painterResource(id = R.drawable.ic_home_arrowscounterclockwise),
+            contentDescription = null
         )
 
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = updatedText, style = DduruTheme.typography.Caption1, color = DduruTheme.colors.gray600
+            text = updatedText,
+            style = DduruTheme.typography.Caption1,
+            color = DduruTheme.colors.gray600
         )
     }
 }
@@ -365,29 +329,47 @@ private fun HomeCompanionJoinBarPreview() {
     }
 }
 
+@Preview
+@Composable
+private fun HomeBasicCardPreview() {
+    DduruTheme {
+        HomeBasicCard(
+            imageUrl = "",
+            rank = 1,
+            destination = "제주도",
+            travelerCount = 14231,
+            hashtags = persistentListOf("힐링", "드라이브", "바다"),
+            companionCount = 8,
+            modifier = Modifier
+                .width(267.dp)
+                .aspectRatio(267f / 166f)
+        )
+    }
+
+}
 @Preview(showBackground = true, widthDp = 375)
 @Composable
 private fun HomeRealtimePopularDestinationSectionPreview() {
     DduruTheme {
         HomeRealtimePopularDestinationSection(
-            items = listOf(
-            HomePopularDestinationUiModel(
-                id = 1L,
-                rank = 1,
-                destinationName = "제주도",
-                waitingMateCount = 14231,
-                whyHotText = "유채꽃이 활짝 폈어요!",
-                hashtags = listOf("힐링", "드라이브", "바다"),
-                imageUrl = ""
-            ), HomePopularDestinationUiModel(
-                id = 2L,
-                rank = 2,
-                destinationName = "강릉",
-                waitingMateCount = 8231,
-                whyHotText = "바다 보러 떠나기 딱 좋아요!",
-                hashtags = listOf("오션뷰", "카페", "산책"),
-                imageUrl = ""
-            )
-        ), updatedText = "방금 전", onRefreshClick = {}, onItemClick = {})
+            items = persistentListOf(
+                HomePopularDestinationUiModel(
+                    id = 1L,
+                    rank = 1,
+                    destinationName = "제주도",
+                    waitingMateCount = 14231,
+                    whyHotText = "유채꽃이 활짝 폈어요!",
+                    hashtags = persistentListOf("힐링", "드라이브", "바다"),
+                    imageUrl = ""
+                ), HomePopularDestinationUiModel(
+                    id = 2L,
+                    rank = 2,
+                    destinationName = "강릉",
+                    waitingMateCount = 8231,
+                    whyHotText = "바다 보러 떠나기 딱 좋아요!",
+                    hashtags = persistentListOf("오션뷰", "카페", "산책"),
+                    imageUrl = ""
+                )
+            ), updatedText = "방금 전", onRefreshClick = {}, onItemClick = {})
     }
 }
