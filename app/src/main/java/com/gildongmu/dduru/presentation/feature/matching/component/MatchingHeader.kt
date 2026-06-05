@@ -20,12 +20,11 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MatchingHeader(
     onCloseClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     TopAppBar(
         modifier = modifier,
@@ -39,7 +38,7 @@ fun MatchingHeader(
                     .shadow(
                         elevation = 8.dp,
                         shape = CircleShape,
-                        clip = false,
+                        clip = false
                     )
                     .clip(CircleShape)
                     .background(DduruTheme.colors.gray0)
@@ -48,10 +47,8 @@ fun MatchingHeader(
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_close),
-                    contentDescription = null,
+                    contentDescription = null
                 )
-
-
             }
         }
     )

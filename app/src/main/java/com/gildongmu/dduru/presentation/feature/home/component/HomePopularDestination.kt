@@ -47,7 +47,7 @@ fun HomeRealtimePopularDestinationSection(
     updatedText: String,
     onRefreshClick: () -> Unit,
     onItemClick: (HomePopularDestinationUiModel) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         Row(
@@ -83,7 +83,9 @@ fun HomeRealtimePopularDestinationSection(
             horizontalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             items(
-                items = items, key = { it.id }) { item ->
+                items = items,
+                key = { it.id }
+            ) { item ->
                 HomeBasicCard(
                     rank = item.rank,
                     destination = item.destinationName,
@@ -112,22 +114,20 @@ private fun HomeBasicCard(
     companionCount: Int,
     modifier: Modifier = Modifier,
     onClick: () -> Unit = {},
-    onJoinClick: () -> Unit = {},
+    onJoinClick: () -> Unit = {}
 ) {
-
     Box(
         modifier = modifier
-                .clip(RoundedCornerShape(24.dp))
-                .noRippleClickable(onClick = onClick)
+            .clip(RoundedCornerShape(24.dp))
+            .noRippleClickable(onClick = onClick)
     ) {
-
         AsyncImage(
             model = imageUrl.takeIf { it.isNotBlank() },
             contentDescription = null,
             modifier = Modifier
                 .matchParentSize()
                 .background(DduruTheme.colors.secondary100),
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Crop
         )
 
         Box(
@@ -137,43 +137,35 @@ private fun HomeBasicCard(
                     Brush.verticalGradient(
                         colors = listOf(
                             Color.Black.copy(alpha = 0.7f),
-                            Color.Black.copy(alpha = 0f),
-                        ),
-                    ),
-                ),
+                            Color.Black.copy(alpha = 0f)
+                        )
+                    )
+                )
         )
 
         Column(
             modifier = Modifier
                 .matchParentSize()
-                .padding(12.dp),
+                .padding(12.dp)
         ) {
             Column {
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = rank.toString(),
                         color = DduruTheme.colors.gray0,
                         fontSize = 28.sp,
-                        fontWeight = FontWeight.ExtraBold, // DS 적용예정
+                        fontWeight = FontWeight.ExtraBold // DS 적용예정
                     )
-
 
                     Spacer(modifier = Modifier.width(8.dp))
 
                     Text(
-                        text ="|",
+                        text = "|",
                         color = DduruTheme.colors.gray0,
                         fontSize = 28.sp,
-                        fontWeight = FontWeight.ExtraBold, // DS 적용예정
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .width(1.dp)
-                            .height(38.dp) // 이거 바꾸기 (디자인관련 무늬 나무니,,)
-                            .background(DduruTheme.colors.gray0),
+                        fontWeight = FontWeight.ExtraBold // DS 적용예정
                     )
 
                     Spacer(modifier = Modifier.width(8.dp))
@@ -190,14 +182,13 @@ private fun HomeBasicCard(
                             color = DduruTheme.colors.gray400,
                             style = DduruTheme.typography.Micro2
                         )
-
                     }
                 }
 
                 Spacer(modifier = Modifier.height(8.dp))
 
                 HomeHashtags(
-                    hashtags = hashtags,
+                    hashtags = hashtags
                 )
             }
 
@@ -205,21 +196,20 @@ private fun HomeBasicCard(
 
             HomeCompanionJoinBar(
                 companionCount = companionCount,
-                onJoin = onJoinClick,
+                onJoin = onJoinClick
             )
         }
-
     }
 }
 
 @Composable
 private fun HomeHashtags(
     hashtags: ImmutableList<String>,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     FlowRow(
         modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
         hashtags.take(3).forEach { hashtag ->
             HomeHashtag(
@@ -227,24 +217,25 @@ private fun HomeHashtags(
                 textColor = DduruTheme.colors.gray0,
                 textStyle = DduruTheme.typography.Micro2, // DS 다시 적용
                 backgroundColor = DduruTheme.colors.gray0.copy(alpha = 0.3f),
-                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp),
+                contentPadding = PaddingValues(horizontal = 8.dp, vertical = 4.dp)
             )
         }
     }
 }
 
-
 @Composable
 private fun HomeCompanionJoinBar(
     companionCount: Int,
     onJoin: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
             .border(
-                width = 1.dp, shape = RoundedCornerShape(12.dp), color = DduruTheme.colors.gray0.copy(alpha = 0.3f)
+                width = 1.dp,
+                shape = RoundedCornerShape(12.dp),
+                color = DduruTheme.colors.gray0.copy(alpha = 0.3f)
             )
             .clip(RoundedCornerShape(12.dp))
             .background(DduruTheme.colors.gray0.copy(alpha = 0.8f))
@@ -252,10 +243,12 @@ private fun HomeCompanionJoinBar(
         contentAlignment = Alignment.Center
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(), verticalAlignment = Alignment.CenterVertically
+            modifier = Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Row(
-                horizontalArrangement = Arrangement.spacedBy(4.dp), verticalAlignment = Alignment.CenterVertically
+                horizontalArrangement = Arrangement.spacedBy(4.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "🔥",
@@ -276,9 +269,10 @@ private fun HomeCompanionJoinBar(
                 horizontalArrangement = Arrangement.spacedBy(3.dp),
                 verticalAlignment = Alignment.CenterVertically
             ) {
-
                 Text(
-                    text = "바로 참여하기", color = DduruTheme.colors.primary, style = DduruTheme.typography.Micro2
+                    text = "바로 참여하기",
+                    color = DduruTheme.colors.primary,
+                    style = DduruTheme.typography.Micro2
                 )
 
                 Icon(
@@ -287,10 +281,8 @@ private fun HomeCompanionJoinBar(
                     modifier = Modifier.size(8.dp),
                     tint = DduruTheme.colors.primary
                 )
-
             }
         }
-
     }
 }
 
@@ -298,7 +290,7 @@ private fun HomeCompanionJoinBar(
 private fun RefreshButton(
     updatedText: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -325,7 +317,9 @@ private fun RefreshButton(
 private fun HomeCompanionJoinBarPreview() {
     DduruTheme {
         HomeCompanionJoinBar(
-            companionCount = 24, onJoin = {})
+            companionCount = 24,
+            onJoin = {}
+        )
     }
 }
 
@@ -345,8 +339,8 @@ private fun HomeBasicCardPreview() {
                 .aspectRatio(267f / 166f)
         )
     }
-
 }
+
 @Preview(showBackground = true, widthDp = 375)
 @Composable
 private fun HomeRealtimePopularDestinationSectionPreview() {
@@ -361,7 +355,8 @@ private fun HomeRealtimePopularDestinationSectionPreview() {
                     whyHotText = "유채꽃이 활짝 폈어요!",
                     hashtags = persistentListOf("힐링", "드라이브", "바다"),
                     imageUrl = ""
-                ), HomePopularDestinationUiModel(
+                ),
+                HomePopularDestinationUiModel(
                     id = 2L,
                     rank = 2,
                     destinationName = "강릉",
@@ -370,6 +365,10 @@ private fun HomeRealtimePopularDestinationSectionPreview() {
                     hashtags = persistentListOf("오션뷰", "카페", "산책"),
                     imageUrl = ""
                 )
-            ), updatedText = "방금 전", onRefreshClick = {}, onItemClick = {})
+            ),
+            updatedText = "방금 전",
+            onRefreshClick = {},
+            onItemClick = {}
+        )
     }
 }
