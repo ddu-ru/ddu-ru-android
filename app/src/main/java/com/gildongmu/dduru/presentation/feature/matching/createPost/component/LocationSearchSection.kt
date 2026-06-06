@@ -29,20 +29,22 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
 import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun LocationSearchSection(
-    uiStateFlow: StateFlow<LocationSearchUiState>,
+    uiStateFlow: StateFlow<MatchingCreatePostUiState>,
     onUiStateChange: (LocationSearchUiState) -> Unit,
     modifier: Modifier = Modifier,
     onSearchClick: () -> Unit = {},
     onLocationClick: (LocationSearchItemUiState) -> Unit = {}
 ) {
-    val uiState = uiStateFlow.collectAsStateWithLifecycle()
+    val screenUiState = uiStateFlow.collectAsStateWithLifecycle()
+    val uiState = screenUiState.value.locationSearchUiState
 
     LocationSearchContent(
-        uiState = uiState.value,
+        uiState = uiState,
         onUiStateChange = onUiStateChange,
         modifier = modifier,
         onSearchClick = onSearchClick,
