@@ -33,4 +33,6 @@ data class MatchingCreatePostUiState(
             MatchingCreatePostStep.POST_WRITING -> postWritingUiState.isNextEnabled
             MatchingCreatePostStep.THUMBNAIL_AND_TAG -> thumbnailAndTagUiState.isNextEnabled
         }
+
+    val popularTags: List<String> = emptyList()
 }

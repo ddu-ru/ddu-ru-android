@@ -170,7 +170,7 @@ fun MatchingCreatePostScreen(
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding)
-                .padding(horizontal = 24.dp)
+                .padding(horizontal = 16.dp)
         ) {
             when (uiState.currentStep) {
 
@@ -214,12 +214,7 @@ fun MatchingCreatePostScreen(
                     ThumbnailAndTagSection(
                         uiState = uiState.thumbnailAndTagUiState,
                         onUiStateChange = onThumbnailAndTagUiStateChange,
-                        popularTags = listOf(
-                            "맛집",
-                            "힐링여행",
-                            "액티비티",
-                            "사진스팟"
-                        )
+                        popularTags = uiState.popularTags
                     )
                 }
             }

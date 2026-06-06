@@ -60,8 +60,7 @@ fun RecruitmentAgeSection(
 
     Column(
         modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp),
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CreatePostStepHeader(uiModel = stepHeaderAge)
