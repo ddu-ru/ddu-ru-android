@@ -17,35 +17,16 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSelectionTarget
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
-import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun DateSelectionSection(
-    uiStateFlow: StateFlow<MatchingCreatePostUiState>,
-    onUiStateChange: (DateSectionUiState) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val screenUiState = uiStateFlow.collectAsStateWithLifecycle()
-    val uiState = screenUiState.value.dateSectionUiState
-
-    DateSelectionContent(
-        uiState = uiState,
-        onUiStateChange = onUiStateChange,
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun DateSelectionContent(
     uiState: DateSectionUiState,
     onUiStateChange: (DateSectionUiState) -> Unit,
     modifier: Modifier = Modifier
@@ -211,7 +192,7 @@ private fun DateSelectionContent(
 private fun DateSelectionSectionPreview() {
     DduruTheme {
         Surface(color = DduruTheme.colors.gray0) {
-            DateSelectionContent(
+            DateSelectionSection(
                 uiState = DateSectionUiState(),
                 onUiStateChange = {},
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 52.dp)

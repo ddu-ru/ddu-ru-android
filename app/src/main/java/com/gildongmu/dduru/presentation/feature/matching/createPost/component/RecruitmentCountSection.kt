@@ -14,36 +14,17 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
-import kotlinx.coroutines.flow.StateFlow
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
 
 @Composable
 fun RecruitmentCountSection(
-    uiStateFlow: StateFlow<MatchingCreatePostUiState>,
-    onUiStateChange: (RecruitmentScreenUiState) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    val screenUiState = uiStateFlow.collectAsStateWithLifecycle()
-    val uiState = screenUiState.value.recruitmentSectionUiState
-
-    RecruitmentCountContent(
-        uiState = uiState,
-        onUiStateChange = onUiStateChange,
-        modifier = modifier
-    )
-}
-
-@Composable
-private fun RecruitmentCountContent(
     uiState: RecruitmentScreenUiState,
     onUiStateChange: (RecruitmentScreenUiState) -> Unit,
     modifier: Modifier = Modifier
@@ -240,7 +221,7 @@ private fun RecruitmentCountSectionPreview() {
         Surface(
             color = DduruTheme.colors.gray0
         ) {
-            RecruitmentCountContent(
+            RecruitmentCountSection(
                 uiState = RecruitmentScreenUiState(),
                 onUiStateChange = {}
             )

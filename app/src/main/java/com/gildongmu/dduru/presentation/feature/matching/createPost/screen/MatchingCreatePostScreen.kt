@@ -51,7 +51,6 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Recr
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingCreatePostViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -73,7 +72,6 @@ fun MatchingCreatePostRoute(
     }
 
     MatchingCreatePostScreen(
-        uiStateFlow = viewModel.uiState,
         uiState = uiState,
         onDismissClick = viewModel::onDismissClick,
         onBackClick = viewModel::onBackClick,
@@ -91,7 +89,6 @@ fun MatchingCreatePostRoute(
 
 @Composable
 fun MatchingCreatePostScreen(
-    uiStateFlow: StateFlow<MatchingCreatePostUiState>,
     uiState: MatchingCreatePostUiState,
     onDismissClick: () -> Unit,
     onBackClick: () -> Unit,
@@ -122,38 +119,38 @@ fun MatchingCreatePostScreen(
         ) {
             when (uiState.currentStep) {
                 MatchingCreatePostStep.LOCATION -> LocationSearchSection(
-                    uiStateFlow = uiStateFlow,
+                    uiState = uiState.locationSearchUiState,
                     onUiStateChange = onLocationSearchUiStateChange,
                     onLocationClick = onLocationSelected,
                     modifier = Modifier
                 )
 
                 MatchingCreatePostStep.DATE -> DateSelectionSection(
-                    uiStateFlow = uiStateFlow,
+                    uiState = uiState.dateSectionUiState,
                     onUiStateChange = onDateSectionUiStateChange,
                     modifier = Modifier
                 )
 
                 MatchingCreatePostStep.RECRUITMENT_COUNT -> RecruitmentCountSection(
-                    uiStateFlow = uiStateFlow,
+                    uiState = uiState.recruitmentSectionUiState,
                     onUiStateChange = onRecruitmentSectionUiStateChange,
                     modifier = Modifier
                 )
 
                 MatchingCreatePostStep.RECRUITMENT_AGE -> RecruitmentAgeSection(
-                    uiStateFlow = uiStateFlow,
+                    uiState = uiState.ageSectionUiState,
                     onUiStateChange = onAgeSectionUiStateChange,
                     modifier = Modifier
                 )
 
                 MatchingCreatePostStep.POST_WRITING -> PostWritingSection(
-                    uiStateFlow = uiStateFlow,
+                    uiState = uiState.postWritingUiState,
                     onUiStateChange = onPostWritingUiStateChange,
                     modifier = Modifier
                 )
 
                 MatchingCreatePostStep.THUMBNAIL_AND_TAG -> ThumbnailAndTagSection(
-                    uiStateFlow = uiStateFlow,
+                    uiState = uiState.thumbnailAndTagUiState,
                     onUiStateChange = onThumbnailAndTagUiStateChange,
                     popularTags = listOf("맛집", "힐링여행", "액티비티", "사진스팟"),
                     modifier = Modifier
@@ -304,7 +301,6 @@ private fun MatchingCreatePostHeader(
 private fun MatchingCreatePostContentPreview() {
     DduruTheme {
         MatchingCreatePostScreen(
-            uiStateFlow = MutableStateFlow(MatchingCreatePostUiState()),
             uiState = MatchingCreatePostUiState(
                 currentStep = MatchingCreatePostStep.DATE,
                 locationSearchUiState = LocationSearchUiState(

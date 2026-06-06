@@ -29,37 +29,15 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
-import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ThumbnailAndTagSection(
-    uiStateFlow: StateFlow<MatchingCreatePostUiState>,
-    onUiStateChange: (ThumbnailAndTagUiState) -> Unit,
-    modifier: Modifier = Modifier,
-    popularTags: List<String> = emptyList()
-) {
-    val screenUiState = uiStateFlow.collectAsStateWithLifecycle()
-    val uiState = screenUiState.value.thumbnailAndTagUiState
-
-    ThumbnailAndTagContent(
-        uiState = uiState,
-        onUiStateChange = onUiStateChange,
-        modifier = modifier,
-        popularTags = popularTags
-    )
-}
-
-@OptIn(ExperimentalLayoutApi::class)
-@Composable
-private fun ThumbnailAndTagContent(
     uiState: ThumbnailAndTagUiState,
     onUiStateChange: (ThumbnailAndTagUiState) -> Unit,
     modifier: Modifier = Modifier,
@@ -239,7 +217,7 @@ private fun ThumbnailAndTagSectionPreview() {
             color = DduruTheme.colors.gray0,
             modifier = Modifier.fillMaxWidth()
         ) {
-            ThumbnailAndTagContent(
+            ThumbnailAndTagSection(
                 uiState = uiState,
                 onUiStateChange = { uiState = it },
                 modifier = Modifier.padding(24.dp),
