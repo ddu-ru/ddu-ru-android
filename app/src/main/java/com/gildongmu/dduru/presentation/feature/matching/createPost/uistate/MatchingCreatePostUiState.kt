@@ -7,7 +7,8 @@ data class MatchingCreatePostUiState(
     val recruitmentSectionUiState: RecruitmentScreenUiState = RecruitmentScreenUiState(),
     val ageSectionUiState: AgeSectionUiState = AgeSectionUiState(),
     val postWritingUiState: PostWritingUiState = PostWritingUiState(),
-    val thumbnailAndTagUiState: ThumbnailAndTagUiState = ThumbnailAndTagUiState()
+    val thumbnailAndTagUiState: ThumbnailAndTagUiState = ThumbnailAndTagUiState(),
+    val popularTags: List<String> = emptyList()
 ) {
     val region: String?
         get() = locationSearchUiState.selectedLocation?.city
@@ -33,6 +34,4 @@ data class MatchingCreatePostUiState(
             MatchingCreatePostStep.POST_WRITING -> postWritingUiState.isNextEnabled
             MatchingCreatePostStep.THUMBNAIL_AND_TAG -> thumbnailAndTagUiState.isNextEnabled
         }
-
-    val popularTags: List<String> = emptyList()
 }
