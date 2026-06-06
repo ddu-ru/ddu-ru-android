@@ -19,11 +19,17 @@ data class MatchingCreatePostUiState(
     val isFirstStep: Boolean
         get() = currentStep == MatchingCreatePostStep.LOCATION
 
-    val isLastStep: Boolean
-        get() = currentStep == MatchingCreatePostStep.THUMBNAIL_AND_TAG
+    val hasBottomButton: Boolean
+        get() = currentStep.hasBottomButton
+
+    val hasBackButton: Boolean
+        get() = currentStep.hasBackButton
+
+    val nextButtonWeight: Float
+        get() = if (hasBackButton) 1f else 2f
 
     val nextButtonText: String
-        get() = if (isLastStep) "작성 완료" else "다음"
+        get() = currentStep.nextButtonText
 
     val isNextEnabled: Boolean
         get() = when (currentStep) {

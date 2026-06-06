@@ -56,7 +56,6 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Recr
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingCreatePostViewModel
 import kotlinx.coroutines.flow.collectLatest
-import kotlin.collections.listOf
 
 @Composable
 fun MatchingCreatePostRoute(
@@ -91,6 +90,7 @@ fun MatchingCreatePostRoute(
         modifier = modifier
     )
 }
+
 @Composable
 fun MatchingCreatePostScreen(
     uiState: MatchingCreatePostUiState,
@@ -123,7 +123,7 @@ fun MatchingCreatePostScreen(
             )
         },
         bottomBar = {
-            if (!uiState.isFirstStep) {
+            if (uiState.hasBottomButton) {
                 Column {
                     Row(
                         modifier = Modifier
@@ -131,13 +131,15 @@ fun MatchingCreatePostScreen(
                             .padding(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        DduruButton(
-                            text = "이전",
-                            onClick = onBackClick,
-                            enabledColors = DduruButtonDefaults.whiteEnabledColors,
-                            disabledColors = DduruButtonDefaults.whiteDisabledColors,
-                            modifier = Modifier.weight(1f)
-                        )
+                        if (uiState.hasBackButton) {
+                            DduruButton(
+                                text = "이전",
+                                onClick = onBackClick,
+                                enabledColors = DduruButtonDefaults.whiteEnabledColors,
+                                disabledColors = DduruButtonDefaults.whiteDisabledColors,
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
 
                         DduruButton(
                             text = uiState.nextButtonText,
@@ -145,7 +147,7 @@ fun MatchingCreatePostScreen(
                             enabled = uiState.isNextEnabled,
                             enabledColors = DduruButtonDefaults.filledEnabledColors,
                             disabledColors = DduruButtonDefaults.whiteDisabledColors,
-                            modifier = Modifier.weight(1f)
+                            modifier = Modifier.weight(uiState.nextButtonWeight)
                         )
                     }
 
@@ -306,30 +308,7 @@ private fun MatchingCreatePostHeader(
 @Composable
 private fun MatchingCreatePostContentPreview() {
     var uiState by remember {
-        mutableStateOf(
-            MatchingCreatePostUiState(
-                currentStep = MatchingCreatePostStep.LOCATION,
-                locationSearchUiState = LocationSearchUiState(
-                    popularLocations = listOf(
-                        LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
-                        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
-                        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-                        LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
-                        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
-                        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-                        LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
-                        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
-                        LocationSearchItemUiState(countryName = "태국", city = "방콕")
-                    )
-                ),
-                thumbnailAndTagUiState = ThumbnailAndTagUiState(
-                    regionName = "도쿄",
-                    countryName = "일본",
-                    addedTags = listOf()
-                ),
-                popularTags = listOf("맛집", "힐링여행", "액티비티", "사진스팟","1", "2", "3", "4", "5", "이러쿵저러쿵")
-            )
-        )
+        mutableStateOf(MatchingCreatePostMockData.screenUiState)
     }
 
     DduruTheme {
@@ -346,8 +325,10 @@ private fun MatchingCreatePostContentPreview() {
                     }
                 },
                 onNextClick = {
-                    uiState.currentStep.nextOrNull()?.let { nextStep ->
-                        uiState = uiState.copy(currentStep = nextStep)
+                    if (uiState.isNextEnabled) {
+                        uiState.currentStep.nextOrNull()?.let { nextStep ->
+                            uiState = uiState.copy(currentStep = nextStep)
+                        }
                     }
                 },
                 onLocationSearchUiStateChange = { locationSearchUiState ->

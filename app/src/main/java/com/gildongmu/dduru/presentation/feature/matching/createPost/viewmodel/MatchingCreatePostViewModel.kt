@@ -2,6 +2,7 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
@@ -27,7 +28,7 @@ import kotlinx.coroutines.launch
 class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(
         MatchingCreatePostUiState(
-            popularTags = listOf("맛집", "힐링여행", "액티비티", "사진스팟","1", "2", "3", "4", "5", "이러쿵저러쿵")
+            popularTags = MatchingCreatePostMockData.popularTags
         )
     )
     val uiState: StateFlow<MatchingCreatePostUiState> = _uiState.asStateFlow()
@@ -36,9 +37,7 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
     val uiEvent: SharedFlow<MatchingCreatePostUiEvent> = _uiEvent.asSharedFlow()
 
     fun onDismissClick() {
-        viewModelScope.launch {
-            _uiEvent.emit(MatchingCreatePostUiEvent.Close)
-        }
+        emitUiEvent(MatchingCreatePostUiEvent.Close)
     }
 
     fun onBackClick() {
@@ -46,20 +45,7 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onNextClick() {
-        val currentState = _uiState.value
-
-        if (!currentState.isNextEnabled) return
-
-        val nextStep = currentState.currentStep.nextOrNull()
-
-        if (nextStep == null) {
-            viewModelScope.launch {
-                _uiEvent.emit(MatchingCreatePostUiEvent.Complete)
-            }
-            return
-        }
-
-        moveToStep(nextStep)
+        moveNextStep()
     }
 
     fun onLocationSearchUiStateChange(locationSearchUiState: LocationSearchUiState) {
@@ -77,7 +63,6 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
                 )
             )
         }
-
         moveToStep(MatchingCreatePostStep.DATE)
     }
 
@@ -117,8 +102,27 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    private fun moveNextStep() {
+        val currentState = _uiState.value
+        if (!currentState.isNextEnabled) return
+
+        val nextStep = currentState.currentStep.nextOrNull()
+        if (nextStep == null) {
+            emitUiEvent(MatchingCreatePostUiEvent.Complete)
+            return
+        }
+
+        moveToStep(nextStep)
+    }
+
     private fun movePreviousStep() {
         val previousStep = _uiState.value.currentStep.previousOrNull() ?: return
         moveToStep(previousStep)
+    }
+
+    private fun emitUiEvent(event: MatchingCreatePostUiEvent) {
+        viewModelScope.launch {
+            _uiEvent.emit(event)
+        }
     }
 }
