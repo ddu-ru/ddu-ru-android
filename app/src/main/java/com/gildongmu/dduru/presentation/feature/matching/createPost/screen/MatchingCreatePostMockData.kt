@@ -12,6 +12,11 @@ object MatchingCreatePostMockData {
         LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
         LocationSearchItemUiState(countryName = "태국", city = "방콕"),
         LocationSearchItemUiState(countryName = "일본", city = "오사카"),
+        LocationSearchItemUiState(countryName = "베트남", city = "다낭"),
+        LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
+        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
+        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
+        LocationSearchItemUiState(countryName = "일본", city = "오사카"),
         LocationSearchItemUiState(countryName = "베트남", city = "다낭")
     )
 
