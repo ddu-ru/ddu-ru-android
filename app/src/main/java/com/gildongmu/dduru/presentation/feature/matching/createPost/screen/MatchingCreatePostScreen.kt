@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
+import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -60,8 +61,8 @@ import kotlinx.coroutines.flow.collectLatest
 fun MatchingCreatePostRoute(
     onClose: () -> Unit,
     onComplete: () -> Unit,
+    modifier: Modifier = Modifier,
     viewModel: MatchingCreatePostViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -89,7 +90,6 @@ fun MatchingCreatePostRoute(
         modifier = modifier
     )
 }
-
 @Composable
 fun MatchingCreatePostScreen(
     uiState: MatchingCreatePostUiState,
@@ -105,107 +105,125 @@ fun MatchingCreatePostScreen(
     onThumbnailAndTagUiStateChange: (ThumbnailAndTagUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
-        modifier = modifier.statusBarsPadding()
-    ) {
-        MatchingCreatePostHeader(
-            isNowStepOne = uiState.isFirstStep,
-            region = uiState.region,
-            country = uiState.country,
-            onDismissClick = onDismissClick
-        )
+    Scaffold(
+        modifier = modifier.fillMaxSize(),
+        containerColor = DduruTheme.colors.gray0,
+        topBar = {
+            MatchingCreatePostHeader(
+                isNowStepOne = uiState.isFirstStep,
+                region = uiState.region,
+                country = uiState.country,
+                onDismissClick = onDismissClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(horizontal = 24.dp)
+            )
+        },
+        bottomBar = {
+            Column {
+                if (uiState.isFirstStep) {
+                    DduruButton(
+                        text = uiState.nextButtonText,
+                        onClick = onNextClick,
+                        enabled = uiState.isNextEnabled,
+                        enabledColors = DduruButtonDefaults.filledEnabledColors,
+                        disabledColors = DduruButtonDefaults.whiteDisabledColors,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp)
+                    )
+                } else {
+                    Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(horizontal = 24.dp),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        DduruButton(
+                            text = "이전",
+                            onClick = onBackClick,
+                            enabledColors = DduruButtonDefaults.whiteEnabledColors,
+                            disabledColors = DduruButtonDefaults.whiteDisabledColors,
+                            modifier = Modifier.weight(1f)
+                        )
 
-        Spacer(modifier = Modifier.height(24.dp))
+                        DduruButton(
+                            text = uiState.nextButtonText,
+                            onClick = onNextClick,
+                            enabled = uiState.isNextEnabled,
+                            enabledColors = DduruButtonDefaults.filledEnabledColors,
+                            disabledColors = DduruButtonDefaults.whiteDisabledColors,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
+                }
+
+                Spacer(
+                    modifier = Modifier.height(40.dp)
+                )
+            }
+        }
+    ) { innerPadding ->
 
         Box(
-            modifier = Modifier.weight(1f)
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(innerPadding)
+                .padding(horizontal = 24.dp)
         ) {
             when (uiState.currentStep) {
-                MatchingCreatePostStep.LOCATION -> LocationSearchSection(
-                    uiState = uiState.locationSearchUiState,
-                    onUiStateChange = onLocationSearchUiStateChange,
-                    onLocationClick = onLocationSelected,
-                    modifier = Modifier
-                )
 
-                MatchingCreatePostStep.DATE -> DateSelectionSection(
-                    uiState = uiState.dateSectionUiState,
-                    onUiStateChange = onDateSectionUiStateChange,
-                    modifier = Modifier
-                )
+                MatchingCreatePostStep.LOCATION -> {
+                    LocationSearchSection(
+                        uiState = uiState.locationSearchUiState,
+                        onUiStateChange = onLocationSearchUiStateChange,
+                        onLocationClick = onLocationSelected
+                    )
+                }
 
-                MatchingCreatePostStep.RECRUITMENT_COUNT -> RecruitmentCountSection(
-                    uiState = uiState.recruitmentSectionUiState,
-                    onUiStateChange = onRecruitmentSectionUiStateChange,
-                    modifier = Modifier
-                )
+                MatchingCreatePostStep.DATE -> {
+                    DateSelectionSection(
+                        uiState = uiState.dateSectionUiState,
+                        onUiStateChange = onDateSectionUiStateChange
+                    )
+                }
 
-                MatchingCreatePostStep.RECRUITMENT_AGE -> RecruitmentAgeSection(
-                    uiState = uiState.ageSectionUiState,
-                    onUiStateChange = onAgeSectionUiStateChange,
-                    modifier = Modifier
-                )
+                MatchingCreatePostStep.RECRUITMENT_COUNT -> {
+                    RecruitmentCountSection(
+                        uiState = uiState.recruitmentSectionUiState,
+                        onUiStateChange = onRecruitmentSectionUiStateChange
+                    )
+                }
 
-                MatchingCreatePostStep.POST_WRITING -> PostWritingSection(
-                    uiState = uiState.postWritingUiState,
-                    onUiStateChange = onPostWritingUiStateChange,
-                    modifier = Modifier
-                )
+                MatchingCreatePostStep.RECRUITMENT_AGE -> {
+                    RecruitmentAgeSection(
+                        uiState = uiState.ageSectionUiState,
+                        onUiStateChange = onAgeSectionUiStateChange
+                    )
+                }
 
-                MatchingCreatePostStep.THUMBNAIL_AND_TAG -> ThumbnailAndTagSection(
-                    uiState = uiState.thumbnailAndTagUiState,
-                    onUiStateChange = onThumbnailAndTagUiStateChange,
-                    popularTags = listOf("맛집", "힐링여행", "액티비티", "사진스팟"),
-                    modifier = Modifier
-                )
+                MatchingCreatePostStep.POST_WRITING -> {
+                    PostWritingSection(
+                        uiState = uiState.postWritingUiState,
+                        onUiStateChange = onPostWritingUiStateChange
+                    )
+                }
+
+                MatchingCreatePostStep.THUMBNAIL_AND_TAG -> {
+                    ThumbnailAndTagSection(
+                        uiState = uiState.thumbnailAndTagUiState,
+                        onUiStateChange = onThumbnailAndTagUiStateChange,
+                        popularTags = listOf(
+                            "맛집",
+                            "힐링여행",
+                            "액티비티",
+                            "사진스팟"
+                        )
+                    )
+                }
             }
         }
-
-        if (uiState.isFirstStep) {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .padding(horizontal = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                DduruButton(
-                    text = uiState.nextButtonText,
-                    onClick = onNextClick,
-                    enabled = uiState.isNextEnabled,
-                    enabledColors = DduruButtonDefaults.filledEnabledColors,
-                    disabledColors = DduruButtonDefaults.whiteDisabledColors,
-                    modifier = Modifier.fillMaxWidth()
-                )
-            }
-        } else {
-            Row(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(48.dp)
-                    .padding(horizontal = 24.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                DduruButton(
-                    text = "이전",
-                    onClick = onBackClick,
-                    enabledColors = DduruButtonDefaults.whiteEnabledColors,
-                    disabledColors = DduruButtonDefaults.whiteDisabledColors,
-                    modifier = Modifier.weight(1f)
-                )
-
-                DduruButton(
-                    text = uiState.nextButtonText,
-                    onClick = onNextClick,
-                    enabled = uiState.isNextEnabled,
-                    enabledColors = DduruButtonDefaults.filledEnabledColors,
-                    disabledColors = DduruButtonDefaults.whiteDisabledColors,
-                    modifier = Modifier.weight(1f)
-                )
-            }
-        }
-
-        Spacer(modifier = Modifier.height(40.dp))
     }
 }
 
