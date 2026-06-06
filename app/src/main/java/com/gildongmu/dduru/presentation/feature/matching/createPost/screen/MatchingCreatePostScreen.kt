@@ -19,6 +19,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -26,6 +27,7 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
@@ -41,6 +43,8 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeS
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiEvent
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
@@ -48,20 +52,29 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Thum
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingCreatePostViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
-fun MatchingCreatePostScreen(
-    viewModel: MatchingCreatePostViewModel,
+fun MatchingCreatePostRoute(
+    onClose: () -> Unit,
+    onComplete: () -> Unit,
+    viewModel: MatchingCreatePostViewModel = hiltViewModel(),
     modifier: Modifier = Modifier
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    MatchingCreatePostContent(
+    LaunchedEffect(Unit) {
+        viewModel.uiEvent.collectLatest { event ->
+            when (event) {
+                MatchingCreatePostUiEvent.Close -> onClose()
+                MatchingCreatePostUiEvent.Complete -> onComplete()
+            }
+        }
+    }
+
+    MatchingCreatePostScreen(
         uiStateFlow = viewModel.uiState,
-        currentStep = uiState.currentStep,
-        region = uiState.region,
-        country = uiState.country,
-        isNextEnabled = uiState.isNextEnabled,
+        uiState = uiState,
         onDismissClick = viewModel::onDismissClick,
         onBackClick = viewModel::onBackClick,
         onNextClick = viewModel::onNextClick,
@@ -77,12 +90,9 @@ fun MatchingCreatePostScreen(
 }
 
 @Composable
-private fun MatchingCreatePostContent(
+fun MatchingCreatePostScreen(
     uiStateFlow: StateFlow<MatchingCreatePostUiState>,
-    currentStep: Int,
-    region: String?,
-    country: String?,
-    isNextEnabled: Boolean,
+    uiState: MatchingCreatePostUiState,
     onDismissClick: () -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
@@ -95,16 +105,13 @@ private fun MatchingCreatePostContent(
     onThumbnailAndTagUiStateChange: (ThumbnailAndTagUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val isNowStepOne = currentStep == 1
-    val nextButtonText = if (currentStep == 6) "작성 완료" else "다음"
-
     Column(
         modifier = modifier.statusBarsPadding()
     ) {
         MatchingCreatePostHeader(
-            isNowStepOne = isNowStepOne,
-            region = region,
-            country = country,
+            isNowStepOne = uiState.isFirstStep,
+            region = uiState.region,
+            country = uiState.country,
             onDismissClick = onDismissClick
         )
 
@@ -113,48 +120,48 @@ private fun MatchingCreatePostContent(
         Box(
             modifier = Modifier.weight(1f)
         ) {
-            when (currentStep) {
-                1 -> LocationSearchSection(
+            when (uiState.currentStep) {
+                MatchingCreatePostStep.LOCATION -> LocationSearchSection(
                     uiStateFlow = uiStateFlow,
                     onUiStateChange = onLocationSearchUiStateChange,
                     onLocationClick = onLocationSelected,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier
                 )
 
-                2 -> DateSelectionSection(
+                MatchingCreatePostStep.DATE -> DateSelectionSection(
                     uiStateFlow = uiStateFlow,
                     onUiStateChange = onDateSectionUiStateChange,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier
                 )
 
-                3 -> RecruitmentCountSection(
+                MatchingCreatePostStep.RECRUITMENT_COUNT -> RecruitmentCountSection(
                     uiStateFlow = uiStateFlow,
                     onUiStateChange = onRecruitmentSectionUiStateChange,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier
                 )
 
-                4 -> RecruitmentAgeSection(
+                MatchingCreatePostStep.RECRUITMENT_AGE -> RecruitmentAgeSection(
                     uiStateFlow = uiStateFlow,
                     onUiStateChange = onAgeSectionUiStateChange,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier
                 )
 
-                5 -> PostWritingSection(
+                MatchingCreatePostStep.POST_WRITING -> PostWritingSection(
                     uiStateFlow = uiStateFlow,
                     onUiStateChange = onPostWritingUiStateChange,
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier
                 )
 
-                6 -> ThumbnailAndTagSection(
+                MatchingCreatePostStep.THUMBNAIL_AND_TAG -> ThumbnailAndTagSection(
                     uiStateFlow = uiStateFlow,
                     onUiStateChange = onThumbnailAndTagUiStateChange,
                     popularTags = listOf("맛집", "힐링여행", "액티비티", "사진스팟"),
-                    modifier = Modifier.padding(horizontal = 24.dp)
+                    modifier = Modifier
                 )
             }
         }
 
-        if (isNowStepOne) {
+        if (uiState.isFirstStep) {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -163,9 +170,9 @@ private fun MatchingCreatePostContent(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 DduruButton(
-                    text = nextButtonText,
+                    text = uiState.nextButtonText,
                     onClick = onNextClick,
-                    enabled = isNextEnabled,
+                    enabled = uiState.isNextEnabled,
                     enabledColors = DduruButtonDefaults.filledEnabledColors,
                     disabledColors = DduruButtonDefaults.whiteDisabledColors,
                     modifier = Modifier.fillMaxWidth()
@@ -188,9 +195,9 @@ private fun MatchingCreatePostContent(
                 )
 
                 DduruButton(
-                    text = nextButtonText,
+                    text = uiState.nextButtonText,
                     onClick = onNextClick,
-                    enabled = isNextEnabled,
+                    enabled = uiState.isNextEnabled,
                     enabledColors = DduruButtonDefaults.filledEnabledColors,
                     disabledColors = DduruButtonDefaults.whiteDisabledColors,
                     modifier = Modifier.weight(1f)
@@ -296,12 +303,17 @@ private fun MatchingCreatePostHeader(
 @Composable
 private fun MatchingCreatePostContentPreview() {
     DduruTheme {
-        MatchingCreatePostContent(
+        MatchingCreatePostScreen(
             uiStateFlow = MutableStateFlow(MatchingCreatePostUiState()),
-            currentStep = 2,
-            region = "일본",
-            country = "도쿄",
-            isNextEnabled = true,
+            uiState = MatchingCreatePostUiState(
+                currentStep = MatchingCreatePostStep.DATE,
+                locationSearchUiState = LocationSearchUiState(
+                    selectedLocation = LocationSearchItemUiState(
+                        countryName = "도쿄",
+                        city = "일본"
+                    )
+                )
+            ),
             onDismissClick = {},
             onBackClick = {},
             onNextClick = {},

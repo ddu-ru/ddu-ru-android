@@ -53,7 +53,9 @@ private fun PostWritingContent(
     }
 
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
     ) {
         CreatePostStepHeader(
             uiModel = stepHeaderPostWriting,

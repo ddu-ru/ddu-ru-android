@@ -155,7 +155,11 @@ private fun DateSelectionContent(
         selectEndDateField()
     }
 
-    Column(modifier = modifier.fillMaxWidth()) {
+    Column(
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
+    ) {
         CreatePostStepHeader(uiModel = stepHeaderDate)
 
         Spacer(modifier = Modifier.weight(16f))

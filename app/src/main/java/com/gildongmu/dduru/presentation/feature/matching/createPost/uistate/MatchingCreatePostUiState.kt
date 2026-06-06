@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.uistate
 
 data class MatchingCreatePostUiState(
-    val currentStep: Int = 1,
+    val currentStep: MatchingCreatePostStep = MatchingCreatePostStep.LOCATION,
     val locationSearchUiState: LocationSearchUiState = LocationSearchUiState(),
     val dateSectionUiState: DateSectionUiState = DateSectionUiState(),
     val recruitmentSectionUiState: RecruitmentScreenUiState = RecruitmentScreenUiState(),
@@ -15,18 +15,22 @@ data class MatchingCreatePostUiState(
     val country: String?
         get() = locationSearchUiState.selectedLocation?.countryName
 
+    val isFirstStep: Boolean
+        get() = currentStep == MatchingCreatePostStep.LOCATION
+
+    val isLastStep: Boolean
+        get() = currentStep == MatchingCreatePostStep.THUMBNAIL_AND_TAG
+
+    val nextButtonText: String
+        get() = if (isLastStep) "작성 완료" else "다음"
+
     val isNextEnabled: Boolean
         get() = when (currentStep) {
-            1 -> locationSearchUiState.isNextEnabled
-            2 -> dateSectionUiState.isNextEnabled
-            3 -> recruitmentSectionUiState.isNextEnabled
-            4 -> ageSectionUiState.isNextEnabled
-            5 -> postWritingUiState.isNextEnabled
-            6 -> thumbnailAndTagUiState.isNextEnabled
-            else -> false
+            MatchingCreatePostStep.LOCATION -> locationSearchUiState.isNextEnabled
+            MatchingCreatePostStep.DATE -> dateSectionUiState.isNextEnabled
+            MatchingCreatePostStep.RECRUITMENT_COUNT -> recruitmentSectionUiState.isNextEnabled
+            MatchingCreatePostStep.RECRUITMENT_AGE -> ageSectionUiState.isNextEnabled
+            MatchingCreatePostStep.POST_WRITING -> postWritingUiState.isNextEnabled
+            MatchingCreatePostStep.THUMBNAIL_AND_TAG -> thumbnailAndTagUiState.isNextEnabled
         }
-
-    companion object {
-        const val MAX_STEP = 6
-    }
 }

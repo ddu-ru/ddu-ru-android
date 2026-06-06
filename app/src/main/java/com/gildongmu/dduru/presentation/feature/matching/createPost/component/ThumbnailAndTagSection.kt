@@ -83,7 +83,9 @@ private fun ThumbnailAndTagContent(
     }
 
     Column(
-        modifier = modifier.fillMaxWidth()
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp)
     ) {
         CreatePostStepHeader(
             uiModel = stepHeaderThumbnail

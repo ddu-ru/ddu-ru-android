@@ -89,7 +89,9 @@ private fun RecruitmentCountContent(
             isCompanionTypeSelectionEnabled
 
     Column(
-        modifier = modifier.padding(horizontal = 16.dp),
+        modifier = modifier
+            .fillMaxWidth()
+            .padding(horizontal = 24.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CreatePostStepHeader(
