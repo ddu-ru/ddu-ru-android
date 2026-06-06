@@ -17,10 +17,14 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -50,8 +54,8 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Post
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingCreatePostViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.collectLatest
+import java.time.LocalDate
 
 @Composable
 fun MatchingCreatePostRoute(
@@ -299,28 +303,77 @@ private fun MatchingCreatePostHeader(
 @Preview(showBackground = true)
 @Composable
 private fun MatchingCreatePostContentPreview() {
-    DduruTheme {
-        MatchingCreatePostScreen(
-            uiState = MatchingCreatePostUiState(
-                currentStep = MatchingCreatePostStep.DATE,
+    var uiState by remember {
+        mutableStateOf(
+            MatchingCreatePostUiState(
+                currentStep = MatchingCreatePostStep.LOCATION,
                 locationSearchUiState = LocationSearchUiState(
-                    selectedLocation = LocationSearchItemUiState(
-                        countryName = "도쿄",
-                        city = "일본"
+                    popularLocations = listOf(
+                        LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
+                        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
+                        LocationSearchItemUiState(countryName = "태국", city = "방콕")
                     )
+                ),
+                thumbnailAndTagUiState = ThumbnailAndTagUiState(
+                    regionName = "도쿄",
+                    countryName = "일본",
+                    addedTags = listOf("맛집")
                 )
-            ),
-            onDismissClick = {},
-            onBackClick = {},
-            onNextClick = {},
-            onLocationSearchUiStateChange = {},
-            onLocationSelected = {},
-            onDateSectionUiStateChange = {},
-            onRecruitmentSectionUiStateChange = {},
-            onAgeSectionUiStateChange = {},
-            onPostWritingUiStateChange = {},
-            onThumbnailAndTagUiStateChange = {},
-            modifier = Modifier.fillMaxSize()
+            )
         )
+    }
+
+    DduruTheme {
+        Surface(
+            color = DduruTheme.colors.gray0,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            MatchingCreatePostScreen(
+                uiState = uiState,
+                onDismissClick = {},
+                onBackClick = {
+                    uiState.currentStep.previousOrNull()?.let { previousStep ->
+                        uiState = uiState.copy(currentStep = previousStep)
+                    }
+                },
+                onNextClick = {
+                    uiState.currentStep.nextOrNull()?.let { nextStep ->
+                        uiState = uiState.copy(currentStep = nextStep)
+                    }
+                },
+                onLocationSearchUiStateChange = { locationSearchUiState ->
+                    uiState = uiState.copy(locationSearchUiState = locationSearchUiState)
+                },
+                onLocationSelected = { location ->
+                    uiState = uiState.copy(
+                        locationSearchUiState = uiState.locationSearchUiState.copy(
+                            selectedLocation = location,
+                            searchQuery = location.city,
+                            searchedLocations = uiState.locationSearchUiState.popularLocations
+                        ),
+                        thumbnailAndTagUiState = uiState.thumbnailAndTagUiState.copy(
+                            regionName = location.city,
+                            countryName = location.countryName
+                        )
+                    )
+                },
+                onDateSectionUiStateChange = { dateSectionUiState ->
+                    uiState = uiState.copy(dateSectionUiState = dateSectionUiState)
+                },
+                onRecruitmentSectionUiStateChange = { recruitmentSectionUiState ->
+                    uiState = uiState.copy(recruitmentSectionUiState = recruitmentSectionUiState)
+                },
+                onAgeSectionUiStateChange = { ageSectionUiState ->
+                    uiState = uiState.copy(ageSectionUiState = ageSectionUiState)
+                },
+                onPostWritingUiStateChange = { postWritingUiState ->
+                    uiState = uiState.copy(postWritingUiState = postWritingUiState)
+                },
+                onThumbnailAndTagUiStateChange = { thumbnailAndTagUiState ->
+                    uiState = uiState.copy(thumbnailAndTagUiState = thumbnailAndTagUiState)
+                },
+                modifier = Modifier.fillMaxSize()
+            )
+        }
     }
 }
