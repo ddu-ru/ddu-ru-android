@@ -55,7 +55,7 @@ fun ThumbnailAndTagSection(
 
     Column(
         modifier = modifier
-            .fillMaxWidth(),
+            .fillMaxWidth()
     ) {
         CreatePostStepHeader(
             uiModel = MatchingCreatePostStep.THUMBNAIL_AND_TAG.headerUiModel

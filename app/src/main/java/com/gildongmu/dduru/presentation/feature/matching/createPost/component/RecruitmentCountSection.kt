@@ -19,8 +19,8 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 
 @Composable
 fun RecruitmentCountSection(
@@ -85,12 +85,12 @@ fun RecruitmentCountSection(
             onCountChange = { newCount ->
                 onUiStateChange(
                     uiState.copy(
-                    recruitmentCount = uiState.recruitmentCount.copy(
-                        rawCount = newCount.coerceIn(
-                            RecruitmentCountNum.MIN,
-                            RecruitmentCountNum.MAX
+                        recruitmentCount = uiState.recruitmentCount.copy(
+                            rawCount = newCount.coerceIn(
+                                RecruitmentCountNum.MIN,
+                                RecruitmentCountNum.MAX
+                            )
                         )
-                    )
                     )
                 )
             }
@@ -117,8 +117,8 @@ fun RecruitmentCountSection(
                 onClick = {
                     onUiStateChange(
                         uiState.copy(
-                        selectedCompanionType = CompanionType.FULL,
-                        isCompanionTypeOptional = false
+                            selectedCompanionType = CompanionType.FULL,
+                            isCompanionTypeOptional = false
                         )
                     )
                 },
@@ -137,8 +137,8 @@ fun RecruitmentCountSection(
                 onClick = {
                     onUiStateChange(
                         uiState.copy(
-                        selectedCompanionType = CompanionType.PARTIAL,
-                        isCompanionTypeOptional = false
+                            selectedCompanionType = CompanionType.PARTIAL,
+                            isCompanionTypeOptional = false
                         )
                     )
                 },
@@ -157,8 +157,8 @@ fun RecruitmentCountSection(
                 onClick = {
                     onUiStateChange(
                         uiState.copy(
-                        selectedCompanionType = CompanionType.MEAL,
-                        isCompanionTypeOptional = false
+                            selectedCompanionType = CompanionType.MEAL,
+                            isCompanionTypeOptional = false
                         )
                     )
                 },

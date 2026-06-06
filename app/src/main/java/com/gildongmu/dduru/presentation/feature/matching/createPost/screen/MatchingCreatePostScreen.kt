@@ -17,9 +17,9 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
-import androidx.compose.material3.Scaffold
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -62,7 +62,7 @@ fun MatchingCreatePostRoute(
     onClose: () -> Unit,
     onComplete: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: MatchingCreatePostViewModel = hiltViewModel(),
+    viewModel: MatchingCreatePostViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -165,7 +165,6 @@ fun MatchingCreatePostScreen(
                 .padding(top = 24.dp, bottom = 40.dp)
         ) {
             when (uiState.currentStep) {
-
                 MatchingCreatePostStep.LOCATION -> {
                     LocationSearchSection(
                         uiState = uiState.locationSearchUiState,
