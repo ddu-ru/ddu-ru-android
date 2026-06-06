@@ -27,18 +27,27 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import androidx.lifecycle.viewmodel.compose.viewModel
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.DateSelectionSection
+import com.gildongmu.dduru.presentation.feature.matching.createPost.component.LocationSearchSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.PostWritingSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.RecruitmentAgeSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.RecruitmentCountSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.ThumbnailAndTagSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingCreatePostViewModel
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun MatchingCreatePostScreen(
@@ -48,30 +57,42 @@ fun MatchingCreatePostScreen(
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
     MatchingCreatePostContent(
+        uiStateFlow = viewModel.uiState,
         currentStep = uiState.currentStep,
         region = uiState.region,
         country = uiState.country,
-        ageSectionUiState = uiState.ageSectionUiState,
         isNextEnabled = uiState.isNextEnabled,
         onDismissClick = viewModel::onDismissClick,
         onBackClick = viewModel::onBackClick,
         onNextClick = viewModel::onNextClick,
+        onLocationSearchUiStateChange = viewModel::onLocationSearchUiStateChange,
+        onLocationSelected = viewModel::onLocationSelected,
+        onDateSectionUiStateChange = viewModel::onDateSectionUiStateChange,
+        onRecruitmentSectionUiStateChange = viewModel::onRecruitmentSectionUiStateChange,
         onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
+        onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
+        onThumbnailAndTagUiStateChange = viewModel::onThumbnailAndTagUiStateChange,
         modifier = modifier
     )
 }
 
 @Composable
 private fun MatchingCreatePostContent(
+    uiStateFlow: StateFlow<MatchingCreatePostUiState>,
     currentStep: Int,
     region: String?,
     country: String?,
-    ageSectionUiState: AgeSectionUiState,
     isNextEnabled: Boolean,
     onDismissClick: () -> Unit,
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
+    onLocationSearchUiStateChange: (LocationSearchUiState) -> Unit,
+    onLocationSelected: (LocationSearchItemUiState) -> Unit,
+    onDateSectionUiStateChange: (DateSectionUiState) -> Unit,
+    onRecruitmentSectionUiStateChange: (RecruitmentScreenUiState) -> Unit,
     onAgeSectionUiStateChange: (AgeSectionUiState) -> Unit,
+    onPostWritingUiStateChange: (PostWritingUiState) -> Unit,
+    onThumbnailAndTagUiStateChange: (ThumbnailAndTagUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val isNowStepOne = currentStep == 1
@@ -93,35 +114,64 @@ private fun MatchingCreatePostContent(
             modifier = Modifier.weight(1f)
         ) {
             when (currentStep) {
-//                1 -> LocationSearchSection(
-//                    modifier = Modifier.padding(horizontal = 24.dp)
-//                ) 머지 후 주석 없앨 예정입니다
+                1 -> LocationSearchSection(
+                    uiStateFlow = uiStateFlow,
+                    onUiStateChange = onLocationSearchUiStateChange,
+                    onLocationClick = onLocationSelected,
+                    modifier = Modifier.padding(horizontal = 24.dp)
+                )
 
                 2 -> DateSelectionSection(
+                    uiStateFlow = uiStateFlow,
+                    onUiStateChange = onDateSectionUiStateChange,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
 
                 3 -> RecruitmentCountSection(
+                    uiStateFlow = uiStateFlow,
+                    onUiStateChange = onRecruitmentSectionUiStateChange,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
 
                 4 -> RecruitmentAgeSection(
-                    uiState = ageSectionUiState,
+                    uiStateFlow = uiStateFlow,
                     onUiStateChange = onAgeSectionUiStateChange,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
 
                 5 -> PostWritingSection(
+                    uiStateFlow = uiStateFlow,
+                    onUiStateChange = onPostWritingUiStateChange,
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
 
                 6 -> ThumbnailAndTagSection(
+                    uiStateFlow = uiStateFlow,
+                    onUiStateChange = onThumbnailAndTagUiStateChange,
+                    popularTags = listOf("맛집", "힐링여행", "액티비티", "사진스팟"),
                     modifier = Modifier.padding(horizontal = 24.dp)
                 )
             }
         }
 
-        if (!isNowStepOne) {
+        if (isNowStepOne) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(48.dp)
+                    .padding(horizontal = 24.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                DduruButton(
+                    text = nextButtonText,
+                    onClick = onNextClick,
+                    enabled = isNextEnabled,
+                    enabledColors = DduruButtonDefaults.filledEnabledColors,
+                    disabledColors = DduruButtonDefaults.whiteDisabledColors,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
+        } else {
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -247,15 +297,21 @@ private fun MatchingCreatePostHeader(
 private fun MatchingCreatePostContentPreview() {
     DduruTheme {
         MatchingCreatePostContent(
+            uiStateFlow = MutableStateFlow(MatchingCreatePostUiState()),
             currentStep = 2,
             region = "일본",
             country = "도쿄",
-            ageSectionUiState = AgeSectionUiState(),
             isNextEnabled = true,
             onDismissClick = {},
             onBackClick = {},
             onNextClick = {},
+            onLocationSearchUiStateChange = {},
+            onLocationSelected = {},
+            onDateSectionUiStateChange = {},
+            onRecruitmentSectionUiStateChange = {},
             onAgeSectionUiStateChange = {},
+            onPostWritingUiStateChange = {},
+            onThumbnailAndTagUiStateChange = {},
             modifier = Modifier.fillMaxSize()
         )
     }

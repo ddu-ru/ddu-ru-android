@@ -2,18 +2,27 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.uistate
 
 data class MatchingCreatePostUiState(
     val currentStep: Int = 1,
-    val region: String? = null,
-    val country: String? = null,
-    val ageSectionUiState: AgeSectionUiState = AgeSectionUiState()
+    val locationSearchUiState: LocationSearchUiState = LocationSearchUiState(),
+    val dateSectionUiState: DateSectionUiState = DateSectionUiState(),
+    val recruitmentSectionUiState: RecruitmentScreenUiState = RecruitmentScreenUiState(),
+    val ageSectionUiState: AgeSectionUiState = AgeSectionUiState(),
+    val postWritingUiState: PostWritingUiState = PostWritingUiState(),
+    val thumbnailAndTagUiState: ThumbnailAndTagUiState = ThumbnailAndTagUiState()
 ) {
+    val region: String?
+        get() = locationSearchUiState.selectedLocation?.city
+
+    val country: String?
+        get() = locationSearchUiState.selectedLocation?.countryName
+
     val isNextEnabled: Boolean
         get() = when (currentStep) {
-            1 -> true
-            2 -> true
-            3 -> true
-            4 -> true
-            5 -> true
-            6 -> true
+            1 -> locationSearchUiState.isNextEnabled
+            2 -> dateSectionUiState.isNextEnabled
+            3 -> recruitmentSectionUiState.isNextEnabled
+            4 -> ageSectionUiState.isNextEnabled
+            5 -> postWritingUiState.isNextEnabled
+            6 -> thumbnailAndTagUiState.isNextEnabled
             else -> false
         }
 
