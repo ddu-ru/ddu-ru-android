@@ -32,7 +32,8 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
-import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
+import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -52,20 +53,12 @@ fun ThumbnailAndTagSection(
         }
     }
 
-    val stepHeaderThumbnail = remember {
-        StepHeaderUiModel(
-            step = 6,
-            title = "대표 사진과 태그를 설정해 보세요",
-            subtitle = "내 글을 더 돋보이게 만들어요"
-        )
-    }
-
     Column(
         modifier = modifier
             .fillMaxWidth(),
     ) {
         CreatePostStepHeader(
-            uiModel = stepHeaderThumbnail
+            uiModel = MatchingCreatePostStep.THUMBNAIL_AND_TAG.headerUiModel
         )
 
         Spacer(modifier = Modifier.weight(24f))
@@ -207,7 +200,7 @@ private fun ThumbnailAndTagSectionPreview() {
         var uiState by remember {
             mutableStateOf(
                 ThumbnailAndTagUiState(
-                    addedTags = listOf("맛집")
+                    addedTags = listOf()
                 )
             )
         }
@@ -220,7 +213,7 @@ private fun ThumbnailAndTagSectionPreview() {
                 uiState = uiState,
                 onUiStateChange = { uiState = it },
                 modifier = Modifier.padding(24.dp),
-                popularTags = listOf("1", "2", "3", "4", "5", "맛집", "힐링여행", "맛집", "이러쿵저러쿵", "다음줄넘어가")
+                popularTags = MatchingCreatePostMockData.popularTags
             )
         }
     }

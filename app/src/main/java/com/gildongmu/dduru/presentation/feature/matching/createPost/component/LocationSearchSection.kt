@@ -17,7 +17,6 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -25,9 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
+import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 
 @Composable
 fun LocationSearchSection(
@@ -37,14 +37,6 @@ fun LocationSearchSection(
     onSearchClick: () -> Unit = {},
     onLocationClick: (LocationSearchItemUiState) -> Unit = {}
 ) {
-    val stepHeaderLocationSearch = remember {
-        StepHeaderUiModel(
-            step = 1,
-            title = "어디로 떠나시나요?",
-            subtitle = "여행지를 선택해 주세요"
-        )
-    }
-
     val sectionIconRes = if (uiState.isSearching) {
         R.drawable.ic_matching_searching
     } else {
@@ -56,7 +48,7 @@ fun LocationSearchSection(
             .fillMaxWidth()
     ) {
         CreatePostStepHeader(
-            uiModel = stepHeaderLocationSearch,
+            uiModel = MatchingCreatePostStep.LOCATION.headerUiModel,
             modifier = Modifier.fillMaxWidth()
         )
 
@@ -147,19 +139,6 @@ private fun LocationSearchNoResultsPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun LocationSearchSectionPreview() {
-    val popularLocations = listOf(
-        LocationSearchItemUiState(countryName = "일본", city = "후쿠오카"),
-        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
-        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-        LocationSearchItemUiState(countryName = "일본", city = "후쿠오카"),
-        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
-        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-        LocationSearchItemUiState(countryName = "태국", city = "방콕")
-    )
-
     DduruTheme {
         Surface(
             color = DduruTheme.colors.gray0,
@@ -167,8 +146,8 @@ private fun LocationSearchSectionPreview() {
         ) {
             LocationSearchSection(
                 uiState = LocationSearchUiState(
-                    popularLocations = popularLocations,
-                    searchedLocations = popularLocations
+                    popularLocations = MatchingCreatePostMockData.popularLocations,
+                    searchedLocations = MatchingCreatePostMockData.popularLocations
                 ),
                 onUiStateChange = {},
                 modifier = Modifier.padding(24.dp)

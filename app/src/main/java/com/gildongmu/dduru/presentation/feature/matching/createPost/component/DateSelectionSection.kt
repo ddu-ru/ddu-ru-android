@@ -11,7 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -19,9 +18,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSelectionTarget
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
@@ -31,14 +30,6 @@ fun DateSelectionSection(
     onUiStateChange: (DateSectionUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val stepHeaderDate = remember {
-        StepHeaderUiModel(
-            step = 2,
-            title = "언제 떠나시나요?",
-            subtitle = "날짜를 선택해 주세요."
-        )
-    }
-
     fun formatDate(date: LocalDate?): String? {
         return date?.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
     }
@@ -152,7 +143,7 @@ fun DateSelectionSection(
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
-        CreatePostStepHeader(uiModel = stepHeaderDate)
+        CreatePostStepHeader(uiModel = MatchingCreatePostStep.DATE.headerUiModel)
 
         Spacer(modifier = Modifier.weight(16f))
 

@@ -9,7 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -18,8 +17,8 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
 
@@ -29,14 +28,6 @@ fun RecruitmentCountSection(
     onUiStateChange: (RecruitmentScreenUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val stepHeaderRecruitmentCount = remember {
-        StepHeaderUiModel(
-            step = 3,
-            title = "모집 인원과 동행 형태를 설정해 주세요",
-            subtitle = "몇 명이 함께할지, 어떤 방식으로 동행할지 선택해 주세요"
-        )
-    }
-
     val selectedButtonColors = DduruButtonEnabledColors(
         backgroundColor = DduruTheme.colors.secondary,
         textColor = DduruTheme.colors.primary,
@@ -75,7 +66,7 @@ fun RecruitmentCountSection(
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CreatePostStepHeader(
-            uiModel = stepHeaderRecruitmentCount
+            uiModel = MatchingCreatePostStep.RECRUITMENT_COUNT.headerUiModel
         )
 
         Spacer(modifier = Modifier.weight(8f))

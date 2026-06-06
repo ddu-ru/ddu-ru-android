@@ -22,8 +22,8 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentGenderOption
 
 @Composable
@@ -32,14 +32,6 @@ fun RecruitmentAgeSection(
     onUiStateChange: (AgeSectionUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val stepHeaderAge = remember {
-        StepHeaderUiModel(
-            step = 4,
-            title = "함께하고 싶은 상대를 알려주세요",
-            subtitle = "성별과 연령대를 선택해주세요"
-        )
-    }
-
     val selectedButtonColors = DduruButtonEnabledColors(
         backgroundColor = DduruTheme.colors.secondary,
         textColor = DduruTheme.colors.primary,
@@ -63,7 +55,7 @@ fun RecruitmentAgeSection(
             .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        CreatePostStepHeader(uiModel = stepHeaderAge)
+        CreatePostStepHeader(uiModel = MatchingCreatePostStep.RECRUITMENT_AGE.headerUiModel)
 
         Spacer(modifier = Modifier.weight(24f))
 
