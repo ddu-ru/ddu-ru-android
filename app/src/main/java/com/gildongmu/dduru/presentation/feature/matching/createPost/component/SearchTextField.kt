@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.tripgroup.createPost.component
+package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth

@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.matching.creative.component
+package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
