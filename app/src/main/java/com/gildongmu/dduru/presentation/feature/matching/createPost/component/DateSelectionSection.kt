@@ -11,25 +11,43 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSelectionTarget
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
+import kotlinx.coroutines.flow.StateFlow
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun DateSelectionSection(
+    uiStateFlow: StateFlow<MatchingCreatePostUiState>,
+    onUiStateChange: (DateSectionUiState) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val screenUiState = uiStateFlow.collectAsStateWithLifecycle()
+    val uiState = screenUiState.value.dateSectionUiState
+
+    DateSelectionContent(
+        uiState = uiState,
+        onUiStateChange = onUiStateChange,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun DateSelectionContent(
+    uiState: DateSectionUiState,
+    onUiStateChange: (DateSectionUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val stepHeaderDate = remember {
@@ -39,7 +57,6 @@ fun DateSelectionSection(
             subtitle = "날짜를 선택해 주세요."
         )
     }
-    var uiState by remember { mutableStateOf(DateSectionUiState()) }
 
     fun formatDate(date: LocalDate?): String? {
         if (date == null) return null
@@ -51,65 +68,80 @@ fun DateSelectionSection(
         when (uiState.selectionTarget) {
             DateSelectionTarget.START -> {
                 if (uiState.selectedEndDate != null && date.isAfter(uiState.selectedEndDate)) {
-                    uiState = uiState.copy(
-                        selectedStartDate = uiState.selectedEndDate,
-                        selectedEndDate = date
+                    onUiStateChange(
+                        uiState.copy(
+                            selectedStartDate = uiState.selectedEndDate,
+                            selectedEndDate = date
+                        )
                     )
                 } else {
-                    uiState = uiState.copy(selectedStartDate = date)
+                    onUiStateChange(uiState.copy(selectedStartDate = date))
                 }
 
                 if (uiState.selectedEndDate == null) {
-                    uiState = uiState.copy(selectionTarget = DateSelectionTarget.END)
+                    onUiStateChange(
+                        uiState.copy(
+                            selectedStartDate = date,
+                            selectionTarget = DateSelectionTarget.END
+                        )
+                    )
                 }
             }
 
             DateSelectionTarget.END -> {
                 if (uiState.selectedStartDate == null) {
-                    uiState = uiState.copy(
-                        selectedStartDate = date,
-                        selectionTarget = DateSelectionTarget.END
+                    onUiStateChange(
+                        uiState.copy(
+                            selectedStartDate = date,
+                            selectionTarget = DateSelectionTarget.END
+                        )
                     )
                     return
                 }
 
                 if (date.isBefore(uiState.selectedStartDate)) {
-                    uiState = uiState.copy(
-                        selectedStartDate = date,
-                        selectedEndDate = uiState.selectedStartDate
+                    onUiStateChange(
+                        uiState.copy(
+                            selectedStartDate = date,
+                            selectedEndDate = uiState.selectedStartDate
+                        )
                     )
                 } else {
-                    uiState = uiState.copy(selectedEndDate = date)
+                    onUiStateChange(uiState.copy(selectedEndDate = date))
                 }
             }
         }
     }
 
     fun selectStartDateField() {
-        uiState = uiState.copy(
-            selectionTarget = DateSelectionTarget.START,
-            selectedEndDate = if (uiState.selectedStartDate != null && uiState.selectedEndDate != null) {
-                null
-            } else {
-                uiState.selectedEndDate
-            }
+        onUiStateChange(
+            uiState.copy(
+                selectionTarget = DateSelectionTarget.START,
+                selectedEndDate = if (uiState.selectedStartDate != null && uiState.selectedEndDate != null) {
+                    null
+                } else {
+                    uiState.selectedEndDate
+                }
+            )
         )
     }
 
     fun selectEndDateField() {
-        uiState = uiState.copy(
-            selectionTarget = DateSelectionTarget.END,
-            selectedEndDate = if (uiState.selectedStartDate == null) {
-                null
-            } else {
-                uiState.selectedEndDate
-            }
+        onUiStateChange(
+            uiState.copy(
+                selectionTarget = DateSelectionTarget.END,
+                selectedEndDate = if (uiState.selectedStartDate == null) {
+                    null
+                } else {
+                    uiState.selectedEndDate
+                }
+            )
         )
     }
 
     fun resetRangeIfCompleted() {
         if (uiState.selectedStartDate != null && uiState.selectedEndDate != null) {
-            uiState = uiState.copy(selectedEndDate = null)
+            onUiStateChange(uiState.copy(selectedEndDate = null))
         }
     }
 
@@ -175,7 +207,9 @@ fun DateSelectionSection(
 private fun DateSelectionSectionPreview() {
     DduruTheme {
         Surface(color = DduruTheme.colors.gray0) {
-            DateSelectionSection(
+            DateSelectionContent(
+                uiState = DateSectionUiState(),
+                onUiStateChange = {},
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 52.dp)
             )
         }

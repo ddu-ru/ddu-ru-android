@@ -29,23 +29,29 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
+import kotlinx.coroutines.flow.StateFlow
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun ThumbnailAndTagSection(
+    uiStateFlow: StateFlow<MatchingCreatePostUiState>,
+    onUiStateChange: (ThumbnailAndTagUiState) -> Unit,
     modifier: Modifier = Modifier,
     popularTags: List<String> = emptyList()
 ) {
-    var uiState by remember { mutableStateOf(ThumbnailAndTagUiState()) }
+    val screenUiState = uiStateFlow.collectAsStateWithLifecycle()
+    val uiState = screenUiState.value.thumbnailAndTagUiState
 
-    ThumbnailAndTagSection(
+    ThumbnailAndTagContent(
         uiState = uiState,
-        onUiStateChange = { uiState = it },
+        onUiStateChange = onUiStateChange,
         modifier = modifier,
         popularTags = popularTags
     )
@@ -53,7 +59,7 @@ fun ThumbnailAndTagSection(
 
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
-fun ThumbnailAndTagSection(
+private fun ThumbnailAndTagContent(
     uiState: ThumbnailAndTagUiState,
     onUiStateChange: (ThumbnailAndTagUiState) -> Unit,
     modifier: Modifier = Modifier,
@@ -70,7 +76,7 @@ fun ThumbnailAndTagSection(
 
     val stepHeaderThumbnail = remember {
         StepHeaderUiModel(
-            step = 5,
+            step = 6,
             title = "대표 사진과 태그를 설정해 보세요",
             subtitle = "내 글을 더 돋보이게 만들어요"
         )
@@ -231,7 +237,7 @@ private fun ThumbnailAndTagSectionPreview() {
             color = DduruTheme.colors.gray0,
             modifier = Modifier.fillMaxWidth()
         ) {
-            ThumbnailAndTagSection(
+            ThumbnailAndTagContent(
                 uiState = uiState,
                 onUiStateChange = { uiState = it },
                 modifier = Modifier.padding(24.dp),

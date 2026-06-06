@@ -18,22 +18,42 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentGenderOption
+import kotlinx.coroutines.flow.StateFlow
+
 @Composable
 fun RecruitmentAgeSection(
+    uiStateFlow: StateFlow<MatchingCreatePostUiState>,
+    onUiStateChange: (AgeSectionUiState) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val screenUiState = uiStateFlow.collectAsStateWithLifecycle()
+    val uiState = screenUiState.value.ageSectionUiState
+
+    RecruitmentAgeContent(
+        uiState = uiState,
+        onUiStateChange = onUiStateChange,
+        modifier = modifier
+    )
+}
+
+@Composable
+private fun RecruitmentAgeContent(
     uiState: AgeSectionUiState,
     onUiStateChange: (AgeSectionUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val stepHeaderAge = remember {
         StepHeaderUiModel(
-            step = 3,
+            step = 4,
             title = "함께하고 싶은 상대를 알려주세요",
             subtitle = "성별과 연령대를 선택해주세요"
         )
@@ -153,7 +173,7 @@ private fun RecruitmentAgeSectionPreview() {
                 )
             }
 
-            RecruitmentAgeSection(
+            RecruitmentAgeContent(
                 uiState = uiState,
                 onUiStateChange = { uiState = it },
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 52.dp)
