@@ -8,14 +8,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.MultiLineTextField
 import com.gildongmu.dduru.presentation.component.SingleLineTextField
-import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
 
 @Composable
@@ -24,20 +23,12 @@ fun PostWritingSection(
     onUiStateChange: (PostWritingUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val stepHeaderPostWriting = remember {
-        StepHeaderUiModel(
-            step = 5,
-            title = "제목과 내용을 입력해주세요",
-            subtitle = "동행을 찾기 위한 매력적인 글을 작성해 보세요"
-        )
-    }
-
     Column(
         modifier = modifier
             .fillMaxWidth()
     ) {
         CreatePostStepHeader(
-            uiModel = stepHeaderPostWriting,
+            uiModel = MatchingCreatePostStep.POST_WRITING.headerUiModel,
             modifier = Modifier
         )
 
