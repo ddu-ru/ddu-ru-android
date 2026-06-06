@@ -17,39 +17,36 @@ import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
+import kotlinx.coroutines.flow.StateFlow
 
 @Composable
 fun LocationSearchSection(
+    uiStateFlow: StateFlow<LocationSearchUiState>,
+    onUiStateChange: (LocationSearchUiState) -> Unit,
     modifier: Modifier = Modifier,
-    popularLocations: List<LocationSearchItemUiState> = emptyList()
+    onSearchClick: () -> Unit = {},
+    onLocationClick: (LocationSearchItemUiState) -> Unit = {}
 ) {
-    var uiState by remember {
-        mutableStateOf(
-            LocationSearchUiState(
-                popularLocations = popularLocations,
-                searchedLocations = popularLocations
-            )
-        )
-    }
+    val uiState = uiStateFlow.collectAsStateWithLifecycle()
 
     LocationSearchContent(
-        uiState = uiState,
-        onUiStateChange = { uiState = it },
-        modifier = modifier
+        uiState = uiState.value,
+        onUiStateChange = onUiStateChange,
+        modifier = modifier,
+        onSearchClick = onSearchClick,
+        onLocationClick = onLocationClick
     )
 }
 
@@ -170,25 +167,31 @@ private fun LocationSearchNoResultsPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun LocationSearchSectionPreview() {
+    val popularLocations = listOf(
+        LocationSearchItemUiState(countryName = "일본", city = "후쿠오카"),
+        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
+        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
+        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
+        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
+        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
+        LocationSearchItemUiState(countryName = "일본", city = "후쿠오카"),
+        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
+        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
+        LocationSearchItemUiState(countryName = "태국", city = "방콕")
+    )
+
     DduruTheme {
         Surface(
             color = DduruTheme.colors.gray0,
             modifier = Modifier.fillMaxWidth()
         ) {
-            LocationSearchSection(
+            LocationSearchContent(
+                uiState = LocationSearchUiState(
+                    popularLocations = popularLocations,
+                    searchedLocations = popularLocations
+                ),
+                onUiStateChange = {},
                 modifier = Modifier.padding(24.dp),
-                popularLocations = listOf(
-                    LocationSearchItemUiState(countryName = "일본", city = "후쿠오카"),
-                    LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
-                    LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-                    LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-                    LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-                    LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-                    LocationSearchItemUiState(countryName = "일본", city = "후쿠오카"),
-                    LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
-                    LocationSearchItemUiState(countryName = "태국", city = "방콕"),
-                    LocationSearchItemUiState(countryName = "태국", city = "방콕")
-                )
             )
         }
     }
