@@ -55,7 +55,6 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Recr
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingCreatePostViewModel
 import kotlinx.coroutines.flow.collectLatest
-import java.time.LocalDate
 
 @Composable
 fun MatchingCreatePostRoute(

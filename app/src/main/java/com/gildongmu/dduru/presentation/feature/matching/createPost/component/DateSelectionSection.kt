@@ -40,106 +40,117 @@ fun DateSelectionSection(
     }
 
     fun formatDate(date: LocalDate?): String? {
-        if (date == null) return null
-
-        return date.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+        return date?.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
     }
 
     fun handleDateSelected(date: LocalDate) {
-        when (uiState.selectionTarget) {
+        val newUiState = when (uiState.selectionTarget) {
             DateSelectionTarget.START -> {
-                if (uiState.selectedEndDate != null && date.isAfter(uiState.selectedEndDate)) {
-                    onUiStateChange(
-                        uiState.copy(
-                            selectedStartDate = uiState.selectedEndDate,
-                            selectedEndDate = date
-                        )
+                val updatedState = if (
+                    uiState.selectedEndDate != null &&
+                    date.isAfter(uiState.selectedEndDate)
+                ) {
+                    uiState.copy(
+                        selectedStartDate = uiState.selectedEndDate,
+                        selectedEndDate = date
                     )
                 } else {
-                    onUiStateChange(uiState.copy(selectedStartDate = date))
+                    uiState.copy(selectedStartDate = date)
                 }
 
-                if (uiState.selectedEndDate == null) {
-                    onUiStateChange(
-                        uiState.copy(
-                            selectedStartDate = date,
-                            selectionTarget = DateSelectionTarget.END
-                        )
-                    )
+                if (updatedState.selectedEndDate == null) {
+                    updatedState.copy(selectionTarget = DateSelectionTarget.END)
+                } else {
+                    updatedState
                 }
             }
 
             DateSelectionTarget.END -> {
-                if (uiState.selectedStartDate == null) {
-                    onUiStateChange(
+                when {
+                    uiState.selectedStartDate == null -> {
                         uiState.copy(
                             selectedStartDate = date,
                             selectionTarget = DateSelectionTarget.END
                         )
-                    )
-                    return
-                }
+                    }
 
-                if (date.isBefore(uiState.selectedStartDate)) {
-                    onUiStateChange(
+                    date.isBefore(uiState.selectedStartDate) -> {
                         uiState.copy(
                             selectedStartDate = date,
                             selectedEndDate = uiState.selectedStartDate
                         )
-                    )
-                } else {
-                    onUiStateChange(uiState.copy(selectedEndDate = date))
+                    }
+
+                    else -> {
+                        uiState.copy(selectedEndDate = date)
+                    }
                 }
             }
         }
+
+        onUiStateChange(newUiState)
     }
 
-    fun selectStartDateField() {
-        onUiStateChange(
-            uiState.copy(
-                selectionTarget = DateSelectionTarget.START,
-                selectedEndDate = if (uiState.selectedStartDate != null && uiState.selectedEndDate != null) {
-                    null
-                } else {
-                    uiState.selectedEndDate
-                }
-            )
+    fun selectStartDateField(): DateSectionUiState {
+        return uiState.copy(
+            selectionTarget = DateSelectionTarget.START,
+            selectedEndDate = if (uiState.selectedStartDate != null && uiState.selectedEndDate != null) {
+                null
+            } else {
+                uiState.selectedEndDate
+            }
         )
     }
 
-    fun selectEndDateField() {
-        onUiStateChange(
-            uiState.copy(
-                selectionTarget = DateSelectionTarget.END,
-                selectedEndDate = if (uiState.selectedStartDate == null) {
-                    null
-                } else {
-                    uiState.selectedEndDate
-                }
-            )
+    fun selectEndDateField(): DateSectionUiState {
+        return uiState.copy(
+            selectionTarget = DateSelectionTarget.END,
+            selectedEndDate = if (uiState.selectedStartDate == null) {
+                null
+            } else {
+                uiState.selectedEndDate
+            }
         )
     }
 
-    fun resetRangeIfCompleted() {
-        if (uiState.selectedStartDate != null && uiState.selectedEndDate != null) {
-            onUiStateChange(uiState.copy(selectedEndDate = null))
+    fun resetRangeIfCompleted(state: DateSectionUiState): DateSectionUiState {
+        return if (state.selectedStartDate != null && state.selectedEndDate != null) {
+            state.copy(selectedEndDate = null)
+        } else {
+            state
         }
     }
 
     fun handleStartBoxClick() {
-        resetRangeIfCompleted()
-        selectStartDateField()
+        val resetState = resetRangeIfCompleted(uiState)
+        val newUiState = resetState.copy(
+            selectionTarget = DateSelectionTarget.START,
+            selectedEndDate = if (resetState.selectedStartDate != null && resetState.selectedEndDate != null) {
+                null
+            } else {
+                resetState.selectedEndDate
+            }
+        )
+
+        onUiStateChange(newUiState)
     }
 
     fun handleEndBoxClick() {
-        resetRangeIfCompleted()
-        selectEndDateField()
+        val resetState = resetRangeIfCompleted(uiState)
+        val newUiState = resetState.copy(
+            selectionTarget = DateSelectionTarget.END,
+            selectedEndDate = if (resetState.selectedStartDate == null) {
+                null
+            } else {
+                resetState.selectedEndDate
+            }
+        )
+
+        onUiStateChange(newUiState)
     }
 
     Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 24.dp)
+        modifier = modifier.fillMaxWidth()
     ) {
         CreatePostStepHeader(uiModel = stepHeaderDate)
 
