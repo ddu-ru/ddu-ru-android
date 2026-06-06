@@ -31,8 +31,6 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
-import com.gildongmu.dduru.presentation.feature.tripgroup.createPost.component.NoSearchResults
-import com.gildongmu.dduru.presentation.feature.tripgroup.createPost.component.SearchTextField
 
 @Composable
 fun LocationSearchSection(
