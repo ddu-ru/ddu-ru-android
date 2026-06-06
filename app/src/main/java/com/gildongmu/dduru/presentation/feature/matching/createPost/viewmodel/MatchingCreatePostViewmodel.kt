@@ -9,22 +9,21 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Matc
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
+import dagger.hilt.android.lifecycle.HiltViewModel
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 
-class MatchingCreatePostViewModel : ViewModel() {
+@HiltViewModel
+class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
     private val _uiState = MutableStateFlow(MatchingCreatePostUiState())
     val uiState: StateFlow<MatchingCreatePostUiState> = _uiState.asStateFlow()
 
-    fun onDismissClick() {
-        // TODO: 화면 닫기 이벤트 처리
-    }
-
     fun onBackClick() {
         _uiState.update { currentState ->
-            if (currentState.currentStep > 1) {
+            if (currentState.currentStep > FIRST_STEP) {
                 currentState.copy(currentStep = currentState.currentStep - 1)
             } else {
                 currentState
@@ -43,12 +42,6 @@ class MatchingCreatePostViewModel : ViewModel() {
         }
     }
 
-    fun onAgeSectionUiStateChange(ageSectionUiState: AgeSectionUiState) {
-        _uiState.update { currentState ->
-            currentState.copy(ageSectionUiState = ageSectionUiState)
-        }
-    }
-
     fun onLocationSearchUiStateChange(locationSearchUiState: LocationSearchUiState) {
         _uiState.update { currentState ->
             currentState.copy(locationSearchUiState = locationSearchUiState)
@@ -62,10 +55,6 @@ class MatchingCreatePostViewModel : ViewModel() {
                     selectedLocation = location,
                     searchQuery = location.city,
                     searchedLocations = currentState.locationSearchUiState.popularLocations
-                ),
-                thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
-                    regionName = location.city,
-                    countryName = location.countryName
                 )
             )
         }
@@ -83,6 +72,12 @@ class MatchingCreatePostViewModel : ViewModel() {
         }
     }
 
+    fun onAgeSectionUiStateChange(ageSectionUiState: AgeSectionUiState) {
+        _uiState.update { currentState ->
+            currentState.copy(ageSectionUiState = ageSectionUiState)
+        }
+    }
+
     fun onPostWritingUiStateChange(postWritingUiState: PostWritingUiState) {
         _uiState.update { currentState ->
             currentState.copy(postWritingUiState = postWritingUiState)
@@ -93,5 +88,9 @@ class MatchingCreatePostViewModel : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(thumbnailAndTagUiState = thumbnailAndTagUiState)
         }
+    }
+
+    companion object {
+        private const val FIRST_STEP = 1
     }
 }
