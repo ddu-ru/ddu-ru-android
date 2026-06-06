@@ -22,6 +22,20 @@ reviews:
         - 불필요한 recomposition 가능성, remember/derivedStateOf 적절한 사용 확인
         - 네이밍 컨벤션, 가독성, Google 권장 Android 아키텍처 준수 여부
 
+        # Compose Convention
+        - @Composable 함수명은 PascalCase를 사용했는지 확인
+        - 재사용 가능한 Composable은 modifier: Modifier = Modifier 파라미터를 제공했는지 확인
+        - modifier 파라미터는 가능한 첫 번째 optional parameter로 배치했는지 확인
+        - Composable 내부에서 하드코딩 색상/폰트 대신 design system 값을 사용하는지 확인
+        - 화면 단위 Composable은 state hoisting이 되어 있는지 확인
+        - 같은 파일 내 @Composable 함수들은 가독성을 위해 함수 사이에 빈 줄을 유지했는지 확인
+        - 이벤트 콜백 파라미터는 `onClick`, `onBackClick`, `onValueChange`처럼 `on` prefix를 사용하는지 확인
+        - Preview 함수는 가능한 앱 테마로 감싸 실제 UI와 유사하게 렌더링되는지 확인
+        - 재사용 컴포넌트는 ViewModel을 직접 참조하지 않고 필요한 state와 event lambda를 파라미터로 받는지 확인
+        - Preview 함수는 실제 화면 함수와 같은 파일 하단에 위치하는지 확인
+        - Preview 함수명은 `XXXPreview` 형식을 따르는지 확인
+        - Preview 함수는 private으로 선언되어 있는지 확인
+
         # Google Recommended Architecture
         - 레이어 분리 준수: presentation(ViewModel/Ui) ↔ data(repository/datasource) 의존 방향이 단방향인지 확인
         - 비즈니스 로직이 ViewModel 또는 Repository에 과도하게 섞여 있지 않은지, 책임이 명확한지 확인
