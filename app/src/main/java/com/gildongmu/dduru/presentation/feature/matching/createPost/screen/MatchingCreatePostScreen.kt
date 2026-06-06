@@ -56,6 +56,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Recr
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingCreatePostViewModel
 import kotlinx.coroutines.flow.collectLatest
+import kotlin.collections.listOf
 
 @Composable
 fun MatchingCreatePostRoute(
@@ -106,7 +107,8 @@ fun MatchingCreatePostScreen(
     modifier: Modifier = Modifier
 ) {
     Scaffold(
-        modifier = modifier.fillMaxSize(),
+        modifier = modifier
+            .fillMaxSize(),
         containerColor = DduruTheme.colors.gray0,
         topBar = {
             MatchingCreatePostHeader(
@@ -117,27 +119,16 @@ fun MatchingCreatePostScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .statusBarsPadding()
-                    .padding(horizontal = 24.dp)
+                    .padding(horizontal = 16.dp)
             )
         },
         bottomBar = {
-            Column {
-                if (uiState.isFirstStep) {
-                    DduruButton(
-                        text = uiState.nextButtonText,
-                        onClick = onNextClick,
-                        enabled = uiState.isNextEnabled,
-                        enabledColors = DduruButtonDefaults.filledEnabledColors,
-                        disabledColors = DduruButtonDefaults.whiteDisabledColors,
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 24.dp)
-                    )
-                } else {
+            if (!uiState.isFirstStep) {
+                Column {
                     Row(
                         modifier = Modifier
                             .fillMaxWidth()
-                            .padding(horizontal = 24.dp),
+                            .padding(horizontal = 16.dp),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         DduruButton(
@@ -157,11 +148,9 @@ fun MatchingCreatePostScreen(
                             modifier = Modifier.weight(1f)
                         )
                     }
-                }
 
-                Spacer(
-                    modifier = Modifier.height(40.dp)
-                )
+                    Spacer(modifier = Modifier.height(40.dp))
+                }
             }
         }
     ) { innerPadding ->
@@ -171,6 +160,7 @@ fun MatchingCreatePostScreen(
                 .fillMaxSize()
                 .padding(innerPadding)
                 .padding(horizontal = 16.dp)
+                .padding(top = 24.dp, bottom = 40.dp)
         ) {
             when (uiState.currentStep) {
 
@@ -323,14 +313,21 @@ private fun MatchingCreatePostContentPreview() {
                     popularLocations = listOf(
                         LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
                         LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
+                        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
+                        LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
+                        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
+                        LocationSearchItemUiState(countryName = "태국", city = "방콕"),
+                        LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
+                        LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
                         LocationSearchItemUiState(countryName = "태국", city = "방콕")
                     )
                 ),
                 thumbnailAndTagUiState = ThumbnailAndTagUiState(
                     regionName = "도쿄",
                     countryName = "일본",
-                    addedTags = listOf("맛집")
-                )
+                    addedTags = listOf()
+                ),
+                popularTags = listOf("맛집", "힐링여행", "액티비티", "사진스팟","1", "2", "3", "4", "5", "이러쿵저러쿵")
             )
         )
     }
@@ -360,13 +357,13 @@ private fun MatchingCreatePostContentPreview() {
                     uiState = uiState.copy(
                         locationSearchUiState = uiState.locationSearchUiState.copy(
                             selectedLocation = location,
-                            searchQuery = location.city,
-                            searchedLocations = uiState.locationSearchUiState.popularLocations
+                            searchQuery = location.city
                         ),
                         thumbnailAndTagUiState = uiState.thumbnailAndTagUiState.copy(
                             regionName = location.city,
                             countryName = location.countryName
-                        )
+                        ),
+                        currentStep = MatchingCreatePostStep.DATE
                     )
                 },
                 onDateSectionUiStateChange = { dateSectionUiState ->
