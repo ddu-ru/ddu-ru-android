@@ -13,4 +13,14 @@ data class AgeSectionUiState(
     val selectedStartAge: Int? = null,
     val selectedEndAge: Int? = null,
     val isAgeIrrelevant: Boolean = false
-)
+) {
+    val isNextEnabled: Boolean
+        get() = selectedGender != null &&
+            (
+                isAgeIrrelevant ||
+                    (
+                        selectedStartAge != null &&
+                            selectedEndAge != null
+                        )
+                )
+}
