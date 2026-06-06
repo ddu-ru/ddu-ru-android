@@ -25,13 +25,10 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentGenderOption
-
 @Composable
 fun RecruitmentAgeSection(
     uiState: AgeSectionUiState,
-    onGenderSelected: (RecruitmentGenderOption) -> Unit,
-    onAgeRangeChanged: (Int, Int) -> Unit,
-    onAgeIrrelevantChanged: (Boolean) -> Unit,
+    onUiStateChange: (AgeSectionUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val stepHeaderAge = remember {
@@ -85,7 +82,11 @@ fun RecruitmentAgeSection(
                 DduruButton(
                     modifier = Modifier.weight(1f),
                     text = option.label,
-                    onClick = { onGenderSelected(option) },
+                    onClick = {
+                        onUiStateChange(
+                            uiState.copy(selectedGender = option)
+                        )
+                    },
                     enabledColors = if (uiState.selectedGender == option) {
                         selectedButtonColors
                     } else {
@@ -101,7 +102,15 @@ fun RecruitmentAgeSection(
         AgeRangeBar(
             selectedStart = if (uiState.isAgeIrrelevant) null else uiState.selectedStartAge,
             selectedEnd = if (uiState.isAgeIrrelevant) null else uiState.selectedEndAge,
-            onRangeChanged = onAgeRangeChanged,
+            onRangeChanged = { start, end ->
+                onUiStateChange(
+                    uiState.copy(
+                        selectedStartAge = start,
+                        selectedEndAge = end,
+                        isAgeIrrelevant = false
+                    )
+                )
+            },
             enabled = !uiState.isAgeIrrelevant,
             isAgeIrrelevant = uiState.isAgeIrrelevant,
             modifier = Modifier.fillMaxWidth()
@@ -112,7 +121,19 @@ fun RecruitmentAgeSection(
         OptionalCheckbox(
             checked = uiState.isAgeIrrelevant,
             text = "나이는 상관 없어요",
-            onCheckedChange = onAgeIrrelevantChanged
+            onCheckedChange = { checked ->
+                onUiStateChange(
+                    if (checked) {
+                        uiState.copy(
+                            selectedStartAge = null,
+                            selectedEndAge = null,
+                            isAgeIrrelevant = true
+                        )
+                    } else {
+                        uiState.copy(isAgeIrrelevant = false)
+                    }
+                )
+            }
         )
 
         Spacer(modifier = Modifier.weight(226f))
@@ -134,27 +155,7 @@ private fun RecruitmentAgeSectionPreview() {
 
             RecruitmentAgeSection(
                 uiState = uiState,
-                onGenderSelected = { selectedGender ->
-                    uiState = uiState.copy(selectedGender = selectedGender)
-                },
-                onAgeRangeChanged = { start, end ->
-                    uiState = uiState.copy(
-                        selectedStartAge = start,
-                        selectedEndAge = end,
-                        isAgeIrrelevant = false
-                    )
-                },
-                onAgeIrrelevantChanged = { checked ->
-                    uiState = if (checked) {
-                        uiState.copy(
-                            selectedStartAge = null,
-                            selectedEndAge = null,
-                            isAgeIrrelevant = true
-                        )
-                    } else {
-                        uiState.copy(isAgeIrrelevant = false)
-                    }
-                },
+                onUiStateChange = { uiState = it },
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 52.dp)
             )
         }
