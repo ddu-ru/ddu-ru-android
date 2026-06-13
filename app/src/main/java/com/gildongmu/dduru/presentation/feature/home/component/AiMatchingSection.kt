@@ -28,12 +28,12 @@ fun AiMatchingSection(
         modifier = modifier
     ) {
         Text(
-            text = "✨ AI가 추천하는 여행 메이트",
-            style = DduruTheme.typography.Title1,
+            text = "✨ 뚜르가 추천하는 여행 메이트",
+            style = DduruTheme.typography.H1,
             color = DduruTheme.colors.gray900
         )
 
-        Spacer(modifier = Modifier.height(2.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         Text(
             text = "회원님의 취향을 분석해 가장 잘 맞는 메이트를 찾아드려요!",
@@ -41,7 +41,7 @@ fun AiMatchingSection(
             color = DduruTheme.colors.gray500
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         if (data != null && matchUsedCount < DAILY_AI_MATCHING_LIMIT) {
             AiMatchingCard(
