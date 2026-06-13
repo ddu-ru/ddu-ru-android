@@ -38,7 +38,7 @@ fun UpcomingTripCard(
     maxMember: Int,
     dDay: Int,
     taskCount: Int,
-    onTaskClick: () -> Unit,
+    onUpcomingTripTaskClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val secondaryColor = DduruTheme.colors.secondary
@@ -142,7 +142,7 @@ fun UpcomingTripCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onTaskClick() },
+                    .clickable { onUpcomingTripTaskClick() },
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -174,7 +174,7 @@ private fun UpcomingTripCardPreview() {
             maxMember = 4,
             dDay = 12,
             taskCount = 1,
-            onTaskClick = {}
+            onUpcomingTripTaskClick = {}
         )
     }
 }
