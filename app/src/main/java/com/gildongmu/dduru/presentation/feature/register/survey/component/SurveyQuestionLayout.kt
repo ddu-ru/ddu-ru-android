@@ -13,21 +13,29 @@ import androidx.compose.foundation.layout.wrapContentHeight
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.zIndex
+import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.register.survey.SurveyViewModel
 
 @Composable
 fun SurveyQuestionLayout(
     questionNumber: Int,
+    totalQuestions: Int,
     questionTitle: String,
     imageUrl: String?,
     onBackClick: () -> Unit,
     content: @Composable () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    viewModel: SurveyViewModel = hiltViewModel()
 ) {
+    val token by viewModel.accessToken.collectAsState()
+
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -58,8 +66,10 @@ fun SurveyQuestionLayout(
         ) {
             QuestionCard(
                 questionNumber = questionNumber,
+                totalQuestions = totalQuestions,
                 questionTitle = questionTitle,
                 imageUrl = imageUrl,
+                token = token,
                 modifier = Modifier
                     .width(343.dp)
                     .wrapContentHeight()

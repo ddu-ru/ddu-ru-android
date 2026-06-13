@@ -2,6 +2,7 @@ package com.gildongmu.dduru.presentation.feature.register.survey
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.model.SurveyState
 import com.gildongmu.dduru.domain.entity.Question
 import com.gildongmu.dduru.domain.entity.SurveyResult
@@ -9,8 +10,10 @@ import com.gildongmu.dduru.domain.repository.SurveyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.launch
 
 sealed class SurveyUiState {
@@ -22,8 +25,12 @@ sealed class SurveyUiState {
 
 @HiltViewModel
 class SurveyViewModel @Inject constructor(
-    private val surveyRepository: SurveyRepository
+    private val surveyRepository: SurveyRepository,
+    private val tokenLocalDataSource: TokenLocalDataSource
 ) : ViewModel() {
+
+    val accessToken: StateFlow<String?> = tokenLocalDataSource.accessToken
+        .stateIn(viewModelScope, SharingStarted.Eagerly, null)
 
     private val _surveyState = MutableStateFlow(SurveyState())
     val surveyState: StateFlow<SurveyState> = _surveyState.asStateFlow()
@@ -64,35 +71,39 @@ class SurveyViewModel @Inject constructor(
     }
 
     fun updateAnswer(questionId: String, answer: Int) {
-        val serverAnswer = answer + 1
+        val code = answer + 1
         _surveyState.value = when (questionId) {
-            "q1" -> _surveyState.value.copy(q1 = serverAnswer)
-            "q2" -> _surveyState.value.copy(q2 = serverAnswer)
-            "q3" -> _surveyState.value.copy(q3 = serverAnswer)
-            "q4" -> _surveyState.value.copy(q4 = serverAnswer)
-            "q5" -> _surveyState.value.copy(q5 = serverAnswer)
-            "q6" -> _surveyState.value.copy(q6 = serverAnswer)
-            "q8" -> _surveyState.value.copy(q8 = serverAnswer)
-            "q9" -> _surveyState.value.copy(q9 = serverAnswer)
-            "q10" -> _surveyState.value.copy(q10 = serverAnswer)
-            "q11" -> _surveyState.value.copy(q11 = serverAnswer)
+            "rhythm_q1" -> _surveyState.value.copy(rhythmQ1 = code)
+            "rhythm_q2" -> _surveyState.value.copy(rhythmQ2 = code)
+            "rhythm_q3" -> _surveyState.value.copy(rhythmQ3 = code)
+            "consumption_q1" -> _surveyState.value.copy(consumptionQ1 = code)
+            "consumption_q2" -> _surveyState.value.copy(consumptionQ2 = code)
+            "consumption_q3" -> _surveyState.value.copy(consumptionQ3 = code)
+            "energy_q1" -> _surveyState.value.copy(energyQ1 = code)
+            "energy_q2" -> _surveyState.value.copy(energyQ2 = code)
+            "energy_q3" -> _surveyState.value.copy(energyQ3 = code)
+            "decision_q1" -> _surveyState.value.copy(decisionQ1 = code)
+            "decision_q2" -> _surveyState.value.copy(decisionQ2 = code)
+            "decision_q3" -> _surveyState.value.copy(decisionQ3 = code)
+            "record_style" -> _surveyState.value.copy(recordStyle = code)
             else -> _surveyState.value
         }
     }
 
-    fun toggleQ7Answer(answer: Int) {
-        val serverAnswer = answer + 1
-        val currentAnswers = _surveyState.value.q7.toMutableSet()
-
-        if (currentAnswers.contains(serverAnswer)) {
-            currentAnswers.remove(serverAnswer)
+    fun toggleActivityTag(answer: Int) {
+        val code = answer + 1
+        val current = _surveyState.value.activityTags.toMutableSet()
+        if (current.contains(code)) {
+            current.remove(code)
         } else {
-            if (currentAnswers.size < 3) {
-                currentAnswers.add(serverAnswer)
+            if (current.size < 3) {
+                current.add(code)
             }
         }
-        _surveyState.value = _surveyState.value.copy(q7 = currentAnswers)
+        _surveyState.value = _surveyState.value.copy(activityTags = current)
     }
+
+    fun toggleQ7Answer(answer: Int) = toggleActivityTag(answer)
 
     fun nextQuestion() {
         val totalQuestions = _questions.value.size
@@ -106,6 +117,7 @@ class SurveyViewModel @Inject constructor(
             _currentQuestion.value -= 1
         }
     }
+
     fun submitSurvey() {
         val answers = _surveyState.value.toAnswers()
         if (answers == null) {
@@ -116,9 +128,7 @@ class SurveyViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = SurveyUiState.Loading
 
-            val result = surveyRepository.submitSurvey(answers)
-
-            result.fold(
+            surveyRepository.submitSurvey(answers).fold(
                 onSuccess = { surveyResult ->
                     _uiState.value = SurveyUiState.Success(surveyResult)
                 },
@@ -135,9 +145,7 @@ class SurveyViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = SurveyUiState.Loading
 
-            val result = surveyRepository.getMySurveyResult()
-
-            result.fold(
+            surveyRepository.getMySurveyResult().fold(
                 onSuccess = { surveyResult ->
                     _uiState.value = SurveyUiState.Success(surveyResult)
                 },
