@@ -124,8 +124,6 @@ fun AiMatchingCard(
                         textStyle = DduruTheme.typography.Caption2
                     )
 
-
-
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(4.dp),
                         verticalAlignment = Alignment.CenterVertically
@@ -342,7 +340,7 @@ fun AiMatchingCard(
                     .matchParentSize()
                     .background(
                         color = overlayBackgroundColor,
-                    shape = cardShape
+                        shape = cardShape
                     ),
                 contentAlignment = Alignment.Center
             ) {

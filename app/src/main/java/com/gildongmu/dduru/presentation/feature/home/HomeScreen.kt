@@ -173,7 +173,6 @@ private fun HomeScreen(
         Column(
             modifier = Modifier
         ) {
-
             HomeHeader(
                 onNotificationClick = onNotificationClick,
                 onMenuClick = onMenuClick
@@ -272,7 +271,6 @@ private fun HomeScreen(
         }
     }
 }
-
 
 @Preview(showBackground = true, backgroundColor = 0xFFF5F6F8)
 @Composable
