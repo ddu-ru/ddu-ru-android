@@ -1,7 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.home.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -17,6 +16,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -68,7 +68,7 @@ private fun HomeHeaderIconButtons(
             tint = DduruTheme.colors.black,
             modifier = Modifier
                 .size(20.dp)
-                .clickable(onClick = onNotificationClick)
+                .noRippleClickable(onClick = onNotificationClick)
         )
 
         Icon(
@@ -77,7 +77,7 @@ private fun HomeHeaderIconButtons(
             tint = DduruTheme.colors.black,
             modifier = Modifier
                 .size(20.dp)
-                .clickable(onClick = onMenuClick)
+                .noRippleClickable(onClick = onMenuClick)
         )
     }
 }

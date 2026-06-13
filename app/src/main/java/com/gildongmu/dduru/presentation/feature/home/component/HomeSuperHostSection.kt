@@ -3,7 +3,6 @@ package com.gildongmu.dduru.presentation.feature.home.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.model.HomeSuperHostCardUiModel
 
@@ -106,7 +106,7 @@ fun HomeSuperHostCard(
 
     Card(
         modifier = modifier
-            .clickable(onClick = onClick),
+            .noRippleClickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = DduruTheme.colors.gray0
@@ -168,7 +168,7 @@ fun HomeSuperHostCard(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(end = 16.dp, bottom = 44.dp)
-                        .clickable(onClick = onLikeClick)
+                        .noRippleClickable(onClick = onLikeClick)
                 )
             }
 
