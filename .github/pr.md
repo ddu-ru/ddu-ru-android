@@ -15,8 +15,7 @@
 ## 📎 관련 이슈
 필요한 경우 연결된 이슈를 적어주세요.
 
-- closes #IssueNumber
-- 관련: #IssueNumber
+- closed #IssueNumber
 
 
 ## 📷 스크린샷 / 영상
