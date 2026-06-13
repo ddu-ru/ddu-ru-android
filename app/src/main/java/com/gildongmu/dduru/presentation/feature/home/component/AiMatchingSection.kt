@@ -19,7 +19,7 @@ private const val AI_MATCHING_CARD_RATIO = 343f / 456f
 @Composable
 fun AiMatchingSection(
     matchUsedCount: Int,
-    data: AiMatchingCardData,
+    data: AiMatchingCardData?,
     onPass: () -> Unit,
     onAccept: () -> Unit,
     modifier: Modifier = Modifier
@@ -43,17 +43,17 @@ fun AiMatchingSection(
 
         Spacer(modifier = Modifier.height(16.dp))
 
-        if (matchUsedCount >= DAILY_AI_MATCHING_LIMIT) {
-            AiMatchingFinishedCard(
+        if (data != null && matchUsedCount < DAILY_AI_MATCHING_LIMIT) {
+            AiMatchingCard(
+                data = data,
+                onPass = onPass,
+                onAccept = onAccept,
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(AI_MATCHING_CARD_RATIO)
             )
         } else {
-            AiMatchingCard(
-                data = data,
-                onPass = onPass,
-                onAccept = onAccept,
+            AiMatchingFinishedCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(AI_MATCHING_CARD_RATIO)
