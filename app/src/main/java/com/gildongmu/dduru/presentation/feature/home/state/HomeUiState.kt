@@ -3,6 +3,7 @@ package com.gildongmu.dduru.presentation.feature.home.state
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.presentation.feature.home.model.AiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.model.HomePopularDestinationUiModel
+import com.gildongmu.dduru.presentation.feature.home.model.HomeSuperHostCardUiModel
 import com.gildongmu.dduru.presentation.feature.home.model.TravelCompanionUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
@@ -13,7 +14,7 @@ data class HomeUiState(
     val popularDestinationUpdatedText: String = "방금 전",
     val aiMatchingUsedCount: Int = 0,
     val aiMatchingCard: AiMatchingCardData? = fakeAiMatchingCard,
-    val superHosts: List<HomeSuperHostUiState> = emptyList(),
+    val superHosts: List<HomeSuperHostCardUiModel> = emptyList(),
     val sameDestinationCompanions: List<TravelCompanionUiModel> = emptyList(),
     val sameAgeCompanions: List<TravelCompanionUiModel> = emptyList()
 ) {
@@ -48,7 +49,7 @@ data class HomeUiState(
             ),
             aiMatchingUsedCount = 0,
             superHosts = listOf(
-                HomeSuperHostUiState(
+                HomeSuperHostCardUiModel(
                     id = 1L,
                     title = "제주 동쪽 일출 투어",
                     location = "제주도 한라산",
@@ -61,7 +62,7 @@ data class HomeUiState(
                     thumbnailImageRes = R.drawable.fukuoka,
                     hostProfileImageRes = R.drawable.img_profile
                 ),
-                HomeSuperHostUiState(
+                HomeSuperHostCardUiModel(
                     id = 2L,
                     title = "제주 중턱 일출 투어",
                     location = "제주도 한라산",
@@ -87,22 +88,6 @@ data class UpcomingTripUiState(
     val maxMember: Int = 0,
     val dDay: Int = 0,
     val taskCount: Int = 0
-)
-
-data class HomeSuperHostUiState(
-    val id: Long,
-    val title: String,
-    val location: String,
-    val dateRange: String,
-    val currentMemberCount: Int,
-    val maxMemberCount: Int,
-    val hashtags: List<String>,
-    val hostName: String,
-    val viewCount: Int,
-    val thumbnailImageRes: Int? = null,
-    val hostProfileImageRes: Int? = null,
-    val recruitmentText: String = "모집중",
-    val isLiked: Boolean = false
 )
 
 private val fakeAiMatchingCard = AiMatchingCardData(

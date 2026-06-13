@@ -2,6 +2,7 @@ package com.gildongmu.dduru.presentation.feature.home.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -16,8 +17,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow(HomeUiState.fake)
-    val uiState: StateFlow<HomeUiState> = _uiState.asStateFlow()
+    private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Success(HomeUiState.fake))
+    val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
@@ -35,7 +36,9 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onRefreshPopularDestinationClick() {
-        _uiState.value = _uiState.value.copy(popularDestinationUpdatedText = "방금 전")
+        updateHomeUiState {
+            copy(popularDestinationUpdatedText = "방금 전")
+        }
     }
 
     fun onPopularDestinationClick(id: Long) {
@@ -57,11 +60,13 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onSuperHostLikeClick(id: Long) {
-        _uiState.value = _uiState.value.copy(
-            superHosts = _uiState.value.superHosts.map { item ->
-                if (item.id == id) item.copy(isLiked = !item.isLiked) else item
-            }
-        )
+        updateHomeUiState {
+            copy(
+                superHosts = superHosts.map { item ->
+                    if (item.id == id) item.copy(isLiked = !item.isLiked) else item
+                }
+            )
+        }
     }
 
     fun onCompanionMoreClick() = Unit
@@ -85,14 +90,24 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     private fun updateAiMatchingUsedCount() {
-        val nextUsedCount = _uiState.value.aiMatchingUsedCount + 1
+        updateHomeUiState {
+            val nextUsedCount = aiMatchingUsedCount + 1
 
-        _uiState.value = _uiState.value.copy(
-            aiMatchingUsedCount = nextUsedCount,
-            aiMatchingCard = _uiState.value.aiMatchingCard.takeIf {
-                nextUsedCount < DAILY_AI_MATCHING_LIMIT
-            }
-        )
+            copy(
+                aiMatchingUsedCount = nextUsedCount,
+                aiMatchingCard = aiMatchingCard.takeIf {
+                    nextUsedCount < DAILY_AI_MATCHING_LIMIT
+                }
+            )
+        }
+    }
+
+    private fun updateHomeUiState(reducer: HomeUiState.() -> HomeUiState) {
+        val currentState = _uiState.value
+
+        if (currentState is UiState.Success) {
+            _uiState.value = UiState.Success(currentState.data.reducer())
+        }
     }
 
     private companion object {

@@ -99,6 +99,11 @@ fun HomeSuperHostCard(
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val thumbnailPainter = item.thumbnailImageRes?.let { painterResource(id = it) }
+        ?: ColorPainter(DduruTheme.colors.gray300)
+    val hostProfilePainter = item.hostProfileImageRes?.let { painterResource(id = it) }
+        ?: ColorPainter(DduruTheme.colors.secondary100)
+
     Card(
         modifier = modifier
             .clickable(onClick = onClick),
@@ -123,7 +128,7 @@ fun HomeSuperHostCard(
                     .aspectRatio(300f / 280f)
             ) {
                 Image(
-                    painter = item.thumbnailPainter,
+                    painter = thumbnailPainter,
                     contentDescription = null,
                     modifier = Modifier.matchParentSize(),
                     contentScale = ContentScale.Crop
@@ -237,7 +242,7 @@ fun HomeSuperHostCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = item.hostProfilePainter,
+                        painter = hostProfilePainter,
                         contentDescription = null,
                         modifier = Modifier
                             .size(36.dp)
@@ -344,8 +349,8 @@ private fun HomeSuperHostSectionPreview() {
                 hashtags = listOf("일출", "등산"),
                 hostName = "username",
                 viewCount = 723,
-                thumbnailPainter = ColorPainter(DduruTheme.colors.gray300),
-                hostProfilePainter = ColorPainter(DduruTheme.colors.secondary100)
+                thumbnailImageRes = R.drawable.fukuoka,
+                hostProfileImageRes = R.drawable.img_profile
             ),
             HomeSuperHostCardUiModel(
                 id = 2L,
@@ -357,8 +362,8 @@ private fun HomeSuperHostSectionPreview() {
                 hashtags = listOf("일출", "등산"),
                 hostName = "username",
                 viewCount = 723,
-                thumbnailPainter = ColorPainter(DduruTheme.colors.gray300),
-                hostProfilePainter = ColorPainter(DduruTheme.colors.gray300)
+                thumbnailImageRes = R.drawable.fukuoka,
+                hostProfileImageRes = R.drawable.img_profile
             )
         )
 

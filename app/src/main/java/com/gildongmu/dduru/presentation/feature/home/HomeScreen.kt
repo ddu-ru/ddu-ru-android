@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -21,12 +23,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.painter.ColorPainter
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.AiMatchingSection
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHeader
@@ -37,8 +38,6 @@ import com.gildongmu.dduru.presentation.feature.home.component.UpcomingTripCard
 import com.gildongmu.dduru.presentation.feature.home.component.WritingButton
 import com.gildongmu.dduru.presentation.feature.home.component.WritingExpandedMenu
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
-import com.gildongmu.dduru.presentation.feature.home.model.HomeSuperHostCardUiModel
-import com.gildongmu.dduru.presentation.feature.home.state.HomeSuperHostUiState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
 import com.gildongmu.dduru.presentation.feature.home.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -73,24 +72,72 @@ fun HomeRoute(
         }
     }
 
-    HomeScreen(
-        uiState = uiState,
-        paddingValues = paddingValues,
-        onNotificationClick = viewModel::onNotificationClick,
-        onMenuClick = viewModel::onMenuClick,
-        onUpcomingTripTaskClick = viewModel::onUpcomingTripTaskClick,
-        onRefreshPopularDestinationClick = viewModel::onRefreshPopularDestinationClick,
-        onPopularDestinationClick = viewModel::onPopularDestinationClick,
-        onAiMatchingPassClick = viewModel::onAiMatchingPassClick,
-        onAiMatchingAcceptClick = viewModel::onAiMatchingAcceptClick,
-        onSuperHostMoreClick = viewModel::onSuperHostMoreClick,
-        onSuperHostClick = viewModel::onSuperHostClick,
-        onSuperHostLikeClick = viewModel::onSuperHostLikeClick,
-        onCompanionMoreClick = viewModel::onCompanionMoreClick,
-        onCompanionClick = viewModel::onCompanionClick,
-        onCreateTravelRoomClick = viewModel::onCreateTravelRoomClick,
-        onWriteCommunityClick = viewModel::onWriteCommunityClick
-    )
+    when (val state = uiState) {
+        UiState.Empty -> Unit
+
+        UiState.Loading -> {
+            HomeLoadingScreen()
+        }
+
+        UiState.Failure -> {
+            HomeFailureScreen()
+        }
+
+        is UiState.Success -> {
+            HomeScreen(
+                uiState = state.data,
+                paddingValues = paddingValues,
+                onNotificationClick = viewModel::onNotificationClick,
+                onMenuClick = viewModel::onMenuClick,
+                onUpcomingTripTaskClick = viewModel::onUpcomingTripTaskClick,
+                onRefreshPopularDestinationClick = viewModel::onRefreshPopularDestinationClick,
+                onPopularDestinationClick = viewModel::onPopularDestinationClick,
+                onAiMatchingPassClick = viewModel::onAiMatchingPassClick,
+                onAiMatchingAcceptClick = viewModel::onAiMatchingAcceptClick,
+                onSuperHostMoreClick = viewModel::onSuperHostMoreClick,
+                onSuperHostClick = viewModel::onSuperHostClick,
+                onSuperHostLikeClick = viewModel::onSuperHostLikeClick,
+                onCompanionMoreClick = viewModel::onCompanionMoreClick,
+                onCompanionClick = viewModel::onCompanionClick,
+                onCreateTravelRoomClick = viewModel::onCreateTravelRoomClick,
+                onWriteCommunityClick = viewModel::onWriteCommunityClick
+            )
+        }
+    }
+}
+
+@Composable
+private fun HomeLoadingScreen(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(DduruTheme.colors.gray50),
+        contentAlignment = Alignment.Center
+    ) {
+        CircularProgressIndicator(
+            color = DduruTheme.colors.primary
+        )
+    }
+}
+
+@Composable
+private fun HomeFailureScreen(
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxSize()
+            .background(DduruTheme.colors.gray50),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = "홈 정보를 불러오지 못했어요.",
+            style = DduruTheme.typography.Body2,
+            color = DduruTheme.colors.gray600
+        )
+    }
 }
 
 @Composable
@@ -114,7 +161,6 @@ private fun HomeScreen(
     modifier: Modifier = Modifier
 ) {
     var isWritingMenuVisible by remember { mutableStateOf(false) }
-    val superHosts = uiState.superHosts.map { it.toCardModel() }
 
     Box(
         modifier = modifier
@@ -173,7 +219,7 @@ private fun HomeScreen(
 
                 item {
                     HomeSuperHostSection(
-                        items = superHosts,
+                        items = uiState.superHosts,
                         onMoreClick = onSuperHostMoreClick,
                         onCardClick = onSuperHostClick,
                         onLikeClick = onSuperHostLikeClick
@@ -227,27 +273,6 @@ private fun HomeScreen(
     }
 }
 
-
-@Composable
-private fun HomeSuperHostUiState.toCardModel(): HomeSuperHostCardUiModel {
-    return HomeSuperHostCardUiModel(
-        id = id,
-        title = title,
-        location = location,
-        dateRange = dateRange,
-        currentMemberCount = currentMemberCount,
-        maxMemberCount = maxMemberCount,
-        hashtags = hashtags,
-        hostName = hostName,
-        viewCount = viewCount,
-        thumbnailPainter = thumbnailImageRes?.let { painterResource(id = it) }
-            ?: ColorPainter(DduruTheme.colors.gray300),
-        hostProfilePainter = hostProfileImageRes?.let { painterResource(id = it) }
-            ?: ColorPainter(DduruTheme.colors.secondary100),
-        recruitmentText = recruitmentText,
-        isLiked = isLiked
-    )
-}
 
 @Preview(showBackground = true, backgroundColor = 0xFFF5F6F8)
 @Composable
