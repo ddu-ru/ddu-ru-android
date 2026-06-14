@@ -2,7 +2,6 @@ package com.gildongmu.dduru.presentation.feature.matching.post.component
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.runtime.Composable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
@@ -20,6 +19,7 @@ import androidx.compose.material3.DropdownMenuItem
 import androidx.compose.material3.Icon
 import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -60,7 +60,7 @@ fun PostStatusDropdown(
             Text(
                 text = selectedStatus.label,
                 style = DduruTheme.typography.Title3,
-                color = DduruTheme.colors.gray800,
+                color = DduruTheme.colors.gray800
             )
 
             Spacer(modifier = Modifier.width(10.dp))
@@ -77,7 +77,7 @@ fun PostStatusDropdown(
                 .background(color = DduruTheme.colors.gray0.copy(alpha = 0.7f)),
             border = BorderStroke(
                 width = 1.dp,
-                color =  DduruTheme.colors.gray0.copy(alpha = 0.3f)
+                color = DduruTheme.colors.gray0.copy(alpha = 0.3f)
             ),
             expanded = expanded,
             onDismissRequest = { expanded = false },
@@ -136,7 +136,7 @@ private fun PostStatusDropdownPreview() {
         PostStatusDropdown(
             modifier = Modifier.padding(16.dp),
             selectedStatus = status,
-            onStatusSelected = { status = it },
+            onStatusSelected = { status = it }
         )
     }
 }
