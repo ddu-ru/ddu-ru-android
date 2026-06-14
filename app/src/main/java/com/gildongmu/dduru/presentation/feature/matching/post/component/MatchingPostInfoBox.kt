@@ -39,9 +39,8 @@ fun CommonBoxComponent(
                 shape = RoundedCornerShape(24.dp)
             )
             .padding(vertical = 20.dp),
-        verticalAlignment = Alignment.CenterVertically,
-    ){
-
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Column(
             modifier = Modifier.weight(1f),
             horizontalAlignment = Alignment.CenterHorizontally
@@ -49,7 +48,7 @@ fun CommonBoxComponent(
             Text(
                 text = recruitmentType,
                 style = DduruTheme.typography.Title2,
-                color = DduruTheme.colors.black,
+                color = DduruTheme.colors.black
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -57,7 +56,7 @@ fun CommonBoxComponent(
             Text(
                 text = "모집 유형",
                 style = DduruTheme.typography.Caption2,
-                color = DduruTheme.colors.gray600,
+                color = DduruTheme.colors.gray600
             )
         }
 
@@ -73,9 +72,9 @@ fun CommonBoxComponent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "${recruitmentCount}/${recruitCapacity}",
+                text = "$recruitmentCount/$recruitCapacity",
                 style = DduruTheme.typography.Title2,
-                color = DduruTheme.colors.black,
+                color = DduruTheme.colors.black
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -83,7 +82,7 @@ fun CommonBoxComponent(
             Text(
                 text = "모집 인원",
                 style = DduruTheme.typography.Caption2,
-                color = DduruTheme.colors.gray600,
+                color = DduruTheme.colors.gray600
             )
         }
 
@@ -99,9 +98,9 @@ fun CommonBoxComponent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "${minAge}-${maxAge}세 $preferredGender",
+                text = "$minAge-${maxAge}세 $preferredGender",
                 style = DduruTheme.typography.Title2,
-                color = DduruTheme.colors.black,
+                color = DduruTheme.colors.black
             )
 
             Spacer(modifier = Modifier.height(6.dp))
@@ -109,10 +108,9 @@ fun CommonBoxComponent(
             Text(
                 text = "모집 조건",
                 style = DduruTheme.typography.Caption2,
-                color = DduruTheme.colors.gray600,
+                color = DduruTheme.colors.gray600
             )
         }
-
     }
 }
 
@@ -122,7 +120,7 @@ private fun CommonBoxComponentPreview() {
     DduruTheme {
         CommonBoxComponent(
             recruitmentType = "전체 동행",
-            recruitmentCount= "1",
+            recruitmentCount = "1",
             recruitCapacity = "4",
             minAge = 20,
             maxAge = 30,
