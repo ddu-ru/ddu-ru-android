@@ -3,7 +3,6 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -24,10 +23,10 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
@@ -135,6 +134,11 @@ fun TransparentButton(
     contentPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
 ) {
     val containerShape = RoundedCornerShape(99.dp)
+    val clickableModifier = if (enabled) {
+        Modifier.noRippleClickable(onClick = onClick)
+    } else {
+        Modifier
+    }
 
     Box(
         modifier = modifier
@@ -143,11 +147,7 @@ fun TransparentButton(
                 color = DduruTheme.colors.gray0.copy(alpha = 0.2f),
                 shape = containerShape
             )
-            .clickable(
-                enabled = enabled,
-                role = Role.Companion.Button,
-                onClick = onClick
-            ),
+            .then(clickableModifier),
         contentAlignment = Alignment.Center
     ) {
         Box(
@@ -177,22 +177,23 @@ fun TransparentButton(
 @Composable
 private fun TransparentButtonPreview() {
     val hazeState = remember { HazeState() }
-
-    Box(
-        modifier = Modifier.fillMaxSize(),
-        contentAlignment = Alignment.Center
-    ) {
+    DduruTheme {
         Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(Color(0xFF5A6F95))
-                .haze(hazeState)
-        )
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(Color(0xFF5A6F95))
+                    .haze(hazeState)
+            )
 
-        TransparentButton(
-            text = "사진 변경",
-            hazeState = hazeState,
-            onClick = {}
-        )
+            TransparentButton(
+                text = "사진 변경",
+                hazeState = hazeState,
+                onClick = {}
+            )
+        }
     }
 }

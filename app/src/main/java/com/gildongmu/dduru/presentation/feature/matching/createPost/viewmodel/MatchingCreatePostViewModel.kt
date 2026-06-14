@@ -60,9 +60,14 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
                 locationSearchUiState = currentState.locationSearchUiState.copy(
                     selectedLocation = location,
                     searchQuery = location.city
+                ),
+                thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
+                    regionName = location.city,
+                    countryName = location.countryName
                 )
             )
         }
+
         moveToStep(MatchingCreatePostStep.DATE)
     }
 
