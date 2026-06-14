@@ -9,8 +9,8 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.filled.Check
@@ -29,7 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
-enum class PostStatus(
+enum class MatchingPostStatus(
     val label: String
 ) {
     RECRUITING("모집중"),
@@ -39,8 +39,8 @@ enum class PostStatus(
 
 @Composable
 fun PostStatusDropdown(
-    selectedStatus: PostStatus,
-    onStatusSelected: (PostStatus) -> Unit,
+    selectedStatus: MatchingPostStatus,
+    onStatusSelected: (MatchingPostStatus) -> Unit,
     modifier: Modifier = Modifier
 ) {
     var expanded by remember { mutableStateOf(false) }
@@ -49,7 +49,7 @@ fun PostStatusDropdown(
         modifier = modifier
     ) {
         OutlinedButton(
-            onClick = { expanded = true },
+            onClick = { expanded = !expanded },
             shape = RoundedCornerShape(8.dp),
             border = BorderStroke(
                 width = 1.dp,
@@ -74,8 +74,7 @@ fun PostStatusDropdown(
 
         DropdownMenu(
             modifier = Modifier
-                .background(color = DduruTheme.colors.gray0.copy(alpha = 0.7f))
-                .wrapContentWidth(),
+                .background(color = DduruTheme.colors.gray0.copy(alpha = 0.7f)),
             border = BorderStroke(
                 width = 1.dp,
                 color =  DduruTheme.colors.gray0.copy(alpha = 0.3f)
@@ -84,7 +83,7 @@ fun PostStatusDropdown(
             onDismissRequest = { expanded = false },
             shape = RoundedCornerShape(16.dp)
         ) {
-            PostStatus.entries.forEach { status ->
+            MatchingPostStatus.entries.forEach { status ->
                 DropdownMenuItem(
                     contentPadding = PaddingValues(
                         horizontal = 16.dp,
@@ -131,10 +130,11 @@ fun PostStatusDropdown(
 private fun PostStatusDropdownPreview() {
     DduruTheme {
         var status by remember {
-            mutableStateOf(PostStatus.RECRUITING)
+            mutableStateOf(MatchingPostStatus.RECRUITING)
         }
 
         PostStatusDropdown(
+            modifier = Modifier.padding(16.dp),
             selectedStatus = status,
             onStatusSelected = { status = it },
         )
