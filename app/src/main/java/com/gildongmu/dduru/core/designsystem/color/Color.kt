@@ -29,6 +29,7 @@ val Gray9E = Color(0xFF9E9E9E)
 val Black = Color(0xFF000000)
 val ValidationRed = Color(0xFFFF2828)
 val KakaoYellow = Color(0xFFFEE500)
+val BadgeOrange = Color(0xFFFF6C28)
 
 @Immutable
 data class DduruColors(
@@ -59,7 +60,8 @@ data class DduruColors(
     val black: Color,
 
     val validationRed: Color,
-    val kakaoYellow: Color
+    val kakaoYellow: Color,
+    val badgeOrange: Color
 )
 
 val defaultDduruColors = DduruColors(
@@ -89,7 +91,8 @@ val defaultDduruColors = DduruColors(
     black = Black,
 
     kakaoYellow = KakaoYellow,
-    validationRed = ValidationRed
+    validationRed = ValidationRed,
+    badgeOrange = BadgeOrange
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }
