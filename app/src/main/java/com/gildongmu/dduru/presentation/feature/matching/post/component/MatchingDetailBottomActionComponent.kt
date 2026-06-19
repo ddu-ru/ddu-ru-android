@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.core.common.extension.toDotDate
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
@@ -216,10 +217,6 @@ private enum class MatchingDetailBottomButtonState(
             }
         }
     }
-}
-
-private fun String.toDotDate(): String {
-    return replace("-", ".")
 }
 
 @Preview(showBackground = true)
