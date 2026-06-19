@@ -2,7 +2,6 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
-import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -18,6 +17,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableFloatStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.rememberUpdatedState
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -63,6 +63,7 @@ fun AgeRangeBar(
     val labelWidth = 36.dp
 
     val density = LocalDensity.current
+    val currentOnRangeChanged by rememberUpdatedState(onRangeChanged)
 
     var containerWidthPx by remember { mutableFloatStateOf(0f) }
     var dragStartIndex by remember { mutableStateOf<Int?>(null) }
@@ -70,12 +71,10 @@ fun AgeRangeBar(
     val startIndex = selectedStart?.let { ages.indexOf(it) } ?: -1
     val endIndex = selectedEnd?.let { ages.indexOf(it) } ?: -1
 
-    val ageRangeText = if (isAgeIrrelevant) {
-        "연령무관"
-    } else if (selectedStart != null && selectedEnd != null) {
-        "$selectedStart-${selectedEnd}세"
-    } else {
-        "선택해주세요"
+    val ageRangeText = when {
+        isAgeIrrelevant -> "연령무관"
+        selectedStart != null && selectedEnd != null -> "$selectedStart-${selectedEnd}세"
+        else -> "선택해주세요"
     }
 
     fun segmentWidthPx(containerWidthPx: Float, capWidthPx: Float): Float {
@@ -138,34 +137,34 @@ fun AgeRangeBar(
                     if (!enabled) {
                         baseModifier
                     } else {
-                        baseModifier
-                            .pointerInput(enabled, onRangeChanged) {
-                                detectTapGestures(
-                                    onTap = { offset ->
-                                        val index = xToIndex(offset.x)
-                                        onRangeChanged(ages[index], ages[index + 1])
-                                    }
-                                )
-                            }
-                            .pointerInput(enabled, onRangeChanged) {
-                                detectDragGestures(
-                                    onDragStart = { offset ->
-                                        val index = xToIndex(offset.x)
-                                        dragStartIndex = index
-                                    },
-                                    onDrag = { change, _ ->
-                                        val start = dragStartIndex ?: return@detectDragGestures
-                                        val current = xToIndex(change.position.x)
+                        baseModifier.pointerInput(
+                            enabled,
+                            containerWidthPx
+                        ) {
+                            detectDragGestures(
+                                onDragStart = { offset ->
+                                    val index = xToIndex(offset.x)
+                                    dragStartIndex = index
+                                    currentOnRangeChanged(ages[index], ages[index + 1])
+                                },
+                                onDrag = { change, _ ->
+                                    val start = dragStartIndex ?: return@detectDragGestures
+                                    val current = xToIndex(change.position.x)
 
-                                        val from = minOf(start, current)
-                                        val to = maxOf(start, current)
+                                    val from = minOf(start, current)
+                                    val to = maxOf(start, current)
 
-                                        onRangeChanged(ages[from], ages[to + 1])
-                                    },
-                                    onDragEnd = { dragStartIndex = null },
-                                    onDragCancel = { dragStartIndex = null }
-                                )
-                            }
+                                    currentOnRangeChanged(ages[from], ages[to + 1])
+                                    change.consume()
+                                },
+                                onDragEnd = {
+                                    dragStartIndex = null
+                                },
+                                onDragCancel = {
+                                    dragStartIndex = null
+                                }
+                            )
+                        }
                     }
                 }
         ) {

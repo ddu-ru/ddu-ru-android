@@ -11,10 +11,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -22,71 +18,72 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSelectionTarget
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
 
 @Composable
 fun DateSelectionSection(
+    uiState: DateSectionUiState,
+    onUiStateChange: (DateSectionUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val stepHeaderDate = remember {
-        StepHeaderUiModel(
-            step = 2,
-            title = "언제 떠나시나요?",
-            subtitle = "날짜를 선택해 주세요."
-        )
-    }
-    var uiState by remember { mutableStateOf(DateSectionUiState()) }
-
     fun formatDate(date: LocalDate?): String? {
-        if (date == null) return null
-
-        return date.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
+        return date?.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
     }
 
     fun handleDateSelected(date: LocalDate) {
-        when (uiState.selectionTarget) {
+        val newUiState = when (uiState.selectionTarget) {
             DateSelectionTarget.START -> {
-                if (uiState.selectedEndDate != null && date.isAfter(uiState.selectedEndDate)) {
-                    uiState = uiState.copy(
+                val updatedState = if (
+                    uiState.selectedEndDate != null &&
+                    date.isAfter(uiState.selectedEndDate)
+                ) {
+                    uiState.copy(
                         selectedStartDate = uiState.selectedEndDate,
                         selectedEndDate = date
                     )
                 } else {
-                    uiState = uiState.copy(selectedStartDate = date)
+                    uiState.copy(selectedStartDate = date)
                 }
 
-                if (uiState.selectedEndDate == null) {
-                    uiState = uiState.copy(selectionTarget = DateSelectionTarget.END)
+                if (updatedState.selectedEndDate == null) {
+                    updatedState.copy(selectionTarget = DateSelectionTarget.END)
+                } else {
+                    updatedState
                 }
             }
 
             DateSelectionTarget.END -> {
-                if (uiState.selectedStartDate == null) {
-                    uiState = uiState.copy(
-                        selectedStartDate = date,
-                        selectionTarget = DateSelectionTarget.END
-                    )
-                    return
-                }
+                when {
+                    uiState.selectedStartDate == null -> {
+                        uiState.copy(
+                            selectedStartDate = date,
+                            selectionTarget = DateSelectionTarget.END
+                        )
+                    }
 
-                if (date.isBefore(uiState.selectedStartDate)) {
-                    uiState = uiState.copy(
-                        selectedStartDate = date,
-                        selectedEndDate = uiState.selectedStartDate
-                    )
-                } else {
-                    uiState = uiState.copy(selectedEndDate = date)
+                    date.isBefore(uiState.selectedStartDate) -> {
+                        uiState.copy(
+                            selectedStartDate = date,
+                            selectedEndDate = uiState.selectedStartDate
+                        )
+                    }
+
+                    else -> {
+                        uiState.copy(selectedEndDate = date)
+                    }
                 }
             }
         }
+
+        onUiStateChange(newUiState)
     }
 
-    fun selectStartDateField() {
-        uiState = uiState.copy(
+    fun selectStartDateField(): DateSectionUiState {
+        return uiState.copy(
             selectionTarget = DateSelectionTarget.START,
             selectedEndDate = if (uiState.selectedStartDate != null && uiState.selectedEndDate != null) {
                 null
@@ -96,8 +93,8 @@ fun DateSelectionSection(
         )
     }
 
-    fun selectEndDateField() {
-        uiState = uiState.copy(
+    fun selectEndDateField(): DateSectionUiState {
+        return uiState.copy(
             selectionTarget = DateSelectionTarget.END,
             selectedEndDate = if (uiState.selectedStartDate == null) {
                 null
@@ -107,24 +104,46 @@ fun DateSelectionSection(
         )
     }
 
-    fun resetRangeIfCompleted() {
-        if (uiState.selectedStartDate != null && uiState.selectedEndDate != null) {
-            uiState = uiState.copy(selectedEndDate = null)
+    fun resetRangeIfCompleted(state: DateSectionUiState): DateSectionUiState {
+        return if (state.selectedStartDate != null && state.selectedEndDate != null) {
+            state.copy(selectedEndDate = null)
+        } else {
+            state
         }
     }
 
     fun handleStartBoxClick() {
-        resetRangeIfCompleted()
-        selectStartDateField()
+        val resetState = resetRangeIfCompleted(uiState)
+        val newUiState = resetState.copy(
+            selectionTarget = DateSelectionTarget.START,
+            selectedEndDate = if (resetState.selectedStartDate != null && resetState.selectedEndDate != null) {
+                null
+            } else {
+                resetState.selectedEndDate
+            }
+        )
+
+        onUiStateChange(newUiState)
     }
 
     fun handleEndBoxClick() {
-        resetRangeIfCompleted()
-        selectEndDateField()
+        val resetState = resetRangeIfCompleted(uiState)
+        val newUiState = resetState.copy(
+            selectionTarget = DateSelectionTarget.END,
+            selectedEndDate = if (resetState.selectedStartDate == null) {
+                null
+            } else {
+                resetState.selectedEndDate
+            }
+        )
+
+        onUiStateChange(newUiState)
     }
 
-    Column(modifier = modifier.fillMaxWidth()) {
-        CreatePostStepHeader(uiModel = stepHeaderDate)
+    Column(
+        modifier = modifier.fillMaxWidth()
+    ) {
+        CreatePostStepHeader(uiModel = MatchingCreatePostStep.DATE.headerUiModel)
 
         Spacer(modifier = Modifier.weight(16f))
 
@@ -176,6 +195,8 @@ private fun DateSelectionSectionPreview() {
     DduruTheme {
         Surface(color = DduruTheme.colors.gray0) {
             DateSelectionSection(
+                uiState = DateSectionUiState(),
+                onUiStateChange = {},
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 52.dp)
             )
         }
