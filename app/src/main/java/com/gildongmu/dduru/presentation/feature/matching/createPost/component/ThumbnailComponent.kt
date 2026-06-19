@@ -2,7 +2,9 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
@@ -18,15 +20,18 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.tripgroup.creative.component.TransparentButton
 import dev.chrisbanes.haze.HazeState
+import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.haze
+import dev.chrisbanes.haze.hazeChild
 
 @Composable
 fun ThumbnailImageCard(
@@ -107,6 +112,87 @@ private fun ThumbnailImageCardPreview() {
                 countryName = "일본",
                 imageResId = R.drawable.fukuoka,
                 onChangeClick = {}
+            )
+        }
+    }
+}
+
+@Composable
+private fun transparentButtonHazeStyle(): HazeStyle = HazeStyle(
+    tint = DduruTheme.colors.gray50.copy(alpha = 0.22f),
+    blurRadius = 8.dp,
+    noiseFactor = 0f
+)
+
+@Composable
+fun TransparentButton(
+    text: String,
+    hazeState: HazeState,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    enabled: Boolean = true,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 8.dp, vertical = 6.dp)
+) {
+    val containerShape = RoundedCornerShape(99.dp)
+    val clickableModifier = if (enabled) {
+        Modifier.noRippleClickable(onClick = onClick)
+    } else {
+        Modifier
+    }
+
+    Box(
+        modifier = modifier
+            .border(
+                width = 0.8.dp,
+                color = DduruTheme.colors.gray0.copy(alpha = 0.2f),
+                shape = containerShape
+            )
+            .then(clickableModifier),
+        contentAlignment = Alignment.Center
+    ) {
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .hazeChild(
+                    state = hazeState,
+                    shape = containerShape,
+                    style = transparentButtonHazeStyle()
+                )
+                .background(
+                    color = DduruTheme.colors.gray0.copy(alpha = 0.10f),
+                    shape = containerShape
+                )
+        )
+
+        Text(
+            text = text,
+            modifier = Modifier.padding(contentPadding),
+            style = DduruTheme.typography.Micro,
+            color = DduruTheme.colors.gray0
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun TransparentButtonPreview() {
+    val hazeState = remember { HazeState() }
+    DduruTheme {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Box(
+                modifier = Modifier
+                    .matchParentSize()
+                    .background(Color(0xFF5A6F95))
+                    .haze(hazeState)
+            )
+
+            TransparentButton(
+                text = "사진 변경",
+                hazeState = hazeState,
+                onClick = {}
             )
         }
     }
