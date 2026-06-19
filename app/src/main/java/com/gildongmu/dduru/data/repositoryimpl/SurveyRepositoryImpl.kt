@@ -35,6 +35,8 @@ class SurveyRepositoryImpl @Inject constructor(
                 }
             }
         } catch (e: retrofit2.HttpException) {
+            val errorBody = e.response()?.errorBody()?.string()
+            android.util.Log.e("SurveyRepo", "submitSurvey 실패 - HTTP ${e.code()}: $errorBody")
             Result.failure(Exception("서버 오류: ${e.code()} - ${e.message()}"))
         } catch (e: java.io.IOException) {
             Result.failure(Exception("네트워크 오류: 인터넷 연결을 확인해주세요."))

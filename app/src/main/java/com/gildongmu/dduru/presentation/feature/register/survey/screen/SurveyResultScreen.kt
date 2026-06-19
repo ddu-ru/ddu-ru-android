@@ -103,7 +103,7 @@ private fun ResultScreen(
         Spacer(modifier = Modifier.height(16.dp))
 
         Text(
-            text = result.avatarName,
+            text = result.characterName,
             style = DduruTheme.typography.Heading,
             color = DduruTheme.colors.primary
         )
@@ -111,7 +111,9 @@ private fun ResultScreen(
         Spacer(modifier = Modifier.height(8.dp))
 
         Text(
-            text = result.avatarDescription,
+            text = listOf(result.descriptionLine1, result.descriptionLine2, result.descriptionLine3)
+                .filter { it.isNotBlank() }
+                .joinToString("\n"),
             style = DduruTheme.typography.BodyMain,
             color = DduruTheme.colors.gray800,
             textAlign = TextAlign.Center
@@ -131,9 +133,9 @@ private fun ResultScreen(
                 modifier = Modifier.padding(20.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                InfoItem(title = "💡 성격", content = result.personality)
-                InfoItem(title = "💪 강점", content = result.strength)
-                InfoItem(title = "💬 팁", content = result.tip)
+                InfoItem(title = "🏷️ 태그", content = result.tags.joinToString(", "))
+                InfoItem(title = "📝 기록 스타일", content = result.recordStyleType)
+                InfoItem(title = "💬 한마디", content = result.speechBubbleText)
             }
         }
 

@@ -13,22 +13,27 @@ import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import coil.request.ImageRequest
+import com.gildongmu.dduru.BuildConfig
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun QuestionCard(
     questionNumber: Int,
+    totalQuestions: Int,
     questionTitle: String,
     imageUrl: String?,
+    token: String?,
     modifier: Modifier = Modifier
 ) {
     val cardShape = remember { RoundedCornerShape(24.dp) }
+    val context = LocalContext.current
 
     val shouldShowImage = !imageUrl.isNullOrEmpty() &&
-        imageUrl != "survey/q7.png" &&
-        !imageUrl.contains("q7")
+        !imageUrl.contains("activity_tags")
 
     Box(
         modifier = modifier
@@ -62,13 +67,20 @@ fun QuestionCard(
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                QuestionNumberBadge(currentQuestion = questionNumber)
+                QuestionNumberBadge(currentQuestion = questionNumber, totalQuestions = totalQuestions)
                 QuestionTitle(text = questionTitle)
             }
 
-            if (shouldShowImage) {
+            if (shouldShowImage && token != null) {
+                val fullUrl = if (imageUrl!!.startsWith("http")) {
+                    imageUrl
+                } else {
+                    "${BuildConfig.BASE_URL.trimEnd('/')}/$imageUrl"
+                }
                 AsyncImage(
-                    model = imageUrl,
+                    model = ImageRequest.Builder(context)
+                        .data(fullUrl)
+                        .build(),
                     contentDescription = null,
                     modifier = Modifier.size(180.dp)
                 )
