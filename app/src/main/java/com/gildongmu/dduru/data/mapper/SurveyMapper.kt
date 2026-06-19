@@ -13,18 +13,21 @@ import com.gildongmu.dduru.domain.entity.SurveyResult
 
 fun SurveyResponse.toDomain(): SurveyResult {
     return SurveyResult(
-        r = r,
-        w = w,
-        s = s,
-        p = p,
+        rhythmScore = tendencyScores.rhythmScore,
+        energyScore = tendencyScores.energyScore,
+        consumptionScore = tendencyScores.consumptionScore,
+        decisionScore = tendencyScores.decisionScore,
         avatarCode = avatarCode,
         avatarType = avatarType,
-        avatarName = avatarName,
-        avatarDescription = avatarDescription,
-        personality = personality,
-        strength = strength,
-        tip = tip,
-        tags = tags
+        recordStyleType = recordStyleType,
+        avatarLabel = avatarLabel,
+        characterName = avatarProfile.characterName,
+        speechBubbleText = avatarProfile.speechBubbleText,
+        tags = avatarProfile.tags,
+        descriptionLine1 = avatarProfile.descriptionLine1,
+        descriptionLine2 = avatarProfile.descriptionLine2,
+        descriptionLine3 = avatarProfile.descriptionLine3,
+        imageUrl = avatarProfile.imageUrl
     )
 }
 
@@ -64,16 +67,19 @@ fun com.gildongmu.dduru.data.remote.dto.response.QuestionOption.toDomain(): Ques
 
 fun SurveyAnswers.toRequest(): SurveyRequest {
     return SurveyRequest(
-        q1 = q1,
-        q2 = q2,
-        q3 = q3,
-        q4 = q4,
-        q5 = q5,
-        q6 = q6,
-        q7 = q7,
-        q8 = q8,
-        q9 = q9,
-        q10 = q10,
-        q11 = q11
+        rhythmQ1 = rhythmQ1,
+        rhythmQ2 = rhythmQ2,
+        rhythmQ3 = rhythmQ3,
+        activityTags = activityTags,
+        consumptionQ1 = consumptionQ1,
+        consumptionQ2 = consumptionQ2,
+        consumptionQ3 = consumptionQ3,
+        energyQ1 = energyQ1,
+        energyQ2 = energyQ2,
+        energyQ3 = energyQ3,
+        decisionQ1 = decisionQ1,
+        decisionQ2 = decisionQ2,
+        decisionQ3 = decisionQ3,
+        recordStyle = recordStyle
     )
 }
