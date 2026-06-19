@@ -87,8 +87,7 @@ fun CommonBoxComponent(
         }
 
         VerticalDivider(
-            modifier = Modifier
-                .fillMaxHeight(),
+            modifier = Modifier,
             color = DduruTheme.colors.gray200,
             thickness = 1.dp
         )
