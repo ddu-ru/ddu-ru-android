@@ -1,7 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.matching.post.component
 
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -60,23 +59,21 @@ fun MatchingHostInfoComponent(
         Row(
             verticalAlignment = Alignment.Top
         ) {
-            Box {
-                val profileImageModel = when (profileImage) {
-                    is MatchingHostProfileImage.Resource -> profileImage.resId
-                    is MatchingHostProfileImage.Url -> profileImage.value
-                    null -> R.drawable.img_blank_profile
-                }
-
-                AsyncImage(
-                    model = profileImageModel,
-                    contentDescription = null,
-                    modifier = Modifier
-                        .size(36.dp)
-                        .clip(CircleShape),
-                    contentScale = ContentScale.Crop,
-                    error = painterResource(id = R.drawable.img_blank_profile)
-                )
+            val profileImageModel = when (profileImage) {
+                is MatchingHostProfileImage.Resource -> profileImage.resId
+                is MatchingHostProfileImage.Url -> profileImage.value
+                null -> R.drawable.img_blank_profile
             }
+
+            AsyncImage(
+                model = profileImageModel,
+                contentDescription = null,
+                modifier = Modifier
+                    .size(36.dp)
+                    .clip(CircleShape),
+                contentScale = ContentScale.Crop,
+                error = painterResource(id = R.drawable.img_blank_profile)
+            )
 
             Spacer(modifier = Modifier.width(8.dp))
 
