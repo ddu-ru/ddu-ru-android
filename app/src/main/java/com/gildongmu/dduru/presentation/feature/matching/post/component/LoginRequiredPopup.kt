@@ -1,10 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.matching.post.component
 
 import androidx.compose.foundation.Image
-import androidx.compose.ui.window.Dialog
-import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -24,7 +21,9 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -109,9 +108,8 @@ private fun LoginBenefitBox(
                 color = DduruTheme.colors.gray100,
                 shape = RoundedCornerShape(18.dp)
             )
-            .padding(16.dp),
+            .padding(16.dp)
     ) {
-
         Text(
             text = "로그인하면",
             style = DduruTheme.typography.Title3,
@@ -138,7 +136,7 @@ private fun LoginBenefitItem(
     modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = modifier,
+        modifier = modifier
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_check),
