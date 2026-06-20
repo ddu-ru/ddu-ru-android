@@ -31,12 +31,18 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
+sealed interface MatchingHostProfileImage {
+    data class Resource(val resId: Int) : MatchingHostProfileImage
+
+    data class Url(val value: String) : MatchingHostProfileImage
+}
+
 @Composable
 fun MatchingHostInfoComponent(
     username: String,
     age: String,
     gender: String,
-    profileImage: Any?,
+    profileImage: MatchingHostProfileImage?,
     onProfileClick: () -> Unit,
     onContactClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -55,8 +61,14 @@ fun MatchingHostInfoComponent(
             verticalAlignment = Alignment.Top
         ) {
             Box {
+                val profileImageModel = when (profileImage) {
+                    is MatchingHostProfileImage.Resource -> profileImage.resId
+                    is MatchingHostProfileImage.Url -> profileImage.value
+                    null -> R.drawable.img_blank_profile
+                }
+
                 AsyncImage(
-                    model = profileImage ?: R.drawable.img_blank_profile,
+                    model = profileImageModel,
                     contentDescription = null,
                     modifier = Modifier
                         .size(36.dp)
@@ -149,7 +161,7 @@ private fun MatchingHostInfoComponentPreview() {
             username = "username",
             age = "20대",
             gender = "여성",
-            profileImage = R.drawable.img_profile,
+            profileImage = MatchingHostProfileImage.Resource(R.drawable.img_profile),
             onProfileClick = { },
             onContactClick = { },
             modifier = Modifier.padding(16.dp)
