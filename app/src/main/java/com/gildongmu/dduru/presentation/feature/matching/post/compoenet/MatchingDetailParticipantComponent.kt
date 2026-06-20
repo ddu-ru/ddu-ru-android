@@ -70,7 +70,7 @@ fun MatchingDetailParticipantComponent(
             )
 
             Text(
-                text = "${participantCount}/${recruitCapacity}명",
+                text = "$participantCount/${recruitCapacity}명",
                 style = DduruTheme.typography.Body2,
                 color = DduruTheme.colors.primary
             )
@@ -107,7 +107,6 @@ fun MatchingDetailParticipantComponent(
                                         participant = slot.participant,
                                         modifier = Modifier.weight(1f)
                                     )
-
 
                                 is MatchingDetailParticipantSlot.Remaining ->
                                     MatchingDetailRemainingParticipantItem(
