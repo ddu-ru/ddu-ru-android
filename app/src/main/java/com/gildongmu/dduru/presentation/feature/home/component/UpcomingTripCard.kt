@@ -2,7 +2,6 @@ package com.gildongmu.dduru.presentation.feature.home.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -29,6 +28,7 @@ import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -38,7 +38,7 @@ fun UpcomingTripCard(
     maxMember: Int,
     dDay: Int,
     taskCount: Int,
-    onTaskClick: () -> Unit,
+    onUpcomingTripTaskClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val secondaryColor = DduruTheme.colors.secondary
@@ -142,7 +142,7 @@ fun UpcomingTripCard(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .clickable { onTaskClick() },
+                    .noRippleClickable { onUpcomingTripTaskClick() },
                 horizontalArrangement = Arrangement.End,
                 verticalAlignment = Alignment.CenterVertically
             ) {
@@ -174,7 +174,7 @@ private fun UpcomingTripCardPreview() {
             maxMember = 4,
             dDay = 12,
             taskCount = 1,
-            onTaskClick = {}
+            onUpcomingTripTaskClick = {}
         )
     }
 }

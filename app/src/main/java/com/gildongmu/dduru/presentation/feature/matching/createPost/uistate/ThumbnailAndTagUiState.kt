@@ -9,6 +9,9 @@ data class ThumbnailAndTagUiState(
     val tagInput: String = "",
     val addedTags: List<String> = emptyList()
 ) {
+    val isNextEnabled: Boolean
+        get() = true
+
     val canAddTag: Boolean
         get() = tagInput.trim().isNotBlank() && addedTags.size < 10
 

@@ -54,6 +54,8 @@ fun DduruButton(
     ),
     textStyle: TextStyle = DduruTheme.typography.Title1,
     iconRes: Int? = null,
+    trailingContent: @Composable (() -> Unit)? = null,
+    contentPadding: PaddingValues = PaddingValues(horizontal = 18.dp, vertical = 13.dp),
     enabled: Boolean = true,
     shape: Shape = RoundedCornerShape(16.dp)
 ) {
@@ -63,6 +65,7 @@ fun DduruButton(
 
     Button(
         onClick = onClick,
+        contentPadding = contentPadding,
         modifier = modifier
             .border(
                 width = 1.dp,
@@ -74,7 +77,6 @@ fun DduruButton(
             disabledContainerColor = disabledColors.backgroundColor
         ),
         shape = shape,
-        contentPadding = PaddingValues(horizontal = 18.dp, vertical = 13.dp),
         enabled = enabled
     ) {
         Row(
@@ -96,6 +98,8 @@ fun DduruButton(
                 color = textColor,
                 textAlign = TextAlign.Center
             )
+
+            trailingContent?.invoke()
         }
     }
 }
