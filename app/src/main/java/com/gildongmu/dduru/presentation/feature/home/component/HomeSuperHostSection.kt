@@ -3,7 +3,6 @@ package com.gildongmu.dduru.presentation.feature.home.component
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -41,6 +40,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.model.HomeSuperHostCardUiModel
 
@@ -99,9 +99,14 @@ fun HomeSuperHostCard(
     onLikeClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val thumbnailPainter = item.thumbnailImageRes?.let { painterResource(id = it) }
+        ?: ColorPainter(DduruTheme.colors.gray300)
+    val hostProfilePainter = item.hostProfileImageRes?.let { painterResource(id = it) }
+        ?: ColorPainter(DduruTheme.colors.secondary100)
+
     Card(
         modifier = modifier
-            .clickable(onClick = onClick),
+            .noRippleClickable(onClick = onClick),
         shape = RoundedCornerShape(16.dp),
         colors = CardDefaults.cardColors(
             containerColor = DduruTheme.colors.gray0
@@ -123,7 +128,7 @@ fun HomeSuperHostCard(
                     .aspectRatio(300f / 280f)
             ) {
                 Image(
-                    painter = item.thumbnailPainter,
+                    painter = thumbnailPainter,
                     contentDescription = null,
                     modifier = Modifier.matchParentSize(),
                     contentScale = ContentScale.Crop
@@ -163,7 +168,7 @@ fun HomeSuperHostCard(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(end = 16.dp, bottom = 44.dp)
-                        .clickable(onClick = onLikeClick)
+                        .noRippleClickable(onClick = onLikeClick)
                 )
             }
 
@@ -237,7 +242,7 @@ fun HomeSuperHostCard(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Image(
-                        painter = item.hostProfilePainter,
+                        painter = hostProfilePainter,
                         contentDescription = null,
                         modifier = Modifier
                             .size(36.dp)
@@ -344,8 +349,8 @@ private fun HomeSuperHostSectionPreview() {
                 hashtags = listOf("일출", "등산"),
                 hostName = "username",
                 viewCount = 723,
-                thumbnailPainter = ColorPainter(DduruTheme.colors.gray300),
-                hostProfilePainter = ColorPainter(DduruTheme.colors.secondary100)
+                thumbnailImageRes = R.drawable.fukuoka,
+                hostProfileImageRes = R.drawable.img_profile
             ),
             HomeSuperHostCardUiModel(
                 id = 2L,
@@ -357,8 +362,8 @@ private fun HomeSuperHostSectionPreview() {
                 hashtags = listOf("일출", "등산"),
                 hostName = "username",
                 viewCount = 723,
-                thumbnailPainter = ColorPainter(DduruTheme.colors.gray300),
-                hostProfilePainter = ColorPainter(DduruTheme.colors.gray300)
+                thumbnailImageRes = R.drawable.fukuoka,
+                hostProfileImageRes = R.drawable.img_profile
             )
         )
 

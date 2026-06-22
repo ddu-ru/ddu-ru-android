@@ -9,10 +9,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -21,25 +17,17 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.createPost.model.StepHeaderUiModel
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 
 @Composable
 fun RecruitmentCountSection(
+    uiState: RecruitmentScreenUiState,
+    onUiStateChange: (RecruitmentScreenUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var uiState by remember { mutableStateOf(RecruitmentScreenUiState()) }
-
-    val stepHeaderRecruitmentCount = remember {
-        StepHeaderUiModel(
-            step = 3,
-            title = "모집 인원과 동행 형태를 설정해 주세요",
-            subtitle = "몇 명이 함께할지, 어떤 방식으로 동행할지 선택해 주세요"
-        )
-    }
-
     val selectedButtonColors = DduruButtonEnabledColors(
         backgroundColor = DduruTheme.colors.secondary,
         textColor = DduruTheme.colors.primary,
@@ -73,11 +61,12 @@ fun RecruitmentCountSection(
             isCompanionTypeSelectionEnabled
 
     Column(
-        modifier = modifier.padding(horizontal = 16.dp),
+        modifier = modifier
+            .fillMaxWidth(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         CreatePostStepHeader(
-            uiModel = stepHeaderRecruitmentCount
+            uiModel = MatchingCreatePostStep.RECRUITMENT_COUNT.headerUiModel
         )
 
         Spacer(modifier = Modifier.weight(8f))
@@ -94,11 +83,13 @@ fun RecruitmentCountSection(
         RecruitmentCount(
             uiState = uiState.recruitmentCount,
             onCountChange = { newCount ->
-                uiState = uiState.copy(
-                    recruitmentCount = uiState.recruitmentCount.copy(
-                        rawCount = newCount.coerceIn(
-                            RecruitmentCountNum.MIN,
-                            RecruitmentCountNum.MAX
+                onUiStateChange(
+                    uiState.copy(
+                        recruitmentCount = uiState.recruitmentCount.copy(
+                            rawCount = newCount.coerceIn(
+                                RecruitmentCountNum.MIN,
+                                RecruitmentCountNum.MAX
+                            )
                         )
                     )
                 )
@@ -124,9 +115,11 @@ fun RecruitmentCountSection(
                 modifier = Modifier.weight(1f),
                 text = "전체 동행",
                 onClick = {
-                    uiState = uiState.copy(
-                        selectedCompanionType = CompanionType.FULL,
-                        isCompanionTypeOptional = false
+                    onUiStateChange(
+                        uiState.copy(
+                            selectedCompanionType = CompanionType.FULL,
+                            isCompanionTypeOptional = false
+                        )
                     )
                 },
                 enabled = isCompanionTypeSelectionEnabled,
@@ -142,9 +135,11 @@ fun RecruitmentCountSection(
                 modifier = Modifier.weight(1f),
                 text = "부분 동행",
                 onClick = {
-                    uiState = uiState.copy(
-                        selectedCompanionType = CompanionType.PARTIAL,
-                        isCompanionTypeOptional = false
+                    onUiStateChange(
+                        uiState.copy(
+                            selectedCompanionType = CompanionType.PARTIAL,
+                            isCompanionTypeOptional = false
+                        )
                     )
                 },
                 enabled = isCompanionTypeSelectionEnabled,
@@ -160,9 +155,11 @@ fun RecruitmentCountSection(
                 modifier = Modifier.weight(1f),
                 text = "식사 동행",
                 onClick = {
-                    uiState = uiState.copy(
-                        selectedCompanionType = CompanionType.MEAL,
-                        isCompanionTypeOptional = false
+                    onUiStateChange(
+                        uiState.copy(
+                            selectedCompanionType = CompanionType.MEAL,
+                            isCompanionTypeOptional = false
+                        )
                     )
                 },
                 enabled = isCompanionTypeSelectionEnabled,
@@ -189,13 +186,15 @@ fun RecruitmentCountSection(
         OptionalCheckbox(
             checked = uiState.isCompanionTypeOptional,
             onCheckedChange = { isChecked ->
-                uiState = uiState.copy(
-                    isCompanionTypeOptional = isChecked,
-                    selectedCompanionType = if (isChecked) {
-                        null
-                    } else {
-                        uiState.selectedCompanionType
-                    }
+                onUiStateChange(
+                    uiState.copy(
+                        isCompanionTypeOptional = isChecked,
+                        selectedCompanionType = if (isChecked) {
+                            null
+                        } else {
+                            uiState.selectedCompanionType
+                        }
+                    )
                 )
             },
             text = "동행 형태는 상관없어요."
@@ -212,7 +211,10 @@ private fun RecruitmentCountSectionPreview() {
         Surface(
             color = DduruTheme.colors.gray0
         ) {
-            RecruitmentCountSection()
+            RecruitmentCountSection(
+                uiState = RecruitmentScreenUiState(),
+                onUiStateChange = {}
+            )
         }
     }
 }
