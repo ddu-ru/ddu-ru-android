@@ -2,6 +2,8 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
+import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
@@ -25,7 +27,14 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
+class MatchingCreatePostViewModel @Inject constructor(
+    private val destinationRepository: DestinationRepository
+) : ViewModel() {
+    private companion object {
+        const val POPULAR_DESTINATIONS_ERROR_MESSAGE =
+            "인기 여행지를 불러올 수 없어요 잠시후 다시 시도해주세요"
+    }
+
     private val _uiState = MutableStateFlow(
         MatchingCreatePostUiState(
             popularTags = MatchingCreatePostMockData.popularTags
@@ -35,6 +44,10 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
 
     private val _uiEvent = MutableSharedFlow<MatchingCreatePostUiEvent>()
     val uiEvent: SharedFlow<MatchingCreatePostUiEvent> = _uiEvent.asSharedFlow()
+
+    init {
+        fetchPopularDestinations()
+    }
 
     fun onDismissClick() {
         emitUiEvent(MatchingCreatePostUiEvent.Close)
@@ -69,6 +82,10 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
         }
 
         moveToStep(MatchingCreatePostStep.DATE)
+    }
+
+    fun onLocationSearchClick() {
+        // TODO: Implement destination search API integration with /api/v1/destinations?keyword=
     }
 
     fun onDateSectionUiStateChange(dateSectionUiState: DateSectionUiState) {
@@ -130,4 +147,41 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
             _uiEvent.emit(event)
         }
     }
+
+    private fun fetchPopularDestinations() {
+        viewModelScope.launch {
+            destinationRepository.getPopularDestinations()
+                .onSuccess { destinations ->
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            locationSearchUiState = currentState.locationSearchUiState.copy(
+                                popularLocations = destinations.map { it.toUiState() },
+                                popularLocationsErrorMessage = null
+                            )
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            locationSearchUiState = currentState.locationSearchUiState.copy(
+                                popularLocations = emptyList(),
+                                popularLocationsErrorMessage =
+                                    POPULAR_DESTINATIONS_ERROR_MESSAGE
+                            )
+                        )
+                    }
+                }
+        }
+    }
+}
+
+private fun PopularDestination.toUiState(): LocationSearchItemUiState {
+    return LocationSearchItemUiState(
+        id = id,
+        countryCode = countryCode,
+        countryName = countryName,
+        city = city,
+        image = image
+    )
 }
