@@ -1,6 +1,6 @@
 package com.gildongmu.dduru.data.createPost.repository
 
-import com.gildongmu.dduru.data.createPost.datasource.DestinationRemoteDataSource
+import com.gildongmu.dduru.data.createPost.api.DestinationApi
 import com.gildongmu.dduru.data.createPost.mapper.toDomain
 import com.gildongmu.dduru.domain.createPost.DestinationErrorMapper
 import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
@@ -11,11 +11,11 @@ import kotlin.coroutines.cancellation.CancellationException
 import retrofit2.HttpException
 
 class DestinationRepositoryImpl @Inject constructor(
-    private val destinationRemoteDataSource: DestinationRemoteDataSource
+    private val destinationApi: DestinationApi
 ) : DestinationRepository {
     override suspend fun getPopularDestinations(): Result<List<PopularDestination>> {
         return try {
-            val response = destinationRemoteDataSource.getPopularDestinations()
+            val response = destinationApi.getPopularDestinations()
 
             when (response.status) {
                 200 -> {
@@ -57,7 +57,7 @@ class DestinationRepositoryImpl @Inject constructor(
 
     override suspend fun searchDestinations(keyword: String): Result<List<PopularDestination>> {
         return try {
-            val response = destinationRemoteDataSource.searchDestinations(keyword)
+            val response = destinationApi.searchDestinations(keyword)
 
             when (response.status) {
                 200 -> {
