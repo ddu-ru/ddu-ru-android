@@ -18,6 +18,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Thum
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -36,6 +37,7 @@ class MatchingCreatePostViewModel @Inject constructor(
             "인기 여행지를 불러올 수 없어요 잠시후 다시 시도해주세요"
         const val SEARCH_DESTINATIONS_ERROR_MESSAGE =
             "여행지를 검색할 수 없어요 잠시후 다시 시도해주세요"
+        const val SEARCH_DEBOUNCE_MILLIS = 1_200L
     }
 
     private val _uiState = MutableStateFlow(
@@ -47,7 +49,8 @@ class MatchingCreatePostViewModel @Inject constructor(
 
     private val _uiEvent = MutableSharedFlow<MatchingCreatePostUiEvent>()
     val uiEvent: SharedFlow<MatchingCreatePostUiEvent> = _uiEvent.asSharedFlow()
-    private var searchJob: Job? = null
+    private var searchDebounceJob: Job? = null
+    private var searchRequestJob: Job? = null
 
     init {
         fetchPopularDestinations()
@@ -72,7 +75,7 @@ class MatchingCreatePostViewModel @Inject constructor(
         }
 
         if (previousQuery != locationSearchUiState.searchQuery) {
-            searchDestinations(locationSearchUiState.searchQuery)
+            debounceSearchDestinations(locationSearchUiState.searchQuery)
         }
     }
 
@@ -94,6 +97,7 @@ class MatchingCreatePostViewModel @Inject constructor(
     }
 
     fun onLocationSearchClick() {
+        searchDebounceJob?.cancel()
         searchDestinations(_uiState.value.locationSearchUiState.searchQuery)
     }
 
@@ -188,7 +192,8 @@ class MatchingCreatePostViewModel @Inject constructor(
         val trimmedKeyword = keyword.trim()
 
         if (trimmedKeyword.isEmpty()) {
-            searchJob?.cancel()
+            searchDebounceJob?.cancel()
+            searchRequestJob?.cancel()
             _uiState.update { currentState ->
                 currentState.copy(
                     locationSearchUiState = currentState.locationSearchUiState.copy(
@@ -214,8 +219,8 @@ class MatchingCreatePostViewModel @Inject constructor(
             )
         }
 
-        searchJob?.cancel()
-        searchJob = viewModelScope.launch {
+        searchRequestJob?.cancel()
+        searchRequestJob = viewModelScope.launch {
             destinationRepository.searchDestinations(trimmedKeyword)
                 .onSuccess { destinations ->
                     _uiState.update { currentState ->
@@ -241,6 +246,14 @@ class MatchingCreatePostViewModel @Inject constructor(
                         )
                     }
                 }
+        }
+    }
+
+    private fun debounceSearchDestinations(keyword: String) {
+        searchDebounceJob?.cancel()
+        searchDebounceJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_MILLIS)
+            searchDestinations(keyword)
         }
     }
 }
