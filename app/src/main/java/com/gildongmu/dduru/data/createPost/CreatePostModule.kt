@@ -1,6 +1,8 @@
 package com.gildongmu.dduru.data.createPost
 
 import com.gildongmu.dduru.data.createPost.api.DestinationApi
+import com.gildongmu.dduru.data.createPost.datasource.DestinationRemoteDataSource
+import com.gildongmu.dduru.data.createPost.datasourceimpl.DestinationRemoteDataSourceImpl
 import com.gildongmu.dduru.data.createPost.repository.DestinationRepositoryImpl
 import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
 import dagger.Binds
@@ -19,6 +21,12 @@ abstract class CreatePostModule {
     abstract fun bindDestinationRepository(
         destinationRepositoryImpl: DestinationRepositoryImpl
     ): DestinationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindDestinationRemoteDataSource(
+        destinationRemoteDataSourceImpl: DestinationRemoteDataSourceImpl
+    ): DestinationRemoteDataSource
 }
 
 @Module
