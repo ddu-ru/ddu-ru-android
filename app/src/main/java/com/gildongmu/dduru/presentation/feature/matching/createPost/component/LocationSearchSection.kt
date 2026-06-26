@@ -65,7 +65,12 @@ fun LocationSearchSection(
 
         Spacer(modifier = Modifier.weight(24f))
 
-        if (uiState.isSearching && uiState.searchedLocations.isEmpty()) {
+        if (
+            uiState.isSearching &&
+            !uiState.isSearchLoading &&
+            uiState.hasSearchResult &&
+            uiState.searchedLocations.isEmpty()
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
