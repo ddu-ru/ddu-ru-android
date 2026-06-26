@@ -13,7 +13,9 @@ data class LocationSearchUiState(
     val selectedLocation: LocationSearchItemUiState? = null,
     val popularLocations: List<LocationSearchItemUiState> = emptyList(),
     val searchedLocations: List<LocationSearchItemUiState> = emptyList(),
-    val popularLocationsErrorMessage: String? = null
+    val popularLocationsErrorMessage: String? = null,
+    val isSearchLoading: Boolean = false,
+    val hasSearchResult: Boolean = false
 ) {
     val isSearching: Boolean
         get() = searchQuery.isNotBlank()
