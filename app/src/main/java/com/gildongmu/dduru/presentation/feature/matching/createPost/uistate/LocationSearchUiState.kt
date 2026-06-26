@@ -1,15 +1,19 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.uistate
 
 data class LocationSearchItemUiState(
+    val id: Long = 0L,
+    val countryCode: String = "",
     val countryName: String,
-    val city: String
+    val city: String,
+    val image: String? = null
 )
 
 data class LocationSearchUiState(
     val searchQuery: String = "",
     val selectedLocation: LocationSearchItemUiState? = null,
     val popularLocations: List<LocationSearchItemUiState> = emptyList(),
-    val searchedLocations: List<LocationSearchItemUiState> = emptyList()
+    val searchedLocations: List<LocationSearchItemUiState> = emptyList(),
+    val popularLocationsErrorMessage: String? = null
 ) {
     val isSearching: Boolean
         get() = searchQuery.isNotBlank()
