@@ -176,7 +176,7 @@ class MatchingCreatePostViewModel @Inject constructor(
                             locationSearchUiState = currentState.locationSearchUiState.copy(
                                 popularLocations = emptyList(),
                                 popularLocationsErrorMessage =
-                                    POPULAR_DESTINATIONS_ERROR_MESSAGE
+                                POPULAR_DESTINATIONS_ERROR_MESSAGE
                             )
                         )
                     }
