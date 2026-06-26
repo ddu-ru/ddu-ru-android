@@ -11,4 +11,15 @@ object DestinationErrorMapper {
             else -> "인기 여행지를 불러오지 못했습니다."
         }
     }
+
+    fun searchDestinationMessage(status: Int?): String {
+        return when (status) {
+            400 -> "여행지 검색 요청이 올바르지 않습니다."
+            401 -> "여행지 검색을 위한 인증이 필요합니다."
+            403 -> "여행지를 검색할 권한이 없습니다."
+            404 -> "검색된 여행지 정보가 없습니다."
+            500 -> "여행지 검색 서버에 일시적인 오류가 발생했습니다."
+            else -> "여행지를 검색하지 못했습니다."
+        }
+    }
 }
