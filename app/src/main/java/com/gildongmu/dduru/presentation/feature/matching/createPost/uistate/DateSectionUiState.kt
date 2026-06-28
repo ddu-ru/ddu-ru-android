@@ -11,4 +11,7 @@ data class DateSectionUiState(
     val selectedStartDate: LocalDate? = null,
     val selectedEndDate: LocalDate? = null,
     val selectionTarget: DateSelectionTarget = DateSelectionTarget.START
-)
+) {
+    val isNextEnabled: Boolean
+        get() = selectedStartDate != null && selectedEndDate != null
+}
