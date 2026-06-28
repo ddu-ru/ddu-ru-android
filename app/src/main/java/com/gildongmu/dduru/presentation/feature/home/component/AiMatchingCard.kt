@@ -49,9 +49,10 @@ fun AiMatchingCard(
     modifier: Modifier = Modifier
 ) {
     var overlayType by remember { mutableStateOf<OverlayType?>(null) }
+    val cardShape = RoundedCornerShape(24.dp)
     val dividerColor = DduruTheme.colors.gray0.copy(alpha = 0.3f)
     val badgeBorderColor = DduruTheme.colors.gray0.copy(alpha = 0.05f)
-    val badgeBackgroundColor = DduruTheme.colors.black.copy(alpha = 0.1f)
+    val badgeBackgroundColor = DduruTheme.colors.gray0.copy(alpha = 0.18f)
     val overlayBackgroundColor = DduruTheme.colors.black.copy(alpha = 0.6f)
     val overlayCircleColor = if (overlayType == OverlayType.ACCEPT) {
         DduruTheme.colors.secondary
@@ -67,7 +68,7 @@ fun AiMatchingCard(
     Box(
         modifier = modifier
             .aspectRatio(343f / 456f)
-            .clip(RoundedCornerShape(16.dp))
+            .clip(cardShape)
     ) {
         SubcomposeAsyncImage(
             model = data.imageUrl,
@@ -75,17 +76,19 @@ fun AiMatchingCard(
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize(),
             loading = {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(DduruTheme.colors.gray700)
+                Image(
+                    painter = painterResource(id = R.drawable.fukuoka),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize()
                 )
             },
             error = {
-                Box(
-                    modifier = Modifier
-                        .matchParentSize()
-                        .background(DduruTheme.colors.gray700)
+                Image(
+                    painter = painterResource(id = R.drawable.fukuoka),
+                    contentDescription = null,
+                    contentScale = ContentScale.Crop,
+                    modifier = Modifier.matchParentSize()
                 )
             }
         )
@@ -93,14 +96,14 @@ fun AiMatchingCard(
         Box(
             modifier = Modifier
                 .matchParentSize()
-                .background(DduruTheme.colors.black.copy(alpha = 0.4f))
+                .background(DduruTheme.colors.black.copy(alpha = 0.35f))
         )
 
         Column(
             modifier = Modifier
                 .matchParentSize()
-                .padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(12.dp, Alignment.Bottom)
+                .padding(horizontal = 16.dp, vertical = 20.dp),
+            verticalArrangement = Arrangement.spacedBy(14.dp, Alignment.Bottom)
         ) {
             Column(
                 verticalArrangement = Arrangement.spacedBy(4.dp)
@@ -119,12 +122,6 @@ fun AiMatchingCard(
                         location = data.location,
                         color = DduruTheme.colors.gray200,
                         textStyle = DduruTheme.typography.Caption2
-                    )
-
-                    Box(
-                        modifier = Modifier
-                            .size(4.dp)
-                            .background(DduruTheme.colors.gray200, CircleShape)
                     )
 
                     Row(
@@ -146,7 +143,6 @@ fun AiMatchingCard(
                 }
             }
 
-            // 프로필 + HorizontalDivider를 Column으로 묶어 8dp 간격 적용
             Column(
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -195,7 +191,7 @@ fun AiMatchingCard(
                         }
 
                         Column(
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
+                            verticalArrangement = Arrangement.spacedBy(6.dp)
                         ) {
                             Text(
                                 text = data.username,
@@ -245,7 +241,7 @@ fun AiMatchingCard(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(bottom = 8.dp),
+                    .padding(bottom = 6.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp, Alignment.Top)
             ) {
                 Text(
@@ -344,7 +340,7 @@ fun AiMatchingCard(
                     .matchParentSize()
                     .background(
                         color = overlayBackgroundColor,
-                        shape = RoundedCornerShape(16.dp)
+                        shape = cardShape
                     ),
                 contentAlignment = Alignment.Center
             ) {
