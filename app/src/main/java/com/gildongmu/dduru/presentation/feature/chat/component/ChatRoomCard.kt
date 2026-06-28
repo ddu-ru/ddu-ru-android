@@ -24,8 +24,7 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-
-enum class ChatRoomType { PRIVATE, GROUP }
+import com.gildongmu.dduru.domain.entity.chat.ChatRoomType
 
 @Composable
 fun ChatRoomCard(
@@ -174,11 +173,13 @@ private fun ChatRoomPreviewRow(
             overflow = TextOverflow.Ellipsis
         )
         if (time != null) {
-            Box(
-                modifier = Modifier
-                    .size(4.dp)
-                    .background(DduruTheme.colors.gray500, CircleShape)
-            )
+            if (!preview.isNullOrBlank()) {
+                Box(
+                    modifier = Modifier
+                        .size(4.dp)
+                        .background(DduruTheme.colors.gray500, CircleShape)
+                )
+            }
             Text(
                 text = time,
                 style = DduruTheme.typography.Body2,
@@ -231,7 +232,6 @@ private fun ChatRoomAvatar(roomType: ChatRoomType, modifier: Modifier = Modifier
     }
 }
 
-@Preview(showBackground = true)
 @Composable
 @Preview(showBackground = true)
 private fun ChatRoomCardPrivatePreview() {
