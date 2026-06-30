@@ -2,8 +2,8 @@ package com.gildongmu.dduru.presentation.feature.matching.post.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
@@ -23,7 +23,6 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
-import com.gildongmu.dduru.core.common.extension.dduruFrostedBackground
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -79,7 +78,7 @@ fun CreatePostTopActionButton(
     }
 
     val likeIconRes = if (hasLiked) {
-        R.drawable.ic_heart_rounded //수정필요
+        R.drawable.ic_heart_rounded // 수정필요
     } else {
         R.drawable.ic_heart_rounded
     }
