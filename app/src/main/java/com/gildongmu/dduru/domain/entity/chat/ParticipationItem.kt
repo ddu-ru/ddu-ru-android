@@ -2,7 +2,7 @@ package com.gildongmu.dduru.domain.entity.chat
 
 import java.time.LocalDateTime
 
-data class ParticipationItemEntity(
+data class ParticipationItem(
     val participationId: Long,
     val postId: Long,
     val postTitle: String,

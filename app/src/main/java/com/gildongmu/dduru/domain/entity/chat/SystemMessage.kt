@@ -1,6 +1,6 @@
 package com.gildongmu.dduru.domain.entity.chat
 
-data class SystemMessageEntity(
+data class SystemMessage(
     val type: SystemMessageType,
     val displayText: String,
     val actorUserId: Long?,

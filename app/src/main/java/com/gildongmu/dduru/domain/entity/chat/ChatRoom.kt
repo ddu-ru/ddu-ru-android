@@ -2,7 +2,7 @@ package com.gildongmu.dduru.domain.entity.chat
 
 import java.time.LocalDateTime
 
-data class ChatRoomEntity(
+data class ChatRoom(
     val chatRoomId: Long,
     val roomType: ChatRoomType,
     val status: ChatRoomStatus,
@@ -12,7 +12,7 @@ data class ChatRoomEntity(
     val postId: Long?,
     val journeyId: Long?,
     val participantCount: Int,
-    val lastMessage: ChatRoomLastMessageEntity?,
+    val lastMessage: ChatRoomLastMessage?,
     val unreadCount: Long,
     val lastReadMessageId: Long?,
     val activityAt: LocalDateTime?,

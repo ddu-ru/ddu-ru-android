@@ -1,6 +1,6 @@
 package com.gildongmu.dduru.domain.entity.chat
 
-data class ChatRoomInfoEntity(
+data class ChatRoomInfo(
     val chatRoomId: Long,
     val roomType: ChatRoomType,
     val isActive: Boolean,
