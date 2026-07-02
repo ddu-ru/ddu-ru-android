@@ -27,20 +27,18 @@ fun ChatFilterTab(
     val textColor = if (selected) DduruTheme.colors.gray0 else DduruTheme.colors.gray600
     val shape = RoundedCornerShape(99.dp)
 
-    val baseModifier = modifier
-        .background(color = bgColor, shape = shape)
-        .then(
-            if (!selected) {
-                Modifier.border(width = 1.dp, color = DduruTheme.colors.gray50, shape = shape)
-            } else {
-                Modifier
-            }
-        )
-        .noRippleClickable(onClick = onClick)
-        .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp)
-
     Row(
-        modifier = baseModifier,
+        modifier = modifier
+            .background(color = bgColor, shape = shape)
+            .then(
+                if (!selected) {
+                    Modifier.border(width = 1.dp, color = DduruTheme.colors.gray50, shape = shape)
+                } else {
+                    Modifier
+                }
+            )
+            .noRippleClickable(onClick = onClick)
+            .padding(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {

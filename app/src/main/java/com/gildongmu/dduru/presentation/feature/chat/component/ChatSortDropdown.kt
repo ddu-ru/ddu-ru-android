@@ -21,9 +21,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -68,16 +71,20 @@ fun ChatSortDropdown(
         }
 
         if (expanded) {
-            ChatSortDropdownMenu(
-                selectedOption = selectedOption,
-                onOptionSelected = { option ->
-                    onOptionSelected(option)
-                    expanded = false
-                },
-                modifier = Modifier
-                    .align(Alignment.TopEnd)
-                    .padding(top = 44.dp)
-            )
+            val offsetY = with(LocalDensity.current) { 44.dp.roundToPx() }
+            Popup(
+                alignment = Alignment.TopEnd,
+                offset = IntOffset(0, offsetY),
+                onDismissRequest = { expanded = false }
+            ) {
+                ChatSortDropdownMenu(
+                    selectedOption = selectedOption,
+                    onOptionSelected = { option ->
+                        onOptionSelected(option)
+                        expanded = false
+                    }
+                )
+            }
         }
     }
 }
