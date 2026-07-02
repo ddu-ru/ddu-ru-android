@@ -18,6 +18,8 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
@@ -101,42 +103,56 @@ fun ParticipationCard(
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(32.dp)
-                    .border(
-                        width = 1.dp,
-                        color = DduruTheme.colors.gray300,
-                        shape = RoundedCornerShape(9.dp)
-                    )
-                    .background(
-                        color = DduruTheme.colors.gray100,
-                        shape = RoundedCornerShape(9.dp)
-                    )
+                    .size(48.dp)
+                    .semantics { contentDescription = "거절" }
                     .noRippleClickable(onClick = onReject)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_close),
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = DduruTheme.colors.gray700
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .border(
+                            width = 1.dp,
+                            color = DduruTheme.colors.gray300,
+                            shape = RoundedCornerShape(9.dp)
+                        )
+                        .background(
+                            color = DduruTheme.colors.gray100,
+                            shape = RoundedCornerShape(9.dp)
+                        )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_close),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = DduruTheme.colors.gray700
+                    )
+                }
             }
 
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .size(32.dp)
-                    .background(
-                        color = DduruTheme.colors.primary,
-                        shape = RoundedCornerShape(9.dp)
-                    )
+                    .size(48.dp)
+                    .semantics { contentDescription = "수락" }
                     .noRippleClickable(onClick = onAccept)
             ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_check),
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = DduruTheme.colors.gray0
-                )
+                Box(
+                    contentAlignment = Alignment.Center,
+                    modifier = Modifier
+                        .size(32.dp)
+                        .background(
+                            color = DduruTheme.colors.primary,
+                            shape = RoundedCornerShape(9.dp)
+                        )
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_check),
+                        contentDescription = null,
+                        modifier = Modifier.size(16.dp),
+                        tint = DduruTheme.colors.gray0
+                    )
+                }
             }
         }
     }
