@@ -51,7 +51,7 @@ data class ChatRoomUiModel(
 )
 
 @Composable
-fun ChatScreen(
+fun ChatMainScreen(
     chatRooms: List<ChatRoomUiModel> = emptyList(),
     requestUnreadCount: Int = 0,
     applicationUnreadCount: Int = 0,
@@ -224,7 +224,7 @@ private val previewRooms = listOf(
 @Composable
 private fun ChatScreenAllTabPreview() {
     DduruTheme {
-        ChatScreen(
+        ChatMainScreen(
             chatRooms = previewRooms,
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
@@ -238,7 +238,7 @@ private fun ChatScreenAllTabPreview() {
 @Composable
 private fun ChatScreenDropdownOpenPreview() {
     DduruTheme {
-        ChatScreen(
+        ChatMainScreen(
             chatRooms = previewRooms,
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
@@ -253,7 +253,7 @@ private fun ChatScreenDropdownOpenPreview() {
 @Composable
 private fun ChatScreenPrivateSortPreview() {
     DduruTheme {
-        ChatScreen(
+        ChatMainScreen(
             chatRooms = previewRooms.filter { it.roomType == ChatRoomType.PRIVATE },
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
