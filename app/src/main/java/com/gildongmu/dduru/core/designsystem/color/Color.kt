@@ -66,7 +66,7 @@ data class DduruColors(
 
     val validationRed: Color,
     val kakaoYellow: Color,
-    val badgeOrange: Color
+    val badgeOrange: Color,
     val acceptGreen: Color,
     val acceptGreenBg: Color,
     val rejectRed: Color,
@@ -102,7 +102,7 @@ val defaultDduruColors = DduruColors(
 
     kakaoYellow = KakaoYellow,
     validationRed = ValidationRed,
-    badgeOrange = BadgeOrange
+    badgeOrange = BadgeOrange,
     acceptGreen = AcceptGreen,
     acceptGreenBg = AcceptGreenBg,
     rejectRed = RejectRed,
