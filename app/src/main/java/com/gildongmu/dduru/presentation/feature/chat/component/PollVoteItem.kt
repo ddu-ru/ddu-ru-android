@@ -165,7 +165,7 @@ fun PollVoteList(
                 PollVoteItem(
                     label = label,
                     isSelected = selectedIndex == index,
-                    voteCount = voteCounts?.get(index),
+                    voteCount = voteCounts?.getOrNull(index),
                     totalVotes = totalVotes,
                     onClick = { onItemClick(index) }
                 )
