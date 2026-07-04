@@ -1,7 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.chat.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -17,6 +16,8 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.draw.drawBehind
+import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -38,12 +39,29 @@ fun ChatRoomCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val borderColor = DduruTheme.colors.gray200
+
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .border(width = 1.dp, color = DduruTheme.colors.gray200)
+            .padding(horizontal = 16.dp)
+            .drawBehind {
+                val stroke = 1.dp.toPx()
+                drawLine(
+                    color = borderColor,
+                    start = Offset(0f, 0f),
+                    end = Offset(size.width, 0f),
+                    strokeWidth = stroke
+                )
+                drawLine(
+                    color = borderColor,
+                    start = Offset(0f, size.height),
+                    end = Offset(size.width, size.height),
+                    strokeWidth = stroke
+                )
+            }
             .noRippleClickable(onClick = onClick)
-            .padding(horizontal = 1.dp, vertical = 20.dp),
+            .padding(horizontal = 16.dp, vertical = 20.dp),
         horizontalArrangement = Arrangement.spacedBy(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -232,22 +250,20 @@ private fun ChatRoomAvatar(roomType: ChatRoomType, modifier: Modifier = Modifier
     }
 }
 
-@Composable
 @Preview(showBackground = true)
+@Composable
 private fun ChatRoomCardPrivatePreview() {
     DduruTheme {
-        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-            ChatRoomCard(
-                displayName = "username",
-                postTitle = "제주 애월 2박 3일",
-                participantCount = null,
-                lastMessagePreview = "안녕하세요!",
-                lastMessageAt = "방금",
-                unreadCount = 10,
-                roomType = ChatRoomType.PRIVATE,
-                onClick = {}
-            )
-        }
+        ChatRoomCard(
+            displayName = "username",
+            postTitle = "제주 애월 2박 3일",
+            participantCount = null,
+            lastMessagePreview = "안녕하세요!",
+            lastMessageAt = "방금",
+            unreadCount = 10,
+            roomType = ChatRoomType.PRIVATE,
+            onClick = {}
+        )
     }
 }
 

@@ -20,6 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
@@ -41,11 +42,15 @@ enum class ChatSortOption(val label: String) {
 fun ChatSortDropdown(
     selectedOption: ChatSortOption,
     onOptionSelected: (ChatSortOption) -> Unit,
+    initialExpanded: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(false) }
+    var expanded by remember { mutableStateOf(initialExpanded) }
 
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier.height(36.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
         Row(
             modifier = Modifier
                 .background(
@@ -71,9 +76,9 @@ fun ChatSortDropdown(
         }
 
         if (expanded) {
-            val offsetY = with(LocalDensity.current) { 44.dp.roundToPx() }
+            val offsetY = with(LocalDensity.current) { 36.dp.roundToPx() }
             Popup(
-                alignment = Alignment.TopEnd,
+                alignment = Alignment.TopStart,
                 offset = IntOffset(0, offsetY),
                 onDismissRequest = { expanded = false }
             ) {
@@ -117,6 +122,7 @@ private fun ChatSortDropdownMenu(
                 spotColor = DduruTheme.colors.black.copy(alpha = 0.08f),
                 ambientColor = DduruTheme.colors.black.copy(alpha = 0.08f)
             )
+            .clip(RoundedCornerShape(16.dp))
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray0.copy(alpha = 0.30f),

@@ -11,6 +11,7 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -43,6 +44,7 @@ fun ChatActionBar(
                 spotColor = DduruTheme.colors.black.copy(alpha = 0.08f),
                 ambientColor = DduruTheme.colors.black.copy(alpha = 0.08f)
             )
+            .clip(shape)
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray0.copy(alpha = 0.30f),
