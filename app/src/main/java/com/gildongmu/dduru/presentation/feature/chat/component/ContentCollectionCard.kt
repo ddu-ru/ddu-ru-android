@@ -139,7 +139,7 @@ private fun ContentPhotoGrid(photoUrls: List<String>) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        photoUrls.chunked(3).forEach { rowItems ->
+        photoUrls.take(6).chunked(3).forEach { rowItems ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
             ) {
@@ -241,7 +241,7 @@ private fun ContentCollectionCardPhotoPreview() {
         ContentCollectionCard(
             selectedTab = ContentTab.PHOTO,
             onTabSelected = {},
-            photoUrls = List(5) { "" },
+            photoUrls = List(6) { "" },
             polls = emptyList(),
             onViewAllClick = {},
             modifier = Modifier.padding(16.dp)
