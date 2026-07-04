@@ -35,7 +35,7 @@ fun ChatDateDivider(
                     color = DduruTheme.colors.gray200,
                     shape = RoundedCornerShape(99.dp)
                 )
-                .padding(start = 48.dp, top = 4.dp, end = 48.dp, bottom = 4.dp)
+                .padding(horizontal = 48.dp, vertical = 4.dp)
         )
     }
 }

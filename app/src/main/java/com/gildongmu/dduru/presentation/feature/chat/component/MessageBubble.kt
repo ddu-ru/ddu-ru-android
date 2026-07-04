@@ -30,30 +30,14 @@ fun MessageBubble(
     isHead: Boolean,
     modifier: Modifier = Modifier
 ) {
-    val bubbleShape = if (isMine) {
-        RoundedCornerShape(
-            topStart = 16.dp,
-            topEnd = 16.dp,
-            bottomStart = 16.dp,
-            bottomEnd = 8.dp
-        )
-    } else {
-        if (isHead) {
-            RoundedCornerShape(
-                topStart = 16.dp,
-                topEnd = 16.dp,
-                bottomStart = 8.dp,
-                bottomEnd = 16.dp
-            )
-        } else {
-            RoundedCornerShape(
-                topStart = 8.dp,
-                topEnd = 16.dp,
-                bottomStart = 16.dp,
-                bottomEnd = 16.dp
-            )
-        }
-    }
+    val bottomStart = if (isMine) 16.dp else if (isHead) 8.dp else 16.dp
+    val bottomEnd = if (isMine) 8.dp else 16.dp
+    val bubbleShape = RoundedCornerShape(
+        topStart = 16.dp,
+        topEnd = 16.dp,
+        bottomStart = bottomStart,
+        bottomEnd = bottomEnd
+    )
 
     Row(
         horizontalArrangement = if (isMine) {
