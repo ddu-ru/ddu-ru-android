@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -37,6 +38,7 @@ import dev.chrisbanes.haze.hazeChild
 fun ThumbnailImageCard(
     regionName: String,
     countryName: String,
+    imageUrl: String?,
     imageResId: Int,
     modifier: Modifier = Modifier,
     onChangeClick: () -> Unit = {}
@@ -49,15 +51,26 @@ fun ThumbnailImageCard(
             .aspectRatio(344f / 130f)
             .clip(RoundedCornerShape(16.dp))
     ) {
-        Image(
-            painter = painterResource(id = imageResId),
-            contentDescription = null,
-            modifier = Modifier
-                .fillMaxSize()
-                .haze(hazeState),
-            contentScale = ContentScale.Crop
+        if (!imageUrl.isNullOrBlank()) {
+            AsyncImage(
+                model = imageUrl,
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .haze(hazeState),
+                contentScale = ContentScale.Crop
+            )
+        } else {
+            Image(
+                painter = painterResource(id = imageResId),
+                contentDescription = null,
+                modifier = Modifier
+                    .fillMaxSize()
+                    .haze(hazeState),
+                contentScale = ContentScale.Crop
 
-        )
+            )
+        }
 
         Box(
             modifier = Modifier
@@ -110,6 +123,7 @@ private fun ThumbnailImageCardPreview() {
             ThumbnailImageCard(
                 regionName = "후쿠오카",
                 countryName = "일본",
+                imageUrl = null,
                 imageResId = R.drawable.fukuoka,
                 onChangeClick = {}
             )
