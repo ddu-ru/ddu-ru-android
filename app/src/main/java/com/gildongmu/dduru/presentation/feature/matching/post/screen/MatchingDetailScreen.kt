@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
@@ -29,6 +31,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
@@ -102,84 +105,96 @@ fun MatchingDetailScreen(
             }
 
             item {
-                Column(
-                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
-                    verticalArrangement = Arrangement.spacedBy(24.dp)
+                Surface(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .offset(y = (-16).dp),
+                    color = DduruTheme.colors.gray0,
+                    shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                 ) {
-                    var isExpanded by remember { mutableStateOf(false) }
+                    Column(
+                        modifier = Modifier.padding(horizontal = 16.dp, vertical = 24.dp),
+                        verticalArrangement = Arrangement.spacedBy(24.dp)
+                    ) {
+                        var isExpanded by remember { mutableStateOf(false) }
 
-                    if (uiState.isOwner) {
-                        PostStatusDropdown(
-                            selectedStatus = selectedStatus,
-                            onStatusSelected = { selectedStatus = it }
+                        if (uiState.isOwner) {
+                            PostStatusDropdown(
+                                selectedStatus = selectedStatus,
+                                onStatusSelected = { selectedStatus = it }
+                            )
+
+                            Spacer(modifier = Modifier.weight(24f))
+                        }
+
+                        MatchingDetailSummarySection(uiState = uiState)
+
+                        CommonBoxComponent(
+                            recruitmentType = uiState.companionTypeText,
+                            recruitmentCount = uiState.recruitCount.toString(),
+                            recruitCapacity = uiState.recruitCapacity.toString(),
+                            minAge = uiState.minAge,
+                            maxAge = uiState.maxAge,
+                            preferredGender = uiState.preferredGenderText
                         )
 
-                        Spacer(modifier = Modifier.weight(24f))
-                    }
+                        MatchingDetailDescriptionSection(uiState = uiState)
 
-                    MatchingDetailSummarySection(uiState = uiState)
+                        if (!isExpanded) {
+                            Text(
+                                text = "더보기",
+                                modifier = Modifier.clickable { isExpanded = true },
+                                style = DduruTheme.typography.Body2,
+                                color = DduruTheme.colors.primary
+                            )
+                        }
 
-                    CommonBoxComponent(
-                        recruitmentType = uiState.companionTypeText,
-                        recruitmentCount = uiState.recruitCount.toString(),
-                        recruitCapacity = uiState.recruitCapacity.toString(),
-                        minAge = uiState.minAge,
-                        maxAge = uiState.maxAge,
-                        preferredGender = uiState.preferredGenderText
-                    )
-
-                    MatchingDetailDescriptionSection(uiState = uiState)
-
-                    Text(
-                        text = if (isExpanded) "접기" else "더보기",
-                        modifier = Modifier.clickable { isExpanded = !isExpanded },
-                        style = DduruTheme.typography.Body2,
-                        color = DduruTheme.colors.primary
-                    )
-
-                    MatchingDetailMetaRow(uiState = uiState)
+                        MatchingDetailMetaRow(uiState = uiState)
 
 
-                    if (isExpanded) {
-                        HorizontalDivider(
-                            thickness = 1.dp,
-                            color = DduruTheme.colors.gray200
-                        )
-                        Spacer(modifier = Modifier.weight(24f))
+                        if (isExpanded) {
+                            HorizontalDivider(
+                                thickness = 1.dp,
+                                color = DduruTheme.colors.gray200
+                            )
+                            Spacer(modifier = Modifier.weight(24f))
 
-                        MatchingDetailInfoGrid(uiState = uiState)
+                            MatchingDetailInfoGrid(uiState = uiState)
 
-                        Spacer(modifier = Modifier.weight(24f))
+                            Spacer(modifier = Modifier.weight(24f))
 
 
-                        MatchingDetailTagSection(tags = uiState.tags)
+                            MatchingDetailTagSection(tags = uiState.tags)
 
-                        Spacer(modifier = Modifier.weight(24f))
+                            Spacer(modifier = Modifier.weight(24f))
 
-                        MatchingHostInfoComponent(
-                            username = uiState.author.nickname,
-                            age = uiState.author.ageText,
-                            gender = uiState.author.genderText,
-                            profileImage = uiState.author.profileImage.toHostProfileImage(),
-                            onProfileClick = onProfileClick,
-                            onContactClick = onContactClick
-                        )
+                            MatchingHostInfoComponent(
+                                username = uiState.author.nickname,
+                                age = uiState.author.ageText,
+                                gender = uiState.author.genderText,
+                                profileImage = uiState.author.profileImage.toHostProfileImage(),
+                                onProfileClick = onProfileClick,
+                                onContactClick = onContactClick
+                            )
 
-                        Spacer(modifier = Modifier.weight(24f))
+                            Spacer(modifier = Modifier.weight(24f))
 
-                        MatchingDetailParticipantComponent(
-                            participants = uiState.participants.map { participant ->
-                                MatchingDetailParticipantUiModel(
-                                    userId = participant.userId,
-                                    nickname = participant.nickname,
-                                    ageText = participant.ageText,
-                                    genderText = participant.genderText,
-                                    profileImage = participant.profileImage.url,
-                                    isHost = participant.isHost
-                                )
-                            },
-                            recruitCapacity = uiState.recruitCapacity
-                        )
+                            MatchingDetailParticipantComponent(
+                                participants = uiState.participants.map { participant ->
+                                    MatchingDetailParticipantUiModel(
+                                        userId = participant.userId,
+                                        nickname = participant.nickname,
+                                        ageText = participant.ageText,
+                                        genderText = participant.genderText,
+                                        profileImage = participant.profileImage.url,
+                                        isHost = participant.isHost
+                                    )
+                                },
+                                recruitCapacity = uiState.recruitCapacity
+                            )
+                        } else {
+                            Spacer(modifier = Modifier.height(16.dp))
+                        }
                     }
                 }
             }
@@ -371,7 +386,7 @@ fun MatchingDetailHeaderImage(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(375f/304f)
+            .aspectRatio(375f/300f)
     ) {
         AsyncImage(
             model = imageUrl ?: R.drawable.fukuoka,
@@ -379,21 +394,33 @@ fun MatchingDetailHeaderImage(
             modifier = Modifier.fillMaxWidth(),
             contentScale = ContentScale.Crop
         )
+        Column {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(
+                        color = DduruTheme.colors.gray0.copy(alpha = 0.89f)
+                    )
+                    .aspectRatio(375f / 52f)
+                    .blur(24.dp)
+            )
 
-        Box(
-            modifier = Modifier
-                .matchParentSize()
-                .background(
-                    brush = Brush.verticalGradient(
-                        colorStops = arrayOf(
-                            0f to DduruTheme.colors.gray0,
-                            0.15f to DduruTheme.colors.gray0.copy(alpha = 0.9f),
-                            0.30f to DduruTheme.colors.gray0.copy(alpha = 0.55f),
-                            1f to Color.Transparent
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .aspectRatio(375f / 48f)
+                    .background(
+                        Brush.verticalGradient(
+                            colorStops = arrayOf(
+                                0f to DduruTheme.colors.gray0.copy(alpha = 0.88f),
+                                0.25f to DduruTheme.colors.gray0.copy(alpha = 0.7f),
+                                0.75f to DduruTheme.colors.gray0.copy(alpha = 0.18f),
+                                1f to Color.Transparent
+                            )
                         )
                     )
-                )
-        )
+            )
+        }
     }
 }
 
