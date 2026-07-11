@@ -38,8 +38,8 @@ import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
-import com.gildongmu.dduru.presentation.feature.matching.post.compoenet.MatchingDetailParticipantComponent
-import com.gildongmu.dduru.presentation.feature.matching.post.compoenet.MatchingDetailParticipantUiModel
+import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailParticipantComponent
+import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailParticipantUiModel
 import com.gildongmu.dduru.presentation.feature.matching.post.component.CommonBoxComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailBottomActionComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailInfoComponent
