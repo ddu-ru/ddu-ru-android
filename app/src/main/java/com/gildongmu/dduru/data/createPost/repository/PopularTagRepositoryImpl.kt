@@ -15,7 +15,7 @@ class PopularTagRepositoryImpl @Inject constructor(
             val response = popularTagRemoteDataSource.getPopularTags()
 
             when (response.status) {
-                0 -> {
+                200 -> {
                     if (response.data == null) {
                         Result.failure(Exception("서버 응답에 데이터가 없습니다"))
                     } else {

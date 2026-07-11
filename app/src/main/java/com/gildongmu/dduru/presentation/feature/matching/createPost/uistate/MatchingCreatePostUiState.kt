@@ -7,8 +7,7 @@ data class MatchingCreatePostUiState(
     val recruitmentSectionUiState: RecruitmentScreenUiState = RecruitmentScreenUiState(),
     val ageSectionUiState: AgeSectionUiState = AgeSectionUiState(),
     val postWritingUiState: PostWritingUiState = PostWritingUiState(),
-    val thumbnailAndTagUiState: ThumbnailAndTagUiState = ThumbnailAndTagUiState(),
-    val popularTags: List<String> = emptyList()
+    val thumbnailAndTagUiState: ThumbnailAndTagUiState = ThumbnailAndTagUiState()
 ) {
     val region: String?
         get() = locationSearchUiState.selectedLocation?.city

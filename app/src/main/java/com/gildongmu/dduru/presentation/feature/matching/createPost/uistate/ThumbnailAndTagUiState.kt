@@ -7,7 +7,8 @@ data class ThumbnailAndTagUiState(
     val countryName: String = "일본",
     val imageResId: Int = R.drawable.fukuoka,
     val tagInput: String = "",
-    val addedTags: List<String> = emptyList()
+    val addedTags: List<String> = emptyList(),
+    val popularTags: List<String> = emptyList()
 ) {
     val isNextEnabled: Boolean
         get() = true

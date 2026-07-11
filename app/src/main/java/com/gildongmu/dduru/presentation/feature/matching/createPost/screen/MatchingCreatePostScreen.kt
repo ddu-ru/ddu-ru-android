@@ -207,8 +207,7 @@ fun MatchingCreatePostScreen(
                 MatchingCreatePostStep.THUMBNAIL_AND_TAG -> {
                     ThumbnailAndTagSection(
                         uiState = uiState.thumbnailAndTagUiState,
-                        onUiStateChange = onThumbnailAndTagUiStateChange,
-                        popularTags = uiState.popularTags
+                        onUiStateChange = onThumbnailAndTagUiStateChange
                     )
                 }
             }
