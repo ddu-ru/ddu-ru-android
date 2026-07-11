@@ -81,6 +81,7 @@ fun MatchingCreatePostRoute(
         onBackClick = viewModel::onBackClick,
         onNextClick = viewModel::onNextClick,
         onLocationSearchUiStateChange = viewModel::onLocationSearchUiStateChange,
+        onLocationSearchClick = viewModel::onLocationSearchClick,
         onLocationSelected = viewModel::onLocationSelected,
         onDateSectionUiStateChange = viewModel::onDateSectionUiStateChange,
         onRecruitmentSectionUiStateChange = viewModel::onRecruitmentSectionUiStateChange,
@@ -98,6 +99,7 @@ fun MatchingCreatePostScreen(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     onLocationSearchUiStateChange: (LocationSearchUiState) -> Unit,
+    onLocationSearchClick: () -> Unit,
     onLocationSelected: (LocationSearchItemUiState) -> Unit,
     onDateSectionUiStateChange: (DateSectionUiState) -> Unit,
     onRecruitmentSectionUiStateChange: (RecruitmentScreenUiState) -> Unit,
@@ -169,6 +171,7 @@ fun MatchingCreatePostScreen(
                     LocationSearchSection(
                         uiState = uiState.locationSearchUiState,
                         onUiStateChange = onLocationSearchUiStateChange,
+                        onSearchClick = onLocationSearchClick,
                         onLocationClick = onLocationSelected
                     )
                 }
@@ -326,6 +329,7 @@ private fun MatchingCreatePostContentPreview() {
                 onLocationSearchUiStateChange = { locationSearchUiState ->
                     uiState = uiState.copy(locationSearchUiState = locationSearchUiState)
                 },
+                onLocationSearchClick = {},
                 onLocationSelected = { location ->
                     uiState = uiState.copy(
                         locationSearchUiState = uiState.locationSearchUiState.copy(
