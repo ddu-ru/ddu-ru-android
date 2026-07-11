@@ -2,8 +2,8 @@ package com.gildongmu.dduru.presentation.feature.matching.post.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -25,9 +25,9 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
-import androidx.compose.runtime.getValue
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -41,18 +41,18 @@ import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
-import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailParticipantComponent
-import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailParticipantUiModel
 import com.gildongmu.dduru.presentation.feature.matching.post.component.CommonBoxComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailBottomActionComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailInfoComponent
+import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailParticipantComponent
+import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailParticipantUiModel
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostInfoComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostProfileImage
 import com.gildongmu.dduru.presentation.feature.matching.post.component.PostStatusDropdown
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailProfileImageUiState
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostRecruitStatus
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostStatus
-import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
 import dev.chrisbanes.haze.HazeState
 
 @Composable
@@ -74,7 +74,7 @@ fun MatchingDetailScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = DduruTheme.colors.gray0,
         topBar = {
-            //채워야함
+            // 채워야함
         },
         bottomBar = {
             MatchingDetailBottomActionComponent(
@@ -151,7 +151,6 @@ fun MatchingDetailScreen(
 
                         MatchingDetailMetaRow(uiState = uiState)
 
-
                         if (isExpanded) {
                             HorizontalDivider(
                                 thickness = 1.dp,
@@ -162,7 +161,6 @@ fun MatchingDetailScreen(
                             MatchingDetailInfoGrid(uiState = uiState)
 
                             Spacer(modifier = Modifier.weight(24f))
-
 
                             MatchingDetailTagSection(tags = uiState.tags)
 
@@ -233,8 +231,7 @@ private fun MatchingDetailSummarySection(
 private fun MatchingDetailDescriptionSection(
     uiState: MatchingDetailUiState
 ) {
-    Column(
-    ) {
+    Column() {
         SectionTitle(text = "여행 소개")
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -282,8 +279,7 @@ private fun MatchingDetailMetaRow(
 private fun MatchingDetailInfoGrid(
     uiState: MatchingDetailUiState
 ) {
-    Column(
-    ) {
+    Column() {
         SectionTitle(text = "핵심 정보")
 
         Spacer(modifier = Modifier.height(12.dp))
@@ -366,7 +362,6 @@ private fun SectionTitle(
     )
 }
 
-
 private fun MatchingDetailProfileImageUiState.toHostProfileImage(): MatchingHostProfileImage? {
     return url?.let { MatchingHostProfileImage.Url(it) }
 }
@@ -386,7 +381,7 @@ fun MatchingDetailHeaderImage(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .aspectRatio(375f/300f)
+            .aspectRatio(375f / 300f)
     ) {
         AsyncImage(
             model = imageUrl ?: R.drawable.fukuoka,

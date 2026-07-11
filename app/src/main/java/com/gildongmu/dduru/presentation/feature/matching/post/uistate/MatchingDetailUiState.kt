@@ -3,7 +3,9 @@ package com.gildongmu.dduru.presentation.feature.matching.post.uistate
 data class MatchingDetailUiState(
     val id: Long = 101,
     val title: String = "제주도 2박 3일 동행 구해요",
-    val content: String = "제주도 서쪽 위주로 천천히 여행하실 분을 찾습니다. 카페와 맛집도 들르고, 사진도 여유롭게 찍는 일정으로 생각하고 있어요. 일정이 비슷하신 분이면 편하게 같이 다녀요.",
+    val content: String = "제주도 서쪽 위주로 천천히 여행하실 분을 찾습니다. " +
+        "카페와 맛집도 들르고, 사진도 여유롭게 찍는 일정으로 생각하고 있어요. " +
+        "일정이 비슷하신 분이면 편하게 같이 다녀요.",
     val status: MatchingPostRecruitStatus = MatchingPostRecruitStatus.OPEN,
     val isFull: Boolean = false,
     val daysUntilRecruitDeadline: Int = 3,
