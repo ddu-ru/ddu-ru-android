@@ -78,7 +78,7 @@ fun CreatePostTopActionButton(
     }
 
     val likeIconRes = if (hasLiked) {
-        R.drawable.ic_heart_rounded // 수정필요
+        R.drawable.ic_heart_rounded_filled
     } else {
         R.drawable.ic_heart_rounded
     }
