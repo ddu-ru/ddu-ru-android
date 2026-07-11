@@ -1,8 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.matching.post.uistate
 
-import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingPostParticipationStatus
-import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingPostRecruitStatus
-
 data class MatchingDetailUiState(
     val id: Long = 101,
     val title: String = "제주도 2박 3일 동행 구해요",
@@ -116,7 +113,7 @@ data class MatchingDetailParticipantUiState(
 
 data class MatchingDetailProfileImageUiState(
     val type: String = "AVATAR",
-    val url: String? = "https://cdn.example.com/profiles/avatar.png",
+    val url: String? = null,
     val bgColorId: Int = 3
 )
 

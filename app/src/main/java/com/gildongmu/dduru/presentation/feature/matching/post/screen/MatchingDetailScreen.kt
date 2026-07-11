@@ -45,10 +45,10 @@ import com.gildongmu.dduru.presentation.feature.matching.post.component.Matching
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailInfoComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostInfoComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostProfileImage
-import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingPostRecruitStatus
-import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingPostStatus
 import com.gildongmu.dduru.presentation.feature.matching.post.component.PostStatusDropdown
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailProfileImageUiState
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostRecruitStatus
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostStatus
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
 import dev.chrisbanes.haze.HazeState
 

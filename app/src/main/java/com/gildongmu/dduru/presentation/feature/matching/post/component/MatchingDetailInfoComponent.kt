@@ -5,9 +5,9 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -30,12 +30,12 @@ fun MatchingDetailInfoComponent(
 ) {
     Column(
         modifier = modifier
+            .fillMaxHeight()
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray200,
                 shape = RoundedCornerShape(20.dp)
             )
-            .wrapContentWidth()
             .padding(16.dp)
     ) {
         Row(

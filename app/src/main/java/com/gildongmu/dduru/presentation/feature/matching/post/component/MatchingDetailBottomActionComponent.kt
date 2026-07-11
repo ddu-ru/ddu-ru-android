@@ -30,22 +30,11 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostParticipationStatus
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostRecruitStatus
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
 import dev.chrisbanes.haze.hazeChild
-
-enum class MatchingPostRecruitStatus {
-    OPEN,
-    CLOSED,
-    HIDDEN
-}
-
-enum class MatchingPostParticipationStatus {
-    NONE,
-    PENDING,
-    APPROVED,
-    REJECTED
-}
 
 @Composable
 fun MatchingDetailBottomActionComponent(
