@@ -7,18 +7,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,44 +31,37 @@ fun PollTitleInput(
     onValueChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val borderColor = DduruTheme.colors.gray200
-
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        textStyle = DduruTheme.typography.Body1.copy(color = DduruTheme.colors.gray958),
-        cursorBrush = SolidColor(DduruTheme.colors.primary),
-        modifier = modifier
-            .fillMaxWidth()
-            .drawBehind {
-                val stroke = 2.dp.toPx()
-                val half = stroke / 2f
-                drawLine(
-                    color = borderColor,
-                    start = Offset(0f, size.height - half),
-                    end = Offset(size.width, size.height - half),
-                    strokeWidth = stroke
-                )
-            }
-            .height(48.dp)
-            .padding(start = 16.dp, top = 3.dp, end = 16.dp, bottom = 3.dp),
-        decorationBox = { innerTextField ->
-            Box(
-                contentAlignment = Alignment.CenterStart,
-                modifier = Modifier.fillMaxWidth()
-            ) {
-                if (value.isEmpty()) {
-                    Text(
-                        text = "투표 제목을 입력하세요",
-                        style = DduruTheme.typography.Body1,
-                        color = DduruTheme.colors.gray400
-                    )
+    Column(modifier = modifier.fillMaxWidth()) {
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            singleLine = true,
+            textStyle = DduruTheme.typography.Body1.copy(color = DduruTheme.colors.gray958),
+            cursorBrush = SolidColor(DduruTheme.colors.primary),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(start = 16.dp, top = 13.dp, end = 16.dp, bottom = 13.dp),
+            decorationBox = { innerTextField ->
+                Box(
+                    contentAlignment = Alignment.CenterStart,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = "투표 제목을 입력하세요",
+                            style = DduruTheme.typography.Body1,
+                            color = DduruTheme.colors.gray400
+                        )
+                    }
+                    innerTextField()
                 }
-                innerTextField()
             }
-        }
-    )
+        )
+        HorizontalDivider(
+            color = DduruTheme.colors.gray200,
+            thickness = 2.dp
+        )
+    }
 }
 
 @Composable
@@ -92,8 +83,7 @@ fun PollSubjectItem(
             .fillMaxWidth()
             .border(1.dp, DduruTheme.colors.gray200, shape)
             .background(DduruTheme.colors.gray0, shape)
-            .height(48.dp)
-            .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp),
+            .padding(start = 16.dp, top = 13.dp, end = 16.dp, bottom = 13.dp),
         decorationBox = { innerTextField ->
             Row(
                 horizontalArrangement = Arrangement.spacedBy(10.dp),
@@ -153,8 +143,7 @@ fun PollSubjectList(
                 .fillMaxWidth()
                 .border(1.dp, DduruTheme.colors.gray200, shape)
                 .background(DduruTheme.colors.gray0, shape)
-                .height(48.dp)
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 16.dp)
+                .padding(start = 16.dp, top = 13.dp, end = 16.dp, bottom = 13.dp)
                 .noRippleClickable(onClick = onAddClick)
         ) {
             Icon(
