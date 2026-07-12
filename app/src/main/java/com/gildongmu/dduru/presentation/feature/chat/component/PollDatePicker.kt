@@ -4,16 +4,14 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -28,8 +26,6 @@ fun PollDatePicker(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val borderColor = DduruTheme.colors.gray200
-
     Column(
         verticalArrangement = Arrangement.spacedBy(16.dp),
         modifier = modifier.fillMaxWidth()
@@ -39,52 +35,47 @@ fun PollDatePicker(
             style = DduruTheme.typography.Caption1,
             color = DduruTheme.colors.gray600
         )
-        Row(
-            horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier
-                .fillMaxWidth()
-                .drawBehind {
-                    val stroke = 2.dp.toPx()
-                    val half = stroke / 2f
-                    drawLine(
-                        color = borderColor,
-                        start = Offset(0f, size.height - half),
-                        end = Offset(size.width, size.height - half),
-                        strokeWidth = stroke
+        Column {
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(12.dp),
+                verticalAlignment = Alignment.CenterVertically,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .noRippleClickable(onClick = onClick)
+                    .padding(start = 16.dp, top = 13.dp, end = 16.dp, bottom = 13.dp)
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_home_calendar),
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = DduruTheme.colors.gray800
+                )
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(16.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier.weight(1f)
+                ) {
+                    Text(
+                        text = dateText,
+                        style = DduruTheme.typography.Body1,
+                        color = DduruTheme.colors.gray800
+                    )
+                    Text(
+                        text = timeText,
+                        style = DduruTheme.typography.Body1,
+                        color = DduruTheme.colors.gray800
                     )
                 }
-                .height(48.dp)
-                .padding(start = 16.dp, top = 3.dp, end = 16.dp, bottom = 3.dp)
-                .noRippleClickable(onClick = onClick)
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_home_calendar),
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = DduruTheme.colors.gray800
-            )
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(16.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier.weight(1f)
-            ) {
-                Text(
-                    text = dateText,
-                    style = DduruTheme.typography.Body1,
-                    color = DduruTheme.colors.gray800
-                )
-                Text(
-                    text = timeText,
-                    style = DduruTheme.typography.Body1,
-                    color = DduruTheme.colors.gray800
+                Icon(
+                    painter = painterResource(R.drawable.ic_chevron_right),
+                    contentDescription = null,
+                    modifier = Modifier.size(16.dp),
+                    tint = DduruTheme.colors.gray600
                 )
             }
-            Icon(
-                painter = painterResource(R.drawable.ic_chevron_right),
-                contentDescription = null,
-                modifier = Modifier.size(16.dp),
-                tint = DduruTheme.colors.gray600
+            HorizontalDivider(
+                color = DduruTheme.colors.gray200,
+                thickness = 2.dp
             )
         }
     }
