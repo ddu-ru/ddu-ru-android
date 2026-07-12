@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
@@ -65,103 +66,110 @@ fun ChatMainScreen(
 ) {
     var selectedTab by remember { mutableStateOf(initialTab) }
     var selectedSort by remember { mutableStateOf(initialSort) }
+    var sortExpanded by remember { mutableStateOf(initialSortExpanded) }
 
-    Column(
-        modifier = modifier
-            .fillMaxSize()
-            .background(DduruTheme.colors.gray0)
-    ) {
-        Column(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp),
-            verticalArrangement = Arrangement.spacedBy(10.dp)
-        ) {
-            Row(
-                horizontalArrangement = Arrangement.SpaceBetween,
-                verticalAlignment = Alignment.CenterVertically,
+    Scaffold(
+        modifier = modifier.background(DduruTheme.colors.gray0),
+        topBar = {
+            Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(48.dp)
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 8.dp),
+                verticalArrangement = Arrangement.spacedBy(10.dp)
             ) {
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(16.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(48.dp)
                 ) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_logo),
-                        contentDescription = null,
-                        tint = DduruTheme.colors.primary,
-                        modifier = Modifier
-                            .width(46.dp)
-                            .height(32.dp)
-                    )
-                    VerticalDivider(
-                        color = DduruTheme.colors.gray300,
-                        modifier = Modifier.height(16.dp)
-                    )
-                    Text(
-                        text = "채팅",
-                        style = DduruTheme.typography.H1,
-                        color = DduruTheme.colors.gray500
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(16.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_logo),
+                            contentDescription = null,
+                            tint = DduruTheme.colors.primary,
+                            modifier = Modifier
+                                .width(46.dp)
+                                .height(32.dp)
+                        )
+                        VerticalDivider(
+                            color = DduruTheme.colors.gray300,
+                            modifier = Modifier.height(16.dp)
+                        )
+                        Text(
+                            text = "채팅",
+                            style = DduruTheme.typography.H1,
+                            color = DduruTheme.colors.gray500
+                        )
+                    }
+                    ChatActionBar(
+                        onSearchClick = onSearchClick,
+                        onMenuClick = onMenuClick
                     )
                 }
-                ChatActionBar(
-                    onSearchClick = onSearchClick,
-                    onMenuClick = onMenuClick
+
+                Row(
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .height(40.dp)
+                ) {
+                    ChatFilterTab(
+                        label = ChatTab.ALL.label,
+                        selected = selectedTab == ChatTab.ALL,
+                        onClick = { selectedTab = ChatTab.ALL }
+                    )
+                    ChatFilterTab(
+                        label = ChatTab.REQUEST.label,
+                        selected = selectedTab == ChatTab.REQUEST,
+                        unreadCount = requestUnreadCount,
+                        onClick = { selectedTab = ChatTab.REQUEST }
+                    )
+                    ChatFilterTab(
+                        label = ChatTab.APPLICATION.label,
+                        selected = selectedTab == ChatTab.APPLICATION,
+                        unreadCount = applicationUnreadCount,
+                        onClick = { selectedTab = ChatTab.APPLICATION }
+                    )
+                }
+            }
+        }
+    ) { paddingValues ->
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            if (selectedTab == ChatTab.ALL) {
+                ChatSortDropdown(
+                    selectedOption = selectedSort,
+                    onOptionSelected = { selectedSort = it },
+                    expanded = sortExpanded,
+                    onExpandedChange = { sortExpanded = it },
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp)
+                        .padding(bottom = 4.dp)
                 )
             }
 
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .height(40.dp)
-            ) {
-                ChatFilterTab(
-                    label = ChatTab.ALL.label,
-                    selected = selectedTab == ChatTab.ALL,
-                    onClick = { selectedTab = ChatTab.ALL }
-                )
-                ChatFilterTab(
-                    label = ChatTab.REQUEST.label,
-                    selected = selectedTab == ChatTab.REQUEST,
-                    unreadCount = requestUnreadCount,
-                    onClick = { selectedTab = ChatTab.REQUEST }
-                )
-                ChatFilterTab(
-                    label = ChatTab.APPLICATION.label,
-                    selected = selectedTab == ChatTab.APPLICATION,
-                    unreadCount = applicationUnreadCount,
-                    onClick = { selectedTab = ChatTab.APPLICATION }
-                )
-            }
-        }
-
-        if (selectedTab == ChatTab.ALL) {
-            ChatSortDropdown(
-                selectedOption = selectedSort,
-                onOptionSelected = { selectedSort = it },
-                initialExpanded = initialSortExpanded,
-                modifier = Modifier
-                    .padding(horizontal = 16.dp)
-                    .padding(bottom = 4.dp)
-            )
-        }
-
-        LazyColumn(modifier = Modifier.fillMaxSize()) {
-            items(chatRooms) { room ->
-                ChatRoomCard(
-                    displayName = room.displayName,
-                    postTitle = room.postTitle,
-                    participantCount = room.participantCount,
-                    lastMessagePreview = room.lastMessagePreview,
-                    lastMessageAt = room.lastMessageAt,
-                    unreadCount = room.unreadCount,
-                    roomType = room.roomType,
-                    onClick = { onChatRoomClick(room.id) }
-                )
+            LazyColumn(modifier = Modifier.fillMaxSize()) {
+                items(chatRooms) { room ->
+                    ChatRoomCard(
+                        displayName = room.displayName,
+                        postTitle = room.postTitle,
+                        participantCount = room.participantCount,
+                        lastMessagePreview = room.lastMessagePreview,
+                        lastMessageAt = room.lastMessageAt,
+                        unreadCount = room.unreadCount,
+                        roomType = room.roomType,
+                        onClick = { onChatRoomClick(room.id) }
+                    )
+                }
             }
         }
     }

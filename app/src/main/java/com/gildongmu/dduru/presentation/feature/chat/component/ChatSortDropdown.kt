@@ -42,11 +42,10 @@ enum class ChatSortOption(val label: String) {
 fun ChatSortDropdown(
     selectedOption: ChatSortOption,
     onOptionSelected: (ChatSortOption) -> Unit,
-    initialExpanded: Boolean = false,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(initialExpanded) }
-
     Box(
         modifier = modifier.height(36.dp),
         contentAlignment = Alignment.CenterStart
@@ -57,7 +56,7 @@ fun ChatSortDropdown(
                     color = DduruTheme.colors.gray200,
                     shape = RoundedCornerShape(99.dp)
                 )
-                .noRippleClickable { expanded = !expanded }
+                .noRippleClickable { onExpandedChange(!expanded) }
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -80,13 +79,13 @@ fun ChatSortDropdown(
             Popup(
                 alignment = Alignment.TopStart,
                 offset = IntOffset(0, offsetY),
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { onExpandedChange(false) }
             ) {
                 ChatSortDropdownMenu(
                     selectedOption = selectedOption,
                     onOptionSelected = { option ->
                         onOptionSelected(option)
-                        expanded = false
+                        onExpandedChange(false)
                     }
                 )
             }
@@ -175,9 +174,12 @@ private fun ChatSortDropdownMenu(
 private fun ChatSortDropdownPreview() {
     DduruTheme {
         var selected by remember { mutableStateOf(ChatSortOption.ALL) }
+        var expanded by remember { mutableStateOf(false) }
         ChatSortDropdown(
             selectedOption = selected,
-            onOptionSelected = { selected = it }
+            onOptionSelected = { selected = it },
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
         )
     }
 }

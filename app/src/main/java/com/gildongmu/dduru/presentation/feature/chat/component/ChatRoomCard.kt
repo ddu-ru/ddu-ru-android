@@ -10,14 +10,13 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
@@ -39,60 +38,53 @@ fun ChatRoomCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val borderColor = DduruTheme.colors.gray200
-
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .padding(horizontal = 16.dp)
-            .drawBehind {
-                val stroke = 1.dp.toPx()
-                drawLine(
-                    color = borderColor,
-                    start = Offset(0f, 0f),
-                    end = Offset(size.width, 0f),
-                    strokeWidth = stroke
-                )
-                drawLine(
-                    color = borderColor,
-                    start = Offset(0f, size.height),
-                    end = Offset(size.width, size.height),
-                    strokeWidth = stroke
-                )
-            }
-            .noRippleClickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Column(modifier = modifier.fillMaxWidth()) {
+        HorizontalDivider(
+            color = DduruTheme.colors.gray200,
+            thickness = 1.dp
+        )
         Row(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp)
+                .noRippleClickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ChatRoomAvatar(roomType = roomType)
-
-            Column(
+            Row(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                ChatRoomNameRow(
-                    displayName = displayName,
-                    postTitle = postTitle,
-                    participantCount = participantCount,
-                    roomType = roomType
-                )
-                ChatRoomPreviewRow(
-                    preview = lastMessagePreview,
-                    time = lastMessageAt,
-                    roomType = roomType
-                )
+                ChatRoomAvatar(roomType = roomType)
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ChatRoomNameRow(
+                        displayName = displayName,
+                        postTitle = postTitle,
+                        participantCount = participantCount,
+                        roomType = roomType
+                    )
+                    ChatRoomPreviewRow(
+                        preview = lastMessagePreview,
+                        time = lastMessageAt,
+                        roomType = roomType
+                    )
+                }
+            }
+
+            if (unreadCount > 0) {
+                UnreadBadge(count = unreadCount)
             }
         }
-
-        if (unreadCount > 0) {
-            UnreadBadge(count = unreadCount)
-        }
+        HorizontalDivider(
+            color = DduruTheme.colors.gray200,
+            thickness = 1.dp
+        )
     }
 }
 
