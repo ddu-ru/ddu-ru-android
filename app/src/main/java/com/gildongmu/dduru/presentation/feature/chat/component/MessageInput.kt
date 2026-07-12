@@ -19,11 +19,11 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -50,17 +50,10 @@ fun MessageInput(
             contentAlignment = Alignment.Center,
             modifier = Modifier
                 .size(48.dp)
-                .shadow(
-                    elevation = 16.dp,
-                    shape = plusShape,
-                    spotColor = DduruTheme.colors.black.copy(alpha = 0.10f),
-                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.10f)
-                )
-                .shadow(
-                    elevation = 8.dp,
-                    shape = plusShape,
-                    spotColor = DduruTheme.colors.black.copy(alpha = 0.08f),
-                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.08f)
+                .dduruDualShadow(
+                    firstAlpha = 0.10f,
+                    secondAlpha = 0.08f,
+                    shape = plusShape
                 )
                 .border(
                     width = 1.dp,
@@ -87,17 +80,10 @@ fun MessageInput(
             verticalAlignment = Alignment.Bottom,
             modifier = Modifier
                 .weight(1f)
-                .shadow(
-                    elevation = 16.dp,
-                    shape = fieldShape,
-                    spotColor = DduruTheme.colors.black.copy(alpha = 0.10f),
-                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.10f)
-                )
-                .shadow(
-                    elevation = 8.dp,
-                    shape = fieldShape,
-                    spotColor = DduruTheme.colors.black.copy(alpha = 0.08f),
-                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.08f)
+                .dduruDualShadow(
+                    firstAlpha = 0.10f,
+                    secondAlpha = 0.08f,
+                    shape = fieldShape
                 )
                 .border(
                     width = 1.dp,
