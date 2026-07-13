@@ -12,12 +12,12 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.gildongmu.dduru.BuildConfig
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -38,18 +38,10 @@ fun QuestionCard(
     Box(
         modifier = modifier
             .padding(10.dp)
-            .shadow(
-                elevation = 16.dp,
+            .dduruDualShadow(
+                firstAlpha = 0.10f,
+                secondAlpha = 0.10f,
                 shape = cardShape,
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.10f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.10f),
-                clip = false
-            )
-            .shadow(
-                elevation = 4.dp,
-                shape = cardShape,
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.10f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.10f),
                 clip = false
             )
             .background(
