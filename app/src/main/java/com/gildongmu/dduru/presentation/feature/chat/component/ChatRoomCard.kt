@@ -39,14 +39,9 @@ fun ChatRoomCard(
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
-        HorizontalDivider(
-            color = DduruTheme.colors.gray200,
-            thickness = 1.dp
-        )
         Row(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp)
                 .noRippleClickable(onClick = onClick)
                 .padding(horizontal = 16.dp, vertical = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
@@ -83,7 +78,7 @@ fun ChatRoomCard(
         }
         HorizontalDivider(
             color = DduruTheme.colors.gray200,
-            thickness = 1.dp
+            modifier = Modifier.padding(horizontal = 16.dp)
         )
     }
 }
