@@ -6,7 +6,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -42,14 +43,15 @@ fun ChatRoomMenuCardContent(
                 contentDescription = null,
                 contentScale = ContentScale.Crop,
                 modifier = Modifier
-                    .size(64.dp)
+                    .fillMaxSize()
+                    .aspectRatio(1f)
                     .clip(RoundedCornerShape(16.dp))
                     .background(DduruTheme.colors.gray200, RoundedCornerShape(16.dp))
             )
             Box(
                 contentAlignment = Alignment.Center,
                 modifier = Modifier
-                    .offset(x = 32.dp, y = 32.dp)
+                    .align(Alignment.BottomEnd)
                     .border(
                         width = 4.dp,
                         color = DduruTheme.colors.gray50,
