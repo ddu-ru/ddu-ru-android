@@ -14,12 +14,12 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -95,17 +95,10 @@ fun WritingExpandedMenu(
         IconButton(
             onClick = onDismiss,
             modifier = Modifier
-                .shadow(
-                    elevation = 16.dp,
-                    shape = RoundedCornerShape(99.dp),
-                    spotColor = DduruTheme.colors.black.copy(alpha = 0.05f),
-                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.05f)
-                )
-                .shadow(
-                    elevation = 4.dp,
-                    shape = RoundedCornerShape(99.dp),
-                    spotColor = DduruTheme.colors.black.copy(alpha = 0.10f),
-                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.10f)
+                .dduruDualShadow(
+                    firstAlpha = 0.05f,
+                    secondAlpha = 0.10f,
+                    shape = RoundedCornerShape(99.dp)
                 )
                 .border(
                     width = 1.dp,
