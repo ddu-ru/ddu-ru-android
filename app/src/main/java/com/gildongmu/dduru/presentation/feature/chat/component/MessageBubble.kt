@@ -16,9 +16,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -63,11 +63,10 @@ fun MessageBubble(
             style = DduruTheme.typography.Body2,
             color = if (isMine) DduruTheme.colors.gray0 else DduruTheme.colors.gray846,
             modifier = Modifier
-                .shadow(
-                    elevation = 16.dp,
-                    shape = bubbleShape,
-                    spotColor = DduruTheme.colors.black.copy(alpha = 0.12f),
-                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.12f)
+                .dduruDualShadow(
+                    firstAlpha = 0.12f,
+                    secondAlpha = 0.12f,
+                    shape = bubbleShape
                 )
                 .widthIn(max = if (isMine) 244.dp else 220.dp)
                 .background(
