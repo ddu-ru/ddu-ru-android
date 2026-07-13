@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
@@ -23,6 +22,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -32,11 +32,11 @@ fun LocationSearchCardComponent(
     region: String,
     country: String,
     modifier: Modifier = Modifier,
+    imageUrl: String? = null,
     imageResId: Int? = null,
     onClick: () -> Unit = {}
 ) {
-    val hasImage = imageResId != null
-    val resolvedImageResId = imageResId ?: R.drawable.ic_home_location
+    val imageModel = imageUrl ?: imageResId
 
     Row(
         modifier = modifier
@@ -58,14 +58,15 @@ fun LocationSearchCardComponent(
                 .background(color = DduruTheme.colors.gray100, shape = CircleShape),
             contentAlignment = Alignment.Center
         ) {
-            if (hasImage) {
-                Image(
-                    painter = painterResource(id = resolvedImageResId),
+            if (imageModel != null) {
+                AsyncImage(
+                    model = imageModel,
                     contentDescription = null,
                     modifier = Modifier
                         .fillMaxWidth()
                         .clip(CircleShape),
-                    contentScale = ContentScale.Crop
+                    contentScale = ContentScale.Crop,
+                    error = painterResource(id = R.drawable.ic_home_location)
                 )
             } else {
                 Icon(

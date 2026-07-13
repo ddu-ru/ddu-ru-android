@@ -2,6 +2,8 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
+import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
@@ -15,6 +17,8 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Recr
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -25,7 +29,17 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
+class MatchingCreatePostViewModel @Inject constructor(
+    private val destinationRepository: DestinationRepository
+) : ViewModel() {
+    private companion object {
+        const val POPULAR_DESTINATIONS_ERROR_MESSAGE =
+            "인기 여행지를 불러올 수 없어요 잠시후 다시 시도해주세요"
+        const val SEARCH_DESTINATIONS_ERROR_MESSAGE =
+            "여행지를 검색할 수 없어요 잠시후 다시 시도해주세요"
+        const val SEARCH_DEBOUNCE_MILLIS = 1_200L
+    }
+
     private val _uiState = MutableStateFlow(
         MatchingCreatePostUiState(
             popularTags = MatchingCreatePostMockData.popularTags
@@ -35,6 +49,12 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
 
     private val _uiEvent = MutableSharedFlow<MatchingCreatePostUiEvent>()
     val uiEvent: SharedFlow<MatchingCreatePostUiEvent> = _uiEvent.asSharedFlow()
+    private var searchDebounceJob: Job? = null
+    private var searchRequestJob: Job? = null
+
+    init {
+        fetchPopularDestinations()
+    }
 
     fun onDismissClick() {
         emitUiEvent(MatchingCreatePostUiEvent.Close)
@@ -49,8 +69,13 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onLocationSearchUiStateChange(locationSearchUiState: LocationSearchUiState) {
+        val previousQuery = _uiState.value.locationSearchUiState.searchQuery
         _uiState.update { currentState ->
             currentState.copy(locationSearchUiState = locationSearchUiState)
+        }
+
+        if (previousQuery != locationSearchUiState.searchQuery) {
+            debounceSearchDestinations(locationSearchUiState.searchQuery)
         }
     }
 
@@ -69,6 +94,11 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
         }
 
         moveToStep(MatchingCreatePostStep.DATE)
+    }
+
+    fun onLocationSearchClick() {
+        searchDebounceJob?.cancel()
+        searchDestinations(_uiState.value.locationSearchUiState.searchQuery)
     }
 
     fun onDateSectionUiStateChange(dateSectionUiState: DateSectionUiState) {
@@ -130,4 +160,110 @@ class MatchingCreatePostViewModel @Inject constructor() : ViewModel() {
             _uiEvent.emit(event)
         }
     }
+
+    private fun fetchPopularDestinations() {
+        viewModelScope.launch {
+            destinationRepository.getPopularDestinations()
+                .onSuccess { destinations ->
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            locationSearchUiState = currentState.locationSearchUiState.copy(
+                                popularLocations = destinations.map { it.toUiState() },
+                                popularLocationsErrorMessage = null
+                            )
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            locationSearchUiState = currentState.locationSearchUiState.copy(
+                                popularLocations = emptyList(),
+                                popularLocationsErrorMessage =
+                                POPULAR_DESTINATIONS_ERROR_MESSAGE
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun searchDestinations(keyword: String) {
+        val trimmedKeyword = keyword.trim()
+
+        if (trimmedKeyword.isEmpty()) {
+            searchDebounceJob?.cancel()
+            searchRequestJob?.cancel()
+            _uiState.update { currentState ->
+                currentState.copy(
+                    locationSearchUiState = currentState.locationSearchUiState.copy(
+                        searchQuery = "",
+                        searchedLocations = emptyList(),
+                        isSearchLoading = false,
+                        hasSearchResult = false,
+                        popularLocationsErrorMessage = null
+                    )
+                )
+            }
+            return
+        }
+
+        _uiState.update { currentState ->
+            currentState.copy(
+                locationSearchUiState = currentState.locationSearchUiState.copy(
+                    searchQuery = trimmedKeyword,
+                    isSearchLoading = true,
+                    hasSearchResult = false,
+                    popularLocationsErrorMessage = null
+                )
+            )
+        }
+
+        searchRequestJob?.cancel()
+        searchRequestJob = viewModelScope.launch {
+            destinationRepository.searchDestinations(trimmedKeyword)
+                .onSuccess { destinations ->
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            locationSearchUiState = currentState.locationSearchUiState.copy(
+                                searchedLocations = destinations.map { it.toUiState() },
+                                isSearchLoading = false,
+                                hasSearchResult = true,
+                                popularLocationsErrorMessage = null
+                            )
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            locationSearchUiState = currentState.locationSearchUiState.copy(
+                                searchedLocations = emptyList(),
+                                isSearchLoading = false,
+                                hasSearchResult = true,
+                                popularLocationsErrorMessage = SEARCH_DESTINATIONS_ERROR_MESSAGE
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun debounceSearchDestinations(keyword: String) {
+        searchDebounceJob?.cancel()
+        searchDebounceJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_MILLIS)
+            searchDestinations(keyword)
+        }
+    }
+}
+
+private fun PopularDestination.toUiState(): LocationSearchItemUiState {
+    return LocationSearchItemUiState(
+        id = id,
+        countryCode = countryCode,
+        countryName = countryName,
+        city = city,
+        image = image
+    )
 }
