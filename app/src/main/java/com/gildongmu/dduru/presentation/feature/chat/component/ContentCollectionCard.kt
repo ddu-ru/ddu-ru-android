@@ -6,18 +6,18 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.drawBehind
-import androidx.compose.ui.geometry.Offset
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -123,8 +123,8 @@ private fun ContentTabChip(
         modifier = Modifier
             .border(1.dp, borderColor, RoundedCornerShape(99.dp))
             .background(bgColor, RoundedCornerShape(99.dp))
-            .padding(horizontal = 16.dp, vertical = 8.dp)
             .noRippleClickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp)
     ) {
         Text(
             text = label,
@@ -149,7 +149,8 @@ private fun ContentPhotoGrid(photoUrls: List<String>) {
                         contentDescription = null,
                         contentScale = ContentScale.Crop,
                         modifier = Modifier
-                            .size(98.dp)
+                            .weight(1f)
+                            .aspectRatio(1f)
                             .clip(RoundedCornerShape(8.dp))
                             .background(DduruTheme.colors.gray200, RoundedCornerShape(8.dp))
                     )
@@ -170,67 +171,62 @@ private fun ContentPollList(polls: List<PollSummary>) {
 
 @Composable
 private fun ContentPollItem(poll: PollSummary) {
-    val borderColor = DduruTheme.colors.gray200
-    Row(
-        horizontalArrangement = Arrangement.spacedBy(14.dp, Alignment.Start),
-        verticalAlignment = Alignment.Top,
-        modifier = Modifier
-            .fillMaxWidth()
-            .drawBehind {
-                val stroke = 1.dp.toPx()
-                val half = stroke / 2f
-                drawLine(
-                    color = borderColor,
-                    start = Offset(0f, size.height - half),
-                    end = Offset(size.width, size.height - half),
-                    strokeWidth = stroke
-                )
-            }
-            .padding(vertical = 16.dp)
-    ) {
-        Text(
-            text = "Q",
-            style = DduruTheme.typography.Title2,
-            color = DduruTheme.colors.gray900
-        )
-        Column(
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+    Column {
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(14.dp, Alignment.Start),
+            verticalAlignment = Alignment.Top,
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(vertical = 16.dp)
         ) {
             Text(
-                text = poll.title,
-                style = DduruTheme.typography.Body1,
+                text = "Q",
+                style = DduruTheme.typography.Title2,
                 color = DduruTheme.colors.gray900
             )
             Column(
-                verticalArrangement = Arrangement.spacedBy(4.dp)
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Row(
-                    horizontalArrangement = Arrangement.spacedBy(11.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                Text(
+                    text = poll.title,
+                    style = DduruTheme.typography.Body1,
+                    color = DduruTheme.colors.gray900
+                )
+                Column(
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(11.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = "${poll.participantCount}명 참여",
+                            style = DduruTheme.typography.Body4,
+                            color = DduruTheme.colors.gray500
+                        )
+                        Box(
+                            modifier = Modifier
+                                .size(4.dp)
+                                .background(DduruTheme.colors.gray500, CircleShape)
+                        )
+                        Text(
+                            text = if (poll.isOngoing) "진행중" else "종료",
+                            style = DduruTheme.typography.Body4,
+                            color = DduruTheme.colors.gray500
+                        )
+                    }
                     Text(
-                        text = "${poll.participantCount}명 참여",
-                        style = DduruTheme.typography.Body4,
-                        color = DduruTheme.colors.gray500
-                    )
-                    Box(
-                        modifier = Modifier
-                            .size(4.dp)
-                            .background(DduruTheme.colors.gray500, CircleShape)
-                    )
-                    Text(
-                        text = if (poll.isOngoing) "진행중" else "종료",
+                        text = poll.endDateTime,
                         style = DduruTheme.typography.Body4,
                         color = DduruTheme.colors.gray500
                     )
                 }
-                Text(
-                    text = poll.endDateTime,
-                    style = DduruTheme.typography.Body4,
-                    color = DduruTheme.colors.gray500
-                )
             }
         }
+        HorizontalDivider(
+            color = DduruTheme.colors.gray200,
+            thickness = 1.dp
+        )
     }
 }
 
