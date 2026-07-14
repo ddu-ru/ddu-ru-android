@@ -14,10 +14,10 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -88,11 +88,11 @@ private fun ParticipationDialogContent(
         verticalArrangement = Arrangement.spacedBy(24.dp, Alignment.Top),
         horizontalAlignment = Alignment.Start,
         modifier = Modifier
-            .shadow(
-                elevation = 20.dp,
+            .dduruDualShadow(
+                firstAlpha = 0.18f,
+                secondAlpha = 0.18f,
                 shape = RoundedCornerShape(16.dp),
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.18f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.18f)
+                firstElevation = 20.dp
             )
             .width(335.dp)
             .background(color = DduruTheme.colors.gray0, shape = RoundedCornerShape(16.dp))
