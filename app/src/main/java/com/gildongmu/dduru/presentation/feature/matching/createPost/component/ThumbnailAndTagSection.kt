@@ -117,7 +117,7 @@ fun ThumbnailAndTagSection(
 
         Text(
             text = uiState.tagValidationMessage
-                ?: "한글 4자 또는 영문/숫자 7자 이하로 입력해 주세요.",
+                ?: "한글은 4자 이하, 영문/숫자는 7자 이하로 입력해 주세요.",
             style = DduruTheme.typography.Caption2,
             color = if (uiState.tagValidationMessage == null) {
                 DduruTheme.colors.gray400
