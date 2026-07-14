@@ -26,7 +26,7 @@ fun ParticipationStatusBadge(
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
             .background(color = backgroundColor, shape = RoundedCornerShape(99.dp))
-            .padding(start = 8.dp, top = 4.dp, end = 8.dp, bottom = 4.dp)
+            .padding(horizontal = 8.dp, vertical = 4.dp)
     ) {
         Text(
             text = label,
