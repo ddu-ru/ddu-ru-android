@@ -20,7 +20,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -28,6 +28,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Popup
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -41,18 +42,21 @@ enum class ChatSortOption(val label: String) {
 fun ChatSortDropdown(
     selectedOption: ChatSortOption,
     onOptionSelected: (ChatSortOption) -> Unit,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    var expanded by remember { mutableStateOf(false) }
-
-    Box(modifier = modifier) {
+    Box(
+        modifier = modifier.height(36.dp),
+        contentAlignment = Alignment.CenterStart
+    ) {
         Row(
             modifier = Modifier
                 .background(
                     color = DduruTheme.colors.gray200,
                     shape = RoundedCornerShape(99.dp)
                 )
-                .noRippleClickable { expanded = !expanded }
+                .noRippleClickable { onExpandedChange(!expanded) }
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically
@@ -71,17 +75,17 @@ fun ChatSortDropdown(
         }
 
         if (expanded) {
-            val offsetY = with(LocalDensity.current) { 44.dp.roundToPx() }
+            val offsetY = with(LocalDensity.current) { 36.dp.roundToPx() }
             Popup(
-                alignment = Alignment.TopEnd,
+                alignment = Alignment.TopStart,
                 offset = IntOffset(0, offsetY),
-                onDismissRequest = { expanded = false }
+                onDismissRequest = { onExpandedChange(false) }
             ) {
                 ChatSortDropdownMenu(
                     selectedOption = selectedOption,
                     onOptionSelected = { option ->
                         onOptionSelected(option)
-                        expanded = false
+                        onExpandedChange(false)
                     }
                 )
             }
@@ -99,24 +103,12 @@ private fun ChatSortDropdownMenu(
         verticalArrangement = Arrangement.spacedBy(8.dp, Alignment.Top),
         horizontalAlignment = Alignment.Start,
         modifier = modifier
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(16.dp),
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.25f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.25f)
+            .dduruDualShadow(
+                firstAlpha = 0.25f,
+                secondAlpha = 0.10f,
+                shape = RoundedCornerShape(16.dp)
             )
-            .shadow(
-                elevation = 16.dp,
-                shape = RoundedCornerShape(16.dp),
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.10f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.10f)
-            )
-            .shadow(
-                elevation = 8.dp,
-                shape = RoundedCornerShape(16.dp),
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.08f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.08f)
-            )
+            .clip(RoundedCornerShape(16.dp))
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray0.copy(alpha = 0.30f),
@@ -169,9 +161,12 @@ private fun ChatSortDropdownMenu(
 private fun ChatSortDropdownPreview() {
     DduruTheme {
         var selected by remember { mutableStateOf(ChatSortOption.ALL) }
+        var expanded by remember { mutableStateOf(false) }
         ChatSortDropdown(
             selectedOption = selected,
-            onOptionSelected = { selected = it }
+            onOptionSelected = { selected = it },
+            expanded = expanded,
+            onExpandedChange = { expanded = it }
         )
     }
 }
