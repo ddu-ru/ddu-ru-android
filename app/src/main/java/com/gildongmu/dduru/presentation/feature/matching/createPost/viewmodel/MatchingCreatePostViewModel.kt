@@ -6,7 +6,7 @@ import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
 import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiAction
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
@@ -15,6 +15,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Matc
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.reduce
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -101,9 +102,11 @@ class MatchingCreatePostViewModel @Inject constructor(
         searchDestinations(_uiState.value.locationSearchUiState.searchQuery)
     }
 
-    fun onDateSectionUiStateChange(dateSectionUiState: DateSectionUiState) {
+    fun onDateSectionAction(action: DateSectionUiAction) {
         _uiState.update { currentState ->
-            currentState.copy(dateSectionUiState = dateSectionUiState)
+            currentState.copy(
+                dateSectionUiState = currentState.dateSectionUiState.reduce(action)
+            )
         }
     }
 

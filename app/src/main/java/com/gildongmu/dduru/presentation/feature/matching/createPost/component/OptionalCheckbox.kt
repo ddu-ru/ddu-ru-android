@@ -55,7 +55,6 @@ fun OptionalCheckbox(
 
     Row(
         modifier = modifier
-            .fillMaxWidth()
             .clickable(
                 indication = null,
                 interactionSource = remember { MutableInteractionSource() }

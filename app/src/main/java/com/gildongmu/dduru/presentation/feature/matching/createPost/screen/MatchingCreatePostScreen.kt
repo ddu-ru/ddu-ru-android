@@ -45,7 +45,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.component.Re
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.RecruitmentCountSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.ThumbnailAndTagSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiAction
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
@@ -54,6 +54,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Matc
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.reduce
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingCreatePostViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -83,7 +84,7 @@ fun MatchingCreatePostRoute(
         onLocationSearchUiStateChange = viewModel::onLocationSearchUiStateChange,
         onLocationSearchClick = viewModel::onLocationSearchClick,
         onLocationSelected = viewModel::onLocationSelected,
-        onDateSectionUiStateChange = viewModel::onDateSectionUiStateChange,
+        onDateSectionAction = viewModel::onDateSectionAction,
         onRecruitmentSectionUiStateChange = viewModel::onRecruitmentSectionUiStateChange,
         onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
         onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
@@ -101,7 +102,7 @@ fun MatchingCreatePostScreen(
     onLocationSearchUiStateChange: (LocationSearchUiState) -> Unit,
     onLocationSearchClick: () -> Unit,
     onLocationSelected: (LocationSearchItemUiState) -> Unit,
-    onDateSectionUiStateChange: (DateSectionUiState) -> Unit,
+    onDateSectionAction: (DateSectionUiAction) -> Unit,
     onRecruitmentSectionUiStateChange: (RecruitmentScreenUiState) -> Unit,
     onAgeSectionUiStateChange: (AgeSectionUiState) -> Unit,
     onPostWritingUiStateChange: (PostWritingUiState) -> Unit,
@@ -179,7 +180,7 @@ fun MatchingCreatePostScreen(
                 MatchingCreatePostStep.DATE -> {
                     DateSelectionSection(
                         uiState = uiState.dateSectionUiState,
-                        onUiStateChange = onDateSectionUiStateChange
+                        onAction = onDateSectionAction
                     )
                 }
 
@@ -350,8 +351,8 @@ private fun MatchingCreatePostContentPreview() {
                         currentStep = MatchingCreatePostStep.DATE
                     )
                 },
-                onDateSectionUiStateChange = { dateSectionUiState ->
-                    uiState = uiState.copy(dateSectionUiState = dateSectionUiState)
+                onDateSectionAction = { action ->
+                    uiState = uiState.copy(dateSectionUiState = uiState.dateSectionUiState.reduce(action))
                 },
                 onRecruitmentSectionUiStateChange = { recruitmentSectionUiState ->
                     uiState = uiState.copy(recruitmentSectionUiState = recruitmentSectionUiState)
