@@ -44,12 +44,12 @@ import com.gildongmu.dduru.presentation.feature.chat.uistate.MessagePosition
 @Composable
 fun ChatRoomScreen(
     uiState: ChatRoomUiState = ChatRoomUiState(),
-    onBackClick: () -> Unit = {},
-    onMembersClick: () -> Unit = {},
-    onMenuClick: () -> Unit = {},
-    onPlusClick: () -> Unit = {},
-    onSendClick: (String) -> Unit = {},
-    onInputChange: (String) -> Unit = {},
+    onBackClick: () -> Unit,
+    onMembersClick: () -> Unit,
+    onMenuClick: () -> Unit,
+    onPlusClick: () -> Unit,
+    onSendClick: (String) -> Unit,
+    onInputChange: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -77,43 +77,7 @@ fun ChatRoomScreen(
                 .padding(top = 8.dp)
         ) {
             items(uiState.items) { item ->
-                when (item) {
-                    is ChatListItem.DateDivider -> ChatDateDivider(date = item.date)
-                    is ChatListItem.Message -> {
-                        val msg = item.message
-                        val isHead = msg.position == MessagePosition.HEAD || msg.position == MessagePosition.SINGLE
-                        val isTail = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
-                        val showTime = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
-                        if (msg.isMine) {
-                            MessageBubble(
-                                message = msg.content,
-                                time = if (showTime) msg.time else "",
-                                unreadCount = msg.unreadCount,
-                                isMine = true,
-                                isHead = isHead,
-                                isTail = isTail
-                            )
-                        } else if (uiState.roomType == ChatRoomType.GROUP) {
-                            GroupMessageBubble(
-                                username = msg.senderName,
-                                message = msg.content,
-                                time = if (showTime) msg.time else "",
-                                unreadCount = msg.unreadCount,
-                                isHead = isHead,
-                                isTail = isTail
-                            )
-                        } else {
-                            MessageBubble(
-                                message = msg.content,
-                                time = if (showTime) msg.time else "",
-                                unreadCount = msg.unreadCount,
-                                isMine = false,
-                                isHead = isHead,
-                                isTail = isTail
-                            )
-                        }
-                    }
-                }
+                ChatMessageItem(item = item, roomType = uiState.roomType)
             }
         }
 
@@ -121,8 +85,53 @@ fun ChatRoomScreen(
             value = uiState.inputText,
             onValueChange = onInputChange,
             onPlusClick = onPlusClick,
-            onSendClick = { onSendClick(uiState.inputText) }
+            onSendClick = {
+                if (uiState.inputText.isNotBlank()) onSendClick(uiState.inputText)
+            }
         )
+    }
+}
+
+@Composable
+private fun ChatMessageItem(
+    item: ChatListItem,
+    roomType: ChatRoomType
+) {
+    when (item) {
+        is ChatListItem.DateDivider -> ChatDateDivider(date = item.date)
+        is ChatListItem.Message -> {
+            val msg = item.message
+            val isHead = msg.position == MessagePosition.HEAD || msg.position == MessagePosition.SINGLE
+            val isTail = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
+            val time = if (msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE) msg.time else ""
+
+            when {
+                msg.isMine -> MessageBubble(
+                    message = msg.content,
+                    time = time,
+                    unreadCount = msg.unreadCount,
+                    isMine = true,
+                    isHead = isHead,
+                    isTail = isTail
+                )
+                roomType == ChatRoomType.GROUP -> GroupMessageBubble(
+                    username = msg.senderName,
+                    message = msg.content,
+                    time = time,
+                    unreadCount = msg.unreadCount,
+                    isHead = isHead,
+                    isTail = isTail
+                )
+                else -> MessageBubble(
+                    message = msg.content,
+                    time = time,
+                    unreadCount = msg.unreadCount,
+                    isMine = false,
+                    isHead = isHead,
+                    isTail = isTail
+                )
+            }
+        }
     }
 }
 
@@ -371,6 +380,11 @@ private fun ChatRoomScreenPrivatePreview() {
                 inputText = inputText,
                 items = figmaPreviewItems()
             ),
+            onBackClick = {},
+            onMembersClick = {},
+            onMenuClick = {},
+            onPlusClick = {},
+            onSendClick = {},
             onInputChange = { inputText = it }
         )
     }
@@ -390,6 +404,11 @@ private fun ChatRoomScreenGroupPreview() {
                 inputText = inputText,
                 items = figmaPreviewItems()
             ),
+            onBackClick = {},
+            onMembersClick = {},
+            onMenuClick = {},
+            onPlusClick = {},
+            onSendClick = {},
             onInputChange = { inputText = it }
         )
     }
