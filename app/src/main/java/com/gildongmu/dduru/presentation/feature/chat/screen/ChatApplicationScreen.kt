@@ -20,9 +20,9 @@ import com.gildongmu.dduru.presentation.feature.chat.uistate.SentApplicationStat
 
 @Composable
 fun ChatApplicationScreen(
-    uiState: ChatApplicationUiState = ChatApplicationUiState(),
-    onCancelClick: (String) -> Unit = {},
-    onEnterClick: (String) -> Unit = {},
+    uiState: ChatApplicationUiState,
+    onCancelClick: (String) -> Unit,
+    onEnterClick: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(modifier = modifier.fillMaxSize()) {
@@ -131,8 +131,13 @@ private fun ChatApplicationScreenPreview() {
         ChatMainScreen(
             applicationUnreadCount = 4,
             initialTab = ChatTab.APPLICATION,
+            requestContent = {},
             applicationContent = {
-                ChatApplicationScreen(uiState = previewUiState)
+                ChatApplicationScreen(
+                    uiState = previewUiState,
+                    onCancelClick = {},
+                    onEnterClick = {}
+                )
             }
         )
     }
