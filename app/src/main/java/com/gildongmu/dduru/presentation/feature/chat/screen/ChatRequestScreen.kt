@@ -8,7 +8,7 @@ import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,14 +33,23 @@ fun ChatRequestScreen(
     onAcceptConfirm: (String) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    var dialogTarget by remember { mutableStateOf<Pair<String, ParticipationDialogType>?>(null) }
+    var dialogTargetId by rememberSaveable { mutableStateOf<String?>(null) }
+    var dialogTypeName by rememberSaveable { mutableStateOf<String?>(null) }
 
-    dialogTarget?.let { (id, type) ->
+    val dialogType = dialogTypeName?.let { ParticipationDialogType.valueOf(it) }
+
+    if (dialogTargetId != null && dialogType != null) {
+        val id = dialogTargetId!!
+        val type = dialogType
         ParticipationDialog(
             type = type,
-            onDismiss = { dialogTarget = null },
+            onDismiss = {
+                dialogTargetId = null
+                dialogTypeName = null
+            },
             onConfirm = {
-                dialogTarget = null
+                dialogTargetId = null
+                dialogTypeName = null
                 when (type) {
                     ParticipationDialogType.REJECT -> onRejectConfirm(id)
                     ParticipationDialogType.ACCEPT -> onAcceptConfirm(id)
@@ -65,8 +74,14 @@ fun ChatRequestScreen(
                         postTitle = item.postTitle,
                         time = item.time,
                         statusLabel = "연락중",
-                        onReject = { dialogTarget = Pair(item.id, ParticipationDialogType.REJECT) },
-                        onAccept = { dialogTarget = Pair(item.id, ParticipationDialogType.ACCEPT) }
+                        onReject = {
+                            dialogTargetId = item.id
+                            dialogTypeName = ParticipationDialogType.REJECT.name
+                        },
+                        onAccept = {
+                            dialogTargetId = item.id
+                            dialogTypeName = ParticipationDialogType.ACCEPT.name
+                        }
                     )
                     ReceivedApplicationStatus.WAITING -> ParticipationCard(
                         username = item.username,
@@ -75,8 +90,14 @@ fun ChatRequestScreen(
                         statusLabel = "연락 대기중",
                         badgeBackgroundColor = DduruTheme.colors.gray200,
                         badgeTextColor = DduruTheme.colors.gray500,
-                        onReject = { dialogTarget = Pair(item.id, ParticipationDialogType.REJECT) },
-                        onAccept = { dialogTarget = Pair(item.id, ParticipationDialogType.ACCEPT) }
+                        onReject = {
+                            dialogTargetId = item.id
+                            dialogTypeName = ParticipationDialogType.REJECT.name
+                        },
+                        onAccept = {
+                            dialogTargetId = item.id
+                            dialogTypeName = ParticipationDialogType.ACCEPT.name
+                        }
                     )
                     ReceivedApplicationStatus.APPROVED -> ApplicationCard(
                         username = item.username,
@@ -156,7 +177,8 @@ private fun ChatRequestScreenPreview() {
             initialTab = ChatTab.REQUEST,
             requestContent = {
                 ChatRequestScreen(uiState = previewUiState)
-            }
+            },
+            applicationContent = {}
         )
     }
 }
@@ -177,7 +199,8 @@ private fun ChatRequestScreenDialogPreview() {
                         onConfirm = {}
                     )
                 }
-            }
+            },
+            applicationContent = {}
         )
     }
 }
