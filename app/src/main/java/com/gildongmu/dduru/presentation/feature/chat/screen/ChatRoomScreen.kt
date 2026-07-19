@@ -103,7 +103,8 @@ private fun ChatMessageItem(
             val msg = item.message
             val isHead = msg.position == MessagePosition.HEAD || msg.position == MessagePosition.SINGLE
             val isTail = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
-            val time = if (msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE) msg.time else ""
+            val showTime = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
+            val time = if (showTime) msg.time else ""
 
             when {
                 msg.isMine -> MessageBubble(
