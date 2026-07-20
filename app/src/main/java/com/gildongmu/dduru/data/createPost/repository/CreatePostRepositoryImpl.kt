@@ -31,7 +31,7 @@ class CreatePostRepositoryImpl @Inject constructor(
         } catch (e: CancellationException) {
             throw e
         } catch (e: IOException) {
-            Result.failure(Exception("네트워크 오류: 인터넷 연결을 확인해주세요."))
+            Result.failure(Exception("네트워크 오류: 인터넷 연결을 확인해주세요.", e))
         } catch (e: Exception) {
             Result.failure(Exception("알 수 없는 오류: ${e.message}", e))
         }

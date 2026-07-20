@@ -43,6 +43,8 @@ class MatchingCreatePostViewModel @Inject constructor(
         const val SEARCH_DESTINATIONS_ERROR_MESSAGE =
             "여행지를 검색할 수 없어요 잠시후 다시 시도해주세요"
         const val SEARCH_DEBOUNCE_MILLIS = 1_200L
+        const val MAX_TAG_COUNT = 10
+        const val TAG_LIMIT_ERROR_MESSAGE = "태그는 최대 10개까지 추가할 수 있어요."
     }
 
     private val _uiState = MutableStateFlow(
@@ -139,10 +141,14 @@ class MatchingCreatePostViewModel @Inject constructor(
 
     fun onTagInputChange(input: String) {
         _uiState.update { currentState ->
+            val thumbnailState = currentState.thumbnailAndTagUiState
             currentState.copy(
-                thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
+                thumbnailAndTagUiState = thumbnailState.copy(
                     tagInput = input,
-                    tagValidationMessage = TagValidator.validate(input.trim())
+                    tagValidationMessage = resolveTagValidationMessage(
+                        tag = input.trim(),
+                        addedTagCount = thumbnailState.addedTags.size
+                    )
                 )
             )
         }
@@ -152,9 +158,12 @@ class MatchingCreatePostViewModel @Inject constructor(
         _uiState.update { currentState ->
             val thumbnailState = currentState.thumbnailAndTagUiState
             val trimmedTag = thumbnailState.tagInput.trim()
-            val validationMessage = TagValidator.validate(trimmedTag)
+            val validationMessage = resolveTagValidationMessage(
+                tag = trimmedTag,
+                addedTagCount = thumbnailState.addedTags.size
+            )
 
-            if (trimmedTag.isBlank() || validationMessage != null || thumbnailState.addedTags.size >= 10) {
+            if (trimmedTag.isBlank() || validationMessage != null) {
                 return@update currentState.copy(
                     thumbnailAndTagUiState = thumbnailState.copy(
                         tagValidationMessage = validationMessage
@@ -174,12 +183,24 @@ class MatchingCreatePostViewModel @Inject constructor(
 
     fun onRemoveTag(tag: String) {
         _uiState.update { currentState ->
+            val thumbnailState = currentState.thumbnailAndTagUiState
+            val updatedTags = thumbnailState.addedTags.filterNot { it == tag }
             currentState.copy(
-                thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
-                    addedTags = currentState.thumbnailAndTagUiState.addedTags.filterNot { it == tag }
+                thumbnailAndTagUiState = thumbnailState.copy(
+                    addedTags = updatedTags,
+                    tagValidationMessage = resolveTagValidationMessage(
+                        tag = thumbnailState.tagInput.trim(),
+                        addedTagCount = updatedTags.size
+                    )
                 )
             )
         }
+    }
+
+    private fun resolveTagValidationMessage(tag: String, addedTagCount: Int): String? {
+        if (tag.isBlank()) return null
+        if (addedTagCount >= MAX_TAG_COUNT) return TAG_LIMIT_ERROR_MESSAGE
+        return TagValidator.validate(tag)
     }
 
     private fun moveToStep(step: MatchingCreatePostStep) {
