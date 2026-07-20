@@ -33,23 +33,8 @@ import com.gildongmu.dduru.presentation.feature.chat.component.ChatFilterTab
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatRoomCard
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatSortDropdown
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatSortOption
-
-enum class ChatTab(val label: String) {
-    ALL("전체"),
-    REQUEST("요청함"),
-    APPLICATION("신청내역")
-}
-
-data class ChatRoomUiModel(
-    val id: String,
-    val displayName: String,
-    val postTitle: String?,
-    val participantCount: Int?,
-    val lastMessagePreview: String?,
-    val lastMessageAt: String?,
-    val unreadCount: Int,
-    val roomType: ChatRoomType
-)
+import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiModel
+import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatTab
 
 @Composable
 fun ChatMainScreen(
@@ -62,7 +47,9 @@ fun ChatMainScreen(
     onChatRoomClick: (String) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    requestContent: @Composable () -> Unit = {},
+    applicationContent: @Composable () -> Unit = {}
 ) {
     var selectedTab by remember { mutableStateOf(initialTab) }
     var selectedSort by remember { mutableStateOf(initialSort) }
@@ -145,31 +132,34 @@ fun ChatMainScreen(
                 .fillMaxSize()
                 .padding(paddingValues)
         ) {
-            if (selectedTab == ChatTab.ALL) {
-                ChatSortDropdown(
-                    selectedOption = selectedSort,
-                    onOptionSelected = { selectedSort = it },
-                    expanded = sortExpanded,
-                    onExpandedChange = { sortExpanded = it },
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp)
-                        .padding(bottom = 4.dp)
-                )
-            }
-
-            LazyColumn(modifier = Modifier.fillMaxSize()) {
-                items(chatRooms) { room ->
-                    ChatRoomCard(
-                        displayName = room.displayName,
-                        postTitle = room.postTitle,
-                        participantCount = room.participantCount,
-                        lastMessagePreview = room.lastMessagePreview,
-                        lastMessageAt = room.lastMessageAt,
-                        unreadCount = room.unreadCount,
-                        roomType = room.roomType,
-                        onClick = { onChatRoomClick(room.id) }
+            when (selectedTab) {
+                ChatTab.ALL -> {
+                    ChatSortDropdown(
+                        selectedOption = selectedSort,
+                        onOptionSelected = { selectedSort = it },
+                        expanded = sortExpanded,
+                        onExpandedChange = { sortExpanded = it },
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp)
+                            .padding(bottom = 4.dp)
                     )
+                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                        items(chatRooms) { room ->
+                            ChatRoomCard(
+                                displayName = room.displayName,
+                                postTitle = room.postTitle,
+                                participantCount = room.participantCount,
+                                lastMessagePreview = room.lastMessagePreview,
+                                lastMessageAt = room.lastMessageAt,
+                                unreadCount = room.unreadCount,
+                                roomType = room.roomType,
+                                onClick = { onChatRoomClick(room.id) }
+                            )
+                        }
+                    }
                 }
+                ChatTab.REQUEST -> requestContent()
+                ChatTab.APPLICATION -> applicationContent()
             }
         }
     }
