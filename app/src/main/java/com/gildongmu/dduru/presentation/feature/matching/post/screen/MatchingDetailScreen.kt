@@ -123,8 +123,6 @@ fun MatchingDetailScreen(
                                 selectedStatus = selectedStatus,
                                 onStatusSelected = { selectedStatus = it }
                             )
-
-                            Spacer(modifier = Modifier.weight(24f))
                         }
 
                         MatchingDetailSummarySection(uiState = uiState)
@@ -156,15 +154,10 @@ fun MatchingDetailScreen(
                                 thickness = 1.dp,
                                 color = DduruTheme.colors.gray200
                             )
-                            Spacer(modifier = Modifier.weight(24f))
 
                             MatchingDetailInfoGrid(uiState = uiState)
 
-                            Spacer(modifier = Modifier.weight(24f))
-
                             MatchingDetailTagSection(tags = uiState.tags)
-
-                            Spacer(modifier = Modifier.weight(24f))
 
                             MatchingHostInfoComponent(
                                 username = uiState.author.nickname,
@@ -174,8 +167,6 @@ fun MatchingDetailScreen(
                                 onProfileClick = onProfileClick,
                                 onContactClick = onContactClick
                             )
-
-                            Spacer(modifier = Modifier.weight(24f))
 
                             MatchingDetailParticipantComponent(
                                 participants = uiState.participants.map { participant ->
