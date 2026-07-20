@@ -40,10 +40,12 @@ import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruFrostedBackground
+import com.gildongmu.dduru.core.common.extension.dduruFrostedBorder
+import com.gildongmu.dduru.core.common.extension.dduruFrostedSurface
+import com.gildongmu.dduru.core.common.extension.rememberDduruHazeState
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeChild
 
 @Composable
 fun BottomNavBar(
@@ -125,29 +127,12 @@ private fun FloatingTabBar(
         modifier = modifier
             .fillMaxWidth()
             .clip(containerShape)
-            .hazeChild(
-                state = hazeState,
-                shape = containerShape,
-                style = HazeStyle(
-                    tint = DduruTheme.colors.gray50.copy(alpha = 0.18f),
-                    blurRadius = 8.dp
-                )
-            )
-            .background(
-                brush = Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0f to DduruTheme.colors.gray500.copy(alpha = 0.1f),
-                        0.2f to Color.Transparent,
-                        0.8f to Color.Transparent,
-                        1f to DduruTheme.colors.gray50.copy(alpha = 0.9f)
-                    )
-                )
-            )
-            .border(
-                width = 1.dp,
-                DduruTheme.colors.gray0.copy(alpha = 0.5f),
+            .dduruFrostedSurface(
+                hazeState = hazeState,
                 shape = containerShape
             )
+            .dduruFrostedBackground()
+            .dduruFrostedBorder(containerShape)
             .padding(8.dp)
     ) {
         val selectedIndex = items.indexOfFirst { it.route == currentRoute }
@@ -293,7 +278,7 @@ private fun FloatingTabBarPreview() {
         BottomNavItem(BottomNavRoute.Board, "리스트", R.drawable.ic_bottom_nav_main)
     )
 
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberDduruHazeState()
 
     DduruTheme {
         Box(
@@ -327,7 +312,7 @@ private fun BottomNavBarPreview() {
         BottomNavItem(BottomNavRoute.Board, "게시판", R.drawable.ic_bottom_nav_main)
     )
 
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberDduruHazeState()
 
     DduruTheme {
         Box(
