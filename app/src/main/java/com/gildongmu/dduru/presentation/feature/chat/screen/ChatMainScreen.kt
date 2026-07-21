@@ -48,8 +48,8 @@ fun ChatMainScreen(
     onSearchClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     modifier: Modifier = Modifier,
-    requestContent: @Composable () -> Unit = {},
-    applicationContent: @Composable () -> Unit = {}
+    requestContent: @Composable () -> Unit,
+    applicationContent: @Composable () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(initialTab) }
     var selectedSort by remember { mutableStateOf(initialSort) }
@@ -227,7 +227,9 @@ private fun ChatScreenAllTabPreview() {
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
             initialTab = ChatTab.ALL,
-            initialSort = ChatSortOption.ALL
+            initialSort = ChatSortOption.ALL,
+            requestContent = {},
+            applicationContent = {}
         )
     }
 }
@@ -242,7 +244,9 @@ private fun ChatScreenDropdownOpenPreview() {
             applicationUnreadCount = 3,
             initialTab = ChatTab.ALL,
             initialSort = ChatSortOption.ALL,
-            initialSortExpanded = true
+            initialSortExpanded = true,
+            requestContent = {},
+            applicationContent = {}
         )
     }
 }
@@ -256,7 +260,9 @@ private fun ChatScreenPrivateSortPreview() {
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
             initialTab = ChatTab.ALL,
-            initialSort = ChatSortOption.PRIVATE
+            initialSort = ChatSortOption.PRIVATE,
+            requestContent = {},
+            applicationContent = {}
         )
     }
 }
