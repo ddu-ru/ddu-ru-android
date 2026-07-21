@@ -2,7 +2,6 @@ package com.gildongmu.dduru.presentation.feature.matching.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,7 +33,6 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
-import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingPostCardUiModel
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import kotlinx.collections.immutable.ImmutableList
