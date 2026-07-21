@@ -5,7 +5,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatRoomUiEvent
+import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRoomSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatRoomViewModel
 
 @Composable
@@ -21,11 +21,11 @@ fun ChatRoomRoute(
     }
 
     LaunchedEffect(Unit) {
-        viewModel.uiEvent.collect { event ->
-            when (event) {
-                ChatRoomUiEvent.NavigateBack -> onBackClick()
-                ChatRoomUiEvent.NavigateToMembers -> Unit
-                ChatRoomUiEvent.NavigateToMenu -> Unit
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                ChatRoomSideEffect.NavigateBack -> onBackClick()
+                ChatRoomSideEffect.NavigateToMembers -> Unit
+                ChatRoomSideEffect.NavigateToMenu -> Unit
             }
         }
     }
