@@ -7,6 +7,7 @@ import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffe
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -14,7 +15,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import kotlinx.collections.immutable.toPersistentList
 
 @HiltViewModel
 class MatchingViewModel @Inject constructor() : ViewModel() {
