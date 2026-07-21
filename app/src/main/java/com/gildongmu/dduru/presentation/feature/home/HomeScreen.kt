@@ -13,8 +13,6 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -28,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.AiMatchingSection
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHeader
@@ -76,11 +76,13 @@ fun HomeRoute(
         UiState.Empty -> Unit
 
         UiState.Loading -> {
-            HomeLoadingScreen()
+            DduruLoadingScreen()
         }
 
         UiState.Failure -> {
-            HomeFailureScreen()
+            DduruFailureScreen(
+                message = "홈 정보를 불러오지 못했어요."
+            )
         }
 
         is UiState.Success -> {
@@ -103,40 +105,6 @@ fun HomeRoute(
                 onWriteCommunityClick = viewModel::onWriteCommunityClick
             )
         }
-    }
-}
-
-@Composable
-private fun HomeLoadingScreen(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(DduruTheme.colors.gray50),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(
-            color = DduruTheme.colors.primary
-        )
-    }
-}
-
-@Composable
-private fun HomeFailureScreen(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(DduruTheme.colors.gray50),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "홈 정보를 불러오지 못했어요.",
-            style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray600
-        )
     }
 }
 

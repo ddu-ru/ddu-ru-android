@@ -16,6 +16,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.presentation.feature.matching.MatchingRoute
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar
 import com.gildongmu.dduru.presentation.navigation.BottomNavItem
 import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
@@ -56,7 +57,7 @@ fun MainScreen() {
             entryProvider = { route ->
                 when (route) {
                     is BottomNavRoute.Home -> NavEntry(route) { Text("홈") }
-                    is BottomNavRoute.Matching -> NavEntry(route) { Text("매칭") }
+                    is BottomNavRoute.Matching -> NavEntry(route) { MatchingRoute() }
                     is BottomNavRoute.Board -> NavEntry(route) { Text("게시판") }
                     is BottomNavRoute.Chat -> NavEntry(route) { Text("채팅") }
                     is BottomNavRoute.MyPage -> NavEntry(route) { Text("마이") }
