@@ -28,16 +28,36 @@ fun MessageBubble(
     unreadCount: Int,
     isMine: Boolean,
     isHead: Boolean,
+    isTail: Boolean = false,
     modifier: Modifier = Modifier
 ) {
-    val bottomStart = if (isMine) 16.dp else if (isHead) 8.dp else 16.dp
-    val bottomEnd = if (isMine) 8.dp else 16.dp
-    val bubbleShape = RoundedCornerShape(
-        topStart = 16.dp,
-        topEnd = 16.dp,
-        bottomStart = bottomStart,
-        bottomEnd = bottomEnd
-    )
+    val bubbleShape = if (isMine) {
+        when {
+            isTail && !isHead -> RoundedCornerShape(
+                topStart = 16.dp,
+                topEnd = 8.dp,
+                bottomStart = 16.dp,
+                bottomEnd = 16.dp
+            )
+            else -> RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp, bottomStart = 16.dp, bottomEnd = 8.dp)
+        }
+    } else {
+        when {
+            isHead && !isTail -> RoundedCornerShape(
+                topStart = 16.dp,
+                topEnd = 16.dp,
+                bottomStart = 8.dp,
+                bottomEnd = 16.dp
+            )
+            isTail && !isHead -> RoundedCornerShape(
+                topStart = 8.dp,
+                topEnd = 16.dp,
+                bottomStart = 16.dp,
+                bottomEnd = 16.dp
+            )
+            else -> RoundedCornerShape(size = 16.dp)
+        }
+    }
 
     Row(
         horizontalArrangement = if (isMine) {
@@ -129,6 +149,7 @@ fun GroupMessageBubble(
     time: String,
     unreadCount: Int,
     isHead: Boolean,
+    isTail: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -163,7 +184,8 @@ fun GroupMessageBubble(
                 time = time,
                 unreadCount = unreadCount,
                 isMine = false,
-                isHead = isHead
+                isHead = isHead,
+                isTail = isTail
             )
         }
     }
@@ -182,14 +204,16 @@ private fun MessageBubbleMinePreview() {
                 time = "",
                 unreadCount = 0,
                 isMine = true,
-                isHead = true
+                isHead = true,
+                isTail = false
             )
             MessageBubble(
                 message = "일단 기준은 220으로. 그래서 길어지면 이정도로 표시됩니다.",
                 time = "15:22",
                 unreadCount = 1,
                 isMine = true,
-                isHead = false
+                isHead = false,
+                isTail = true
             )
         }
     }
@@ -204,18 +228,28 @@ private fun MessageBubbleOtherPreview() {
             modifier = Modifier.padding(16.dp)
         ) {
             MessageBubble(
-                message = "시간 표시 안됨",
+                message = "head는 이렇게",
                 time = "",
                 unreadCount = 0,
                 isMine = false,
-                isHead = true
+                isHead = true,
+                isTail = false
+            )
+            MessageBubble(
+                message = "같은시간에 올라온거 4px",
+                time = "",
+                unreadCount = 0,
+                isMine = false,
+                isHead = false,
+                isTail = false
             )
             MessageBubble(
                 message = "tail은 이렇게",
                 time = "15:22",
                 unreadCount = 1,
                 isMine = false,
-                isHead = false
+                isHead = false,
+                isTail = true
             )
         }
     }
@@ -231,17 +265,19 @@ private fun GroupMessageBubblePreview() {
         ) {
             GroupMessageBubble(
                 username = "username",
-                message = "시간 표시 안됨",
+                message = "head는 이렇게",
                 time = "",
                 unreadCount = 0,
-                isHead = true
+                isHead = true,
+                isTail = false
             )
             GroupMessageBubble(
                 username = "username",
                 message = "tail은 이렇게",
                 time = "15:22",
                 unreadCount = 1,
-                isHead = false
+                isHead = false,
+                isTail = true
             )
         }
     }
