@@ -28,7 +28,9 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onNavigateToChatRoom: (Long) -> Unit
+) {
     val bottomNavItems = remember {
         listOf(
             BottomNavItem(BottomNavRoute.Home, "홈", R.drawable.ic_bottom_nav_main),
@@ -73,7 +75,7 @@ fun MainScreen() {
                     is BottomNavRoute.Board -> NavEntry(route) { Text("게시판") }
                     is BottomNavRoute.Chat -> NavEntry(route) {
                         ChatMainRoute(
-                            onChatRoomClick = { }
+                            onChatRoomClick = onNavigateToChatRoom
                         )
                     }
                     is BottomNavRoute.MyPage -> NavEntry(route) { Text("마이") }
@@ -102,5 +104,5 @@ fun MainScreen() {
 @Preview
 @Composable
 private fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(onNavigateToChatRoom = {})
 }

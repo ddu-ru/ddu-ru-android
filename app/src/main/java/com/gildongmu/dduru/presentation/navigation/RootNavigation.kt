@@ -15,6 +15,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
+import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.LoginRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.WelcomeScreen
 import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
@@ -57,7 +58,6 @@ fun RootNavigation(
                                 rootBackStack.clear()
                                 rootBackStack.add(RootNavRoute.Main)
                             }
-
                         )
                     }
 
@@ -73,7 +73,18 @@ fun RootNavigation(
                     is RootNavRoute.Register -> NavEntry(route) {}
 
                     is RootNavRoute.Main -> NavEntry(route) {
-                        MainScreen()
+                        MainScreen(
+                            onNavigateToChatRoom = { chatRoomId ->
+                                rootBackStack.add(RootNavRoute.ChatRoom(chatRoomId))
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.ChatRoom -> NavEntry(route) {
+                        ChatRoomRoute(
+                            chatRoomId = route.chatRoomId,
+                            onBackClick = { rootBackStack.removeLastOrNull() }
+                        )
                     }
 
                     else -> NavEntry(route) {}

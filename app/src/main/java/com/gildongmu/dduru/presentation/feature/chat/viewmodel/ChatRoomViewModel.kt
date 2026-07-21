@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.domain.entity.chat.MessageEntity
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
+import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRoomSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatListItem
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatMessageUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiState
@@ -23,12 +24,6 @@ import kotlinx.coroutines.launch
 private val DATE_DIVIDER_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
 private val TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 
-sealed interface ChatRoomUiEvent {
-    data object NavigateBack : ChatRoomUiEvent
-    data object NavigateToMembers : ChatRoomUiEvent
-    data object NavigateToMenu : ChatRoomUiEvent
-}
-
 @HiltViewModel
 class ChatRoomViewModel @Inject constructor(
     private val chatRoomRepository: ChatRoomRepository
@@ -37,16 +32,18 @@ class ChatRoomViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(ChatRoomUiState())
     val uiState: StateFlow<ChatRoomUiState> = _uiState.asStateFlow()
 
-    private val _uiEvent = MutableSharedFlow<ChatRoomUiEvent>()
-    val uiEvent: SharedFlow<ChatRoomUiEvent> = _uiEvent.asSharedFlow()
+    private val _sideEffect = MutableSharedFlow<ChatRoomSideEffect>()
+    val sideEffect: SharedFlow<ChatRoomSideEffect> = _sideEffect.asSharedFlow()
 
     fun loadMessages(chatRoomId: Long) {
         viewModelScope.launch {
+            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             chatRoomRepository.getMessages(chatRoomId, beforeMessageId = null)
                 .onSuccess { result ->
                     val roomInfo = result.roomInfo
                     _uiState.update {
                         it.copy(
+                            isLoading = false,
                             roomType = roomInfo.roomType,
                             roomName = roomInfo.opponentNickname ?: roomInfo.journeyTitle ?: "",
                             postTitle = roomInfo.postTitle ?: "",
@@ -59,10 +56,11 @@ class ChatRoomViewModel @Inject constructor(
                     }
                 }
                 .onFailure { throwable ->
+                    val msg = throwable.message ?: ""
+                    _uiState.update { it.copy(isLoading = false, errorMessage = msg) }
                     when {
-                        throwable.message?.contains("400") == true -> emitUiEvent(ChatRoomUiEvent.NavigateBack)
-                        throwable.message?.contains("403") == true -> emitUiEvent(ChatRoomUiEvent.NavigateBack)
-                        throwable.message?.contains("404") == true -> emitUiEvent(ChatRoomUiEvent.NavigateBack)
+                        msg.contains("400") || msg.contains("403") || msg.contains("404") ->
+                            _sideEffect.emit(ChatRoomSideEffect.NavigateBack)
                         else -> Unit
                     }
                 }
@@ -76,15 +74,15 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     fun onBackClick() {
-        emitUiEvent(ChatRoomUiEvent.NavigateBack)
+        viewModelScope.launch { _sideEffect.emit(ChatRoomSideEffect.NavigateBack) }
     }
 
     fun onMembersClick() {
-        emitUiEvent(ChatRoomUiEvent.NavigateToMembers)
+        viewModelScope.launch { _sideEffect.emit(ChatRoomSideEffect.NavigateToMembers) }
     }
 
     fun onMenuClick() {
-        emitUiEvent(ChatRoomUiEvent.NavigateToMenu)
+        viewModelScope.launch { _sideEffect.emit(ChatRoomSideEffect.NavigateToMenu) }
     }
 
     fun onPlusClick() = Unit
@@ -94,13 +92,8 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     fun onSendClick(text: String) {
+        if (text.isBlank()) return
         _uiState.update { it.copy(inputText = "") }
-    }
-
-    private fun emitUiEvent(event: ChatRoomUiEvent) {
-        viewModelScope.launch {
-            _uiEvent.emit(event)
-        }
     }
 }
 

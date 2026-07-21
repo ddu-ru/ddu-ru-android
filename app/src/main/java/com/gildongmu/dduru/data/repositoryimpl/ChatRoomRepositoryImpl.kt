@@ -27,12 +27,10 @@ class ChatRoomRepositoryImpl @Inject constructor(
     private val chatRoomDataSource: ChatRoomDataSource
 ) : ChatRoomRepository {
 
-    override suspend fun getChatRooms(
-        roomType: String?,
-        cursor: String?
-    ): Result<List<ChatRoomEntity>> {
+    override suspend fun getChatRooms(roomType: String?, cursor: String?): Result<List<ChatRoomEntity>> {
         return try {
             val response = chatRoomDataSource.getChatRooms(roomType = roomType, cursor = cursor)
+            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
             val data = response.data ?: return Result.failure(Exception("Response data is null"))
             Result.success(data.chatRooms.map { it.toEntity() })
         } catch (e: Exception) {
@@ -40,15 +38,13 @@ class ChatRoomRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getMessages(
-        chatRoomId: Long,
-        beforeMessageId: Long?
-    ): Result<ChatMessagesResultEntity> {
+    override suspend fun getMessages(chatRoomId: Long, beforeMessageId: Long?): Result<ChatMessagesResultEntity> {
         return try {
             val response = chatRoomDataSource.getMessages(
                 chatRoomId = chatRoomId,
                 beforeMessageId = beforeMessageId
             )
+            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
             val data = response.data ?: return Result.failure(Exception("Response data is null"))
             Result.success(
                 ChatMessagesResultEntity(
@@ -65,10 +61,11 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     override suspend fun markAsRead(chatRoomId: Long, lastReadMessageId: Long): Result<Unit> {
         return try {
-            chatRoomDataSource.markAsRead(
+            val response = chatRoomDataSource.markAsRead(
                 chatRoomId = chatRoomId,
                 request = ChatReadRequest(lastReadMessageId = lastReadMessageId)
             )
+            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -78,6 +75,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
     override suspend fun createPrivateChatRoom(postId: Long): Result<Long> {
         return try {
             val response = chatRoomDataSource.createPrivateChatRoom(postId = postId)
+            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
             val data = response.data ?: return Result.failure(Exception("Response data is null"))
             Result.success(data.roomId)
         } catch (e: Exception) {
@@ -126,11 +124,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
         messageId = messageId,
         messageType = MessageType.valueOf(messageType),
         sender = sender?.let {
-            MessageSenderEntity(
-                userId = it.userId,
-                nickname = it.nickname,
-                isHost = it.isHost
-            )
+            MessageSenderEntity(userId = it.userId, nickname = it.nickname, isHost = it.isHost)
         },
         isMine = isMine,
         content = content,
