@@ -11,6 +11,7 @@ import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.MessagePosition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.format.DateTimeFormatter
+import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -23,6 +24,7 @@ import kotlinx.coroutines.launch
 
 private val DATE_DIVIDER_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 M월 d일")
 private val TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
+private const val GROUPING_THRESHOLD_MINUTES = 5L
 
 @HiltViewModel
 class ChatRoomViewModel @Inject constructor(
@@ -111,12 +113,16 @@ private fun List<MessageEntity>.toChatListItems(): List<ChatListItem> {
 
         val prev = getOrNull(index - 1)
         val next = getOrNull(index + 1)
+
         val sameSenderAsPrev = prev != null &&
             prev.sender?.userId == message.sender?.userId &&
-            prev.createdAt.toLocalDate() == message.createdAt.toLocalDate()
+            prev.createdAt.toLocalDate() == message.createdAt.toLocalDate() &&
+            ChronoUnit.MINUTES.between(prev.createdAt, message.createdAt) < GROUPING_THRESHOLD_MINUTES
+
         val sameSenderAsNext = next != null &&
             next.sender?.userId == message.sender?.userId &&
-            next.createdAt.toLocalDate() == message.createdAt.toLocalDate()
+            next.createdAt.toLocalDate() == message.createdAt.toLocalDate() &&
+            ChronoUnit.MINUTES.between(message.createdAt, next.createdAt) < GROUPING_THRESHOLD_MINUTES
 
         val position = when {
             sameSenderAsPrev && sameSenderAsNext -> MessagePosition.MIDDLE

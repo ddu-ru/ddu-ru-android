@@ -1,11 +1,11 @@
 package com.gildongmu.dduru.data.repositoryimpl
 
-import com.gildongmu.dduru.data.remote.datasource.ChatRoomDataSource
 import com.gildongmu.dduru.data.remote.dto.request.ChatReadRequest
 import com.gildongmu.dduru.data.remote.dto.response.chat.ChatRoomInfoResponse
 import com.gildongmu.dduru.data.remote.dto.response.chat.ChatRoomLastMessageResponse
 import com.gildongmu.dduru.data.remote.dto.response.chat.ChatRoomResponse
 import com.gildongmu.dduru.data.remote.dto.response.chat.MessageItemResponse
+import com.gildongmu.dduru.data.remote.service.ChatRoomService
 import com.gildongmu.dduru.domain.entity.chat.ChatMessagesResultEntity
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomEntity
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomInfoEntity
@@ -20,16 +20,17 @@ import com.gildongmu.dduru.domain.entity.chat.SystemMessageEntity
 import com.gildongmu.dduru.domain.entity.chat.SystemMessageType
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
 import java.time.LocalDateTime
+import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 
 class ChatRoomRepositoryImpl @Inject constructor(
-    private val chatRoomDataSource: ChatRoomDataSource
+    private val chatRoomService: ChatRoomService
 ) : ChatRoomRepository {
 
     override suspend fun getChatRooms(roomType: String?, cursor: String?): Result<List<ChatRoomEntity>> {
         return try {
-            val response = chatRoomDataSource.getChatRooms(roomType = roomType, cursor = cursor)
+            val response = chatRoomService.getChatRooms(roomType = roomType, cursor = cursor)
             if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
             val data = response.data ?: return Result.failure(Exception("Response data is null"))
             Result.success(data.chatRooms.map { it.toEntity() })
@@ -40,7 +41,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     override suspend fun getMessages(chatRoomId: Long, beforeMessageId: Long?): Result<ChatMessagesResultEntity> {
         return try {
-            val response = chatRoomDataSource.getMessages(
+            val response = chatRoomService.getMessages(
                 chatRoomId = chatRoomId,
                 beforeMessageId = beforeMessageId
             )
@@ -61,7 +62,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     override suspend fun markAsRead(chatRoomId: Long, lastReadMessageId: Long): Result<Unit> {
         return try {
-            val response = chatRoomDataSource.markAsRead(
+            val response = chatRoomService.markAsRead(
                 chatRoomId = chatRoomId,
                 request = ChatReadRequest(lastReadMessageId = lastReadMessageId)
             )
@@ -74,7 +75,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     override suspend fun createPrivateChatRoom(postId: Long): Result<Long> {
         return try {
-            val response = chatRoomDataSource.createPrivateChatRoom(postId = postId)
+            val response = chatRoomService.createPrivateChatRoom(postId = postId)
             if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
             val data = response.data ?: return Result.failure(Exception("Response data is null"))
             Result.success(data.roomId)
@@ -145,7 +146,9 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     private fun String.parseDateTime(): LocalDateTime =
         try {
-            ZonedDateTime.parse(this).toLocalDateTime()
+            ZonedDateTime.parse(this)
+                .withZoneSameInstant(ZoneId.systemDefault())
+                .toLocalDateTime()
         } catch (e: Exception) {
             LocalDateTime.parse(this)
         }

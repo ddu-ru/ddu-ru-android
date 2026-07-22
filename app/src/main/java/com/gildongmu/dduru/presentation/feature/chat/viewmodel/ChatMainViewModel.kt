@@ -64,15 +64,15 @@ class ChatMainViewModel @Inject constructor(
         participantCount = if (roomType == ChatRoomType.GROUP) participantCount else null,
         lastMessagePreview = lastMessage?.content,
         lastMessageAt = lastMessage?.createdAt?.toRelativeTime() ?: "",
-        unreadCount = unreadCount.toInt(),
+        unreadCount = unreadCount.toInt().coerceAtMost(99),
         roomType = roomType
     )
 
     private fun LocalDateTime.toRelativeTime(): String {
         val now = LocalDateTime.now()
-        val minutes = ChronoUnit.MINUTES.between(this, now)
-        val hours = ChronoUnit.HOURS.between(this, now)
-        val days = ChronoUnit.DAYS.between(this, now)
+        val minutes = maxOf(0, ChronoUnit.MINUTES.between(this, now))
+        val hours = maxOf(0, ChronoUnit.HOURS.between(this, now))
+        val days = maxOf(0, ChronoUnit.DAYS.between(this, now))
         return when {
             minutes < 1 -> "방금"
             hours < 1 -> "${minutes}분 전"
