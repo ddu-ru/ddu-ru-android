@@ -40,6 +40,7 @@ fun ChatMainRoute(
         is UiState.Success -> ChatMainScreen(
             chatRooms = state.data.chatRooms,
             onChatRoomClick = { id -> viewModel.onChatRoomClick(id.toLong()) },
+            onLoadMore = { viewModel.loadMoreChatRooms() },
             requestContent = {},
             applicationContent = {}
         )

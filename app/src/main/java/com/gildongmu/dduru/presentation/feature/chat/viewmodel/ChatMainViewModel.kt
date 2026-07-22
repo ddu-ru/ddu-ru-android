@@ -42,13 +42,34 @@ class ChatMainViewModel @Inject constructor(
         }
     }
 
+    fun loadMoreChatRooms() {
+        val current = (_uiState.value as? UiState.Success)?.data ?: return
+        if (!current.hasNext || current.nextCursor == null) return
+        viewModelScope.launch {
+            chatRoomRepository.getChatRooms(cursor = current.nextCursor)
+                .onSuccess { result ->
+                    _uiState.value = UiState.Success(
+                        current.copy(
+                            chatRooms = current.chatRooms + result.chatRooms.map { it.toUiModel() },
+                            nextCursor = result.nextCursor,
+                            hasNext = result.hasNext
+                        )
+                    )
+                }
+        }
+    }
+
     private fun loadChatRooms() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             chatRoomRepository.getChatRooms()
-                .onSuccess { rooms ->
+                .onSuccess { result ->
                     _uiState.value = UiState.Success(
-                        ChatMainUiState(chatRooms = rooms.map { it.toUiModel() })
+                        ChatMainUiState(
+                            chatRooms = result.chatRooms.map { it.toUiModel() },
+                            nextCursor = result.nextCursor,
+                            hasNext = result.hasNext
+                        )
                     )
                 }
                 .onFailure {
