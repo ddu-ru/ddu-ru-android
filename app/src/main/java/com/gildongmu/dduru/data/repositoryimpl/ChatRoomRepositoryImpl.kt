@@ -10,6 +10,7 @@ import com.gildongmu.dduru.domain.entity.chat.ChatMessagesResultEntity
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomEntity
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomInfoEntity
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomLastMessageEntity
+import com.gildongmu.dduru.domain.entity.chat.ChatRoomListResult
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomStatus
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomType
 import com.gildongmu.dduru.domain.entity.chat.MessageEntity
@@ -28,12 +29,18 @@ class ChatRoomRepositoryImpl @Inject constructor(
     private val chatRoomService: ChatRoomService
 ) : ChatRoomRepository {
 
-    override suspend fun getChatRooms(roomType: String?, cursor: String?): Result<List<ChatRoomEntity>> {
+    override suspend fun getChatRooms(roomType: String?, cursor: String?): Result<ChatRoomListResult> {
         return try {
             val response = chatRoomService.getChatRooms(roomType = roomType, cursor = cursor)
             if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
             val data = response.data ?: return Result.failure(Exception("Response data is null"))
-            Result.success(data.chatRooms.map { it.toEntity() })
+            Result.success(
+                ChatRoomListResult(
+                    chatRooms = data.chatRooms.map { it.toEntity() },
+                    nextCursor = data.page.nextCursor,
+                    hasNext = data.page.hasNext
+                )
+            )
         } catch (e: Exception) {
             Result.failure(e)
         }

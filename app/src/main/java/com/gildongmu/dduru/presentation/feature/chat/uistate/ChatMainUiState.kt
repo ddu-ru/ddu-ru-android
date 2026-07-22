@@ -26,5 +26,7 @@ data class ChatMainUiState(
     val applicationUnreadCount: Int = 0,
     val selectedTab: ChatTab = ChatTab.ALL,
     val selectedSort: ChatSortOption = ChatSortOption.ALL,
-    val sortExpanded: Boolean = false
+    val sortExpanded: Boolean = false,
+    val nextCursor: String? = null,
+    val hasNext: Boolean = false
 )
