@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.ValidationMessage
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
@@ -64,7 +65,12 @@ fun LocationSearchSection(
 
         Spacer(modifier = Modifier.weight(24f))
 
-        if (uiState.isSearching && uiState.searchedLocations.isEmpty()) {
+        if (
+            uiState.isSearching &&
+            !uiState.isSearchLoading &&
+            uiState.hasSearchResult &&
+            uiState.searchedLocations.isEmpty()
+        ) {
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -73,6 +79,17 @@ fun LocationSearchSection(
             ) {
                 NoSearchResults(
                     modifier = Modifier.aspectRatio(266f / 123f)
+                )
+            }
+        } else if (!uiState.isSearching && uiState.popularLocationsErrorMessage != null) {
+            Box(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .weight(468f),
+                contentAlignment = Alignment.TopStart
+            ) {
+                ValidationMessage(
+                    text = uiState.popularLocationsErrorMessage
                 )
             }
         } else {
@@ -108,6 +125,7 @@ fun LocationSearchSection(
                     LocationSearchCardComponent(
                         region = location.city,
                         country = location.countryName,
+                        imageUrl = location.image,
                         onClick = { onLocationClick(location) }
                     )
                 }

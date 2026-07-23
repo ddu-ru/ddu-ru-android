@@ -10,10 +10,10 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -24,15 +24,10 @@ fun BackButton(
 ) {
     Box(
         modifier = modifier
-            .shadow(
-                elevation = 16.dp,
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.10f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.10f)
-            )
-            .shadow(
-                elevation = 8.dp,
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.05f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.05f)
+            .dduruDualShadow(
+                firstAlpha = 0.10f,
+                secondAlpha = 0.05f,
+                secondElevation = 8.dp
             )
             .size(48.dp)
             .border(
