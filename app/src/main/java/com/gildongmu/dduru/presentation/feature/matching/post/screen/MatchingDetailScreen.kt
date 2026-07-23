@@ -179,7 +179,9 @@ fun MatchingDetailScreen(
                                         isHost = participant.isHost
                                     )
                                 },
-                                recruitCapacity = uiState.recruitCapacity
+                                recruitCount = uiState.recruitCount,
+                                recruitCapacity = uiState.recruitCapacity,
+                                remainingSlots = uiState.remainingSlots
                             )
                         } else {
                             Spacer(modifier = Modifier.height(16.dp))

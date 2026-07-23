@@ -43,15 +43,15 @@ data class MatchingDetailParticipantUiModel(
 @Composable
 fun MatchingDetailParticipantComponent(
     participants: List<MatchingDetailParticipantUiModel>,
+    recruitCount: Int,
     recruitCapacity: Int,
+    remainingSlots: Int,
     modifier: Modifier = Modifier
 ) {
-    val participantCount = participants.size
-    val remainingCount = (recruitCapacity - participantCount).coerceAtLeast(0)
     val participantSlots = buildList {
         participants.forEach { add(MatchingDetailParticipantSlot.Participant(it)) }
-        if (remainingCount > 0) {
-            add(MatchingDetailParticipantSlot.Remaining(remainingCount))
+        if (remainingSlots > 0) {
+            add(MatchingDetailParticipantSlot.Remaining(remainingSlots))
         }
     }.chunked(PARTICIPANT_ITEMS_PER_ROW)
 
@@ -70,7 +70,7 @@ fun MatchingDetailParticipantComponent(
             )
 
             Text(
-                text = "$participantCount/${recruitCapacity}명",
+                text = "$recruitCount/${recruitCapacity}명",
                 style = DduruTheme.typography.Body2,
                 color = DduruTheme.colors.primary
             )
@@ -245,7 +245,9 @@ private fun MatchingDetailParticipantComponentPreview() {
             color = DduruTheme.colors.gray0
         ) {
             MatchingDetailParticipantComponent(
+                recruitCount = 6,
                 recruitCapacity = 9,
+                remainingSlots = 3,
                 participants = listOf(
                     MatchingDetailParticipantUiModel(
                         userId = 1,

@@ -1,5 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.matching.post.uistate
 
+import com.gildongmu.dduru.core.common.extension.toDotDate
+
 data class MatchingDetailUiState(
     val id: Long = 101,
     val title: String = "제주도 2박 3일 동행 구해요",
@@ -118,5 +120,3 @@ data class MatchingDetailProfileImageUiState(
     val url: String? = null,
     val bgColorId: Int = 3
 )
-
-private fun String.toDotDate(): String = replace("-", ".")
