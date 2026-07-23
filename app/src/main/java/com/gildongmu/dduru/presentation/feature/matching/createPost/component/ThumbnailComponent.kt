@@ -32,6 +32,7 @@ import com.gildongmu.dduru.core.common.extension.rememberDduruHazeState
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
+import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 
 @Composable
@@ -58,6 +59,8 @@ fun ThumbnailImageCard(
                 .fillMaxSize()
                 .dduruHazeBackground(hazeState),
             contentScale = ContentScale.Crop
+        )
+
         if (!imageUrl.isNullOrBlank()) {
             AsyncImage(
                 model = imageUrl,
@@ -130,6 +133,7 @@ private fun ThumbnailImageCardPreview() {
             ThumbnailImageCard(
                 regionName = "후쿠오카",
                 countryName = "일본",
+                imageUrl = null,
                 imageResId = R.drawable.fukuoka,
                 onChangeClick = {}
             )
