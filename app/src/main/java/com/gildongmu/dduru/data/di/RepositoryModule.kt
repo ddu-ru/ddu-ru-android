@@ -2,9 +2,11 @@ package com.gildongmu.dduru.data.di
 
 import com.gildongmu.dduru.data.register.nickname.repositoryimpl.NicknameRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.AuthRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.HomeRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.SurveyRepositoryImpl
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.repository.AuthRepository
+import com.gildongmu.dduru.domain.repository.HomeRepository
 import com.gildongmu.dduru.domain.repository.SurveyRepository
 import dagger.Binds
 import dagger.Module
@@ -21,6 +23,12 @@ abstract class RepositoryModule {
     abstract fun bindAuthRepository(
         authRepositoryImpl: AuthRepositoryImpl
     ): AuthRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindHomeRepository(
+        homeRepositoryImpl: HomeRepositoryImpl
+    ): HomeRepository
 
     @Binds
     @Singleton
