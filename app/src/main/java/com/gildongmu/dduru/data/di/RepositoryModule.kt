@@ -3,11 +3,13 @@ package com.gildongmu.dduru.data.di
 import com.gildongmu.dduru.data.register.nickname.repositoryimpl.NicknameRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.AuthRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ChatRoomRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.HomeRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.SurveyRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.home.HomeRepositoryImpl
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
+import com.gildongmu.dduru.domain.repository.HomeRepository
 import com.gildongmu.dduru.domain.repository.SurveyRepository
 import com.gildongmu.dduru.domain.repository.home.HomeRepository
 import dagger.Binds
