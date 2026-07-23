@@ -40,7 +40,8 @@ data class DduruTypography(
     val Caption2: TextStyle,
 
     val Micro: TextStyle,
-    val Micro2: TextStyle
+    val Micro2: TextStyle,
+    val Micro3: TextStyle
 )
 
 val defaultDduruTypography = DduruTypography(
@@ -167,6 +168,13 @@ val defaultDduruTypography = DduruTypography(
     Micro2 = TextStyle(
         fontFamily = Pretendard,
         fontWeight = FontWeight.SemiBold,
+        fontSize = 10.sp,
+        lineHeight = 12.sp
+    ),
+
+    Micro3 = TextStyle(
+        fontFamily = Pretendard,
+        fontWeight = FontWeight.Medium,
         fontSize = 10.sp,
         lineHeight = 12.sp
     )

@@ -16,7 +16,6 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -27,11 +26,12 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruHazeBackground
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
+import com.gildongmu.dduru.core.common.extension.rememberDduruHazeState
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.haze
 import dev.chrisbanes.haze.hazeChild
 
 @Composable
@@ -43,7 +43,7 @@ fun ThumbnailImageCard(
     modifier: Modifier = Modifier,
     onChangeClick: () -> Unit = {}
 ) {
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberDduruHazeState()
 
     Box(
         modifier = modifier
@@ -51,6 +51,13 @@ fun ThumbnailImageCard(
             .aspectRatio(344f / 130f)
             .clip(RoundedCornerShape(16.dp))
     ) {
+        Image(
+            painter = painterResource(id = imageResId),
+            contentDescription = null,
+            modifier = Modifier
+                .fillMaxSize()
+                .dduruHazeBackground(hazeState),
+            contentScale = ContentScale.Crop
         if (!imageUrl.isNullOrBlank()) {
             AsyncImage(
                 model = imageUrl,
@@ -123,7 +130,6 @@ private fun ThumbnailImageCardPreview() {
             ThumbnailImageCard(
                 regionName = "후쿠오카",
                 countryName = "일본",
-                imageUrl = null,
                 imageResId = R.drawable.fukuoka,
                 onChangeClick = {}
             )
@@ -190,7 +196,7 @@ fun TransparentButton(
 @Preview(showBackground = true)
 @Composable
 private fun TransparentButtonPreview() {
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberDduruHazeState()
     DduruTheme {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -200,7 +206,7 @@ private fun TransparentButtonPreview() {
                 modifier = Modifier
                     .matchParentSize()
                     .background(Color(0xFF5A6F95))
-                    .haze(hazeState)
+                    .dduruHazeBackground(hazeState)
             )
 
             TransparentButton(

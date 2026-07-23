@@ -11,11 +11,12 @@ import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -31,18 +32,12 @@ fun ChatActionBar(
         horizontalArrangement = Arrangement.spacedBy(24.dp, Alignment.CenterHorizontally),
         verticalAlignment = Alignment.CenterVertically,
         modifier = modifier
-            .shadow(
-                elevation = 16.dp,
-                shape = shape,
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.10f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.10f)
+            .dduruDualShadow(
+                firstAlpha = 0.10f,
+                secondAlpha = 0.08f,
+                shape = shape
             )
-            .shadow(
-                elevation = 8.dp,
-                shape = shape,
-                spotColor = DduruTheme.colors.black.copy(alpha = 0.08f),
-                ambientColor = DduruTheme.colors.black.copy(alpha = 0.08f)
-            )
+            .clip(shape)
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray0.copy(alpha = 0.30f),
