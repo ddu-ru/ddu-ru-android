@@ -17,7 +17,7 @@ class HomeRepositoryImpl @Inject constructor(
         return runCatchingApi {
             val response = homeRemoteDataSource.getHomeInitialConfig()
 
-            if (response.status == HOME_SUCCESS_STATUS && response.data != null) {
+            if (response.status.isHomeSuccessStatus() && response.data != null) {
                 response.data.toDomain()
             } else {
                 throw IllegalStateException("홈 초기 구성 조회 실패: status=${response.status}")
@@ -29,7 +29,7 @@ class HomeRepositoryImpl @Inject constructor(
         return runCatchingApi {
             val response = homeRemoteDataSource.getHomeMateRecommendations()
 
-            if (response.status == HOME_SUCCESS_STATUS && response.data != null) {
+            if (response.status.isHomeSuccessStatus() && response.data != null) {
                 response.data.toDomain()
             } else {
                 throw IllegalStateException("홈 메이트 추천 조회 실패: status=${response.status}")
@@ -41,7 +41,7 @@ class HomeRepositoryImpl @Inject constructor(
         return runCatchingApi {
             val response = homeRemoteDataSource.getHomePopularDestinations()
 
-            if (response.status == HOME_SUCCESS_STATUS && response.data != null) {
+            if (response.status.isHomeSuccessStatus() && response.data != null) {
                 response.data.toDomain()
             } else {
                 throw IllegalStateException("홈 인기 여행지 조회 실패: status=${response.status}")
@@ -61,7 +61,12 @@ class HomeRepositoryImpl @Inject constructor(
         }
     }
 
+    private fun Int.isHomeSuccessStatus(): Boolean {
+        return this == HOME_SUCCESS_STATUS || this == HTTP_SUCCESS_STATUS
+    }
+
     private companion object {
         const val HOME_SUCCESS_STATUS = 0
+        const val HTTP_SUCCESS_STATUS = 200
     }
 }
