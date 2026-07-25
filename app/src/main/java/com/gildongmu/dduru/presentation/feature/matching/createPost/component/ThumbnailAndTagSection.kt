@@ -32,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
+import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 
@@ -41,15 +42,13 @@ fun ThumbnailAndTagSection(
     uiState: ThumbnailAndTagUiState,
     onUiStateChange: (ThumbnailAndTagUiState) -> Unit,
     modifier: Modifier = Modifier
+    onTagInputChange: (String) -> Unit,
+    onAddTag: () -> Unit,
+    onRemoveTag: (String) -> Unit,
+    modifier: Modifier = Modifier,
+    popularTags: List<String> = emptyList()
 ) {
     val focusManager = LocalFocusManager.current
-
-    val onAddTag = {
-        if (uiState.canAddTag) {
-            onUiStateChange(uiState.addTag())
-            focusManager.clearFocus()
-        }
-    }
 
     Column(
         modifier = modifier
@@ -72,6 +71,7 @@ fun ThumbnailAndTagSection(
         ThumbnailImageCard(
             regionName = uiState.regionName,
             countryName = uiState.countryName,
+            imageUrl = uiState.previewImageUrl,
             imageResId = uiState.imageResId,
             onChangeClick = {}
         )
@@ -88,7 +88,7 @@ fun ThumbnailAndTagSection(
 
         RoundedMatchingTextField(
             value = uiState.tagInput,
-            onValueChange = { onUiStateChange(uiState.copy(tagInput = it)) },
+            onValueChange = onTagInputChange,
             singleLine = true,
             leadingIcon = {
                 Icon(
@@ -106,16 +106,26 @@ fun ThumbnailAndTagSection(
             },
             keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
             keyboardActions = KeyboardActions(
-                onDone = { onAddTag() }
+                onDone = {
+                    onAddTag()
+                    if (uiState.canAddTag) {
+                        focusManager.clearFocus()
+                    }
+                }
             )
         )
 
         Spacer(modifier = Modifier.height(12.dp))
 
         Text(
-            text = "한글 4자 또는 영문/숫자 7자 이하로 입력해 주세요.",
+            text = uiState.tagValidationMessage
+                ?: "한글은 4자 이하, 영문/숫자는 7자 이하로 입력해 주세요.",
             style = DduruTheme.typography.Caption2,
-            color = DduruTheme.colors.gray400
+            color = if (uiState.tagValidationMessage == null) {
+                DduruTheme.colors.gray400
+            } else {
+                DduruTheme.colors.validationRed
+            }
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -145,7 +155,7 @@ fun ThumbnailAndTagSection(
                             modifier = Modifier
                                 .size(5.dp)
                                 .clickable {
-                                    onUiStateChange(uiState.removeTag(addedTag))
+                                    onRemoveTag(addedTag)
                                 },
                             contentAlignment = Alignment.Center
                         ) {
@@ -212,6 +222,16 @@ private fun ThumbnailAndTagSectionPreview() {
                 uiState = uiState,
                 onUiStateChange = { uiState = it },
                 modifier = Modifier.padding(24.dp)
+                onTagInputChange = {
+                    uiState = uiState.copy(
+                        tagInput = it,
+                        tagValidationMessage = null
+                    )
+                },
+                onAddTag = {},
+                onRemoveTag = {},
+                modifier = Modifier.padding(24.dp),
+                popularTags = MatchingCreatePostMockData.popularTags
             )
         }
     }

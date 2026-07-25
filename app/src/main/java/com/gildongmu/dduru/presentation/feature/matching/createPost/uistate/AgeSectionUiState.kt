@@ -5,7 +5,14 @@ enum class RecruitmentGenderOption(
 ) {
     MALE("남자"),
     FEMALE("여자"),
-    ANY("상관없음")
+    ANY("상관없음");
+
+    val code: String
+        get() = when (this) {
+            MALE -> "M"
+            FEMALE -> "F"
+            ANY -> "U"
+        }
 }
 
 data class AgeSectionUiState(
@@ -14,6 +21,18 @@ data class AgeSectionUiState(
     val selectedEndAge: Int? = null,
     val isAgeIrrelevant: Boolean = false
 ) {
+    val preferredGender: RecruitmentGenderOption
+        get() = selectedGender ?: RecruitmentGenderOption.ANY
+
+    val isAgeAny: Boolean
+        get() = isAgeIrrelevant
+
+    val minAge: Int?
+        get() = selectedStartAge
+
+    val maxAge: Int?
+        get() = selectedEndAge
+
     val isNextEnabled: Boolean
         get() = selectedGender != null &&
             (

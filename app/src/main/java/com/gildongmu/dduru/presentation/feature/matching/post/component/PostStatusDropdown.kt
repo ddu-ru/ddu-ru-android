@@ -28,14 +28,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-
-enum class MatchingPostStatus(
-    val label: String
-) {
-    RECRUITING("모집중"),
-    CLOSED("모집 마감"),
-    HIDDEN("숨김")
-}
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostStatus
 
 @Composable
 fun PostStatusDropdown(
