@@ -9,7 +9,13 @@ object RecruitmentCountNum {
 enum class CompanionType {
     FULL,
     PARTIAL,
-    MEAL
+    MEAL;
+
+    val code: String
+        get() = when (this) {
+            FULL -> "FULL"
+            PARTIAL, MEAL -> "PARTIAL"
+        }
 }
 
 data class RecruitmentCountUiState(
@@ -39,6 +45,12 @@ data class RecruitmentScreenUiState(
     val selectedCompanionType: CompanionType? = null,
     val isCompanionTypeOptional: Boolean = false
 ) {
+    val recruitCount: Int
+        get() = recruitmentCount.count
+
+    val companionType: CompanionType
+        get() = selectedCompanionType ?: CompanionType.PARTIAL
+
     val isNextEnabled: Boolean
         get() = isCompanionTypeOptional || selectedCompanionType != null
 
