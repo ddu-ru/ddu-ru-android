@@ -54,6 +54,7 @@ import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDe
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostRecruitStatus
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostStatus
 import dev.chrisbanes.haze.HazeState
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun MatchingDetailScreen(
@@ -178,7 +179,7 @@ fun MatchingDetailScreen(
                                         profileImage = participant.profileImage.url,
                                         isHost = participant.isHost
                                     )
-                                },
+                                }.toPersistentList(),
                                 recruitCount = uiState.recruitCount,
                                 recruitCapacity = uiState.recruitCapacity,
                                 remainingSlots = uiState.remainingSlots

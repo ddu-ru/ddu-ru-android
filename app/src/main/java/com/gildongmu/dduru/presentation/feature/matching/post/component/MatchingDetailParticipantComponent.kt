@@ -28,6 +28,8 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toPersistentList
 
 private const val PARTICIPANT_ITEMS_PER_ROW = 4
 
@@ -42,7 +44,7 @@ data class MatchingDetailParticipantUiModel(
 
 @Composable
 fun MatchingDetailParticipantComponent(
-    participants: List<MatchingDetailParticipantUiModel>,
+    participants: ImmutableList<MatchingDetailParticipantUiModel>,
     recruitCount: Int,
     recruitCapacity: Int,
     remainingSlots: Int,
@@ -292,7 +294,7 @@ private fun MatchingDetailParticipantComponentPreview() {
                         genderText = "남자",
                         profileImage = R.drawable.img_profile
                     )
-                ),
+                ).toPersistentList(),
                 modifier = Modifier.padding(20.dp)
             )
         }
