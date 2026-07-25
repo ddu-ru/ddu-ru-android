@@ -215,9 +215,7 @@ fun MatchingCreatePostScreen(
                         uiState = uiState.thumbnailAndTagUiState,
                         onTagInputChange = onTagInputChange,
                         onAddTag = onAddTag,
-                        onRemoveTag = onRemoveTag,
-                        popularTags = uiState.popularTags
-                        onUiStateChange = onThumbnailAndTagUiStateChange
+                        onRemoveTag = onRemoveTag
                     )
                 }
             }

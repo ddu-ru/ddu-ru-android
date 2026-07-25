@@ -32,7 +32,6 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
-import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 
@@ -40,13 +39,10 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Thum
 @Composable
 fun ThumbnailAndTagSection(
     uiState: ThumbnailAndTagUiState,
-    onUiStateChange: (ThumbnailAndTagUiState) -> Unit,
-    modifier: Modifier = Modifier
     onTagInputChange: (String) -> Unit,
     onAddTag: () -> Unit,
     onRemoveTag: (String) -> Unit,
-    modifier: Modifier = Modifier,
-    popularTags: List<String> = emptyList()
+    modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -220,8 +216,6 @@ private fun ThumbnailAndTagSectionPreview() {
         ) {
             ThumbnailAndTagSection(
                 uiState = uiState,
-                onUiStateChange = { uiState = it },
-                modifier = Modifier.padding(24.dp)
                 onTagInputChange = {
                     uiState = uiState.copy(
                         tagInput = it,
@@ -230,8 +224,7 @@ private fun ThumbnailAndTagSectionPreview() {
                 },
                 onAddTag = {},
                 onRemoveTag = {},
-                modifier = Modifier.padding(24.dp),
-                popularTags = MatchingCreatePostMockData.popularTags
+                modifier = Modifier.padding(24.dp)
             )
         }
     }

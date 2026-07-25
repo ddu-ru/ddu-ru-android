@@ -7,6 +7,8 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Matc
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 
 object MatchingCreatePostMockData {
+    val popularTags = listOf("맛집", "힐링", "드라이브")
+
     val popularLocations = listOf(
         LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
         LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
