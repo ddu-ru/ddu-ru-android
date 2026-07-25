@@ -9,8 +9,9 @@ data class ThumbnailAndTagUiState(
     val previewImageUrl: String? = null,
     val photoUrl: String? = null,
     val tagInput: String = "",
-    val tagValidationMessage: String? = null,
-    val addedTags: List<String> = emptyList()
+    val addedTags: List<String> = emptyList(),
+    val popularTags: List<String> = emptyList(),
+    val tagValidationMessage: String? = null
 ) {
     val isNextEnabled: Boolean
         get() = true

@@ -7,7 +7,7 @@ import com.gildongmu.dduru.data.createPost.model.CreatePostRequest
 import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
 import com.gildongmu.dduru.domain.createPost.repository.CreatePostRepository
 import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
-import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
+import com.gildongmu.dduru.domain.createPost.repository.PopularTagRepository
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
@@ -35,7 +35,8 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class MatchingCreatePostViewModel @Inject constructor(
     private val destinationRepository: DestinationRepository,
-    private val createPostRepository: CreatePostRepository
+    private val createPostRepository: CreatePostRepository,
+    private val popularTagRepository: PopularTagRepository
 ) : ViewModel() {
     private companion object {
         const val POPULAR_DESTINATIONS_ERROR_MESSAGE =
@@ -48,9 +49,7 @@ class MatchingCreatePostViewModel @Inject constructor(
     }
 
     private val _uiState = MutableStateFlow(
-        MatchingCreatePostUiState(
-            popularTags = MatchingCreatePostMockData.popularTags
-        )
+        MatchingCreatePostUiState()
     )
     val uiState: StateFlow<MatchingCreatePostUiState> = _uiState.asStateFlow()
 
@@ -61,6 +60,7 @@ class MatchingCreatePostViewModel @Inject constructor(
 
     init {
         fetchPopularDestinations()
+        fetchPopularTags()
     }
 
     fun onDismissClick() {
@@ -253,6 +253,30 @@ class MatchingCreatePostViewModel @Inject constructor(
                                 popularLocations = emptyList(),
                                 popularLocationsErrorMessage =
                                 POPULAR_DESTINATIONS_ERROR_MESSAGE
+                            )
+                        )
+                    }
+                }
+        }
+    }
+
+    private fun fetchPopularTags() {
+        viewModelScope.launch {
+            popularTagRepository.getPopularTags()
+                .onSuccess { popularTags ->
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
+                                popularTags = popularTags
+                            )
+                        )
+                    }
+                }
+                .onFailure {
+                    _uiState.update { currentState ->
+                        currentState.copy(
+                            thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
+                                popularTags = emptyList()
                             )
                         )
                     }
