@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.matching.post.compoenet
+package com.gildongmu.dduru.presentation.feature.matching.post.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border

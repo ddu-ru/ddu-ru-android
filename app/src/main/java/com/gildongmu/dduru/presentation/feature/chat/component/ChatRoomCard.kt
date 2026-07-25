@@ -1,7 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.chat.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -11,6 +10,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -38,43 +38,48 @@ fun ChatRoomCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Row(
-        modifier = modifier
-            .fillMaxWidth()
-            .border(width = 1.dp, color = DduruTheme.colors.gray200)
-            .noRippleClickable(onClick = onClick)
-            .padding(horizontal = 1.dp, vertical = 20.dp),
-        horizontalArrangement = Arrangement.spacedBy(16.dp),
-        verticalAlignment = Alignment.CenterVertically
-    ) {
+    Column(modifier = modifier.fillMaxWidth()) {
         Row(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier
+                .fillMaxWidth()
+                .noRippleClickable(onClick = onClick)
+                .padding(horizontal = 16.dp, vertical = 20.dp),
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            ChatRoomAvatar(roomType = roomType)
-
-            Column(
+            Row(
                 modifier = Modifier.weight(1f),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
+                horizontalArrangement = Arrangement.spacedBy(16.dp),
+                verticalAlignment = Alignment.CenterVertically
             ) {
-                ChatRoomNameRow(
-                    displayName = displayName,
-                    postTitle = postTitle,
-                    participantCount = participantCount,
-                    roomType = roomType
-                )
-                ChatRoomPreviewRow(
-                    preview = lastMessagePreview,
-                    time = lastMessageAt,
-                    roomType = roomType
-                )
+                ChatRoomAvatar(roomType = roomType)
+
+                Column(
+                    modifier = Modifier.weight(1f),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    ChatRoomNameRow(
+                        displayName = displayName,
+                        postTitle = postTitle,
+                        participantCount = participantCount,
+                        roomType = roomType
+                    )
+                    ChatRoomPreviewRow(
+                        preview = lastMessagePreview,
+                        time = lastMessageAt,
+                        roomType = roomType
+                    )
+                }
+            }
+
+            if (unreadCount > 0) {
+                UnreadBadge(count = unreadCount)
             }
         }
-
-        if (unreadCount > 0) {
-            UnreadBadge(count = unreadCount)
-        }
+        HorizontalDivider(
+            color = DduruTheme.colors.gray200,
+            modifier = Modifier.padding(horizontal = 16.dp)
+        )
     }
 }
 
@@ -232,22 +237,20 @@ private fun ChatRoomAvatar(roomType: ChatRoomType, modifier: Modifier = Modifier
     }
 }
 
-@Composable
 @Preview(showBackground = true)
+@Composable
 private fun ChatRoomCardPrivatePreview() {
     DduruTheme {
-        Box(modifier = Modifier.padding(horizontal = 16.dp)) {
-            ChatRoomCard(
-                displayName = "username",
-                postTitle = "제주 애월 2박 3일",
-                participantCount = null,
-                lastMessagePreview = "안녕하세요!",
-                lastMessageAt = "방금",
-                unreadCount = 10,
-                roomType = ChatRoomType.PRIVATE,
-                onClick = {}
-            )
-        }
+        ChatRoomCard(
+            displayName = "username",
+            postTitle = "제주 애월 2박 3일",
+            participantCount = null,
+            lastMessagePreview = "안녕하세요!",
+            lastMessageAt = "방금",
+            unreadCount = 10,
+            roomType = ChatRoomType.PRIVATE,
+            onClick = {}
+        )
     }
 }
 

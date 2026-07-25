@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Box
@@ -33,7 +34,8 @@ fun OptionalCheckbox(
     modifier: Modifier = Modifier,
     checked: Boolean = false,
     onCheckedChange: (Boolean) -> Unit,
-    text: String
+    text: String,
+    showIconWhenUnchecked: Boolean = true
 ) {
     val iconBackgroundColor = if (checked) {
         DduruTheme.colors.primary
@@ -53,6 +55,23 @@ fun OptionalCheckbox(
         DduruTheme.colors.gray500
     }
 
+    val boxModifier = if (!checked && !showIconWhenUnchecked) {
+        Modifier
+            .size(20.dp)
+            .border(1.25.dp, DduruTheme.colors.gray300, CircleShape)
+            .background(DduruTheme.colors.gray0, CircleShape)
+    } else {
+        Modifier
+            .size(20.dp)
+            .background(color = iconBackgroundColor, shape = CircleShape)
+    }
+
+    val resolvedTextColor = if (!checked && !showIconWhenUnchecked) {
+        DduruTheme.colors.gray500
+    } else {
+        textColor
+    }
+
     Row(
         modifier = modifier
             .clickable(
@@ -64,20 +83,17 @@ fun OptionalCheckbox(
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
-            modifier = Modifier
-                .size(20.dp)
-                .background(
-                    color = iconBackgroundColor,
-                    shape = CircleShape
-                ),
+            modifier = boxModifier,
             contentAlignment = Alignment.Center
         ) {
-            Icon(
-                painter = painterResource(R.drawable.ic_check),
-                contentDescription = null,
-                tint = checkIconColor,
-                modifier = Modifier.width(10.dp)
-            )
+            if (checked || showIconWhenUnchecked) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_check),
+                    contentDescription = null,
+                    tint = checkIconColor,
+                    modifier = Modifier.width(10.dp)
+                )
+            }
         }
 
         Spacer(modifier = Modifier.width(8.dp))
@@ -85,7 +101,7 @@ fun OptionalCheckbox(
         Text(
             text = text,
             style = DduruTheme.typography.Title2,
-            color = textColor
+            color = resolvedTextColor
         )
     }
 }

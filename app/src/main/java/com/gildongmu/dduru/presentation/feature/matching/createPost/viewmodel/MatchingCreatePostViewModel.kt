@@ -3,6 +3,7 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
+import com.gildongmu.dduru.domain.createPost.repository.CreatePostRepository
 import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
@@ -16,6 +17,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Post
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.reduce
+import com.gildongmu.dduru.presentation.feature.matching.createPost.util.TagValidator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
@@ -31,7 +33,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MatchingCreatePostViewModel @Inject constructor(
-    private val destinationRepository: DestinationRepository
+    private val destinationRepository: DestinationRepository,
+    private val createPostRepository: CreatePostRepository
 ) : ViewModel() {
     private companion object {
         const val POPULAR_DESTINATIONS_ERROR_MESSAGE =
@@ -39,6 +42,8 @@ class MatchingCreatePostViewModel @Inject constructor(
         const val SEARCH_DESTINATIONS_ERROR_MESSAGE =
             "여행지를 검색할 수 없어요 잠시후 다시 시도해주세요"
         const val SEARCH_DEBOUNCE_MILLIS = 1_200L
+        const val MAX_TAG_COUNT = 10
+        const val TAG_LIMIT_ERROR_MESSAGE = "태그는 최대 10개까지 추가할 수 있어요."
     }
 
     private val _uiState = MutableStateFlow(
@@ -89,7 +94,8 @@ class MatchingCreatePostViewModel @Inject constructor(
                 ),
                 thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
                     regionName = location.city,
-                    countryName = location.countryName
+                    countryName = location.countryName,
+                    previewImageUrl = location.image
                 )
             )
         }
@@ -134,6 +140,70 @@ class MatchingCreatePostViewModel @Inject constructor(
         }
     }
 
+    fun onTagInputChange(input: String) {
+        _uiState.update { currentState ->
+            val thumbnailState = currentState.thumbnailAndTagUiState
+            currentState.copy(
+                thumbnailAndTagUiState = thumbnailState.copy(
+                    tagInput = input,
+                    tagValidationMessage = resolveTagValidationMessage(
+                        tag = input.trim(),
+                        addedTagCount = thumbnailState.addedTags.size
+                    )
+                )
+            )
+        }
+    }
+
+    fun onAddTag() {
+        _uiState.update { currentState ->
+            val thumbnailState = currentState.thumbnailAndTagUiState
+            val trimmedTag = thumbnailState.tagInput.trim()
+            val validationMessage = resolveTagValidationMessage(
+                tag = trimmedTag,
+                addedTagCount = thumbnailState.addedTags.size
+            )
+
+            if (trimmedTag.isBlank() || validationMessage != null) {
+                return@update currentState.copy(
+                    thumbnailAndTagUiState = thumbnailState.copy(
+                        tagValidationMessage = validationMessage
+                    )
+                )
+            }
+
+            currentState.copy(
+                thumbnailAndTagUiState = thumbnailState.copy(
+                    tagInput = "",
+                    tagValidationMessage = null,
+                    addedTags = thumbnailState.addedTags + trimmedTag
+                )
+            )
+        }
+    }
+
+    fun onRemoveTag(tag: String) {
+        _uiState.update { currentState ->
+            val thumbnailState = currentState.thumbnailAndTagUiState
+            val updatedTags = thumbnailState.addedTags.filterNot { it == tag }
+            currentState.copy(
+                thumbnailAndTagUiState = thumbnailState.copy(
+                    addedTags = updatedTags,
+                    tagValidationMessage = resolveTagValidationMessage(
+                        tag = thumbnailState.tagInput.trim(),
+                        addedTagCount = updatedTags.size
+                    )
+                )
+            )
+        }
+    }
+
+    private fun resolveTagValidationMessage(tag: String, addedTagCount: Int): String? {
+        if (tag.isBlank()) return null
+        if (addedTagCount >= MAX_TAG_COUNT) return TAG_LIMIT_ERROR_MESSAGE
+        return TagValidator.validate(tag)
+    }
+
     private fun moveToStep(step: MatchingCreatePostStep) {
         _uiState.update { currentState ->
             currentState.copy(currentStep = step)
@@ -146,7 +216,7 @@ class MatchingCreatePostViewModel @Inject constructor(
 
         val nextStep = currentState.currentStep.nextOrNull()
         if (nextStep == null) {
-            emitUiEvent(MatchingCreatePostUiEvent.Complete)
+            submitPost()
             return
         }
 
@@ -257,6 +327,39 @@ class MatchingCreatePostViewModel @Inject constructor(
         searchDebounceJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_MILLIS)
             searchDestinations(keyword)
+        }
+    }
+
+    private fun submitPost() {
+        val currentState = _uiState.value
+        val selectedLocation = currentState.locationSearchUiState.selectedLocation ?: return
+        val startDate = currentState.dateSectionUiState.startDate ?: return
+        val endDate = currentState.dateSectionUiState.endDate ?: return
+
+        val request = CreatePostRequest(
+            destinationId = selectedLocation.id,
+            title = currentState.postWritingUiState.title,
+            content = currentState.postWritingUiState.content,
+            startDate = startDate,
+            endDate = endDate,
+            recruitCapacity = currentState.recruitmentSectionUiState.recruitCount,
+            preferredGender = currentState.ageSectionUiState.preferredGender.code,
+            isAgeAny = currentState.ageSectionUiState.isAgeAny,
+            minAge = currentState.ageSectionUiState.minAge,
+            maxAge = currentState.ageSectionUiState.maxAge,
+            photoUrl = currentState.thumbnailAndTagUiState.photoUrl,
+            tags = currentState.thumbnailAndTagUiState.addedTags,
+            companionType = currentState.recruitmentSectionUiState.companionType.code
+        )
+
+        viewModelScope.launch {
+            createPostRepository.createPost(request)
+                .onSuccess {
+                    _uiEvent.emit(MatchingCreatePostUiEvent.Complete)
+                }
+                .onFailure { throwable ->
+                    Log.e("MatchingCreatePostViewModel", "submitPost failed", throwable)
+                }
         }
     }
 }
