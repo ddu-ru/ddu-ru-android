@@ -1,8 +1,8 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.screen
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -22,7 +22,6 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -68,7 +67,6 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Recr
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingEditPostViewModel
-import java.time.LocalDate
 
 @Composable
 fun MatchingEditPostRoute(
@@ -87,7 +85,6 @@ fun MatchingEditPostRoute(
         onRecruitmentSectionUiStateChange = viewModel::onRecruitmentSectionUiStateChange,
         onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
         onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
-        onThumbnailAndTagUiStateChange = viewModel::onThumbnailAndTagUiStateChange,
         onTagInputChange = viewModel::onTagInputChange,
         onAddTag = viewModel::onAddTag,
         onRemoveTag = viewModel::onRemoveTag,
@@ -105,7 +102,6 @@ fun MatchingEditPostScreen(
     onRecruitmentSectionUiStateChange: (RecruitmentScreenUiState) -> Unit,
     onAgeSectionUiStateChange: (AgeSectionUiState) -> Unit,
     onPostWritingUiStateChange: (PostWritingUiState) -> Unit,
-    onThumbnailAndTagUiStateChange: (ThumbnailAndTagUiState) -> Unit,
     onTagInputChange: (String) -> Unit,
     onAddTag: () -> Unit,
     onRemoveTag: (String) -> Unit,
@@ -133,7 +129,7 @@ fun MatchingEditPostScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = DduruTheme.colors.gray0,
         topBar = {
-            MatchingPostEditTopBar(
+            MatchingEditPostTopBar(
                 isNextEnabled = uiState.isSaveEnabled,
                 region = thumbnailAndTagState.regionName,
                 country = thumbnailAndTagState.countryName,
@@ -161,116 +157,21 @@ fun MatchingEditPostScreen(
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
             item {
-                Column {
-                    Text(
-                        text = "대표사진",
-                        style = DduruTheme.typography.Title2,
-                        color = DduruTheme.colors.gray868
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    ThumbnailImageCard(
-                        regionName = thumbnailAndTagState.regionName,
-                        countryName = thumbnailAndTagState.countryName,
-                        imageUrl = thumbnailAndTagState.previewImageUrl,
-                        imageResId = thumbnailAndTagState.imageResId,
-                        onChangeClick = {}
-                    )
-                }
+                MatchingEditPostThumbnailSection(uiState = thumbnailAndTagState)
             }
 
             item {
-                Column {
-                    Text(
-                        text = "제목",
-                        style = DduruTheme.typography.Body2,
-                        color = DduruTheme.colors.gray800
-                    )
-
-                    Spacer(modifier = Modifier.height(8.dp))
-
-                    SingleLineTextField(
-                        value = postWritingState.title,
-                        onValueChange = {
-                            onPostWritingUiStateChange(postWritingState.copy(title = it))
-                        },
-                        maxLength = 40,
-                        placeholder = "제목은 최소 5자 이상입니다."
-                    )
-                }
+                MatchingEditPostWritingSection(
+                    uiState = postWritingState,
+                    onUiStateChange = onPostWritingUiStateChange
+                )
             }
 
             item {
-                Column {
-                    Text(
-                        text = "자세한 설명",
-                        style = DduruTheme.typography.Body2,
-                        color = DduruTheme.colors.gray800
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    MultiLineTextField(
-                        value = postWritingState.content,
-                        onValueChange = {
-                            onPostWritingUiStateChange(postWritingState.copy(content = it))
-                        },
-                        maxLength = 1000,
-                        placeholder = "어떤 여행을 하고 싶은지 자유롭게 작성해 보세요. \n최소 20자 이상 작성해 주세요.",
-                        modifier = Modifier.height(250.dp)
-                    )
-                }
-            }
-
-            item {
-                Column {
-                    Text(
-                        text = "여행 날짜",
-                        style = DduruTheme.typography.Title2,
-                        color = DduruTheme.colors.gray868
-                    )
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.spacedBy(6.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        TripDatePickerBox(
-                            label = "출발 날짜",
-                            selectedDate = DateSelectionDefaults.formatDate(uiState.dateSectionUiState.selectedStartDate),
-                            onClick = { onDateSectionAction(DateSectionUiAction.StartDateClicked) },
-                            modifier = Modifier.weight(1f)
-                        )
-
-                        Icon(
-                            painter = painterResource(R.drawable.ic_arrow),
-                            contentDescription = null,
-                            tint = DduruTheme.colors.gray500,
-                            modifier = Modifier.width(8.dp)
-                        )
-
-                        TripDatePickerBox(
-                            label = "도착 날짜",
-                            selectedDate = DateSelectionDefaults.formatDate(uiState.dateSectionUiState.selectedEndDate),
-                            onClick = { onDateSectionAction(DateSectionUiAction.EndDateClicked) },
-                            modifier = Modifier.weight(1f)
-                        )
-                    }
-
-                    Spacer(modifier = Modifier.height(16.dp))
-
-                    DduruCalendar(
-                        selectedStartDate = uiState.dateSectionUiState.selectedStartDate,
-                        selectedEndDate = uiState.dateSectionUiState.selectedEndDate,
-                        onDateSelected = { date ->
-                            onDateSectionAction(DateSectionUiAction.DateSelected(date))
-                        },
-                        modifier = Modifier.fillMaxWidth()
-                    )
-                }
+                MatchingEditPostDateSection(
+                    uiState = uiState.dateSectionUiState,
+                    onAction = onDateSectionAction
+                )
             }
 
             item {
@@ -464,7 +365,6 @@ fun MatchingEditPostScreen(
                         isAgeIrrelevant = ageState.isAgeIrrelevant,
                         modifier = Modifier.fillMaxWidth()
                     )
-
                 }
             }
 
@@ -585,7 +485,91 @@ fun MatchingEditPostScreen(
 }
 
 @Composable
-private fun MatchingPostEditTopBar(
+private fun MatchingEditPostThumbnailSection(uiState: ThumbnailAndTagUiState) {
+    Column {
+        Text(text = "대표사진", style = DduruTheme.typography.Title2, color = DduruTheme.colors.gray868)
+        Spacer(modifier = Modifier.height(16.dp))
+        ThumbnailImageCard(
+            regionName = uiState.regionName,
+            countryName = uiState.countryName,
+            imageUrl = uiState.previewImageUrl,
+            imageResId = uiState.imageResId,
+            onChangeClick = {}
+        )
+    }
+}
+
+@Composable
+private fun MatchingEditPostWritingSection(
+    uiState: PostWritingUiState,
+    onUiStateChange: (PostWritingUiState) -> Unit
+) {
+    Column {
+        Text(text = "제목", style = DduruTheme.typography.Body2, color = DduruTheme.colors.gray800)
+        Spacer(modifier = Modifier.height(8.dp))
+        SingleLineTextField(
+            value = uiState.title,
+            onValueChange = { onUiStateChange(uiState.copy(title = it)) },
+            maxLength = 40,
+            placeholder = "제목은 최소 5자 이상입니다."
+        )
+        Spacer(modifier = Modifier.height(32.dp))
+        Text(text = "자세한 설명", style = DduruTheme.typography.Body2, color = DduruTheme.colors.gray800)
+        Spacer(modifier = Modifier.height(16.dp))
+        MultiLineTextField(
+            value = uiState.content,
+            onValueChange = { onUiStateChange(uiState.copy(content = it)) },
+            maxLength = 1000,
+            placeholder = "어떤 여행을 하고 싶은지 자유롭게 작성해 보세요. \n최소 20자 이상 작성해 주세요.",
+            modifier = Modifier.height(250.dp)
+        )
+    }
+}
+
+@Composable
+private fun MatchingEditPostDateSection(
+    uiState: DateSectionUiState,
+    onAction: (DateSectionUiAction) -> Unit
+) {
+    Column {
+        Text(text = "여행 날짜", style = DduruTheme.typography.Title2, color = DduruTheme.colors.gray868)
+        Spacer(modifier = Modifier.height(16.dp))
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(6.dp),
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            TripDatePickerBox(
+                label = "출발 날짜",
+                selectedDate = DateSelectionDefaults.formatDate(uiState.selectedStartDate),
+                onClick = { onAction(DateSectionUiAction.StartDateClicked) },
+                modifier = Modifier.weight(1f)
+            )
+            Icon(
+                painter = painterResource(R.drawable.ic_arrow),
+                contentDescription = null,
+                tint = DduruTheme.colors.gray500,
+                modifier = Modifier.width(8.dp)
+            )
+            TripDatePickerBox(
+                label = "도착 날짜",
+                selectedDate = DateSelectionDefaults.formatDate(uiState.selectedEndDate),
+                onClick = { onAction(DateSectionUiAction.EndDateClicked) },
+                modifier = Modifier.weight(1f)
+            )
+        }
+        Spacer(modifier = Modifier.height(16.dp))
+        DduruCalendar(
+            selectedStartDate = uiState.selectedStartDate,
+            selectedEndDate = uiState.selectedEndDate,
+            onDateSelected = { onAction(DateSectionUiAction.DateSelected(it)) },
+            modifier = Modifier.fillMaxWidth()
+        )
+    }
+}
+
+@Composable
+private fun MatchingEditPostTopBar(
     isNextEnabled: Boolean,
     region: String?,
     country: String?,
@@ -594,37 +578,37 @@ private fun MatchingPostEditTopBar(
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier
+            .fillMaxWidth()
+            .height(48.dp)
     ) {
         Box(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .size(48.dp)
-                .border(
-                    1.dp,
-                    DduruTheme.colors.gray0.copy(alpha = 0.3f),
-                    CircleShape,
-                )
                 .dduruDualShadow(
                     firstAlpha = 0.8f,
                     secondAlpha = 0.16f,
                     shape = CircleShape
                 )
+                .border(
+                    1.dp,
+                    DduruTheme.colors.gray0.copy(alpha = 0.3f),
+                    CircleShape
+                )
                 .background(
                     DduruTheme.colors.gray0,
-                    CircleShape,
+                    CircleShape
                 ),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             IconButton(
                 onClick = onBackClick,
-                modifier = Modifier
-                    .size(48.dp)
-                    .background(DduruTheme.colors.gray0, CircleShape),
+                modifier = Modifier.size(48.dp)
             ) {
                 Icon(
                     painter = painterResource(R.drawable.ic_chevron_left),
-                    contentDescription = null,
+                    contentDescription = null
                 )
             }
         }
@@ -671,7 +655,7 @@ private fun MatchingPostEditTopBar(
                     }
                 }
             }
-            }
+        }
 
         DduruButton(
             text = "다음",
@@ -694,16 +678,13 @@ private fun MatchingPostEditScreenPreview() {
             modifier = Modifier.fillMaxSize()
         ) {
             MatchingEditPostScreen(
-                uiState = MatchingEditPostUiState(
-                    popularTags = MatchingCreatePostMockData.popularTags
-                ),
+                uiState = MatchingEditPostMockData.screenUiState,
                 onBackClick = {},
                 onSaveClick = {},
                 onDateSectionAction = {},
                 onRecruitmentSectionUiStateChange = {},
                 onAgeSectionUiStateChange = {},
                 onPostWritingUiStateChange = {},
-                onThumbnailAndTagUiStateChange = {},
                 onTagInputChange = {},
                 onAddTag = {},
                 onRemoveTag = {}
@@ -721,31 +702,13 @@ private fun MatchingPostEditScreenEnabledNextButtonPreview() {
             modifier = Modifier.fillMaxSize()
         ) {
             MatchingEditPostScreen(
-                uiState = MatchingEditPostUiState(
-                    dateSectionUiState = DateSectionUiState(
-                        selectedStartDate = LocalDate.now(),
-                        selectedEndDate = LocalDate.now().plusDays(3)
-                    ),
-                    recruitmentSectionUiState = RecruitmentScreenUiState(
-                        selectedCompanionType = CompanionType.FULL
-                    ),
-                    ageSectionUiState = AgeSectionUiState(
-                        selectedGender = RecruitmentGenderOption.ANY,
-                        isAgeIrrelevant = true
-                    ),
-                    postWritingUiState = PostWritingUiState(
-                        title = "후쿠오카 여행방",
-                        content = "맛집과 관광지를 함께 둘러볼 여행 메이트를 찾고 있어요."
-                    ),
-                    popularTags = MatchingCreatePostMockData.popularTags
-                ),
+                uiState = MatchingEditPostMockData.enabledNextButtonUiState,
                 onBackClick = {},
                 onSaveClick = {},
                 onDateSectionAction = {},
                 onRecruitmentSectionUiStateChange = {},
                 onAgeSectionUiStateChange = {},
                 onPostWritingUiStateChange = {},
-                onThumbnailAndTagUiStateChange = {},
                 onTagInputChange = {},
                 onAddTag = {},
                 onRemoveTag = {}
