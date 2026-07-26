@@ -88,6 +88,9 @@ fun MatchingEditPostRoute(
         onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
         onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
         onThumbnailAndTagUiStateChange = viewModel::onThumbnailAndTagUiStateChange,
+        onTagInputChange = viewModel::onTagInputChange,
+        onAddTag = viewModel::onAddTag,
+        onRemoveTag = viewModel::onRemoveTag,
         modifier = modifier
     )
 }
@@ -103,6 +106,9 @@ fun MatchingEditPostScreen(
     onAgeSectionUiStateChange: (AgeSectionUiState) -> Unit,
     onPostWritingUiStateChange: (PostWritingUiState) -> Unit,
     onThumbnailAndTagUiStateChange: (ThumbnailAndTagUiState) -> Unit,
+    onTagInputChange: (String) -> Unit,
+    onAddTag: () -> Unit,
+    onRemoveTag: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     val focusManager = LocalFocusManager.current
@@ -116,9 +122,9 @@ fun MatchingEditPostScreen(
     val thumbnailAndTagState = uiState.thumbnailAndTagUiState
     val isCompanionTypeSelectionEnabled = !recruitmentState.isCompanionTypeOptional
 
-    val onAddTag = {
+    val handleAddTag = {
         if (thumbnailAndTagState.canAddTag) {
-            onThumbnailAndTagUiStateChange(thumbnailAndTagState.addTag())
+            onAddTag()
             focusManager.clearFocus()
         }
     }
@@ -475,7 +481,7 @@ fun MatchingEditPostScreen(
                     RoundedMatchingTextField(
                         value = thumbnailAndTagState.tagInput,
                         onValueChange = {
-                            onThumbnailAndTagUiStateChange(thumbnailAndTagState.copy(tagInput = it))
+                            onTagInputChange(it)
                         },
                         singleLine = true,
                         leadingIcon = {
@@ -493,7 +499,7 @@ fun MatchingEditPostScreen(
                             )
                         },
                         keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
-                        keyboardActions = KeyboardActions(onDone = { onAddTag() })
+                        keyboardActions = KeyboardActions(onDone = { handleAddTag() })
                     )
 
                     Spacer(modifier = Modifier.height(12.dp))
@@ -531,9 +537,7 @@ fun MatchingEditPostScreen(
                                         modifier = Modifier
                                             .size(12.dp)
                                             .clickable {
-                                                onThumbnailAndTagUiStateChange(
-                                                    thumbnailAndTagState.removeTag(addedTag)
-                                                )
+                                                onRemoveTag(addedTag)
                                             },
                                         contentAlignment = Alignment.Center
                                     ) {
@@ -699,7 +703,10 @@ private fun MatchingPostEditScreenPreview() {
                 onRecruitmentSectionUiStateChange = {},
                 onAgeSectionUiStateChange = {},
                 onPostWritingUiStateChange = {},
-                onThumbnailAndTagUiStateChange = {}
+                onThumbnailAndTagUiStateChange = {},
+                onTagInputChange = {},
+                onAddTag = {},
+                onRemoveTag = {}
             )
         }
     }
@@ -738,7 +745,10 @@ private fun MatchingPostEditScreenEnabledNextButtonPreview() {
                 onRecruitmentSectionUiStateChange = {},
                 onAgeSectionUiStateChange = {},
                 onPostWritingUiStateChange = {},
-                onThumbnailAndTagUiStateChange = {}
+                onThumbnailAndTagUiStateChange = {},
+                onTagInputChange = {},
+                onAddTag = {},
+                onRemoveTag = {}
             )
         }
     }
