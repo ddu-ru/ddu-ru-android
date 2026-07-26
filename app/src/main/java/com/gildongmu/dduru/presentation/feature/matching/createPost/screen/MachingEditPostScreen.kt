@@ -1,6 +1,8 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.screen
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -16,11 +18,15 @@ import androidx.compose.foundation.layout.imePadding
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -35,7 +41,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
+import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.MultiLineTextField
 import com.gildongmu.dduru.presentation.component.SingleLineTextField
@@ -52,6 +60,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.defaults.Mat
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiAction
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingEditPostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
@@ -59,9 +68,10 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Recr
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingEditPostViewModel
+import java.time.LocalDate
 
 @Composable
-fun ㅊ(
+fun MatchingEditPostRoute(
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -118,8 +128,15 @@ fun MatchingEditPostScreen(
         containerColor = DduruTheme.colors.gray0,
         topBar = {
             MatchingPostEditTopBar(
+                isNextEnabled = uiState.isSaveEnabled,
+                region = thumbnailAndTagState.regionName,
+                country = thumbnailAndTagState.countryName,
                 onBackClick = onBackClick,
-                modifier = Modifier.fillMaxWidth()
+                onNextClick = onSaveClick,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp)
             )
         }
     ) { innerPadding ->
@@ -150,6 +167,7 @@ fun MatchingEditPostScreen(
                     ThumbnailImageCard(
                         regionName = thumbnailAndTagState.regionName,
                         countryName = thumbnailAndTagState.countryName,
+                        imageUrl = thumbnailAndTagState.previewImageUrl,
                         imageResId = thumbnailAndTagState.imageResId,
                         onChangeClick = {}
                     )
@@ -564,10 +582,103 @@ fun MatchingEditPostScreen(
 
 @Composable
 private fun MatchingPostEditTopBar(
+    isNextEnabled: Boolean,
+    region: String?,
+    country: String?,
     onBackClick: () -> Unit,
+    onNextClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    // TODO 기존 공통 TopBar 또는 수정 화면 전용 TopBar 연결
+    Box(
+        modifier = modifier.fillMaxWidth(),
+    ) {
+        Box(
+            modifier = Modifier
+                .align(Alignment.CenterStart)
+                .size(48.dp)
+                .border(
+                    1.dp,
+                    DduruTheme.colors.gray0.copy(alpha = 0.3f),
+                    CircleShape,
+                )
+                .dduruDualShadow(
+                    firstAlpha = 0.8f,
+                    secondAlpha = 0.16f,
+                    shape = CircleShape
+                )
+                .background(
+                    DduruTheme.colors.gray0,
+                    CircleShape,
+                ),
+            contentAlignment = Alignment.Center,
+        ) {
+            IconButton(
+                onClick = onBackClick,
+                modifier = Modifier
+                    .size(48.dp)
+                    .background(DduruTheme.colors.gray0, CircleShape),
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ic_chevron_left),
+                    contentDescription = null,
+                )
+            }
+        }
+
+        Column(
+            modifier = Modifier.align(Alignment.Center),
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            Text(
+                text = "여행방 수정",
+                style = DduruTheme.typography.H1,
+                color = DduruTheme.colors.black
+            )
+
+            if (region != null || country != null) {
+                Spacer(modifier = Modifier.height(4.dp))
+
+                Row(
+                    verticalAlignment = Alignment.CenterVertically,
+                    horizontalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    region?.let {
+                        Text(
+                            text = it,
+                            style = DduruTheme.typography.Micro,
+                            color = DduruTheme.colors.gray400
+                        )
+                    }
+
+                    if (region != null && country != null) {
+                        Box(
+                            modifier = Modifier
+                                .size(4.dp)
+                                .background(DduruTheme.colors.gray200, CircleShape)
+                        )
+                    }
+
+                    country?.let {
+                        Text(
+                            text = it,
+                            style = DduruTheme.typography.Micro,
+                            color = DduruTheme.colors.gray400
+                        )
+                    }
+                }
+            }
+            }
+
+        DduruButton(
+            text = "다음",
+            onClick = onNextClick,
+            enabled = isNextEnabled,
+            enabledColors = DduruButtonDefaults.filledEnabledColors,
+            disabledColors = DduruButtonDefaults.whiteDisabledColors,
+            textStyle = DduruTheme.typography.Title2,
+            modifier = Modifier.align(Alignment.CenterEnd)
+        )
+    }
 }
 
 @Preview(showBackground = true)
@@ -580,6 +691,45 @@ private fun MatchingPostEditScreenPreview() {
         ) {
             MatchingEditPostScreen(
                 uiState = MatchingEditPostUiState(
+                    popularTags = MatchingCreatePostMockData.popularTags
+                ),
+                onBackClick = {},
+                onSaveClick = {},
+                onDateSectionAction = {},
+                onRecruitmentSectionUiStateChange = {},
+                onAgeSectionUiStateChange = {},
+                onPostWritingUiStateChange = {},
+                onThumbnailAndTagUiStateChange = {}
+            )
+        }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun MatchingPostEditScreenEnabledNextButtonPreview() {
+    DduruTheme {
+        Surface(
+            color = DduruTheme.colors.gray0,
+            modifier = Modifier.fillMaxSize()
+        ) {
+            MatchingEditPostScreen(
+                uiState = MatchingEditPostUiState(
+                    dateSectionUiState = DateSectionUiState(
+                        selectedStartDate = LocalDate.now(),
+                        selectedEndDate = LocalDate.now().plusDays(3)
+                    ),
+                    recruitmentSectionUiState = RecruitmentScreenUiState(
+                        selectedCompanionType = CompanionType.FULL
+                    ),
+                    ageSectionUiState = AgeSectionUiState(
+                        selectedGender = RecruitmentGenderOption.ANY,
+                        isAgeIrrelevant = true
+                    ),
+                    postWritingUiState = PostWritingUiState(
+                        title = "후쿠오카 여행방",
+                        content = "맛집과 관광지를 함께 둘러볼 여행 메이트를 찾고 있어요."
+                    ),
                     popularTags = MatchingCreatePostMockData.popularTags
                 ),
                 onBackClick = {},

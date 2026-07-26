@@ -1,7 +1,9 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru.data.createPost.model.CreatePostRequest
 import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
 import com.gildongmu.dduru.domain.createPost.repository.CreatePostRepository
 import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
