@@ -3,12 +3,9 @@ package com.gildongmu.dduru.presentation.feature.main.screen
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -22,6 +19,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.presentation.feature.home.HomeRoute
 import com.gildongmu.dduru.presentation.feature.matching.MatchingRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar
@@ -73,21 +71,19 @@ fun MainScreen() {
             entryProvider = { route ->
                 when (route) {
                     is BottomNavRoute.Home -> NavEntry(route) {
-                        Column(
-                            modifier = Modifier.fillMaxSize(),
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally
-                        ) {
-                            Button(
-                                onClick = { showMatchingCreatePost = true }
-                            ) {
-                                Text("게시글 작성 바로가기")
+                        HomeRoute(
+                            navigateToCreateTravelRoom = {
+                                showMatchingCreatePost = true
                             }
-                        }
+                        )
                     }
-                    is BottomNavRoute.Matching -> NavEntry(route) { Text("매칭") }
-                    is BottomNavRoute.Home -> NavEntry(route) { Text("홈") }
-                    is BottomNavRoute.Matching -> NavEntry(route) { MatchingRoute() }
+                    is BottomNavRoute.Matching -> NavEntry(route) {
+                        MatchingRoute(
+                            navigateToCreatePost = {
+                                showMatchingCreatePost = true
+                            }
+                        )
+                    }
                     is BottomNavRoute.Board -> NavEntry(route) { Text("게시판") }
                     is BottomNavRoute.Chat -> NavEntry(route) { Text("채팅") }
                     is BottomNavRoute.MyPage -> NavEntry(route) { Text("마이") }
