@@ -4,6 +4,7 @@ import com.gildongmu.dduru.BuildConfig
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
 import com.gildongmu.dduru.data.remote.service.AuthService
+import com.gildongmu.dduru.data.remote.service.home.HomeService
 import com.gildongmu.dduru.data.remote.service.ChatRoomService
 import com.gildongmu.dduru.data.remote.service.HomeService
 import com.gildongmu.dduru.data.remote.service.SurveyService
