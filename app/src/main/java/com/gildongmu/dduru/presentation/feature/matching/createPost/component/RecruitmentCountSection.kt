@@ -17,10 +17,10 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
 
 @Composable
 fun RecruitmentCountSection(
@@ -49,15 +49,15 @@ fun RecruitmentCountSection(
     val isCompanionTypeSelectionEnabled = !uiState.isCompanionTypeOptional
 
     val isFullSelected =
-        uiState.selectedCompanionType == CompanionType.FULL &&
+        uiState.selectedCompanionType == MatchingCompanionType.FULL &&
             isCompanionTypeSelectionEnabled
 
     val isPartialSelected =
-        uiState.selectedCompanionType == CompanionType.PARTIAL &&
+        uiState.selectedCompanionType == MatchingCompanionType.PARTIAL &&
             isCompanionTypeSelectionEnabled
 
     val isMealSelected =
-        uiState.selectedCompanionType == CompanionType.MEAL &&
+        uiState.selectedCompanionType == MatchingCompanionType.MEAL &&
             isCompanionTypeSelectionEnabled
 
     Column(
@@ -113,11 +113,11 @@ fun RecruitmentCountSection(
         ) {
             DduruButton(
                 modifier = Modifier.weight(1f),
-                text = "전체 동행",
+                text = MatchingCompanionType.FULL.selectionLabel,
                 onClick = {
                     onUiStateChange(
                         uiState.copy(
-                            selectedCompanionType = CompanionType.FULL,
+                            selectedCompanionType = MatchingCompanionType.FULL,
                             isCompanionTypeOptional = false
                         )
                     )
@@ -133,11 +133,11 @@ fun RecruitmentCountSection(
 
             DduruButton(
                 modifier = Modifier.weight(1f),
-                text = "부분 동행",
+                text = MatchingCompanionType.PARTIAL.selectionLabel,
                 onClick = {
                     onUiStateChange(
                         uiState.copy(
-                            selectedCompanionType = CompanionType.PARTIAL,
+                            selectedCompanionType = MatchingCompanionType.PARTIAL,
                             isCompanionTypeOptional = false
                         )
                     )
@@ -153,11 +153,11 @@ fun RecruitmentCountSection(
 
             DduruButton(
                 modifier = Modifier.weight(1f),
-                text = "식사 동행",
+                text = MatchingCompanionType.MEAL.selectionLabel,
                 onClick = {
                     onUiStateChange(
                         uiState.copy(
-                            selectedCompanionType = CompanionType.MEAL,
+                            selectedCompanionType = MatchingCompanionType.MEAL,
                             isCompanionTypeOptional = false
                         )
                     )

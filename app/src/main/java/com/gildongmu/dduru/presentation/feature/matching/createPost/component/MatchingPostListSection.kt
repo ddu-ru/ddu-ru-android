@@ -160,16 +160,16 @@ private fun MatchingPostInfo(
             horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             MatchingStatusTag(
-                text = item.gender.label,
+                text = item.gender.cardLabel,
                 iconRes = R.drawable.ic_home_person
             )
 
             MatchingStatusTag(
-                text = item.companionType.label,
+                text = item.companionType.cardLabel,
                 iconRes = when (item.companionType) {
-                    MatchingCompanionType.Full -> R.drawable.ic_home_users
-                    MatchingCompanionType.Partial -> R.drawable.ic_home_calendar
-                    MatchingCompanionType.Food -> R.drawable.ic_hashtag
+                    MatchingCompanionType.FULL -> R.drawable.ic_home_users
+                    MatchingCompanionType.PARTIAL -> R.drawable.ic_home_calendar
+                    MatchingCompanionType.MEAL -> R.drawable.ic_hashtag
                 }
             )
         }

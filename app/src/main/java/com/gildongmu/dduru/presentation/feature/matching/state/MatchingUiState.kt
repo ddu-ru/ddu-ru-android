@@ -25,8 +25,8 @@ data class MatchingUiState(
                     dateRange = "03.15 - 03.18",
                     currentMemberCount = 3,
                     maxMemberCount = 4,
-                    gender = MatchingGender.Male,
-                    companionType = MatchingCompanionType.Full,
+                    gender = MatchingGender.MALE,
+                    companionType = MatchingCompanionType.FULL,
                     thumbnailImageRes = R.drawable.fukuoka
                 ),
                 MatchingPostCardUiModel(
@@ -37,8 +37,8 @@ data class MatchingUiState(
                     dateRange = "03.15 - 03.18",
                     currentMemberCount = 3,
                     maxMemberCount = 4,
-                    gender = MatchingGender.Male,
-                    companionType = MatchingCompanionType.Partial,
+                    gender = MatchingGender.MALE,
+                    companionType = MatchingCompanionType.PARTIAL,
                     isSuperHost = true,
                     thumbnailImageRes = R.drawable.haha
                 ),
@@ -50,8 +50,8 @@ data class MatchingUiState(
                     dateRange = "03.15 - 03.18",
                     currentMemberCount = 3,
                     maxMemberCount = 4,
-                    gender = MatchingGender.Any,
-                    companionType = MatchingCompanionType.Full,
+                    gender = MatchingGender.ANY,
+                    companionType = MatchingCompanionType.FULL,
                     thumbnailImageRes = R.drawable.fukuoka
                 ),
                 MatchingPostCardUiModel(
@@ -62,8 +62,8 @@ data class MatchingUiState(
                     dateRange = "03.15 - 03.18",
                     currentMemberCount = 3,
                     maxMemberCount = 4,
-                    gender = MatchingGender.Female,
-                    companionType = MatchingCompanionType.Food,
+                    gender = MatchingGender.FEMALE,
+                    companionType = MatchingCompanionType.MEAL,
                     thumbnailImageRes = R.drawable.haha
                 ),
                 MatchingPostCardUiModel(
@@ -74,8 +74,8 @@ data class MatchingUiState(
                     dateRange = "03.15 - 03.18",
                     currentMemberCount = 3,
                     maxMemberCount = 4,
-                    gender = MatchingGender.Any,
-                    companionType = MatchingCompanionType.Full,
+                    gender = MatchingGender.ANY,
+                    companionType = MatchingCompanionType.FULL,
                     thumbnailImageRes = R.drawable.fukuoka
                 ),
                 MatchingPostCardUiModel(
@@ -86,8 +86,8 @@ data class MatchingUiState(
                     dateRange = "04.02 - 04.05",
                     currentMemberCount = 2,
                     maxMemberCount = 4,
-                    gender = MatchingGender.Any,
-                    companionType = MatchingCompanionType.Food,
+                    gender = MatchingGender.ANY,
+                    companionType = MatchingCompanionType.MEAL,
                     thumbnailImageRes = R.drawable.haha
                 ),
                 MatchingPostCardUiModel(
@@ -98,8 +98,8 @@ data class MatchingUiState(
                     dateRange = "04.10 - 04.14",
                     currentMemberCount = 1,
                     maxMemberCount = 3,
-                    gender = MatchingGender.Female,
-                    companionType = MatchingCompanionType.Partial,
+                    gender = MatchingGender.FEMALE,
+                    companionType = MatchingCompanionType.PARTIAL,
                     isSuperHost = true,
                     thumbnailImageRes = R.drawable.fukuoka
                 ),
@@ -111,8 +111,8 @@ data class MatchingUiState(
                     dateRange = "05.03 - 05.04",
                     currentMemberCount = 3,
                     maxMemberCount = 5,
-                    gender = MatchingGender.Male,
-                    companionType = MatchingCompanionType.Full,
+                    gender = MatchingGender.MALE,
+                    companionType = MatchingCompanionType.FULL,
                     thumbnailImageRes = R.drawable.haha
                 ),
                 MatchingPostCardUiModel(
@@ -123,8 +123,8 @@ data class MatchingUiState(
                     dateRange = "05.15 - 05.18",
                     currentMemberCount = 2,
                     maxMemberCount = 4,
-                    gender = MatchingGender.Any,
-                    companionType = MatchingCompanionType.Food,
+                    gender = MatchingGender.ANY,
+                    companionType = MatchingCompanionType.MEAL,
                     thumbnailImageRes = R.drawable.fukuoka
                 ),
                 MatchingPostCardUiModel(
@@ -135,8 +135,8 @@ data class MatchingUiState(
                     dateRange = "06.01 - 06.06",
                     currentMemberCount = 1,
                     maxMemberCount = 4,
-                    gender = MatchingGender.Female,
-                    companionType = MatchingCompanionType.Partial,
+                    gender = MatchingGender.FEMALE,
+                    companionType = MatchingCompanionType.PARTIAL,
                     thumbnailImageRes = R.drawable.haha
                 )
             )
