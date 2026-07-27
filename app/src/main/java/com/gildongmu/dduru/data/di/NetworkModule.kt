@@ -4,8 +4,8 @@ import com.gildongmu.dduru.BuildConfig
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
 import com.gildongmu.dduru.data.remote.service.AuthService
-import com.gildongmu.dduru.data.remote.service.home.HomeService
 import com.gildongmu.dduru.data.remote.service.SurveyService
+import com.gildongmu.dduru.data.remote.service.home.HomeService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides

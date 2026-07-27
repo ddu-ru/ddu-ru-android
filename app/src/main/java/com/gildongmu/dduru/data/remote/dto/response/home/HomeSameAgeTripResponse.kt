@@ -10,5 +10,5 @@ data class HomeSameAgeTripResponse(
     val startDate: String = "",
     val currentMemberCount: Int = 0,
     val maxMemberCount: Int = 0,
-    val thumbnailUrl: String = "",
+    val thumbnailUrl: String = ""
 )

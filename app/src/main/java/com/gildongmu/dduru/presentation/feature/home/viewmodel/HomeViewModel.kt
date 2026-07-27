@@ -9,8 +9,8 @@ import com.gildongmu.dduru.domain.repository.home.HomeRepository
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
 import com.gildongmu.dduru.presentation.feature.home.mapper.toAiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.mapper.toTravelCompanionUiModel
-import com.gildongmu.dduru.presentation.feature.home.mapper.toUiState
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUiModel
+import com.gildongmu.dduru.presentation.feature.home.mapper.toUiState
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUpdatedText
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
