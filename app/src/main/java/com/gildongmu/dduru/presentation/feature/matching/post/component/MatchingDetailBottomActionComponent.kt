@@ -1,7 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.matching.post.component
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
@@ -15,37 +14,25 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.core.common.extension.dduruFrostedBackground
+import com.gildongmu.dduru.core.common.extension.dduruFrostedBorder
+import com.gildongmu.dduru.core.common.extension.dduruFrostedSurface
+import com.gildongmu.dduru.core.common.extension.rememberDduruHazeState
 import com.gildongmu.dduru.core.common.extension.toDotDate
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostParticipationStatus
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostRecruitStatus
 import dev.chrisbanes.haze.HazeState
-import dev.chrisbanes.haze.HazeStyle
-import dev.chrisbanes.haze.hazeChild
-
-enum class MatchingPostRecruitStatus {
-    OPEN,
-    CLOSED,
-    HIDDEN
-}
-
-enum class MatchingPostParticipationStatus {
-    NONE,
-    PENDING,
-    APPROVED,
-    REJECTED
-}
 
 @Composable
 fun MatchingDetailBottomActionComponent(
@@ -82,29 +69,12 @@ fun MatchingDetailBottomActionComponent(
                 ambientColor = DduruTheme.colors.black.copy(alpha = 0.08f)
             )
             .clip(containerShape)
-            .hazeChild(
-                state = hazeState,
-                shape = containerShape,
-                style = HazeStyle(
-                    tint = DduruTheme.colors.gray50.copy(alpha = 0.18f),
-                    blurRadius = 8.dp
-                )
-            )
-            .background(
-                brush = Brush.verticalGradient(
-                    colorStops = arrayOf(
-                        0f to DduruTheme.colors.gray500.copy(alpha = 0.1f),
-                        0.2f to Color.Transparent,
-                        0.8f to Color.Transparent,
-                        1f to DduruTheme.colors.gray50.copy(alpha = 0.9f)
-                    )
-                )
-            )
-            .border(
-                width = 1.dp,
-                color = DduruTheme.colors.gray0.copy(alpha = 0.5f),
+            .dduruFrostedSurface(
+                hazeState = hazeState,
                 shape = containerShape
             )
+            .dduruFrostedBackground()
+            .dduruFrostedBorder(containerShape)
             .padding(16.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -222,7 +192,7 @@ private enum class MatchingDetailBottomButtonState(
 @Preview(showBackground = true)
 @Composable
 private fun MatchingDetailBottomActionOwnerPreview() {
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberDduruHazeState()
 
     DduruTheme {
         MatchingDetailBottomActionComponent(
@@ -246,7 +216,7 @@ private fun MatchingDetailBottomActionOwnerPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun MatchingDetailBottomActionGuestPreview() {
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberDduruHazeState()
 
     DduruTheme {
         MatchingDetailBottomActionComponent(
@@ -269,7 +239,7 @@ private fun MatchingDetailBottomActionGuestPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun MatchingDetailBottomActionWaitingPreview() {
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberDduruHazeState()
 
     DduruTheme {
         MatchingDetailBottomActionComponent(
@@ -292,7 +262,7 @@ private fun MatchingDetailBottomActionWaitingPreview() {
 @Preview(showBackground = true)
 @Composable
 private fun MatchingDetailBottomActionClosedPreview() {
-    val hazeState = remember { HazeState() }
+    val hazeState = rememberDduruHazeState()
 
     DduruTheme {
         MatchingDetailBottomActionComponent(

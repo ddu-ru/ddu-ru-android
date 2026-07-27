@@ -28,13 +28,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -81,12 +81,16 @@ fun MatchingCreatePostRoute(
         onBackClick = viewModel::onBackClick,
         onNextClick = viewModel::onNextClick,
         onLocationSearchUiStateChange = viewModel::onLocationSearchUiStateChange,
+        onLocationSearchClick = viewModel::onLocationSearchClick,
         onLocationSelected = viewModel::onLocationSelected,
         onDateSectionUiStateChange = viewModel::onDateSectionUiStateChange,
         onRecruitmentSectionUiStateChange = viewModel::onRecruitmentSectionUiStateChange,
         onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
         onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
         onThumbnailAndTagUiStateChange = viewModel::onThumbnailAndTagUiStateChange,
+        onTagInputChange = viewModel::onTagInputChange,
+        onAddTag = viewModel::onAddTag,
+        onRemoveTag = viewModel::onRemoveTag,
         modifier = modifier
     )
 }
@@ -98,12 +102,16 @@ fun MatchingCreatePostScreen(
     onBackClick: () -> Unit,
     onNextClick: () -> Unit,
     onLocationSearchUiStateChange: (LocationSearchUiState) -> Unit,
+    onLocationSearchClick: () -> Unit,
     onLocationSelected: (LocationSearchItemUiState) -> Unit,
     onDateSectionUiStateChange: (DateSectionUiState) -> Unit,
     onRecruitmentSectionUiStateChange: (RecruitmentScreenUiState) -> Unit,
     onAgeSectionUiStateChange: (AgeSectionUiState) -> Unit,
     onPostWritingUiStateChange: (PostWritingUiState) -> Unit,
     onThumbnailAndTagUiStateChange: (ThumbnailAndTagUiState) -> Unit,
+    onTagInputChange: (String) -> Unit,
+    onAddTag: () -> Unit,
+    onRemoveTag: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(
@@ -169,6 +177,7 @@ fun MatchingCreatePostScreen(
                     LocationSearchSection(
                         uiState = uiState.locationSearchUiState,
                         onUiStateChange = onLocationSearchUiStateChange,
+                        onSearchClick = onLocationSearchClick,
                         onLocationClick = onLocationSelected
                     )
                 }
@@ -204,8 +213,9 @@ fun MatchingCreatePostScreen(
                 MatchingCreatePostStep.THUMBNAIL_AND_TAG -> {
                     ThumbnailAndTagSection(
                         uiState = uiState.thumbnailAndTagUiState,
-                        onUiStateChange = onThumbnailAndTagUiStateChange,
-                        popularTags = uiState.popularTags
+                        onTagInputChange = onTagInputChange,
+                        onAddTag = onAddTag,
+                        onRemoveTag = onRemoveTag
                     )
                 }
             }
@@ -228,17 +238,10 @@ private fun MatchingCreatePostHeader(
             onClick = onDismissClick,
             modifier = Modifier
                 .align(Alignment.CenterStart)
-                .shadow(
-                    elevation = 16.dp,
-                    shape = RoundedCornerShape(99.dp),
-                    spotColor = DduruTheme.colors.black.copy(alpha = 0.8f),
-                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.8f)
-                )
-                .shadow(
-                    elevation = 4.dp,
-                    shape = RoundedCornerShape(99.dp),
-                    spotColor = DduruTheme.colors.black.copy(alpha = 0.1f),
-                    ambientColor = DduruTheme.colors.black.copy(alpha = 0.1f)
+                .dduruDualShadow(
+                    firstAlpha = 0.8f,
+                    secondAlpha = 0.1f,
+                    shape = RoundedCornerShape(99.dp)
                 )
                 .border(
                     width = 1.dp,
@@ -333,6 +336,7 @@ private fun MatchingCreatePostContentPreview() {
                 onLocationSearchUiStateChange = { locationSearchUiState ->
                     uiState = uiState.copy(locationSearchUiState = locationSearchUiState)
                 },
+                onLocationSearchClick = {},
                 onLocationSelected = { location ->
                     uiState = uiState.copy(
                         locationSearchUiState = uiState.locationSearchUiState.copy(
@@ -358,9 +362,16 @@ private fun MatchingCreatePostContentPreview() {
                 onPostWritingUiStateChange = { postWritingUiState ->
                     uiState = uiState.copy(postWritingUiState = postWritingUiState)
                 },
-                onThumbnailAndTagUiStateChange = { thumbnailAndTagUiState ->
-                    uiState = uiState.copy(thumbnailAndTagUiState = thumbnailAndTagUiState)
+                onThumbnailAndTagUiStateChange = {},
+                onTagInputChange = { input ->
+                    uiState = uiState.copy(
+                        thumbnailAndTagUiState = uiState.thumbnailAndTagUiState.copy(
+                            tagInput = input
+                        )
+                    )
                 },
+                onAddTag = {},
+                onRemoveTag = {},
                 modifier = Modifier.fillMaxSize()
             )
         }
