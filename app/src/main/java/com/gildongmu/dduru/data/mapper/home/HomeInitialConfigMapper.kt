@@ -1,9 +1,9 @@
-package com.gildongmu.dduru.data.mapper
+package com.gildongmu.dduru.data.mapper.home
 
-import com.gildongmu.dduru.data.remote.dto.response.HomeInitialConfigResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeSectionConfigResponse
-import com.gildongmu.dduru.domain.entity.HomeInitialConfig
-import com.gildongmu.dduru.domain.entity.HomeSectionConfig
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeInitialConfigResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeSectionConfigResponse
+import com.gildongmu.dduru.domain.entity.home.HomeInitialConfig
+import com.gildongmu.dduru.domain.entity.home.HomeSectionConfig
 
 fun HomeInitialConfigResponse.toDomain(): HomeInitialConfig {
     return HomeInitialConfig(

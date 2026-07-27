@@ -1,9 +1,9 @@
-package com.gildongmu.dduru.data.mapper
+package com.gildongmu.dduru.data.mapper.home
 
-import com.gildongmu.dduru.data.remote.dto.response.HomeSuperHostHostResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeSuperHostResponse
-import com.gildongmu.dduru.domain.entity.HomeSuperHost
-import com.gildongmu.dduru.domain.entity.HomeSuperHostHost
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeSuperHostHostResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeSuperHostResponse
+import com.gildongmu.dduru.domain.entity.home.HomeSuperHost
+import com.gildongmu.dduru.domain.entity.home.HomeSuperHostHost
 
 fun HomeSuperHostResponse.toDomain(): HomeSuperHost {
     return HomeSuperHost(

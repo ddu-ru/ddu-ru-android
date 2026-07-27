@@ -1,7 +1,7 @@
-package com.gildongmu.dduru.data.mapper
+package com.gildongmu.dduru.data.mapper.home
 
-import com.gildongmu.dduru.data.remote.dto.response.HomeUpcomingTripResponse
-import com.gildongmu.dduru.domain.entity.HomeUpcomingTrip
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeUpcomingTripResponse
+import com.gildongmu.dduru.domain.entity.home.HomeUpcomingTrip
 
 fun HomeUpcomingTripResponse.toDomain(): HomeUpcomingTrip {
     return HomeUpcomingTrip(

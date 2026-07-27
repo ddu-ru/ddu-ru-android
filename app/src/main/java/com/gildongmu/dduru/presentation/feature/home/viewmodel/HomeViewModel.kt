@@ -3,9 +3,9 @@ package com.gildongmu.dduru.presentation.feature.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.domain.entity.HomeInitialConfig
-import com.gildongmu.dduru.domain.entity.HomeMateRecommendations
-import com.gildongmu.dduru.domain.repository.HomeRepository
+import com.gildongmu.dduru.domain.entity.home.HomeInitialConfig
+import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendations
+import com.gildongmu.dduru.domain.repository.home.HomeRepository
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
 import com.gildongmu.dduru.presentation.feature.home.mapper.toAiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.mapper.toTravelCompanionUiModel

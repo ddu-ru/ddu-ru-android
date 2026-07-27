@@ -1,7 +1,7 @@
-package com.gildongmu.dduru.data.mapper
+package com.gildongmu.dduru.data.mapper.home
 
-import com.gildongmu.dduru.data.remote.dto.response.HomeSameAgeTripResponse
-import com.gildongmu.dduru.domain.entity.HomeSameAgeTrip
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeSameAgeTripResponse
+import com.gildongmu.dduru.domain.entity.home.HomeSameAgeTrip
 
 fun HomeSameAgeTripResponse.toDomain(): HomeSameAgeTrip {
     return HomeSameAgeTrip(

@@ -1,12 +1,12 @@
 package com.gildongmu.dduru.presentation.feature.home.mapper
 
 import com.gildongmu.dduru.R
-import com.gildongmu.dduru.domain.entity.HomeMateRecommendation
-import com.gildongmu.dduru.domain.entity.HomePopularDestination
-import com.gildongmu.dduru.domain.entity.HomeSameAgeTrip
-import com.gildongmu.dduru.domain.entity.HomeSameDestinationTrip
-import com.gildongmu.dduru.domain.entity.HomeSuperHost
-import com.gildongmu.dduru.domain.entity.HomeUpcomingTrip
+import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendation
+import com.gildongmu.dduru.domain.entity.home.HomePopularDestination
+import com.gildongmu.dduru.domain.entity.home.HomeSameAgeTrip
+import com.gildongmu.dduru.domain.entity.home.HomeSameDestinationTrip
+import com.gildongmu.dduru.domain.entity.home.HomeSuperHost
+import com.gildongmu.dduru.domain.entity.home.HomeUpcomingTrip
 import com.gildongmu.dduru.presentation.feature.home.model.AiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.model.HomePopularDestinationUiModel
 import com.gildongmu.dduru.presentation.feature.home.model.HomeSuperHostCardUiModel

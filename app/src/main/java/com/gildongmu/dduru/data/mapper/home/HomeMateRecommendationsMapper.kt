@@ -1,13 +1,13 @@
-package com.gildongmu.dduru.data.mapper
+package com.gildongmu.dduru.data.mapper.home
 
-import com.gildongmu.dduru.data.remote.dto.response.HomeMateHostResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeMateRecommendationResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeMateRecommendationsResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeProfileImageInfoResponse
-import com.gildongmu.dduru.domain.entity.HomeMateHost
-import com.gildongmu.dduru.domain.entity.HomeMateRecommendation
-import com.gildongmu.dduru.domain.entity.HomeMateRecommendations
-import com.gildongmu.dduru.domain.entity.HomeProfileImageInfo
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeMateHostResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeMateRecommendationResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeMateRecommendationsResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeProfileImageInfoResponse
+import com.gildongmu.dduru.domain.entity.home.HomeMateHost
+import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendation
+import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendations
+import com.gildongmu.dduru.domain.entity.home.HomeProfileImageInfo
 
 fun HomeMateRecommendationsResponse.toDomain(): HomeMateRecommendations {
     return HomeMateRecommendations(

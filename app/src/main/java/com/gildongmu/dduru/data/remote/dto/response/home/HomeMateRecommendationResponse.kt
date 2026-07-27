@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.data.remote.dto.response
+package com.gildongmu.dduru.data.remote.dto.response.home
 
 import kotlinx.serialization.Serializable
 

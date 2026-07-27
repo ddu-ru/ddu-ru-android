@@ -1,13 +1,13 @@
-package com.gildongmu.dduru.data.remote.datasource
+package com.gildongmu.dduru.data.remote.datasource.home
 
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeInitialConfigResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeMateRecommendationsResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomePopularDestinationsResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeSameAgeTripResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeSameDestinationTripResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeSuperHostResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomeUpcomingTripResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeInitialConfigResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeMateRecommendationsResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomePopularDestinationsResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeSameAgeTripResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeSameDestinationTripResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeSuperHostResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomeUpcomingTripResponse
 
 interface HomeRemoteDataSource {
     suspend fun getHomeInitialConfig(): ApiResponse<HomeInitialConfigResponse>

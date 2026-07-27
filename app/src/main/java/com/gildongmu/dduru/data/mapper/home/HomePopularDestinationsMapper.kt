@@ -1,9 +1,9 @@
-package com.gildongmu.dduru.data.mapper
+package com.gildongmu.dduru.data.mapper.home
 
-import com.gildongmu.dduru.data.remote.dto.response.HomePopularDestinationResponse
-import com.gildongmu.dduru.data.remote.dto.response.HomePopularDestinationsResponse
-import com.gildongmu.dduru.domain.entity.HomePopularDestination
-import com.gildongmu.dduru.domain.entity.HomePopularDestinations
+import com.gildongmu.dduru.data.remote.dto.response.home.HomePopularDestinationResponse
+import com.gildongmu.dduru.data.remote.dto.response.home.HomePopularDestinationsResponse
+import com.gildongmu.dduru.domain.entity.home.HomePopularDestination
+import com.gildongmu.dduru.domain.entity.home.HomePopularDestinations
 
 fun HomePopularDestinationsResponse.toDomain(): HomePopularDestinations {
     return HomePopularDestinations(

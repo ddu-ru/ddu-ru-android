@@ -1,12 +1,12 @@
-package com.gildongmu.dduru.domain.repository
+package com.gildongmu.dduru.domain.repository.home
 
-import com.gildongmu.dduru.domain.entity.HomeInitialConfig
-import com.gildongmu.dduru.domain.entity.HomeMateRecommendations
-import com.gildongmu.dduru.domain.entity.HomePopularDestinations
-import com.gildongmu.dduru.domain.entity.HomeSameAgeTrip
-import com.gildongmu.dduru.domain.entity.HomeSameDestinationTrip
-import com.gildongmu.dduru.domain.entity.HomeSuperHost
-import com.gildongmu.dduru.domain.entity.HomeUpcomingTrip
+import com.gildongmu.dduru.domain.entity.home.HomeInitialConfig
+import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendations
+import com.gildongmu.dduru.domain.entity.home.HomePopularDestinations
+import com.gildongmu.dduru.domain.entity.home.HomeSameAgeTrip
+import com.gildongmu.dduru.domain.entity.home.HomeSameDestinationTrip
+import com.gildongmu.dduru.domain.entity.home.HomeSuperHost
+import com.gildongmu.dduru.domain.entity.home.HomeUpcomingTrip
 
 interface HomeRepository {
     suspend fun getHomeInitialConfig(): Result<HomeInitialConfig>

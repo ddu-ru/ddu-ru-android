@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.domain.entity
+package com.gildongmu.dduru.domain.entity.home
 
 data class HomeUpcomingTrip(
     val journeyId: Long,

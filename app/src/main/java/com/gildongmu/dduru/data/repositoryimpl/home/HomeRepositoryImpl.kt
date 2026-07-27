@@ -1,16 +1,16 @@
-package com.gildongmu.dduru.data.repositoryimpl
+package com.gildongmu.dduru.data.repositoryimpl.home
 
-import com.gildongmu.dduru.data.mapper.toDomain
-import com.gildongmu.dduru.data.remote.datasource.HomeRemoteDataSource
+import com.gildongmu.dduru.data.mapper.home.toDomain
+import com.gildongmu.dduru.data.remote.datasource.home.HomeRemoteDataSource
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
-import com.gildongmu.dduru.domain.entity.HomeInitialConfig
-import com.gildongmu.dduru.domain.entity.HomeMateRecommendations
-import com.gildongmu.dduru.domain.entity.HomePopularDestinations
-import com.gildongmu.dduru.domain.entity.HomeSameAgeTrip
-import com.gildongmu.dduru.domain.entity.HomeSameDestinationTrip
-import com.gildongmu.dduru.domain.entity.HomeSuperHost
-import com.gildongmu.dduru.domain.entity.HomeUpcomingTrip
-import com.gildongmu.dduru.domain.repository.HomeRepository
+import com.gildongmu.dduru.domain.entity.home.HomeInitialConfig
+import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendations
+import com.gildongmu.dduru.domain.entity.home.HomePopularDestinations
+import com.gildongmu.dduru.domain.entity.home.HomeSameAgeTrip
+import com.gildongmu.dduru.domain.entity.home.HomeSameDestinationTrip
+import com.gildongmu.dduru.domain.entity.home.HomeSuperHost
+import com.gildongmu.dduru.domain.entity.home.HomeUpcomingTrip
+import com.gildongmu.dduru.domain.repository.home.HomeRepository
 import java.io.IOException
 import javax.inject.Inject
 import retrofit2.HttpException
