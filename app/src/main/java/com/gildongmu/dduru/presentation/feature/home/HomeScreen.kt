@@ -184,6 +184,7 @@ private fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
+                contentPadding = PaddingValues(bottom = 110.dp),
                 verticalArrangement = Arrangement.spacedBy(40.dp)
             ) {
                 item {

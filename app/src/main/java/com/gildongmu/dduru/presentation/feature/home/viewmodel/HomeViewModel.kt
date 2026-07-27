@@ -159,6 +159,18 @@ class HomeViewModel @Inject constructor(
                 nextState = nextState.copy(sameDestinationCompanions = emptyList())
             }
 
+            if (initialConfig.isSectionEnabled(SECTION_SAME_AGE_TRIPS)) {
+                homeRepository.getHomeSameAgeTrips()
+                    .onSuccess { sameAgeTrips ->
+                        nextState = nextState.copy(
+                            sameAgeCompanions = sameAgeTrips
+                                .map { it.toTravelCompanionUiModel() }
+                        )
+                    }
+            } else {
+                nextState = nextState.copy(sameAgeCompanions = emptyList())
+            }
+
             _uiState.value = UiState.Success(nextState)
         }
     }
@@ -212,5 +224,6 @@ class HomeViewModel @Inject constructor(
         const val SECTION_MATE_RECOMMENDATIONS = "MATE_RECOMMENDATIONS"
         const val SECTION_POPULAR_DESTINATIONS = "POPULAR_DESTINATIONS"
         const val SECTION_SAME_DESTINATION_TRIPS = "SAME_DESTINATION_TRIPS"
+        const val SECTION_SAME_AGE_TRIPS = "SAME_AGE_TRIPS"
     }
 }

@@ -3,6 +3,7 @@ package com.gildongmu.dduru.presentation.feature.home.mapper
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.domain.entity.HomeMateRecommendation
 import com.gildongmu.dduru.domain.entity.HomePopularDestination
+import com.gildongmu.dduru.domain.entity.HomeSameAgeTrip
 import com.gildongmu.dduru.domain.entity.HomeSameDestinationTrip
 import com.gildongmu.dduru.presentation.feature.home.model.AiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.model.HomePopularDestinationUiModel
@@ -47,7 +48,21 @@ fun HomeSameDestinationTrip.toTravelCompanionUiModel(): TravelCompanionUiModel {
         dateText = formatDateRange(startDate, endDate),
         currentMemberCount = currentMemberCount,
         totalMemberCount = maxMemberCount,
-        imageRes = R.drawable.fukuoka
+        imageRes = R.drawable.fukuoka,
+        imageUrl = thumbnailUrl
+    )
+}
+
+fun HomeSameAgeTrip.toTravelCompanionUiModel(): TravelCompanionUiModel {
+    return TravelCompanionUiModel(
+        id = postId,
+        title = title,
+        location = location,
+        dateText = startDate.toDateLabel(includeYear = true),
+        currentMemberCount = currentMemberCount,
+        totalMemberCount = maxMemberCount,
+        imageRes = R.drawable.fukuoka,
+        imageUrl = thumbnailUrl
     )
 }
 
