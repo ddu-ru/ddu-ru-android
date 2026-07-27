@@ -4,6 +4,7 @@ import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.dto.response.HomeInitialConfigResponse
 import com.gildongmu.dduru.data.remote.dto.response.HomeMateRecommendationsResponse
 import com.gildongmu.dduru.data.remote.dto.response.HomePopularDestinationsResponse
+import com.gildongmu.dduru.data.remote.dto.response.HomeSameAgeTripResponse
 import retrofit2.http.GET
 
 interface HomeService {
@@ -15,4 +16,7 @@ interface HomeService {
 
     @GET("api/v1/home/popular-destinations")
     suspend fun getHomePopularDestinations(): ApiResponse<HomePopularDestinationsResponse>
+
+    @GET("api/v1/home/same-age-trips")
+    suspend fun getHomeSameAgeTrips(): ApiResponse<List<HomeSameAgeTripResponse>>
 }
