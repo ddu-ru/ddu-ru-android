@@ -7,6 +7,8 @@ import com.gildongmu.dduru.domain.entity.HomeMateRecommendations
 import com.gildongmu.dduru.domain.entity.HomePopularDestinations
 import com.gildongmu.dduru.domain.entity.HomeSameAgeTrip
 import com.gildongmu.dduru.domain.entity.HomeSameDestinationTrip
+import com.gildongmu.dduru.domain.entity.HomeSuperHost
+import com.gildongmu.dduru.domain.entity.HomeUpcomingTrip
 import com.gildongmu.dduru.domain.repository.HomeRepository
 import java.io.IOException
 import javax.inject.Inject
@@ -71,6 +73,30 @@ class HomeRepositoryImpl @Inject constructor(
                 response.data.map { it.toDomain() }
             } else {
                 throw IllegalStateException("홈 같은 여행지 여행 조회 실패: status=${response.status}")
+            }
+        }
+    }
+
+    override suspend fun getHomeSuperHosts(): Result<List<HomeSuperHost>> {
+        return runCatchingApi {
+            val response = homeRemoteDataSource.getHomeSuperHosts()
+
+            if (response.status.isHomeSuccessStatus() && response.data != null) {
+                response.data.map { it.toDomain() }
+            } else {
+                throw IllegalStateException("홈 슈퍼호스트 조회 실패: status=${response.status}")
+            }
+        }
+    }
+
+    override suspend fun getHomeUpcomingTrip(): Result<HomeUpcomingTrip> {
+        return runCatchingApi {
+            val response = homeRemoteDataSource.getHomeUpcomingTrip()
+
+            if (response.status.isHomeSuccessStatus() && response.data != null) {
+                response.data.toDomain()
+            } else {
+                throw IllegalStateException("홈 다가오는 여행 조회 실패: status=${response.status}")
             }
         }
     }

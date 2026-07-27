@@ -6,6 +6,8 @@ import com.gildongmu.dduru.data.remote.dto.response.HomeMateRecommendationsRespo
 import com.gildongmu.dduru.data.remote.dto.response.HomePopularDestinationsResponse
 import com.gildongmu.dduru.data.remote.dto.response.HomeSameAgeTripResponse
 import com.gildongmu.dduru.data.remote.dto.response.HomeSameDestinationTripResponse
+import com.gildongmu.dduru.data.remote.dto.response.HomeSuperHostResponse
+import com.gildongmu.dduru.data.remote.dto.response.HomeUpcomingTripResponse
 
 interface HomeRemoteDataSource {
     suspend fun getHomeInitialConfig(): ApiResponse<HomeInitialConfigResponse>
@@ -13,4 +15,6 @@ interface HomeRemoteDataSource {
     suspend fun getHomePopularDestinations(): ApiResponse<HomePopularDestinationsResponse>
     suspend fun getHomeSameAgeTrips(): ApiResponse<List<HomeSameAgeTripResponse>>
     suspend fun getHomeSameDestinationTrips(): ApiResponse<List<HomeSameDestinationTripResponse>>
+    suspend fun getHomeSuperHosts(): ApiResponse<List<HomeSuperHostResponse>>
+    suspend fun getHomeUpcomingTrip(): ApiResponse<HomeUpcomingTripResponse>
 }

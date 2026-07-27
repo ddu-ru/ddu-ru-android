@@ -190,6 +190,7 @@ private fun HomeScreen(
                 item {
                     UpcomingTripCard(
                         title = uiState.upcomingTrip.title,
+                        dateText = uiState.upcomingTrip.dateText,
                         currentMember = uiState.upcomingTrip.currentMember,
                         maxMember = uiState.upcomingTrip.maxMember,
                         dDay = uiState.upcomingTrip.dDay,

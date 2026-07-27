@@ -9,6 +9,7 @@ import com.gildongmu.dduru.domain.repository.HomeRepository
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
 import com.gildongmu.dduru.presentation.feature.home.mapper.toAiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.mapper.toTravelCompanionUiModel
+import com.gildongmu.dduru.presentation.feature.home.mapper.toUiState
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUiModel
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUpdatedText
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
@@ -124,6 +125,18 @@ class HomeViewModel @Inject constructor(
 
             var nextState = HomeUiState.fake
 
+            if (initialConfig.isSectionEnabled(SECTION_UPCOMING_TRIP)) {
+                homeRepository.getHomeUpcomingTrip()
+                    .onSuccess { upcomingTrip ->
+                        nextState = nextState.copy(upcomingTrip = upcomingTrip.toUiState())
+                    }
+                    .onFailure {
+                        nextState = nextState.copy(upcomingTrip = HomeUiState().upcomingTrip)
+                    }
+            } else {
+                nextState = nextState.copy(upcomingTrip = HomeUiState().upcomingTrip)
+            }
+
             if (initialConfig.isSectionEnabled(SECTION_MATE_RECOMMENDATIONS)) {
                 homeRepository.getHomeMateRecommendations()
                     .onSuccess { mateRecommendations ->
@@ -145,6 +158,20 @@ class HomeViewModel @Inject constructor(
                     }
             } else {
                 nextState = nextState.copy(popularDestinations = persistentListOf())
+            }
+
+            if (initialConfig.isSectionEnabled(SECTION_SUPER_HOSTS)) {
+                homeRepository.getHomeSuperHosts()
+                    .onSuccess { superHosts ->
+                        nextState = nextState.copy(
+                            superHosts = superHosts.map { it.toUiModel() }
+                        )
+                    }
+                    .onFailure {
+                        nextState = nextState.copy(superHosts = emptyList())
+                    }
+            } else {
+                nextState = nextState.copy(superHosts = emptyList())
             }
 
             if (initialConfig.isSectionEnabled(SECTION_SAME_DESTINATION_TRIPS)) {
@@ -221,8 +248,10 @@ class HomeViewModel @Inject constructor(
 
     private companion object {
         const val DAILY_AI_MATCHING_LIMIT = 3
+        const val SECTION_UPCOMING_TRIP = "UPCOMING_TRIP"
         const val SECTION_MATE_RECOMMENDATIONS = "MATE_RECOMMENDATIONS"
         const val SECTION_POPULAR_DESTINATIONS = "POPULAR_DESTINATIONS"
+        const val SECTION_SUPER_HOSTS = "SUPER_HOSTS"
         const val SECTION_SAME_DESTINATION_TRIPS = "SAME_DESTINATION_TRIPS"
         const val SECTION_SAME_AGE_TRIPS = "SAME_AGE_TRIPS"
     }
