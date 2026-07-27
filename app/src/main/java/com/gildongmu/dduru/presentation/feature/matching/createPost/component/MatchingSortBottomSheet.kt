@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.matching.component
+package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -30,7 +30,7 @@ import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import kotlinx.coroutines.launch
 
-val MatchingSortOptions = listOf("최신순", "조회순", "좋아요순")
+private val MatchingSortOptions = listOf("최신순", "조회순", "좋아요순")
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
