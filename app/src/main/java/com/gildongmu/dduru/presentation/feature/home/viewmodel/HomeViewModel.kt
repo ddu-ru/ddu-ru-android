@@ -8,6 +8,7 @@ import com.gildongmu.dduru.domain.entity.HomeMateRecommendations
 import com.gildongmu.dduru.domain.repository.HomeRepository
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
 import com.gildongmu.dduru.presentation.feature.home.mapper.toAiMatchingCardData
+import com.gildongmu.dduru.presentation.feature.home.mapper.toTravelCompanionUiModel
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUiModel
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUpdatedText
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
@@ -146,6 +147,18 @@ class HomeViewModel @Inject constructor(
                 nextState = nextState.copy(popularDestinations = persistentListOf())
             }
 
+            if (initialConfig.isSectionEnabled(SECTION_SAME_DESTINATION_TRIPS)) {
+                homeRepository.getHomeSameDestinationTrips()
+                    .onSuccess { sameDestinationTrips ->
+                        nextState = nextState.copy(
+                            sameDestinationCompanions = sameDestinationTrips
+                                .map { it.toTravelCompanionUiModel() }
+                        )
+                    }
+            } else {
+                nextState = nextState.copy(sameDestinationCompanions = emptyList())
+            }
+
             _uiState.value = UiState.Success(nextState)
         }
     }
@@ -198,5 +211,6 @@ class HomeViewModel @Inject constructor(
         const val DAILY_AI_MATCHING_LIMIT = 3
         const val SECTION_MATE_RECOMMENDATIONS = "MATE_RECOMMENDATIONS"
         const val SECTION_POPULAR_DESTINATIONS = "POPULAR_DESTINATIONS"
+        const val SECTION_SAME_DESTINATION_TRIPS = "SAME_DESTINATION_TRIPS"
     }
 }

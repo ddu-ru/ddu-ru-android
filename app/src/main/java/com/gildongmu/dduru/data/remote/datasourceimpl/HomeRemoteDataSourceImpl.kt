@@ -6,6 +6,7 @@ import com.gildongmu.dduru.data.remote.dto.response.HomeInitialConfigResponse
 import com.gildongmu.dduru.data.remote.dto.response.HomeMateRecommendationsResponse
 import com.gildongmu.dduru.data.remote.dto.response.HomePopularDestinationsResponse
 import com.gildongmu.dduru.data.remote.dto.response.HomeSameAgeTripResponse
+import com.gildongmu.dduru.data.remote.dto.response.HomeSameDestinationTripResponse
 import com.gildongmu.dduru.data.remote.service.HomeService
 import javax.inject.Inject
 
@@ -26,5 +27,9 @@ class HomeRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getHomeSameAgeTrips(): ApiResponse<List<HomeSameAgeTripResponse>> {
         return homeService.getHomeSameAgeTrips()
+    }
+
+    override suspend fun getHomeSameDestinationTrips(): ApiResponse<List<HomeSameDestinationTripResponse>> {
+        return homeService.getHomeSameDestinationTrips()
     }
 }

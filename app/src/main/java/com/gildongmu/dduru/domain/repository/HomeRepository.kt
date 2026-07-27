@@ -4,10 +4,12 @@ import com.gildongmu.dduru.domain.entity.HomeInitialConfig
 import com.gildongmu.dduru.domain.entity.HomeMateRecommendations
 import com.gildongmu.dduru.domain.entity.HomePopularDestinations
 import com.gildongmu.dduru.domain.entity.HomeSameAgeTrip
+import com.gildongmu.dduru.domain.entity.HomeSameDestinationTrip
 
 interface HomeRepository {
     suspend fun getHomeInitialConfig(): Result<HomeInitialConfig>
     suspend fun getHomeMateRecommendations(): Result<HomeMateRecommendations>
     suspend fun getHomePopularDestinations(): Result<HomePopularDestinations>
     suspend fun getHomeSameAgeTrips(): Result<List<HomeSameAgeTrip>>
+    suspend fun getHomeSameDestinationTrips(): Result<List<HomeSameDestinationTrip>>
 }

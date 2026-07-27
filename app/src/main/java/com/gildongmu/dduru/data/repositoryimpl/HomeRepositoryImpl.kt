@@ -6,6 +6,7 @@ import com.gildongmu.dduru.domain.entity.HomeInitialConfig
 import com.gildongmu.dduru.domain.entity.HomeMateRecommendations
 import com.gildongmu.dduru.domain.entity.HomePopularDestinations
 import com.gildongmu.dduru.domain.entity.HomeSameAgeTrip
+import com.gildongmu.dduru.domain.entity.HomeSameDestinationTrip
 import com.gildongmu.dduru.domain.repository.HomeRepository
 import java.io.IOException
 import javax.inject.Inject
@@ -58,6 +59,18 @@ class HomeRepositoryImpl @Inject constructor(
                 response.data.map { it.toDomain() }
             } else {
                 throw IllegalStateException("홈 동갑 여행 조회 실패: status=${response.status}")
+            }
+        }
+    }
+
+    override suspend fun getHomeSameDestinationTrips(): Result<List<HomeSameDestinationTrip>> {
+        return runCatchingApi {
+            val response = homeRemoteDataSource.getHomeSameDestinationTrips()
+
+            if (response.status.isHomeSuccessStatus() && response.data != null) {
+                response.data.map { it.toDomain() }
+            } else {
+                throw IllegalStateException("홈 같은 여행지 여행 조회 실패: status=${response.status}")
             }
         }
     }
