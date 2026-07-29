@@ -24,6 +24,7 @@ import java.time.LocalDateTime
 import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
+import kotlinx.collections.immutable.toImmutableList
 
 class ChatRoomRepositoryImpl @Inject constructor(
     private val chatRoomService: ChatRoomService
@@ -57,7 +58,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
             Result.success(
                 ChatMessagesResultEntity(
                     roomInfo = data.roomInfo.toEntity(),
-                    messages = data.messages.map { it.toEntity() },
+                    messages = data.messages.map { it.toEntity() }.toImmutableList(),
                     hasNext = data.page.hasNext,
                     nextCursor = data.page.nextCursor
                 )
