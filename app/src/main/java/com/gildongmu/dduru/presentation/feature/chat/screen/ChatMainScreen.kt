@@ -146,7 +146,7 @@ fun ChatMainScreen(
                             totalItems > 0 && lastVisibleIndex >= totalItems - 3
                         }
                     }
-                    LaunchedEffect(shouldLoadMore) {
+                    LaunchedEffect(shouldLoadMore, chatRooms.size) {
                         if (shouldLoadMore) onLoadMore()
                     }
 
