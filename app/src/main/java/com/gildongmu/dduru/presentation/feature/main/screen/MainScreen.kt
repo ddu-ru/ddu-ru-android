@@ -3,9 +3,12 @@ package com.gildongmu.dduru.presentation.feature.main.screen
 import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.material3.Button
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -31,6 +34,7 @@ import dev.chrisbanes.haze.haze
 fun MainScreen(
     onNavigateToChatRoom: (Long) -> Unit
 ) {
+    var showMatchingCreatePost by remember { mutableStateOf(false) }
     val bottomNavItems = remember {
         listOf(
             BottomNavItem(BottomNavRoute.Home, "홈", R.drawable.ic_bottom_nav_main),
@@ -75,7 +79,7 @@ fun MainScreen(
                     is BottomNavRoute.Board -> NavEntry(route) { Text("게시판") }
                     is BottomNavRoute.Chat -> NavEntry(route) {
                         ChatMainRoute(
-                            onChatRoomClick = onNavigateToChatRoom
+                            onNavigateToChatRoom = onNavigateToChatRoom
                         )
                     }
                     is BottomNavRoute.MyPage -> NavEntry(route) { Text("마이") }

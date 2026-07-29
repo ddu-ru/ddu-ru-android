@@ -17,7 +17,7 @@ import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatMainViewModel
 
 @Composable
 fun ChatMainRoute(
-    onChatRoomClick: (Long) -> Unit,
+    onNavigateToChatRoom: (Long) -> Unit,
     viewModel: ChatMainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -25,7 +25,7 @@ fun ChatMainRoute(
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
-                is ChatMainSideEffect.NavigateToChatRoom -> onChatRoomClick(effect.chatRoomId)
+                is ChatMainSideEffect.NavigateToChatRoom -> onNavigateToChatRoom(effect.chatRoomId)
             }
         }
     }
