@@ -54,6 +54,7 @@ import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDe
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostRecruitStatus
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostStatus
 import dev.chrisbanes.haze.HazeState
+import kotlinx.collections.immutable.toPersistentList
 
 @Composable
 fun MatchingDetailScreen(
@@ -123,8 +124,6 @@ fun MatchingDetailScreen(
                                 selectedStatus = selectedStatus,
                                 onStatusSelected = { selectedStatus = it }
                             )
-
-                            Spacer(modifier = Modifier.weight(24f))
                         }
 
                         MatchingDetailSummarySection(uiState = uiState)
@@ -156,15 +155,10 @@ fun MatchingDetailScreen(
                                 thickness = 1.dp,
                                 color = DduruTheme.colors.gray200
                             )
-                            Spacer(modifier = Modifier.weight(24f))
 
                             MatchingDetailInfoGrid(uiState = uiState)
 
-                            Spacer(modifier = Modifier.weight(24f))
-
                             MatchingDetailTagSection(tags = uiState.tags)
-
-                            Spacer(modifier = Modifier.weight(24f))
 
                             MatchingHostInfoComponent(
                                 username = uiState.author.nickname,
@@ -174,8 +168,6 @@ fun MatchingDetailScreen(
                                 onProfileClick = onProfileClick,
                                 onContactClick = onContactClick
                             )
-
-                            Spacer(modifier = Modifier.weight(24f))
 
                             MatchingDetailParticipantComponent(
                                 participants = uiState.participants.map { participant ->
@@ -187,8 +179,10 @@ fun MatchingDetailScreen(
                                         profileImage = participant.profileImage.url,
                                         isHost = participant.isHost
                                     )
-                                },
-                                recruitCapacity = uiState.recruitCapacity
+                                }.toPersistentList(),
+                                recruitCount = uiState.recruitCount,
+                                recruitCapacity = uiState.recruitCapacity,
+                                remainingSlots = uiState.remainingSlots
                             )
                         } else {
                             Spacer(modifier = Modifier.height(16.dp))
