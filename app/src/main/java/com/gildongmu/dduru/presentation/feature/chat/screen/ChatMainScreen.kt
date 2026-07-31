@@ -11,11 +11,14 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.material3.VerticalDivider
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -47,6 +50,7 @@ fun ChatMainScreen(
     onChatRoomClick: (String) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
+    onLoadMore: () -> Unit = {},
     modifier: Modifier = Modifier,
     requestContent: @Composable () -> Unit,
     applicationContent: @Composable () -> Unit
@@ -134,6 +138,18 @@ fun ChatMainScreen(
         ) {
             when (selectedTab) {
                 ChatTab.ALL -> {
+                    val listState = rememberLazyListState()
+                    val shouldLoadMore by remember {
+                        derivedStateOf {
+                            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                            val totalItems = listState.layoutInfo.totalItemsCount
+                            totalItems > 0 && lastVisibleIndex >= totalItems - 3
+                        }
+                    }
+                    LaunchedEffect(shouldLoadMore, chatRooms.size) {
+                        if (shouldLoadMore) onLoadMore()
+                    }
+
                     ChatSortDropdown(
                         selectedOption = selectedSort,
                         onOptionSelected = { selectedSort = it },
@@ -143,7 +159,10 @@ fun ChatMainScreen(
                             .padding(horizontal = 16.dp)
                             .padding(bottom = 4.dp)
                     )
-                    LazyColumn(modifier = Modifier.fillMaxSize()) {
+                    LazyColumn(
+                        state = listState,
+                        modifier = Modifier.fillMaxSize()
+                    ) {
                         items(chatRooms) { room ->
                             ChatRoomCard(
                                 displayName = room.displayName,

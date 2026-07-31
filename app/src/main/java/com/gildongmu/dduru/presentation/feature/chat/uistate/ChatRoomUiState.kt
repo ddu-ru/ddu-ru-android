@@ -26,5 +26,7 @@ data class ChatRoomUiState(
     val postTitle: String = "",
     val participantCount: Int = 0,
     val items: List<ChatListItem> = emptyList(),
-    val inputText: String = ""
+    val inputText: String = "",
+    val isLoading: Boolean = false,
+    val errorMessage: String? = null
 )
