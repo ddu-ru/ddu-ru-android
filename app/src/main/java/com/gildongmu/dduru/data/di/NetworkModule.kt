@@ -6,6 +6,7 @@ import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
 import com.gildongmu.dduru.data.remote.service.AuthService
 import com.gildongmu.dduru.data.remote.service.ChatRoomService
 import com.gildongmu.dduru.data.remote.service.SurveyService
+import com.gildongmu.dduru.data.remote.service.home.HomeService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -93,5 +94,11 @@ object NetworkModule {
     @Singleton
     fun provideChatRoomService(retrofit: Retrofit): ChatRoomService {
         return retrofit.create(ChatRoomService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideHomeService(retrofit: Retrofit): HomeService {
+        return retrofit.create(HomeService::class.java)
     }
 }
