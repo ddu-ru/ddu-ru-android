@@ -76,13 +76,9 @@ fun HomeRoute(
         UiState.Empty -> Unit
 
         UiState.Loading -> {
-            DduruLoadingScreen()
         }
 
         UiState.Failure -> {
-            DduruFailureScreen(
-                message = "홈 정보를 불러오지 못했어요."
-            )
         }
 
         is UiState.Success -> {
@@ -152,11 +148,13 @@ private fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
+                contentPadding = PaddingValues(bottom = 110.dp),
                 verticalArrangement = Arrangement.spacedBy(40.dp)
             ) {
                 item {
                     UpcomingTripCard(
                         title = uiState.upcomingTrip.title,
+                        dateText = uiState.upcomingTrip.dateText,
                         currentMember = uiState.upcomingTrip.currentMember,
                         maxMember = uiState.upcomingTrip.maxMember,
                         dDay = uiState.upcomingTrip.dDay,

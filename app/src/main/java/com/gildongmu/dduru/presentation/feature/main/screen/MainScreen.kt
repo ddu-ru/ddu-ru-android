@@ -19,8 +19,8 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.presentation.feature.chat.screen.ChatMainRoute
 import com.gildongmu.dduru.presentation.feature.home.HomeRoute
-import com.gildongmu.dduru.presentation.feature.matching.MatchingRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar
 import com.gildongmu.dduru.presentation.navigation.BottomNavItem
@@ -29,7 +29,9 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onNavigateToChatRoom: (Long) -> Unit
+) {
     var showMatchingCreatePost by remember { mutableStateOf(false) }
     val bottomNavItems = remember {
         listOf(
@@ -70,22 +72,14 @@ fun MainScreen() {
             },
             entryProvider = { route ->
                 when (route) {
-                    is BottomNavRoute.Home -> NavEntry(route) {
-                        HomeRoute(
-                            navigateToCreateTravelRoom = {
-                                showMatchingCreatePost = true
-                            }
-                        )
-                    }
-                    is BottomNavRoute.Matching -> NavEntry(route) {
-                        MatchingRoute(
-                            navigateToCreatePost = {
-                                showMatchingCreatePost = true
-                            }
-                        )
-                    }
+                    is BottomNavRoute.Home -> NavEntry(route) { HomeRoute() }
+                    is BottomNavRoute.Matching -> NavEntry(route) { Text("매칭") }
                     is BottomNavRoute.Board -> NavEntry(route) { Text("게시판") }
-                    is BottomNavRoute.Chat -> NavEntry(route) { Text("채팅") }
+                    is BottomNavRoute.Chat -> NavEntry(route) {
+                        ChatMainRoute(
+                            onNavigateToChatRoom = onNavigateToChatRoom
+                        )
+                    }
                     is BottomNavRoute.MyPage -> NavEntry(route) { Text("마이") }
                     else -> NavEntry(route) { Text("잘못된 접근입니다.") }
                 }
@@ -112,5 +106,5 @@ fun MainScreen() {
 @Preview
 @Composable
 private fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(onNavigateToChatRoom = {})
 }

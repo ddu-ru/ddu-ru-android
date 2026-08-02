@@ -3,10 +3,20 @@ package com.gildongmu.dduru.presentation.feature.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.domain.entity.home.HomeInitialConfig
+import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendations
+import com.gildongmu.dduru.domain.repository.home.HomeRepository
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
+import com.gildongmu.dduru.presentation.feature.home.mapper.toAiMatchingCardData
+import com.gildongmu.dduru.presentation.feature.home.mapper.toTravelCompanionUiModel
+import com.gildongmu.dduru.presentation.feature.home.mapper.toUiModel
+import com.gildongmu.dduru.presentation.feature.home.mapper.toUiState
+import com.gildongmu.dduru.presentation.feature.home.mapper.toUpdatedText
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -16,12 +26,18 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class HomeViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Success(HomeUiState.fake))
+class HomeViewModel @Inject constructor(
+    private val homeRepository: HomeRepository
+) : ViewModel() {
+    private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<HomeSideEffect>()
     val sideEffect: SharedFlow<HomeSideEffect> = _sideEffect.asSharedFlow()
+
+    init {
+        loadHome()
+    }
 
     fun onNotificationClick() {
         emitSideEffect(HomeSideEffect.NavigateToNotification)
@@ -36,8 +52,18 @@ class HomeViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onRefreshPopularDestinationClick() {
-        updateHomeUiState {
-            copy(popularDestinationUpdatedText = "방금 전")
+        viewModelScope.launch {
+            homeRepository.getHomePopularDestinations()
+                .onSuccess { popularDestinations ->
+                    updateHomeUiState {
+                        copy(
+                            popularDestinations = popularDestinations.items
+                                .map { it.toUiModel() }
+                                .toImmutableList(),
+                            popularDestinationUpdatedText = popularDestinations.updatedAt.toUpdatedText()
+                        )
+                    }
+                }
         }
     }
 
@@ -89,6 +115,93 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    private fun loadHome() {
+        viewModelScope.launch {
+            val initialConfig = homeRepository.getHomeInitialConfig()
+                .getOrElse {
+                    _uiState.value = UiState.Failure
+                    return@launch
+                }
+
+            var nextState = HomeUiState.fake
+
+            if (initialConfig.isSectionEnabled(SECTION_UPCOMING_TRIP)) {
+                homeRepository.getHomeUpcomingTrip()
+                    .onSuccess { upcomingTrip ->
+                        nextState = nextState.copy(upcomingTrip = upcomingTrip.toUiState())
+                    }
+                    .onFailure {
+                        nextState = nextState.copy(upcomingTrip = HomeUiState().upcomingTrip)
+                    }
+            } else {
+                nextState = nextState.copy(upcomingTrip = HomeUiState().upcomingTrip)
+            }
+
+            if (initialConfig.isSectionEnabled(SECTION_MATE_RECOMMENDATIONS)) {
+                homeRepository.getHomeMateRecommendations()
+                    .onSuccess { mateRecommendations ->
+                        nextState = nextState.applyMateRecommendations(mateRecommendations)
+                    }
+            } else {
+                nextState = nextState.copy(aiMatchingCard = null)
+            }
+
+            if (initialConfig.isSectionEnabled(SECTION_POPULAR_DESTINATIONS)) {
+                homeRepository.getHomePopularDestinations()
+                    .onSuccess { popularDestinations ->
+                        nextState = nextState.copy(
+                            popularDestinations = popularDestinations.items
+                                .map { it.toUiModel() }
+                                .toImmutableList(),
+                            popularDestinationUpdatedText = popularDestinations.updatedAt.toUpdatedText()
+                        )
+                    }
+            } else {
+                nextState = nextState.copy(popularDestinations = persistentListOf())
+            }
+
+            if (initialConfig.isSectionEnabled(SECTION_SUPER_HOSTS)) {
+                homeRepository.getHomeSuperHosts()
+                    .onSuccess { superHosts ->
+                        nextState = nextState.copy(
+                            superHosts = superHosts.map { it.toUiModel() }
+                        )
+                    }
+                    .onFailure {
+                        nextState = nextState.copy(superHosts = emptyList())
+                    }
+            } else {
+                nextState = nextState.copy(superHosts = emptyList())
+            }
+
+            if (initialConfig.isSectionEnabled(SECTION_SAME_DESTINATION_TRIPS)) {
+                homeRepository.getHomeSameDestinationTrips()
+                    .onSuccess { sameDestinationTrips ->
+                        nextState = nextState.copy(
+                            sameDestinationCompanions = sameDestinationTrips
+                                .map { it.toTravelCompanionUiModel() }
+                        )
+                    }
+            } else {
+                nextState = nextState.copy(sameDestinationCompanions = emptyList())
+            }
+
+            if (initialConfig.isSectionEnabled(SECTION_SAME_AGE_TRIPS)) {
+                homeRepository.getHomeSameAgeTrips()
+                    .onSuccess { sameAgeTrips ->
+                        nextState = nextState.copy(
+                            sameAgeCompanions = sameAgeTrips
+                                .map { it.toTravelCompanionUiModel() }
+                        )
+                    }
+            } else {
+                nextState = nextState.copy(sameAgeCompanions = emptyList())
+            }
+
+            _uiState.value = UiState.Success(nextState)
+        }
+    }
+
     private fun updateAiMatchingUsedCount() {
         updateHomeUiState {
             val nextUsedCount = aiMatchingUsedCount + 1
@@ -110,7 +223,36 @@ class HomeViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    private fun HomeInitialConfig.isSectionEnabled(key: String): Boolean {
+        return sections.firstOrNull { it.key == key }?.enabled ?: true
+    }
+
+    private fun HomeUiState.applyMateRecommendations(
+        mateRecommendations: HomeMateRecommendations
+    ): HomeUiState {
+        val usedCount = if (mateRecommendations.isAvailable) {
+            DAILY_AI_MATCHING_LIMIT - mateRecommendations.remainingFreeCount
+        } else {
+            DAILY_AI_MATCHING_LIMIT
+        }
+
+        return copy(
+            aiMatchingCard = mateRecommendations
+                .recommendations
+                .firstOrNull()
+                ?.toAiMatchingCardData()
+                .takeIf { mateRecommendations.isAvailable },
+            aiMatchingUsedCount = usedCount.coerceIn(0, DAILY_AI_MATCHING_LIMIT)
+        )
+    }
+
     private companion object {
         const val DAILY_AI_MATCHING_LIMIT = 3
+        const val SECTION_UPCOMING_TRIP = "UPCOMING_TRIP"
+        const val SECTION_MATE_RECOMMENDATIONS = "MATE_RECOMMENDATIONS"
+        const val SECTION_POPULAR_DESTINATIONS = "POPULAR_DESTINATIONS"
+        const val SECTION_SUPER_HOSTS = "SUPER_HOSTS"
+        const val SECTION_SAME_DESTINATION_TRIPS = "SAME_DESTINATION_TRIPS"
+        const val SECTION_SAME_AGE_TRIPS = "SAME_AGE_TRIPS"
     }
 }

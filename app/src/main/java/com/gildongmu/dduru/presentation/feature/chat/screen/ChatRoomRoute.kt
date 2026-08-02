@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
@@ -18,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,6 +29,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
@@ -36,13 +40,48 @@ import com.gildongmu.dduru.presentation.feature.chat.component.ChatDateDivider
 import com.gildongmu.dduru.presentation.feature.chat.component.GroupMessageBubble
 import com.gildongmu.dduru.presentation.feature.chat.component.MessageBubble
 import com.gildongmu.dduru.presentation.feature.chat.component.MessageInput
+import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRoomSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatListItem
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatMessageUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.MessagePosition
+import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatRoomViewModel
 
 @Composable
-fun ChatRoomScreen(
+fun ChatRoomRoute(
+    chatRoomId: Long,
+    onBackClick: () -> Unit,
+    viewModel: ChatRoomViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(chatRoomId) {
+        viewModel.loadMessages(chatRoomId)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is ChatRoomSideEffect.NavigateBack -> onBackClick()
+                is ChatRoomSideEffect.NavigateToMembers -> Unit
+                is ChatRoomSideEffect.NavigateToMenu -> Unit
+            }
+        }
+    }
+
+    ChatRoomScreen(
+        uiState = uiState,
+        onBackClick = viewModel::onBackClick,
+        onMembersClick = viewModel::onMembersClick,
+        onMenuClick = viewModel::onMenuClick,
+        onPlusClick = viewModel::onPlusClick,
+        onSendClick = viewModel::onSendClick,
+        onInputChange = viewModel::onInputChange
+    )
+}
+
+@Composable
+private fun ChatRoomScreen(
     uiState: ChatRoomUiState = ChatRoomUiState(),
     onBackClick: () -> Unit,
     onMembersClick: () -> Unit,
@@ -87,7 +126,8 @@ fun ChatRoomScreen(
             onPlusClick = onPlusClick,
             onSendClick = {
                 if (uiState.inputText.isNotBlank()) onSendClick(uiState.inputText)
-            }
+            },
+            modifier = Modifier.navigationBarsPadding()
         )
     }
 }

@@ -83,7 +83,9 @@ data class HomeUiState(
 }
 
 data class UpcomingTripUiState(
+    val journeyId: Long = 0L,
     val title: String = "",
+    val dateText: String = "",
     val currentMember: Int = 0,
     val maxMember: Int = 0,
     val dDay: Int = 0,
