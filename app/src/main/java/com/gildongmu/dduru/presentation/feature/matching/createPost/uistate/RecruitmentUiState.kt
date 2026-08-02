@@ -1,21 +1,11 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.uistate
 
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
+
 object RecruitmentCountNum {
     const val MIN = 2
     const val MAX = 10
     const val DEFAULT = 2
-}
-
-enum class CompanionType {
-    FULL,
-    PARTIAL,
-    MEAL;
-
-    val code: String
-        get() = when (this) {
-            FULL -> "FULL"
-            PARTIAL, MEAL -> "PARTIAL"
-        }
 }
 
 data class RecruitmentCountUiState(
@@ -42,14 +32,14 @@ data class RecruitmentCountUiState(
 
 data class RecruitmentScreenUiState(
     val recruitmentCount: RecruitmentCountUiState = RecruitmentCountUiState(),
-    val selectedCompanionType: CompanionType? = null,
+    val selectedCompanionType: MatchingCompanionType? = null,
     val isCompanionTypeOptional: Boolean = false
 ) {
     val recruitCount: Int
         get() = recruitmentCount.count
 
-    val companionType: CompanionType
-        get() = selectedCompanionType ?: CompanionType.PARTIAL
+    val companionType: MatchingCompanionType
+        get() = selectedCompanionType ?: MatchingCompanionType.PARTIAL
 
     val isNextEnabled: Boolean
         get() = isCompanionTypeOptional || selectedCompanionType != null
@@ -58,11 +48,6 @@ data class RecruitmentScreenUiState(
         get() = if (isCompanionTypeOptional) {
             "어떠한 형태도 다 괜찮아요!"
         } else {
-            when (selectedCompanionType) {
-                CompanionType.FULL -> "여행 전반을 함께 해요"
-                CompanionType.PARTIAL -> "여행 일부만 함께 해요"
-                CompanionType.MEAL -> "식사 약속 위주로 가볍게 만나요"
-                null -> null
-            }
+            selectedCompanionType?.guideMessage
         }
 }
