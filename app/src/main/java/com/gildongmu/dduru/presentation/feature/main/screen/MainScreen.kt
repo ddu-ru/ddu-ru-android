@@ -19,6 +19,8 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.presentation.feature.chat.screen.ChatMainRoute
+import com.gildongmu.dduru.presentation.feature.home.HomeRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatMainRoute
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar

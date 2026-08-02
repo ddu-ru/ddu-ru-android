@@ -76,11 +76,9 @@ fun HomeRoute(
         UiState.Empty -> Unit
 
         UiState.Loading -> {
-            HomeLoadingScreen()
         }
 
         UiState.Failure -> {
-            HomeFailureScreen()
         }
 
         is UiState.Success -> {
@@ -103,40 +101,6 @@ fun HomeRoute(
                 onWriteCommunityClick = viewModel::onWriteCommunityClick
             )
         }
-    }
-}
-
-@Composable
-private fun HomeLoadingScreen(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(DduruTheme.colors.gray50),
-        contentAlignment = Alignment.Center
-    ) {
-        CircularProgressIndicator(
-            color = DduruTheme.colors.primary
-        )
-    }
-}
-
-@Composable
-private fun HomeFailureScreen(
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxSize()
-            .background(DduruTheme.colors.gray50),
-        contentAlignment = Alignment.Center
-    ) {
-        Text(
-            text = "홈 정보를 불러오지 못했어요.",
-            style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray600
-        )
     }
 }
 
