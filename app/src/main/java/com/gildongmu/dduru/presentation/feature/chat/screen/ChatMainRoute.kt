@@ -41,8 +41,8 @@ fun ChatMainRoute(
             chatRooms = state.data.chatRooms,
             onChatRoomClick = { id -> viewModel.onChatRoomClick(id.toLong()) },
             onLoadMore = { viewModel.loadMoreChatRooms() },
-            requestContent = {},
-            applicationContent = {}
+            requestContent = { ChatRequestRoute() },
+            applicationContent = { ChatApplicationRoute(onNavigateToChatRoom = onNavigateToChatRoom) }
         )
         is UiState.Failure -> Box(
             modifier = Modifier.fillMaxSize(),
