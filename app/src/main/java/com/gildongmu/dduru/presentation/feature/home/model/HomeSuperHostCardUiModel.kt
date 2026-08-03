@@ -11,7 +11,9 @@ data class HomeSuperHostCardUiModel(
     val hostName: String,
     val viewCount: Int,
     val thumbnailImageRes: Int? = null,
+    val thumbnailImageUrl: String? = null,
     val hostProfileImageRes: Int? = null,
+    val hostProfileImageUrl: String? = null,
     val recruitmentText: String = "모집중",
     val isLiked: Boolean = false
 )

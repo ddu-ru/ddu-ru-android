@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.home.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -27,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -106,10 +106,12 @@ private fun TravelCompanionCard(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            Image(
-                painter = painterResource(id = item.imageRes),
+            AsyncImage(
+                model = item.imageUrl?.takeIf { it.isNotBlank() } ?: item.imageRes,
                 contentDescription = item.title,
                 contentScale = ContentScale.Crop,
+                placeholder = painterResource(id = item.imageRes),
+                error = painterResource(id = item.imageRes),
                 modifier = Modifier
                     .weight(1f)
                     .aspectRatio(1f)

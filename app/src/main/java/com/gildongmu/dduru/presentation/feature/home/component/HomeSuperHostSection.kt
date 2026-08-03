@@ -1,7 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.home.component
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -39,6 +38,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -127,9 +127,12 @@ fun HomeSuperHostCard(
                     .fillMaxWidth()
                     .aspectRatio(300f / 280f)
             ) {
-                Image(
-                    painter = thumbnailPainter,
+                AsyncImage(
+                    model = item.thumbnailImageUrl?.takeIf { it.isNotBlank() }
+                        ?: item.thumbnailImageRes,
                     contentDescription = null,
+                    placeholder = thumbnailPainter,
+                    error = thumbnailPainter,
                     modifier = Modifier.matchParentSize(),
                     contentScale = ContentScale.Crop
                 )
@@ -241,9 +244,12 @@ fun HomeSuperHostCard(
                     modifier = Modifier.fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
-                    Image(
-                        painter = hostProfilePainter,
+                    AsyncImage(
+                        model = item.hostProfileImageUrl?.takeIf { it.isNotBlank() }
+                            ?: item.hostProfileImageRes,
                         contentDescription = null,
+                        placeholder = hostProfilePainter,
+                        error = hostProfilePainter,
                         modifier = Modifier
                             .size(36.dp)
                             .clip(CircleShape),

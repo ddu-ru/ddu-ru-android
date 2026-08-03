@@ -15,6 +15,8 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Thum
 import java.time.LocalDate
 
 object MatchingCreatePostMockData {
+    val popularTags = listOf("맛집", "힐링", "드라이브")
+
     val popularLocations = listOf(
         LocationSearchItemUiState(countryName = "일본", city = "도쿄"),
         LocationSearchItemUiState(countryName = "대한민국", city = "제주도"),
@@ -28,18 +30,6 @@ object MatchingCreatePostMockData {
         LocationSearchItemUiState(countryName = "베트남", city = "다낭")
     )
 
-    val popularTags = listOf(
-        "맛집",
-        "힐링여행",
-        "액티비티",
-        "사진스팟",
-        "호캉스",
-        "야경",
-        "이러쿵저러쿵",
-        "어쩌구저쩌구",
-        "임시데이터임"
-    )
-
     val locationUiState = LocationSearchUiState(
         popularLocations = popularLocations,
         searchedLocations = popularLocations
@@ -51,8 +41,7 @@ object MatchingCreatePostMockData {
         thumbnailAndTagUiState = ThumbnailAndTagUiState(
             regionName = "도쿄",
             countryName = "일본"
-        ),
-        popularTags = popularTags
+        )
     )
 }
 

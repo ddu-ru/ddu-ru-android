@@ -8,7 +8,10 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
@@ -16,6 +19,9 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.presentation.feature.chat.screen.ChatMainRoute
+import com.gildongmu.dduru.presentation.feature.home.HomeRoute
+import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar
 import com.gildongmu.dduru.presentation.navigation.BottomNavItem
 import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
@@ -23,7 +29,10 @@ import dev.chrisbanes.haze.HazeState
 import dev.chrisbanes.haze.haze
 
 @Composable
-fun MainScreen() {
+fun MainScreen(
+    onNavigateToChatRoom: (Long) -> Unit
+) {
+    var showMatchingCreatePost by remember { mutableStateOf(false) }
     val bottomNavItems = remember {
         listOf(
             BottomNavItem(BottomNavRoute.Home, "홈", R.drawable.ic_bottom_nav_main),
@@ -38,6 +47,14 @@ fun MainScreen() {
     val currentRoute = bottomNavBackStack.lastOrNull() as? BottomNavRoute
         ?: BottomNavRoute.Home
     val hazeState = remember { HazeState() }
+
+    if (showMatchingCreatePost) {
+        MatchingCreatePostRoute(
+            onClose = { showMatchingCreatePost = false },
+            onComplete = { showMatchingCreatePost = false }
+        )
+        return
+    }
 
     Box(
         modifier = Modifier.fillMaxSize()
@@ -55,10 +72,14 @@ fun MainScreen() {
             },
             entryProvider = { route ->
                 when (route) {
-                    is BottomNavRoute.Home -> NavEntry(route) { Text("홈") }
+                    is BottomNavRoute.Home -> NavEntry(route) { HomeRoute() }
                     is BottomNavRoute.Matching -> NavEntry(route) { Text("매칭") }
                     is BottomNavRoute.Board -> NavEntry(route) { Text("게시판") }
-                    is BottomNavRoute.Chat -> NavEntry(route) { Text("채팅") }
+                    is BottomNavRoute.Chat -> NavEntry(route) {
+                        ChatMainRoute(
+                            onNavigateToChatRoom = onNavigateToChatRoom
+                        )
+                    }
                     is BottomNavRoute.MyPage -> NavEntry(route) { Text("마이") }
                     else -> NavEntry(route) { Text("잘못된 접근입니다.") }
                 }
@@ -85,5 +106,5 @@ fun MainScreen() {
 @Preview
 @Composable
 private fun MainScreenPreview() {
-    MainScreen()
+    MainScreen(onNavigateToChatRoom = {})
 }

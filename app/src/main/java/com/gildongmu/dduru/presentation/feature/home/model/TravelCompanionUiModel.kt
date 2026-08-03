@@ -7,5 +7,6 @@ data class TravelCompanionUiModel(
     val dateText: String,
     val currentMemberCount: Int,
     val totalMemberCount: Int,
-    val imageRes: Int
+    val imageRes: Int,
+    val imageUrl: String? = null
 )

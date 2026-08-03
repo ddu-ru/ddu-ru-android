@@ -23,7 +23,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.defaults.MatchingOptionButtonDefaults
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentGenderOption
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 
 @Composable
 fun RecruitmentAgeSection(
@@ -64,10 +64,10 @@ fun RecruitmentAgeSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            RecruitmentGenderOption.entries.forEach { option ->
+            MatchingGender.entries.forEach { option ->
                 DduruButton(
                     modifier = Modifier.weight(1f),
-                    text = option.label,
+                    text = option.selectionLabel,
                     onClick = {
                         onUiStateChange(
                             uiState.copy(selectedGender = option)
@@ -162,7 +162,7 @@ private fun RecruitmentAgeSectionPreview() {
             var uiState by remember {
                 mutableStateOf(
                     AgeSectionUiState(
-                        selectedGender = RecruitmentGenderOption.ANY
+                        selectedGender = MatchingGender.ANY
                     )
                 )
             }
