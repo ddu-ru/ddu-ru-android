@@ -2,6 +2,8 @@ package com.gildongmu.dduru.presentation.feature.chat.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru.core.common.extension.parseDateTime
+import com.gildongmu.dduru.core.common.extension.toRelativeTime
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.domain.repository.ParticipationRepository
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestItemUiState
@@ -9,10 +11,6 @@ import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestSectionU
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ReceivedApplicationStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.time.ZoneId
-import java.time.ZonedDateTime
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -82,26 +80,6 @@ class ChatRequestViewModel @Inject constructor(
                 .onFailure {
                     _uiState.value = UiState.Failure
                 }
-        }
-    }
-
-    private fun String.parseDateTime(): LocalDateTime =
-        try {
-            ZonedDateTime.parse(this).withZoneSameInstant(ZoneId.systemDefault()).toLocalDateTime()
-        } catch (e: Exception) {
-            LocalDateTime.parse(this)
-        }
-
-    private fun LocalDateTime.toRelativeTime(): String {
-        val now = LocalDateTime.now()
-        val minutes = maxOf(0, ChronoUnit.MINUTES.between(this, now))
-        val hours = maxOf(0, ChronoUnit.HOURS.between(this, now))
-        val days = maxOf(0, ChronoUnit.DAYS.between(this, now))
-        return when {
-            minutes < 1 -> "방금"
-            hours < 1 -> "${minutes}분 전"
-            days < 1 -> "${hours}시간 전"
-            else -> "${days}일 전"
         }
     }
 }

@@ -2,6 +2,7 @@ package com.gildongmu.dduru.presentation.feature.chat.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru.core.common.extension.toRelativeTime
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomEntity
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomType
@@ -10,8 +11,6 @@ import com.gildongmu.dduru.presentation.feature.chat.effect.ChatMainSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatMainUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.LocalDateTime
-import java.time.temporal.ChronoUnit
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -88,17 +87,4 @@ class ChatMainViewModel @Inject constructor(
         unreadCount = unreadCount.toInt().coerceAtMost(99),
         roomType = roomType
     )
-
-    private fun LocalDateTime.toRelativeTime(): String {
-        val now = LocalDateTime.now()
-        val minutes = maxOf(0, ChronoUnit.MINUTES.between(this, now))
-        val hours = maxOf(0, ChronoUnit.HOURS.between(this, now))
-        val days = maxOf(0, ChronoUnit.DAYS.between(this, now))
-        return when {
-            minutes < 1 -> "방금"
-            hours < 1 -> "${minutes}분 전"
-            days < 1 -> "${hours}시간 전"
-            else -> "${days}일 전"
-        }
-    }
 }
