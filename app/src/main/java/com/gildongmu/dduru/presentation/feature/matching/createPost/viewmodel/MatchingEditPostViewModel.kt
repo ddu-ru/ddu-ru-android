@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel
 
-import androidx.lifecycle.ViewModel
 import android.net.Uri
+import androidx.lifecycle.ViewModel
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
