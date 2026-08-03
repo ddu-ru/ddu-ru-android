@@ -43,6 +43,7 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.toKoreanDateString
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
@@ -79,6 +80,7 @@ fun MatchingEditPostRoute(
     viewModel: MatchingEditPostViewModel = hiltViewModel()
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
+    val galleryLauncher = rememberGalleryLauncher(viewModel::onThumbnailImageSelected)
 
     when (val state = uiState) {
         UiState.Empty -> Unit
@@ -95,6 +97,7 @@ fun MatchingEditPostRoute(
             onRecruitmentSectionUiStateChange = viewModel::onRecruitmentSectionUiStateChange,
             onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
             onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
+            onThumbnailImageChange = { galleryLauncher.launch("image/*") },
             onTagInputChange = viewModel::onTagInputChange,
             onAddTag = viewModel::onAddTag,
             onRemoveTag = viewModel::onRemoveTag,
@@ -113,6 +116,7 @@ fun MatchingEditPostScreen(
     onRecruitmentSectionUiStateChange: (RecruitmentScreenUiState) -> Unit,
     onAgeSectionUiStateChange: (AgeSectionUiState) -> Unit,
     onPostWritingUiStateChange: (PostWritingUiState) -> Unit,
+    onThumbnailImageChange: () -> Unit,
     onTagInputChange: (String) -> Unit,
     onAddTag: () -> Unit,
     onRemoveTag: (String) -> Unit,
@@ -168,7 +172,10 @@ fun MatchingEditPostScreen(
             verticalArrangement = Arrangement.spacedBy(32.dp)
         ) {
             item {
-                MatchingEditPostThumbnailSection(uiState = thumbnailAndTagState)
+                MatchingEditPostThumbnailSection(
+                    uiState = thumbnailAndTagState,
+                    onImageChange = onThumbnailImageChange
+                )
             }
 
             item {
@@ -492,7 +499,10 @@ fun MatchingEditPostScreen(
 }
 
 @Composable
-private fun MatchingEditPostThumbnailSection(uiState: ThumbnailAndTagUiState) {
+private fun MatchingEditPostThumbnailSection(
+    uiState: ThumbnailAndTagUiState,
+    onImageChange: () -> Unit
+) {
     Column {
         Text(text = "대표사진", style = DduruTheme.typography.Title2, color = DduruTheme.colors.gray868)
         Spacer(modifier = Modifier.height(16.dp))
@@ -501,7 +511,7 @@ private fun MatchingEditPostThumbnailSection(uiState: ThumbnailAndTagUiState) {
             countryName = uiState.countryName,
             imageUrl = uiState.previewImageUrl,
             imageResId = uiState.imageResId,
-            onChangeClick = {}
+            onChangeClick = onImageChange
         )
     }
 }
@@ -692,6 +702,7 @@ private fun MatchingPostEditScreenPreview() {
                 onRecruitmentSectionUiStateChange = {},
                 onAgeSectionUiStateChange = {},
                 onPostWritingUiStateChange = {},
+                onThumbnailImageChange = {},
                 onTagInputChange = {},
                 onAddTag = {},
                 onRemoveTag = {}
@@ -716,6 +727,7 @@ private fun MatchingPostEditScreenEnabledNextButtonPreview() {
                 onRecruitmentSectionUiStateChange = {},
                 onAgeSectionUiStateChange = {},
                 onPostWritingUiStateChange = {},
+                onThumbnailImageChange = {},
                 onTagInputChange = {},
                 onAddTag = {},
                 onRemoveTag = {}

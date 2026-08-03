@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel
 
 import androidx.lifecycle.ViewModel
+import android.net.Uri
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
@@ -57,12 +58,23 @@ class MatchingEditPostViewModel @Inject constructor() : ViewModel() {
         }
     }
 
-    fun onTagInputChange(tagInput: String) {
+    fun onThumbnailImageSelected(uri: Uri) {
         updateUiState { currentState ->
             currentState.copy(
                 thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
+                    previewImageUrl = uri.toString()
+                )
+            )
+        }
+    }
+
+    fun onTagInputChange(tagInput: String) {
+        updateUiState { currentState ->
+            val thumbnailState = currentState.thumbnailAndTagUiState
+            currentState.copy(
+                thumbnailAndTagUiState = thumbnailState.copy(
                     tagInput = tagInput,
-                    tagValidationMessage = null
+                    tagValidationMessage = thumbnailState.validateTagInput(tagInput)
                 )
             )
         }

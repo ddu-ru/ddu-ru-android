@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
+import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -66,6 +67,7 @@ fun MatchingCreatePostRoute(
     viewModel: MatchingCreatePostViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val galleryLauncher = rememberGalleryLauncher(viewModel::onThumbnailImageSelected)
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collectLatest { event ->
@@ -89,6 +91,7 @@ fun MatchingCreatePostRoute(
         onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
         onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
         onThumbnailAndTagUiStateChange = viewModel::onThumbnailAndTagUiStateChange,
+        onThumbnailImageChange = { galleryLauncher.launch("image/*") },
         onTagInputChange = viewModel::onTagInputChange,
         onAddTag = viewModel::onAddTag,
         onRemoveTag = viewModel::onRemoveTag,
@@ -110,6 +113,7 @@ fun MatchingCreatePostScreen(
     onAgeSectionUiStateChange: (AgeSectionUiState) -> Unit,
     onPostWritingUiStateChange: (PostWritingUiState) -> Unit,
     onThumbnailAndTagUiStateChange: (ThumbnailAndTagUiState) -> Unit,
+    onThumbnailImageChange: () -> Unit,
     onTagInputChange: (String) -> Unit,
     onAddTag: () -> Unit,
     onRemoveTag: (String) -> Unit,
@@ -215,6 +219,7 @@ fun MatchingCreatePostScreen(
                     ThumbnailAndTagSection(
                         uiState = uiState.thumbnailAndTagUiState,
                         onTagInputChange = onTagInputChange,
+                        onThumbnailImageChange = onThumbnailImageChange,
                         onAddTag = onAddTag,
                         onRemoveTag = onRemoveTag
                     )
@@ -364,6 +369,7 @@ private fun MatchingCreatePostContentPreview() {
                     uiState = uiState.copy(postWritingUiState = postWritingUiState)
                 },
                 onThumbnailAndTagUiStateChange = {},
+                onThumbnailImageChange = {},
                 onTagInputChange = { input ->
                     uiState = uiState.copy(
                         thumbnailAndTagUiState = uiState.thumbnailAndTagUiState.copy(

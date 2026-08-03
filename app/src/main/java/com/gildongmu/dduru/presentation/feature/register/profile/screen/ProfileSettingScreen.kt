@@ -38,7 +38,7 @@ import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEd
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
-import com.gildongmu.dduru.presentation.feature.register.profile.util.rememberGalleryLauncher
+import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 
 @Composable

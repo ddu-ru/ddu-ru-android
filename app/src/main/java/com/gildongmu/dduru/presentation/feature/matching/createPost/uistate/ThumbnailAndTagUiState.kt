@@ -20,13 +20,17 @@ data class ThumbnailAndTagUiState(
     val canAddTag: Boolean
         get() = tagInput.trim().isNotBlank() && tagValidationMessage == null && addedTags.size < 10
 
+    fun validateTagInput(input: String = tagInput): String? {
+        val tag = input.trim()
+
+        if (tag.isBlank()) return null
+        if (addedTags.size >= MAX_TAG_COUNT) return TAG_LIMIT_ERROR_MESSAGE
+        return TagValidator.validate(tag)
+    }
+
     fun addTag(): ThumbnailAndTagUiState {
         val tag = tagInput.trim()
-        val validationMessage = when {
-            tag.isBlank() -> null
-            addedTags.size >= MAX_TAG_COUNT -> TAG_LIMIT_ERROR_MESSAGE
-            else -> TagValidator.validate(tag)
-        }
+        val validationMessage = validateTagInput()
 
         if (tag.isBlank() || validationMessage != null) {
             return copy(tagValidationMessage = validationMessage)
@@ -41,15 +45,10 @@ data class ThumbnailAndTagUiState(
 
     fun removeTag(tag: String): ThumbnailAndTagUiState {
         val updatedTags = addedTags.filterNot { it == tag }
-        val validationMessage = if (tagInput.trim().isBlank()) {
-            null
-        } else {
-            TagValidator.validate(tagInput.trim())
-        }
+        val updatedState = copy(addedTags = updatedTags)
 
-        return copy(
-            addedTags = updatedTags,
-            tagValidationMessage = validationMessage
+        return updatedState.copy(
+            tagValidationMessage = updatedState.validateTagInput()
         )
     }
 
