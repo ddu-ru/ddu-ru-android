@@ -3,10 +3,12 @@ package com.gildongmu.dduru.data.di
 import com.gildongmu.dduru.data.register.nickname.repositoryimpl.NicknameRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.AuthRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ChatRoomRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.ParticipationRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.SurveyRepositoryImpl
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
+import com.gildongmu.dduru.domain.repository.ParticipationRepository
 import com.gildongmu.dduru.domain.repository.SurveyRepository
 import dagger.Binds
 import dagger.Module
@@ -41,4 +43,10 @@ abstract class RepositoryModule {
     abstract fun bindChatRoomRepository(
         impl: ChatRoomRepositoryImpl
     ): ChatRoomRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindParticipationRepository(
+        impl: ParticipationRepositoryImpl
+    ): ParticipationRepository
 }
