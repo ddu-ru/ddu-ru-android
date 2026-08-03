@@ -219,6 +219,9 @@ hs_err_pid*
 
 ## Plugin-specific files:
 
+# Personal local notes
+docs/presentation-screen-style.md
+
 # mpeltonen/sbt-idea plugin
 .idea_modules/
 

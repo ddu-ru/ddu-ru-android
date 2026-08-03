@@ -1,28 +1,15 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.uistate
 
-enum class RecruitmentGenderOption(
-    val label: String
-) {
-    MALE("남자"),
-    FEMALE("여자"),
-    ANY("상관없음");
-
-    val code: String
-        get() = when (this) {
-            MALE -> "M"
-            FEMALE -> "F"
-            ANY -> "U"
-        }
-}
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 
 data class AgeSectionUiState(
-    val selectedGender: RecruitmentGenderOption? = null,
+    val selectedGender: MatchingGender? = null,
     val selectedStartAge: Int? = null,
     val selectedEndAge: Int? = null,
     val isAgeIrrelevant: Boolean = false
 ) {
-    val preferredGender: RecruitmentGenderOption
-        get() = selectedGender ?: RecruitmentGenderOption.ANY
+    val preferredGender: MatchingGender
+        get() = selectedGender ?: MatchingGender.ANY
 
     val isAgeAny: Boolean
         get() = isAgeIrrelevant

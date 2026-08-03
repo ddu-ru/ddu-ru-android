@@ -34,6 +34,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun UpcomingTripCard(
     title: String,
+    dateText: String,
     currentMember: Int,
     maxMember: Int,
     dDay: Int,
@@ -116,7 +117,7 @@ fun UpcomingTripCard(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 TripDateRange(
-                    date = "2026.03.15-03.18",
+                    date = dateText,
                     textColor = DduruTheme.colors.gray700
                 )
 
@@ -170,6 +171,7 @@ private fun UpcomingTripCardPreview() {
     DduruTheme {
         UpcomingTripCard(
             title = "제주도 힐링 여행",
+            dateText = "2026.03.15-03.18",
             currentMember = 3,
             maxMember = 4,
             dDay = 12,

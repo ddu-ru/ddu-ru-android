@@ -19,12 +19,11 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
-import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
-import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.matching.createPost.defaults.MatchingOptionButtonDefaults
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentGenderOption
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 
 @Composable
 fun RecruitmentAgeSection(
@@ -32,23 +31,16 @@ fun RecruitmentAgeSection(
     onUiStateChange: (AgeSectionUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedButtonColors = DduruButtonEnabledColors(
-        backgroundColor = DduruTheme.colors.secondary,
-        textColor = DduruTheme.colors.primary,
-        borderColor = DduruTheme.colors.primary
-    )
-
-    val unselectedButtonColors = DduruButtonEnabledColors(
-        backgroundColor = DduruTheme.colors.gray0,
-        textColor = DduruTheme.colors.gray500,
-        borderColor = DduruTheme.colors.gray200
-    )
-
-    val disabledButtonColors = DduruButtonDisabledColors(
-        backgroundColor = DduruTheme.colors.gray200,
-        textColor = DduruTheme.colors.gray400,
-        borderColor = DduruTheme.colors.gray300
-    )
+    val selectedButtonColors = MatchingOptionButtonDefaults.selectedColors
+    val unselectedButtonColors = MatchingOptionButtonDefaults.unselectedColors
+    val disabledButtonColors = MatchingOptionButtonDefaults.disabledColors
+    val ageRangeText = when {
+        uiState.isAgeIrrelevant -> "연령무관"
+        uiState.selectedStartAge != null && uiState.selectedEndAge != null -> {
+            "${uiState.selectedStartAge}-${uiState.selectedEndAge}세"
+        }
+        else -> "선택해주세요"
+    }
 
     Column(
         modifier = modifier
@@ -72,10 +64,10 @@ fun RecruitmentAgeSection(
             modifier = Modifier.fillMaxWidth(),
             horizontalArrangement = Arrangement.spacedBy(6.dp)
         ) {
-            RecruitmentGenderOption.entries.forEach { option ->
+            MatchingGender.entries.forEach { option ->
                 DduruButton(
                     modifier = Modifier.weight(1f),
-                    text = option.label,
+                    text = option.selectionLabel,
                     onClick = {
                         onUiStateChange(
                             uiState.copy(selectedGender = option)
@@ -92,6 +84,33 @@ fun RecruitmentAgeSection(
         }
 
         Spacer(modifier = Modifier.weight(32f))
+
+        Row(
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "함께하고 싶은 연령대",
+                style = DduruTheme.typography.Title3,
+                color = DduruTheme.colors.gray800
+            )
+
+            Text(
+                text = ageRangeText,
+                style = DduruTheme.typography.Title3,
+                color = if (
+                    uiState.isAgeIrrelevant ||
+                    (uiState.selectedStartAge != null && uiState.selectedEndAge != null)
+                ) {
+                    DduruTheme.colors.primary
+                } else {
+                    DduruTheme.colors.gray500
+                }
+            )
+        }
+
+        Spacer(modifier = Modifier.height(16.dp))
 
         AgeRangeBar(
             selectedStart = if (uiState.isAgeIrrelevant) null else uiState.selectedStartAge,
@@ -113,6 +132,7 @@ fun RecruitmentAgeSection(
         Spacer(modifier = Modifier.height(16.dp))
 
         OptionalCheckbox(
+            modifier = Modifier.fillMaxWidth(),
             checked = uiState.isAgeIrrelevant,
             text = "나이는 상관 없어요",
             onCheckedChange = { checked ->
@@ -142,7 +162,7 @@ private fun RecruitmentAgeSectionPreview() {
             var uiState by remember {
                 mutableStateOf(
                     AgeSectionUiState(
-                        selectedGender = RecruitmentGenderOption.ANY
+                        selectedGender = MatchingGender.ANY
                     )
                 )
             }

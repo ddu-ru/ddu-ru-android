@@ -14,13 +14,12 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
-import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
-import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
+import com.gildongmu.dduru.presentation.feature.matching.createPost.defaults.MatchingOptionButtonDefaults
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
 
 @Composable
 fun RecruitmentCountSection(
@@ -28,36 +27,22 @@ fun RecruitmentCountSection(
     onUiStateChange: (RecruitmentScreenUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val selectedButtonColors = DduruButtonEnabledColors(
-        backgroundColor = DduruTheme.colors.secondary,
-        textColor = DduruTheme.colors.primary,
-        borderColor = DduruTheme.colors.primary
-    )
-
-    val unselectedButtonColors = DduruButtonEnabledColors(
-        backgroundColor = DduruTheme.colors.gray0,
-        textColor = DduruTheme.colors.gray500,
-        borderColor = DduruTheme.colors.gray200
-    )
-
-    val disabledButtonColors = DduruButtonDisabledColors(
-        backgroundColor = DduruTheme.colors.gray200,
-        textColor = DduruTheme.colors.gray400,
-        borderColor = DduruTheme.colors.gray300
-    )
+    val selectedButtonColors = MatchingOptionButtonDefaults.selectedColors
+    val unselectedButtonColors = MatchingOptionButtonDefaults.unselectedColors
+    val disabledButtonColors = MatchingOptionButtonDefaults.disabledColors
 
     val isCompanionTypeSelectionEnabled = !uiState.isCompanionTypeOptional
 
     val isFullSelected =
-        uiState.selectedCompanionType == CompanionType.FULL &&
+        uiState.selectedCompanionType == MatchingCompanionType.FULL &&
             isCompanionTypeSelectionEnabled
 
     val isPartialSelected =
-        uiState.selectedCompanionType == CompanionType.PARTIAL &&
+        uiState.selectedCompanionType == MatchingCompanionType.PARTIAL &&
             isCompanionTypeSelectionEnabled
 
     val isMealSelected =
-        uiState.selectedCompanionType == CompanionType.MEAL &&
+        uiState.selectedCompanionType == MatchingCompanionType.MEAL &&
             isCompanionTypeSelectionEnabled
 
     Column(
@@ -98,14 +83,36 @@ fun RecruitmentCountSection(
 
         Spacer(modifier = Modifier.weight(6f))
 
-        Text(
+        Row(
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(vertical = 16.dp),
-            text = "동행 형태",
-            style = DduruTheme.typography.Title3,
-            color = DduruTheme.colors.gray800
-        )
+            horizontalArrangement = Arrangement.SpaceBetween,
+            verticalAlignment = Alignment.CenterVertically
+        ) {
+            Text(
+                text = "동행 형태",
+                style = DduruTheme.typography.Title3,
+                color = DduruTheme.colors.gray800
+            )
+
+            OptionalCheckbox(
+                checked = uiState.isCompanionTypeOptional,
+                onCheckedChange = { isChecked ->
+                    onUiStateChange(
+                        uiState.copy(
+                            isCompanionTypeOptional = isChecked,
+                            selectedCompanionType = if (isChecked) {
+                                null
+                            } else {
+                                uiState.selectedCompanionType
+                            }
+                        )
+                    )
+                },
+                text = "상관없어요"
+            )
+        }
 
         Row(
             modifier = Modifier.fillMaxWidth(),
@@ -113,11 +120,11 @@ fun RecruitmentCountSection(
         ) {
             DduruButton(
                 modifier = Modifier.weight(1f),
-                text = "전체 동행",
+                text = MatchingCompanionType.FULL.selectionLabel,
                 onClick = {
                     onUiStateChange(
                         uiState.copy(
-                            selectedCompanionType = CompanionType.FULL,
+                            selectedCompanionType = MatchingCompanionType.FULL,
                             isCompanionTypeOptional = false
                         )
                     )
@@ -133,11 +140,11 @@ fun RecruitmentCountSection(
 
             DduruButton(
                 modifier = Modifier.weight(1f),
-                text = "부분 동행",
+                text = MatchingCompanionType.PARTIAL.selectionLabel,
                 onClick = {
                     onUiStateChange(
                         uiState.copy(
-                            selectedCompanionType = CompanionType.PARTIAL,
+                            selectedCompanionType = MatchingCompanionType.PARTIAL,
                             isCompanionTypeOptional = false
                         )
                     )
@@ -153,11 +160,11 @@ fun RecruitmentCountSection(
 
             DduruButton(
                 modifier = Modifier.weight(1f),
-                text = "식사 동행",
+                text = MatchingCompanionType.MEAL.selectionLabel,
                 onClick = {
                     onUiStateChange(
                         uiState.copy(
-                            selectedCompanionType = CompanionType.MEAL,
+                            selectedCompanionType = MatchingCompanionType.MEAL,
                             isCompanionTypeOptional = false
                         )
                     )
@@ -180,25 +187,6 @@ fun RecruitmentCountSection(
                 color = DduruTheme.colors.gray400
             )
         }
-
-        Spacer(modifier = Modifier.weight(32f))
-
-        OptionalCheckbox(
-            checked = uiState.isCompanionTypeOptional,
-            onCheckedChange = { isChecked ->
-                onUiStateChange(
-                    uiState.copy(
-                        isCompanionTypeOptional = isChecked,
-                        selectedCompanionType = if (isChecked) {
-                            null
-                        } else {
-                            uiState.selectedCompanionType
-                        }
-                    )
-                )
-            },
-            text = "동행 형태는 상관없어요."
-        )
 
         Spacer(modifier = Modifier.weight(130f))
     }

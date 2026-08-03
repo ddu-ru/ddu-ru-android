@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.register.profile.util
+package com.gildongmu.dduru.core.common.util
 
 import android.net.Uri
 import androidx.activity.compose.rememberLauncherForActivityResult
@@ -11,5 +11,5 @@ fun rememberGalleryLauncher(
 ) = rememberLauncherForActivityResult(
     contract = ActivityResultContracts.GetContent()
 ) { uri: Uri? ->
-    uri?.let { onImageSelected(it) }
+    uri?.let(onImageSelected)
 }

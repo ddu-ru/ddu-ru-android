@@ -35,6 +35,7 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
+import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -45,7 +46,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.component.Re
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.RecruitmentCountSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.ThumbnailAndTagSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiAction
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
@@ -54,6 +55,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Matc
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.reduce
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingCreatePostViewModel
 import kotlinx.coroutines.flow.collectLatest
 
@@ -65,6 +67,7 @@ fun MatchingCreatePostRoute(
     viewModel: MatchingCreatePostViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val galleryLauncher = rememberGalleryLauncher(viewModel::onThumbnailImageSelected)
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collectLatest { event ->
@@ -83,11 +86,12 @@ fun MatchingCreatePostRoute(
         onLocationSearchUiStateChange = viewModel::onLocationSearchUiStateChange,
         onLocationSearchClick = viewModel::onLocationSearchClick,
         onLocationSelected = viewModel::onLocationSelected,
-        onDateSectionUiStateChange = viewModel::onDateSectionUiStateChange,
+        onDateSectionAction = viewModel::onDateSectionAction,
         onRecruitmentSectionUiStateChange = viewModel::onRecruitmentSectionUiStateChange,
         onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
         onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
         onThumbnailAndTagUiStateChange = viewModel::onThumbnailAndTagUiStateChange,
+        onThumbnailImageChange = { galleryLauncher.launch("image/*") },
         onTagInputChange = viewModel::onTagInputChange,
         onAddTag = viewModel::onAddTag,
         onRemoveTag = viewModel::onRemoveTag,
@@ -104,11 +108,12 @@ fun MatchingCreatePostScreen(
     onLocationSearchUiStateChange: (LocationSearchUiState) -> Unit,
     onLocationSearchClick: () -> Unit,
     onLocationSelected: (LocationSearchItemUiState) -> Unit,
-    onDateSectionUiStateChange: (DateSectionUiState) -> Unit,
+    onDateSectionAction: (DateSectionUiAction) -> Unit,
     onRecruitmentSectionUiStateChange: (RecruitmentScreenUiState) -> Unit,
     onAgeSectionUiStateChange: (AgeSectionUiState) -> Unit,
     onPostWritingUiStateChange: (PostWritingUiState) -> Unit,
     onThumbnailAndTagUiStateChange: (ThumbnailAndTagUiState) -> Unit,
+    onThumbnailImageChange: () -> Unit,
     onTagInputChange: (String) -> Unit,
     onAddTag: () -> Unit,
     onRemoveTag: (String) -> Unit,
@@ -185,7 +190,7 @@ fun MatchingCreatePostScreen(
                 MatchingCreatePostStep.DATE -> {
                     DateSelectionSection(
                         uiState = uiState.dateSectionUiState,
-                        onUiStateChange = onDateSectionUiStateChange
+                        onAction = onDateSectionAction
                     )
                 }
 
@@ -214,6 +219,7 @@ fun MatchingCreatePostScreen(
                     ThumbnailAndTagSection(
                         uiState = uiState.thumbnailAndTagUiState,
                         onTagInputChange = onTagInputChange,
+                        onThumbnailImageChange = onThumbnailImageChange,
                         onAddTag = onAddTag,
                         onRemoveTag = onRemoveTag
                     )
@@ -350,8 +356,8 @@ private fun MatchingCreatePostContentPreview() {
                         currentStep = MatchingCreatePostStep.DATE
                     )
                 },
-                onDateSectionUiStateChange = { dateSectionUiState ->
-                    uiState = uiState.copy(dateSectionUiState = dateSectionUiState)
+                onDateSectionAction = { action ->
+                    uiState = uiState.copy(dateSectionUiState = uiState.dateSectionUiState.reduce(action))
                 },
                 onRecruitmentSectionUiStateChange = { recruitmentSectionUiState ->
                     uiState = uiState.copy(recruitmentSectionUiState = recruitmentSectionUiState)
@@ -363,6 +369,7 @@ private fun MatchingCreatePostContentPreview() {
                     uiState = uiState.copy(postWritingUiState = postWritingUiState)
                 },
                 onThumbnailAndTagUiStateChange = {},
+                onThumbnailImageChange = {},
                 onTagInputChange = { input ->
                     uiState = uiState.copy(
                         thumbnailAndTagUiState = uiState.thumbnailAndTagUiState.copy(
