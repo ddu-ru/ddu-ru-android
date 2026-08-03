@@ -1,7 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.screen
 
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
@@ -9,9 +8,10 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Matc
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingEditPostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentGenderOption
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 import java.time.LocalDate
 
 object MatchingCreatePostMockData {
@@ -52,10 +52,10 @@ object MatchingEditPostMockData {
             selectedEndDate = LocalDate.of(2026, 8, 6)
         ),
         recruitmentSectionUiState = RecruitmentScreenUiState(
-            selectedCompanionType = CompanionType.FULL
+            selectedCompanionType = MatchingCompanionType.FULL
         ),
         ageSectionUiState = AgeSectionUiState(
-            selectedGender = RecruitmentGenderOption.ANY,
+            selectedGender = MatchingGender.ANY,
             isAgeIrrelevant = true
         ),
         thumbnailAndTagUiState = ThumbnailAndTagUiState(

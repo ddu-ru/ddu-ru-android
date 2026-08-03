@@ -41,8 +41,12 @@ import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
+import com.gildongmu.dduru.core.common.extension.toKoreanDateString
+import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.MultiLineTextField
 import com.gildongmu.dduru.presentation.component.SingleLineTextField
@@ -54,19 +58,18 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.component.Re
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.RoundedMatchingTextField
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.ThumbnailImageCard
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.TripDatePickerBox
-import com.gildongmu.dduru.presentation.feature.matching.createPost.defaults.DateSelectionDefaults
 import com.gildongmu.dduru.presentation.feature.matching.createPost.defaults.MatchingOptionButtonDefaults
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiAction
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingEditPostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentGenderOption
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel.MatchingEditPostViewModel
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 
 @Composable
 fun MatchingEditPostRoute(
@@ -77,19 +80,27 @@ fun MatchingEditPostRoute(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
 
-    MatchingEditPostScreen(
-        uiState = uiState,
-        onBackClick = onBackClick,
-        onSaveClick = onSaveClick,
-        onDateSectionAction = viewModel::onDateSectionAction,
-        onRecruitmentSectionUiStateChange = viewModel::onRecruitmentSectionUiStateChange,
-        onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
-        onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
-        onTagInputChange = viewModel::onTagInputChange,
-        onAddTag = viewModel::onAddTag,
-        onRemoveTag = viewModel::onRemoveTag,
-        modifier = modifier
-    )
+    when (val state = uiState) {
+        UiState.Empty -> Unit
+        UiState.Loading -> DduruLoadingScreen(modifier = modifier)
+        UiState.Failure -> DduruFailureScreen(
+            message = "게시글 정보를 불러오지 못했어요.",
+            modifier = modifier
+        )
+        is UiState.Success -> MatchingEditPostScreen(
+            uiState = state.data,
+            onBackClick = onBackClick,
+            onSaveClick = onSaveClick,
+            onDateSectionAction = viewModel::onDateSectionAction,
+            onRecruitmentSectionUiStateChange = viewModel::onRecruitmentSectionUiStateChange,
+            onAgeSectionUiStateChange = viewModel::onAgeSectionUiStateChange,
+            onPostWritingUiStateChange = viewModel::onPostWritingUiStateChange,
+            onTagInputChange = viewModel::onTagInputChange,
+            onAddTag = viewModel::onAddTag,
+            onRemoveTag = viewModel::onRemoveTag,
+            modifier = modifier
+        )
+    }
 }
 
 @OptIn(ExperimentalLayoutApi::class)
@@ -238,17 +249,13 @@ fun MatchingEditPostScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        CompanionType.entries.forEach { type ->
+                        MatchingCompanionType.entries.forEach { type ->
                             val isSelected = recruitmentState.selectedCompanionType == type &&
                                 isCompanionTypeSelectionEnabled
 
                             DduruButton(
                                 modifier = Modifier.weight(1f),
-                                text = when (type) {
-                                    CompanionType.FULL -> "전체 동행"
-                                    CompanionType.PARTIAL -> "부분 동행"
-                                    CompanionType.MEAL -> "식사 동행"
-                                },
+                                text = type.selectionLabel,
                                 onClick = {
                                     onRecruitmentSectionUiStateChange(
                                         recruitmentState.copy(
@@ -298,10 +305,10 @@ fun MatchingEditPostScreen(
                         modifier = Modifier.fillMaxWidth(),
                         horizontalArrangement = Arrangement.spacedBy(6.dp)
                     ) {
-                        RecruitmentGenderOption.entries.forEach { option ->
+                        MatchingGender.entries.forEach { option ->
                             DduruButton(
                                 modifier = Modifier.weight(1f),
-                                text = option.label,
+                                text = option.selectionLabel,
                                 onClick = {
                                     onAgeSectionUiStateChange(ageState.copy(selectedGender = option))
                                 },
@@ -541,7 +548,7 @@ private fun MatchingEditPostDateSection(
         ) {
             TripDatePickerBox(
                 label = "출발 날짜",
-                selectedDate = DateSelectionDefaults.formatDate(uiState.selectedStartDate),
+                selectedDate = uiState.selectedStartDate.toKoreanDateString(),
                 onClick = { onAction(DateSectionUiAction.StartDateClicked) },
                 modifier = Modifier.weight(1f)
             )
@@ -553,7 +560,7 @@ private fun MatchingEditPostDateSection(
             )
             TripDatePickerBox(
                 label = "도착 날짜",
-                selectedDate = DateSelectionDefaults.formatDate(uiState.selectedEndDate),
+                selectedDate = uiState.selectedEndDate.toKoreanDateString(),
                 onClick = { onAction(DateSectionUiAction.EndDateClicked) },
                 modifier = Modifier.weight(1f)
             )

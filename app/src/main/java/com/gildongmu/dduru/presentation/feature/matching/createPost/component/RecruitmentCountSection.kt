@@ -16,7 +16,6 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.defaults.MatchingOptionButtonDefaults
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.CompanionType
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountNum
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState

@@ -17,8 +17,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.toKoreanDateString
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.matching.createPost.defaults.DateSelectionDefaults
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiAction
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
@@ -43,7 +43,7 @@ fun DateSelectionSection(
         ) {
             TripDatePickerBox(
                 label = "출발 날짜",
-                selectedDate = DateSelectionDefaults.formatDate(uiState.selectedStartDate),
+                selectedDate = uiState.selectedStartDate.toKoreanDateString(),
                 onClick = { onAction(DateSectionUiAction.StartDateClicked) },
                 modifier = Modifier.weight(1f)
             )
@@ -57,7 +57,7 @@ fun DateSelectionSection(
 
             TripDatePickerBox(
                 label = "도착 날짜",
-                selectedDate = DateSelectionDefaults.formatDate(uiState.selectedEndDate),
+                selectedDate = uiState.selectedEndDate.toKoreanDateString(),
                 onClick = { onAction(DateSectionUiAction.EndDateClicked) },
                 modifier = Modifier.weight(1f)
             )
