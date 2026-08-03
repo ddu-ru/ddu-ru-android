@@ -35,6 +35,7 @@ class ChatRequestViewModel @Inject constructor(
         viewModelScope.launch {
             participationRepository.approveParticipation(participationId.toLong())
                 .onSuccess { loadParticipations() }
+                .onFailure { _uiState.value = UiState.Failure }
         }
     }
 
@@ -42,6 +43,7 @@ class ChatRequestViewModel @Inject constructor(
         viewModelScope.launch {
             participationRepository.rejectParticipation(participationId.toLong())
                 .onSuccess { loadParticipations() }
+                .onFailure { _uiState.value = UiState.Failure }
         }
     }
 

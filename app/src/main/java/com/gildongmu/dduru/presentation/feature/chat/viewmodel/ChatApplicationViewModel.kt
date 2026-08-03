@@ -44,6 +44,7 @@ class ChatApplicationViewModel @Inject constructor(
         viewModelScope.launch {
             participationRepository.cancelParticipation(participationId.toLong())
                 .onSuccess { loadMyParticipations() }
+                .onFailure { _uiState.value = UiState.Failure }
         }
     }
 
