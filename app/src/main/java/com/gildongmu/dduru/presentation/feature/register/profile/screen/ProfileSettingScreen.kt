@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.register.model.SurveyStatus
@@ -38,7 +39,6 @@ import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEd
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
-import com.gildongmu.dduru.presentation.feature.register.profile.util.rememberGalleryLauncher
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
 
 @Composable

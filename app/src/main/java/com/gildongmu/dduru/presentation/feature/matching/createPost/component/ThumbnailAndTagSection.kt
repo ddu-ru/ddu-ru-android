@@ -40,6 +40,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Thum
 fun ThumbnailAndTagSection(
     uiState: ThumbnailAndTagUiState,
     onTagInputChange: (String) -> Unit,
+    onThumbnailImageChange: () -> Unit,
     onAddTag: () -> Unit,
     onRemoveTag: (String) -> Unit,
     modifier: Modifier = Modifier
@@ -69,7 +70,7 @@ fun ThumbnailAndTagSection(
             countryName = uiState.countryName,
             imageUrl = uiState.previewImageUrl,
             imageResId = uiState.imageResId,
-            onChangeClick = {}
+            onChangeClick = onThumbnailImageChange
         )
 
         Spacer(modifier = Modifier.weight(40f))
@@ -222,6 +223,7 @@ private fun ThumbnailAndTagSectionPreview() {
                         tagValidationMessage = null
                     )
                 },
+                onThumbnailImageChange = {},
                 onAddTag = {},
                 onRemoveTag = {},
                 modifier = Modifier.padding(24.dp)
