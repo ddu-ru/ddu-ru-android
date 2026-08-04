@@ -127,10 +127,10 @@ private fun HomeScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .background(DduruTheme.colors.gray50)
             .statusBarsPadding()
             .padding(paddingValues)
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .background(DduruTheme.colors.gray50)
     ) {
         Column(
             modifier = Modifier

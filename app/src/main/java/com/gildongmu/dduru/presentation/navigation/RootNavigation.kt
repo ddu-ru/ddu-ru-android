@@ -19,6 +19,13 @@ import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.LoginRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.WelcomeScreen
 import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
+import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
+import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingEditPostRoute
+import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailScreen
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
+import com.gildongmu.dduru.presentation.feature.register.profile.screen.ProfileSettingRoute
+import com.gildongmu.dduru.presentation.feature.register.screen.SignupRoute
+import com.gildongmu.dduru.presentation.feature.register.survey.SurveyMainScreen
 
 @Composable
 fun RootNavigation(
@@ -70,12 +77,39 @@ fun RootNavigation(
                         )
                     }
 
-                    is RootNavRoute.Register -> NavEntry(route) {}
+                    is RootNavRoute.Register -> NavEntry(route) {
+                        SignupRoute(
+                            onSignupComplete = {
+                                rootBackStack.clear()
+                                rootBackStack.add(RootNavRoute.RegisterSurvey)
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.RegisterSurvey -> NavEntry(route) {
+                        SurveyMainScreen(
+                            onSurveyComplete = {
+                                rootBackStack.clear()
+                                rootBackStack.add(RootNavRoute.RegisterProfile)
+                            },
+                            onBackPressed = { rootBackStack.removeLastOrNull() }
+                        )
+                    }
+
+                    is RootNavRoute.RegisterProfile -> NavEntry(route) {
+                        ProfileSettingRoute()
+                    }
 
                     is RootNavRoute.Main -> NavEntry(route) {
                         MainScreen(
                             onNavigateToChatRoom = { chatRoomId ->
                                 rootBackStack.add(RootNavRoute.ChatRoom(chatRoomId))
+                            },
+                            onNavigateToMatchingCreatePost = {
+                                rootBackStack.add(RootNavRoute.MatchingCreatePost)
+                            },
+                            onNavigateToMatchingDetail = { postId ->
+                                rootBackStack.add(RootNavRoute.MatchingDetail(postId))
                             }
                         )
                     }
@@ -84,6 +118,35 @@ fun RootNavigation(
                         ChatRoomRoute(
                             chatRoomId = route.chatRoomId,
                             onBackClick = { rootBackStack.removeLastOrNull() }
+                        )
+                    }
+
+                    is RootNavRoute.MatchingCreatePost -> NavEntry(route) {
+                        MatchingCreatePostRoute(
+                            onClose = { rootBackStack.removeLastOrNull() },
+                            onComplete = { rootBackStack.removeLastOrNull() }
+                        )
+                    }
+
+                    is RootNavRoute.MatchingDetail -> NavEntry(route) {
+                        MatchingDetailScreen(
+                            uiState = MatchingDetailUiState(id = route.postId),
+                            onBackClick = { rootBackStack.removeLastOrNull() },
+                            onLikeClick = {},
+                            onOverflowClick = {
+                                rootBackStack.add(RootNavRoute.MatchingEditPost(route.postId))
+                            },
+                            onShareClick = {},
+                            onProfileClick = {},
+                            onContactClick = {},
+                            onBottomActionClick = {}
+                        )
+                    }
+
+                    is RootNavRoute.MatchingEditPost -> NavEntry(route) {
+                        MatchingEditPostRoute(
+                            onBackClick = { rootBackStack.removeLastOrNull() },
+                            onSaveClick = { rootBackStack.removeLastOrNull() }
                         )
                     }
 
