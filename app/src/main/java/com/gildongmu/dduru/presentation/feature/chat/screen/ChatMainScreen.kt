@@ -60,7 +60,7 @@ fun ChatMainScreen(
     var sortExpanded by remember { mutableStateOf(initialSortExpanded) }
 
     Scaffold(
-        modifier = modifier.background(DduruTheme.colors.gray0),
+        modifier = modifier.background(DduruTheme.colors.gray50),
         topBar = {
             Column(
                 modifier = Modifier
