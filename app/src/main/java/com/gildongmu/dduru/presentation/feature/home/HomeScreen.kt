@@ -35,6 +35,7 @@ import com.gildongmu.dduru.presentation.feature.home.component.HomeRealtimePopul
 import com.gildongmu.dduru.presentation.feature.home.component.HomeSuperHostSection
 import com.gildongmu.dduru.presentation.feature.home.component.TravelCompanionSection
 import com.gildongmu.dduru.presentation.feature.home.component.UpcomingTripCard
+import com.gildongmu.dduru.presentation.feature.home.component.UpcomingTripEmptyState
 import com.gildongmu.dduru.presentation.feature.home.component.WritingButton
 import com.gildongmu.dduru.presentation.feature.home.component.WritingExpandedMenu
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
@@ -150,16 +151,20 @@ private fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(40.dp)
             ) {
                 item {
-                    UpcomingTripCard(
-                        title = uiState.upcomingTrip.title,
-                        dateText = uiState.upcomingTrip.dateText,
-                        currentMember = uiState.upcomingTrip.currentMember,
-                        maxMember = uiState.upcomingTrip.maxMember,
-                        dDay = uiState.upcomingTrip.dDay,
-                        taskCount = uiState.upcomingTrip.taskCount,
-                        onUpcomingTripTaskClick = onUpcomingTripTaskClick,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    if (uiState.upcomingTrip.hasUpcomingTrip) {
+                        UpcomingTripCard(
+                            title = uiState.upcomingTrip.title,
+                            dateText = uiState.upcomingTrip.dateText,
+                            currentMember = uiState.upcomingTrip.currentMember,
+                            maxMember = uiState.upcomingTrip.maxMember,
+                            dDay = uiState.upcomingTrip.dDay,
+                            taskCount = uiState.upcomingTrip.taskCount,
+                            onUpcomingTripTaskClick = onUpcomingTripTaskClick,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else {
+                        UpcomingTripEmptyState(modifier = Modifier.fillMaxWidth())
+                    }
                 }
 
                 item {
