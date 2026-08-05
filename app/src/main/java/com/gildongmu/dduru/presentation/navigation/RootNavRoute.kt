@@ -16,6 +16,10 @@ sealed interface RootNavRoute : NavKey {
 
     @Serializable data object Main : RootNavRoute
 
+    @Serializable data object HomeNotification : RootNavRoute
+
+    @Serializable data object HomeMenu : RootNavRoute
+
     @Serializable data class ChatRoom(val chatRoomId: Long) : RootNavRoute
 
     @Serializable data object MatchingCreatePost : RootNavRoute

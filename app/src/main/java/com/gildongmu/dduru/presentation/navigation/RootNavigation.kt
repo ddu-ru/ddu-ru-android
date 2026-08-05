@@ -13,13 +13,14 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomRoute
+import com.gildongmu.dduru.presentation.feature.home.screen.HomeMenuRoute
+import com.gildongmu.dduru.presentation.feature.home.screen.HomeNotificationRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.LoginRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.WelcomeScreen
 import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingEditPostRoute
-import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailScreen
-import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
+import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailRoute
 import com.gildongmu.dduru.presentation.feature.register.profile.screen.ProfileSettingRoute
 import com.gildongmu.dduru.presentation.feature.register.screen.SignupRoute
 import com.gildongmu.dduru.presentation.feature.register.survey.SurveyMainScreen
@@ -34,6 +35,11 @@ fun RootNavigation(
         DduruLoadingScreen()
     } else {
         val rootBackStack = rememberNavBackStack(startDestination!!)
+        fun navigateBack() {
+            if (rootBackStack.size > 1) {
+                rootBackStack.removeLastOrNull()
+            }
+        }
 
         NavDisplay(
             backStack = rootBackStack,
@@ -87,7 +93,7 @@ fun RootNavigation(
                                 rootBackStack.clear()
                                 rootBackStack.add(RootNavRoute.RegisterProfile)
                             },
-                            onBackPressed = { rootBackStack.removeLastOrNull() }
+                            onBackPressed = { navigateBack() }
                         )
                     }
 
@@ -102,6 +108,12 @@ fun RootNavigation(
 
                     is RootNavRoute.Main -> NavEntry(route) {
                         MainScreen(
+                            onNavigateToHomeNotification = {
+                                rootBackStack.add(RootNavRoute.HomeNotification)
+                            },
+                            onNavigateToHomeMenu = {
+                                rootBackStack.add(RootNavRoute.HomeMenu)
+                            },
                             onNavigateToChatRoom = { chatRoomId ->
                                 rootBackStack.add(RootNavRoute.ChatRoom(chatRoomId))
                             },
@@ -114,25 +126,36 @@ fun RootNavigation(
                         )
                     }
 
+                    is RootNavRoute.HomeNotification -> NavEntry(route) {
+                        HomeNotificationRoute(
+                            onBackClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.HomeMenu -> NavEntry(route) {
+                        HomeMenuRoute(
+                            onBackClick = { navigateBack() }
+                        )
+                    }
+
                     is RootNavRoute.ChatRoom -> NavEntry(route) {
                         ChatRoomRoute(
                             chatRoomId = route.chatRoomId,
-                            onBackClick = { rootBackStack.removeLastOrNull() }
+                            onBackClick = { navigateBack() }
                         )
                     }
 
                     is RootNavRoute.MatchingCreatePost -> NavEntry(route) {
                         MatchingCreatePostRoute(
-                            onClose = { rootBackStack.removeLastOrNull() },
-                            onComplete = { rootBackStack.removeLastOrNull() }
+                            onClose = { navigateBack() },
+                            onComplete = { navigateBack() }
                         )
                     }
 
                     is RootNavRoute.MatchingDetail -> NavEntry(route) {
-                        MatchingDetailScreen(
-                            uiState = MatchingDetailUiState(id = route.postId),
-                            onBackClick = { rootBackStack.removeLastOrNull() },
-                            onLikeClick = {},
+                        MatchingDetailRoute(
+                            postId = route.postId,
+                            onBackClick = { navigateBack() },
                             onOverflowClick = {
                                 rootBackStack.add(RootNavRoute.MatchingEditPost(route.postId))
                             },
@@ -145,8 +168,8 @@ fun RootNavigation(
 
                     is RootNavRoute.MatchingEditPost -> NavEntry(route) {
                         MatchingEditPostRoute(
-                            onBackClick = { rootBackStack.removeLastOrNull() },
-                            onSaveClick = { rootBackStack.removeLastOrNull() }
+                            onBackClick = { navigateBack() },
+                            onSaveClick = { navigateBack() }
                         )
                     }
 

@@ -29,6 +29,8 @@ import dev.chrisbanes.haze.haze
 
 @Composable
 fun MainScreen(
+    onNavigateToHomeNotification: () -> Unit,
+    onNavigateToHomeMenu: () -> Unit,
     onNavigateToChatRoom: (Long) -> Unit,
     onNavigateToMatchingCreatePost: () -> Unit,
     onNavigateToMatchingDetail: (Long) -> Unit
@@ -72,6 +74,8 @@ fun MainScreen(
                 when (route) {
                     is BottomNavRoute.Home -> NavEntry(route) {
                         HomeRoute(
+                            navigateToNotification = onNavigateToHomeNotification,
+                            navigateToMenu = onNavigateToHomeMenu,
                             navigateToCreateTravelRoom = onNavigateToMatchingCreatePost,
                             navigateToWriteCommunity = {
                                 navigateToBottomRoute(BottomNavRoute.Board)
@@ -114,6 +118,8 @@ fun MainScreen(
 @Composable
 private fun MainScreenPreview() {
     MainScreen(
+        onNavigateToHomeNotification = {},
+        onNavigateToHomeMenu = {},
         onNavigateToChatRoom = {},
         onNavigateToMatchingCreatePost = {},
         onNavigateToMatchingDetail = {}
