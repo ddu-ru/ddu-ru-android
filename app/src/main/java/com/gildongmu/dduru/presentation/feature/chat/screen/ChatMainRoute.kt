@@ -1,17 +1,13 @@
 package com.gildongmu.dduru.presentation.feature.chat.screen
 
-import androidx.compose.foundation.layout.Box
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
-import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.presentation.feature.chat.effect.ChatMainSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatMainViewModel
 
@@ -31,12 +27,7 @@ fun ChatMainRoute(
     }
 
     when (val state = uiState) {
-        is UiState.Loading -> Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            CircularProgressIndicator()
-        }
+        is UiState.Loading -> DduruLoadingScreen()
         is UiState.Success -> ChatMainScreen(
             chatRooms = state.data.chatRooms,
             onChatRoomClick = { id -> viewModel.onChatRoomClick(id.toLong()) },
@@ -44,12 +35,7 @@ fun ChatMainRoute(
             requestContent = { ChatRequestRoute() },
             applicationContent = { ChatApplicationRoute(onNavigateToChatRoom = onNavigateToChatRoom) }
         )
-        is UiState.Failure -> Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Text(text = "채팅 목록을 불러올 수 없습니다.")
-        }
+        is UiState.Failure -> DduruFailureScreen(message = "채팅 목록을 불러올 수 없습니다.")
         else -> Unit
     }
 }

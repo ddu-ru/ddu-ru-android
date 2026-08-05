@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.AiMatchingSection
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHeader
@@ -73,11 +75,9 @@ fun HomeRoute(
     when (val state = uiState) {
         UiState.Empty -> Unit
 
-        UiState.Loading -> {
-        }
+        UiState.Loading -> DduruLoadingScreen()
 
-        UiState.Failure -> {
-        }
+        UiState.Failure -> DduruFailureScreen(message = "홈 정보를 불러오지 못했어요.")
 
         is UiState.Success -> {
             HomeScreen(
