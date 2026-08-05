@@ -5,21 +5,56 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.chat.component.ApplicationCard
 import com.gildongmu.dduru.presentation.feature.chat.component.ApplicationCardAction
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatSectionHeader
+import com.gildongmu.dduru.presentation.feature.chat.effect.ChatApplicationSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatApplicationItemUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatApplicationSectionUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatApplicationUiState
-import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatTab
 import com.gildongmu.dduru.presentation.feature.chat.uistate.SentApplicationStatus
+import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatApplicationViewModel
 
 @Composable
-fun ChatApplicationScreen(
+fun ChatApplicationRoute(
+    onNavigateToChatRoom: (Long) -> Unit,
+    viewModel: ChatApplicationViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is ChatApplicationSideEffect.NavigateToChatRoom -> onNavigateToChatRoom(effect.chatRoomId)
+            }
+        }
+    }
+
+    when (val state = uiState) {
+        is UiState.Loading -> DduruLoadingScreen()
+        is UiState.Success -> ChatApplicationScreen(
+            uiState = state.data,
+            onCancelClick = viewModel::onCancelClick,
+            onEnterClick = viewModel::onEnterClick
+        )
+        is UiState.Failure -> DduruFailureScreen(message = "신청 내역을 불러올 수 없습니다.")
+        else -> Unit
+    }
+}
+
+@Composable
+private fun ChatApplicationScreen(
     uiState: ChatApplicationUiState,
     onCancelClick: (String) -> Unit,
     onEnterClick: (String) -> Unit,
@@ -128,17 +163,10 @@ private val previewUiState = ChatApplicationUiState(
 @Composable
 private fun ChatApplicationScreenPreview() {
     DduruTheme {
-        ChatMainScreen(
-            applicationUnreadCount = 4,
-            initialTab = ChatTab.APPLICATION,
-            requestContent = {},
-            applicationContent = {
-                ChatApplicationScreen(
-                    uiState = previewUiState,
-                    onCancelClick = {},
-                    onEnterClick = {}
-                )
-            }
+        ChatApplicationScreen(
+            uiState = previewUiState,
+            onCancelClick = {},
+            onEnterClick = {}
         )
     }
 }
