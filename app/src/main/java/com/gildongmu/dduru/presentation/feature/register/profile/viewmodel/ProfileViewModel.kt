@@ -12,6 +12,7 @@ import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
 import com.gildongmu.dduru.domain.register.profile.model.ProfileUpdateModel
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
 import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
+import com.gildongmu.dduru.presentation.feature.register.profile.effect.ProfileSideEffect
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
@@ -24,7 +25,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -51,6 +55,9 @@ class ProfileViewModel @Inject constructor(
         )
     )
     val uiState = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<ProfileSideEffect>()
+    val sideEffect: SharedFlow<ProfileSideEffect> = _sideEffect.asSharedFlow()
 
     private val _characterImageRes = MutableStateFlow(R.drawable.img_penguin_personallity)
     val characterImageRes = _characterImageRes.asStateFlow()
@@ -173,6 +180,7 @@ class ProfileViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(isSubmitting = false, isImageUploading = false)
                 }
+                _sideEffect.emit(ProfileSideEffect.NavigateToMain)
             }.onFailure { e ->
                 _uiState.update {
                     it.copy(

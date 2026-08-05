@@ -92,7 +92,12 @@ fun RootNavigation(
                     }
 
                     is RootNavRoute.RegisterProfile -> NavEntry(route) {
-                        ProfileSettingRoute()
+                        ProfileSettingRoute(
+                            onProfileComplete = {
+                                rootBackStack.clear()
+                                rootBackStack.add(RootNavRoute.Main)
+                            }
+                        )
                     }
 
                     is RootNavRoute.Main -> NavEntry(route) {
