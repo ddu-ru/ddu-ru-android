@@ -8,11 +8,11 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -36,9 +36,11 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 private val JourneyCardShape = RoundedCornerShape(32.dp)
+private val JourneyImageShape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
 
 private const val JOURNEY_CARD_RATIO = 343f / 351f
 private const val JOURNEY_IMAGE_RATIO = 343f / 240f
+private const val JOURNEY_INFO_RATIO = 343f / 144f
 
 @Composable
 fun JourneyCard(
@@ -75,7 +77,7 @@ fun JourneyCard(
             onJourneyClick = onJourneyClick,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(144.dp)
+                .aspectRatio(JOURNEY_INFO_RATIO)
                 .align(Alignment.BottomCenter),
         )
     }
@@ -91,7 +93,7 @@ private fun JourneyImageContent(
 ) {
     Box(
         modifier = modifier
-            .clip(JourneyCardShape),
+            .clip(JourneyImageShape),
     ) {
         AsyncImage(
             model = imageUrl,
@@ -125,7 +127,7 @@ private fun JourneyImageContent(
             Text(
                 text = dDay,
                 style = DduruTheme.typography.H1,
-                color = Color.White,
+                color = DduruTheme.colors.gray0,
                 maxLines = 1,
             )
 
@@ -134,7 +136,7 @@ private fun JourneyImageContent(
             Text(
                 text = title,
                 style = DduruTheme.typography.H1,
-                color = Color.White,
+                color = DduruTheme.colors.gray0,
                 maxLines = 1,
                 overflow = TextOverflow.Ellipsis,
             )
@@ -143,8 +145,8 @@ private fun JourneyImageContent(
 
             Text(
                 text = period,
-                style = DduruTheme.typography.Body1,
-                color = Color.White,
+                style = DduruTheme.typography.Body2,
+                color = DduruTheme.colors.gray0,
                 maxLines = 1,
             )
         }
@@ -168,23 +170,19 @@ private fun JourneyInformationContent(
             )
             .clip(JourneyCardShape)
             .background(DduruTheme.colors.gray0)
-            .padding(
-                start = 16.dp,
-                bottom = 16.dp,
-            ),
+            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.Center,
+        horizontalAlignment = Alignment.CenterHorizontally,
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.SpaceBetween,
-            verticalAlignment = Alignment.CenterVertically,
         ) {
             JourneySummaryItem(
                 iconRes = R.drawable.ic_journey_users,
                 label = "멤버",
                 value = "${memberCount}명",
-                iconBackgroundColor = Color(0xFFE7F4FF),
-                iconTint = Color(0xFF2F9DF4),
+                iconBackgroundColor = DduruTheme.colors.secondary100,
+                iconTint = DduruTheme.colors.primary,
                 modifier = Modifier.weight(1f),
             )
 
@@ -192,8 +190,8 @@ private fun JourneyInformationContent(
                 iconRes = R.drawable.ic_write_pencil,
                 label = "남은 할일",
                 value = "${remainingTodoCount}개",
-                iconBackgroundColor = Color(0xFFE8F8F8),
-                iconTint = Color(0xFF2DB5BB),
+                iconBackgroundColor = DduruTheme.colors.journeyTodoBg,
+                iconTint = DduruTheme.colors.journeyTodo,
                 modifier = Modifier.weight(1f),
             )
 
@@ -201,13 +199,13 @@ private fun JourneyInformationContent(
                 iconRes = R.drawable.ic_news,
                 label = "새 소식",
                 value = "${newNewsCount}개",
-                iconBackgroundColor = Color(0xFFFFEEEE),
-                iconTint = Color(0xFFF35E68),
+                iconBackgroundColor = DduruTheme.colors.journeyNewsBg,
+                iconTint = DduruTheme.colors.journeyNews,
                 modifier = Modifier.weight(1f),
             )
         }
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(8.dp))
 
         DduruButton(
             text = "여정 들어가기",
@@ -216,7 +214,7 @@ private fun JourneyInformationContent(
             enabledColors = DduruButtonDefaults.filledEnabledColors,
             modifier = Modifier
                 .fillMaxWidth()
-                .height(52.dp),
+                .padding(16.dp),
         )
     }
 }
@@ -237,7 +235,7 @@ private fun JourneySummaryItem(
     ) {
         Box(
             modifier = Modifier
-                .size(44.dp)
+                .size(40.dp)
                 .background(
                     color = iconBackgroundColor,
                     shape = CircleShape,
@@ -248,17 +246,19 @@ private fun JourneySummaryItem(
                 painter = painterResource(iconRes),
                 contentDescription = null,
                 tint = iconTint,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(16.dp),
             )
         }
+
+        Spacer(modifier = Modifier.width(8.dp))
 
         Column(
             verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(
                 text = label,
-                style = DduruTheme.typography.Caption1,
-                color = DduruTheme.colors.gray500,
+                style = DduruTheme.typography.Caption2,
+                color = DduruTheme.colors.gray700,
                 maxLines = 1,
             )
 
