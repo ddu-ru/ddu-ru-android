@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.matching
+package com.gildongmu.dduru.presentation.feature.matching.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -171,7 +171,8 @@ private fun MatchingScreen(
 
         MatchingFilterBottomSheet(
             visible = isFilterSheetVisible,
-            onDismiss = { isFilterSheetVisible = false }
+            onDismiss = { isFilterSheetVisible = false },
+            onDestinationClick = {}
         )
     }
 }
