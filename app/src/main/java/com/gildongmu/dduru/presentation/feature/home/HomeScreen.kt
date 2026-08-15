@@ -26,6 +26,8 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.AiMatchingSection
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHeader
@@ -33,6 +35,7 @@ import com.gildongmu.dduru.presentation.feature.home.component.HomeRealtimePopul
 import com.gildongmu.dduru.presentation.feature.home.component.HomeSuperHostSection
 import com.gildongmu.dduru.presentation.feature.home.component.TravelCompanionSection
 import com.gildongmu.dduru.presentation.feature.home.component.UpcomingTripCard
+import com.gildongmu.dduru.presentation.feature.home.component.UpcomingTripEmptyState
 import com.gildongmu.dduru.presentation.feature.home.component.WritingButton
 import com.gildongmu.dduru.presentation.feature.home.component.WritingExpandedMenu
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
@@ -73,11 +76,9 @@ fun HomeRoute(
     when (val state = uiState) {
         UiState.Empty -> Unit
 
-        UiState.Loading -> {
-        }
+        UiState.Loading -> DduruLoadingScreen()
 
-        UiState.Failure -> {
-        }
+        UiState.Failure -> DduruFailureScreen(message = "홈 정보를 불러오지 못했어요.")
 
         is UiState.Success -> {
             HomeScreen(
@@ -127,10 +128,10 @@ private fun HomeScreen(
     Box(
         modifier = modifier
             .fillMaxSize()
+            .background(DduruTheme.colors.gray50)
             .statusBarsPadding()
             .padding(paddingValues)
             .padding(horizontal = 16.dp, vertical = 8.dp)
-            .background(DduruTheme.colors.gray50)
     ) {
         Column(
             modifier = Modifier
@@ -150,16 +151,20 @@ private fun HomeScreen(
                 verticalArrangement = Arrangement.spacedBy(40.dp)
             ) {
                 item {
-                    UpcomingTripCard(
-                        title = uiState.upcomingTrip.title,
-                        dateText = uiState.upcomingTrip.dateText,
-                        currentMember = uiState.upcomingTrip.currentMember,
-                        maxMember = uiState.upcomingTrip.maxMember,
-                        dDay = uiState.upcomingTrip.dDay,
-                        taskCount = uiState.upcomingTrip.taskCount,
-                        onUpcomingTripTaskClick = onUpcomingTripTaskClick,
-                        modifier = Modifier.fillMaxWidth()
-                    )
+                    if (uiState.upcomingTrip.hasUpcomingTrip) {
+                        UpcomingTripCard(
+                            title = uiState.upcomingTrip.title,
+                            dateText = uiState.upcomingTrip.dateText,
+                            currentMember = uiState.upcomingTrip.currentMember,
+                            maxMember = uiState.upcomingTrip.maxMember,
+                            dDay = uiState.upcomingTrip.dDay,
+                            taskCount = uiState.upcomingTrip.taskCount,
+                            onUpcomingTripTaskClick = onUpcomingTripTaskClick,
+                            modifier = Modifier.fillMaxWidth()
+                        )
+                    } else {
+                        UpcomingTripEmptyState(modifier = Modifier.fillMaxWidth())
+                    }
                 }
 
                 item {

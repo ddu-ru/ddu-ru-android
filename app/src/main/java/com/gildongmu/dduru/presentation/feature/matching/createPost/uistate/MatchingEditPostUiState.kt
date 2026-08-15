@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.uistate
 
 data class MatchingEditPostUiState(
+    val postId: Long? = null,
     val dateSectionUiState: DateSectionUiState = DateSectionUiState(),
     val recruitmentSectionUiState: RecruitmentScreenUiState = RecruitmentScreenUiState(),
     val ageSectionUiState: AgeSectionUiState = AgeSectionUiState(),

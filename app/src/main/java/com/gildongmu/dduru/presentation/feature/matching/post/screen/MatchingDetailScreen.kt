@@ -16,6 +16,7 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
@@ -25,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -37,15 +39,22 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
 import com.gildongmu.dduru.presentation.feature.matching.post.component.CommonBoxComponent
+import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailBackButton
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailBottomActionComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailInfoComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailParticipantComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailParticipantUiModel
+import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingDetailTopActionButton
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostInfoComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostProfileImage
 import com.gildongmu.dduru.presentation.feature.matching.post.component.PostStatusDropdown
@@ -53,8 +62,47 @@ import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDe
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostRecruitStatus
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostStatus
+import com.gildongmu.dduru.presentation.feature.matching.post.viewmodel.MatchingDetailViewModel
 import dev.chrisbanes.haze.HazeState
 import kotlinx.collections.immutable.toPersistentList
+
+@Composable
+fun MatchingDetailRoute(
+    postId: Long,
+    onBackClick: () -> Unit,
+    onOverflowClick: () -> Unit,
+    onShareClick: () -> Unit,
+    onProfileClick: () -> Unit,
+    onContactClick: () -> Unit,
+    onBottomActionClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    viewModel: MatchingDetailViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(postId) {
+        viewModel.loadMatchingDetail(postId)
+    }
+
+    when (val state = uiState) {
+        UiState.Empty -> Unit
+        UiState.Loading -> DduruLoadingScreen()
+        UiState.Failure -> DduruFailureScreen(message = "동행 글을 불러오지 못했어요.")
+        is UiState.Success -> {
+            MatchingDetailScreen(
+                uiState = state.data,
+                onBackClick = onBackClick,
+                onLikeClick = viewModel::onLikeClick,
+                onOverflowClick = onOverflowClick,
+                onShareClick = onShareClick,
+                onProfileClick = onProfileClick,
+                onContactClick = onContactClick,
+                onBottomActionClick = onBottomActionClick,
+                modifier = modifier
+            )
+        }
+    }
+}
 
 @Composable
 fun MatchingDetailScreen(
@@ -75,7 +123,25 @@ fun MatchingDetailScreen(
         modifier = modifier.fillMaxSize(),
         containerColor = DduruTheme.colors.gray0,
         topBar = {
-            // 채워야함
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .statusBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                horizontalArrangement = Arrangement.SpaceBetween,
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                MatchingDetailBackButton(onClick = onBackClick)
+
+                MatchingDetailTopActionButton(
+                    likeCount = uiState.likeCount,
+                    hasLiked = uiState.hasLiked,
+                    isOwner = uiState.isOwner,
+                    onLikeClick = onLikeClick,
+                    onMoreClick = onOverflowClick,
+                    onShareClick = onShareClick
+                )
+            }
         },
         bottomBar = {
             MatchingDetailBottomActionComponent(

@@ -4,16 +4,13 @@ import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.presentation.feature.register.survey.screen.QuestionStart
 import com.gildongmu.dduru.presentation.feature.register.survey.screen.SurveyQuestionScreen
 import com.gildongmu.dduru.presentation.feature.register.survey.screen.SurveyResultScreen
@@ -53,14 +50,11 @@ fun SurveyMainScreen(
             }
 
             questionsLoading -> {
-                CircularProgressIndicator(modifier = Modifier.align(Alignment.Center))
+                DduruLoadingScreen()
             }
 
             questions.isEmpty() -> {
-                Text(
-                    text = "질문을 불러올 수 없습니다.",
-                    modifier = Modifier.align(Alignment.Center)
-                )
+                DduruFailureScreen(message = "질문을 불러올 수 없습니다.")
             }
 
             currentQuestion == 0 -> {
@@ -136,24 +130,11 @@ fun SurveyMainScreen(
         }
 
         if (uiState is SurveyUiState.Loading) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(16.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                CircularProgressIndicator()
-            }
+            DduruLoadingScreen()
         }
 
         if (uiState is SurveyUiState.Error) {
-            Text(
-                text = (uiState as SurveyUiState.Error).message,
-                modifier = Modifier
-                    .align(Alignment.BottomCenter)
-                    .padding(20.dp),
-                color = androidx.compose.ui.graphics.Color.Red
-            )
+            DduruFailureScreen(message = (uiState as SurveyUiState.Error).message)
         }
     }
 }
