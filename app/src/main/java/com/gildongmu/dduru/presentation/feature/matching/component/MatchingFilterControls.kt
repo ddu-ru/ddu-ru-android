@@ -29,7 +29,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun MatchingDestinationField(
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -65,7 +65,7 @@ fun MatchingSegmentedOptionRow(
     options: List<String>,
     selectedOption: String?,
     onOptionSelected: (String) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -88,7 +88,7 @@ fun MatchingFilterSmallChip(
     text: String,
     selected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     MatchingFilterSelectableChip(
         text = text,
@@ -107,7 +107,7 @@ private fun MatchingToggleButton(
     text: String,
     selected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     MatchingFilterSelectableChip(
         text = text,
@@ -131,7 +131,7 @@ private fun MatchingFilterSelectableChip(
     contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 13.dp),
     showUnselectedBorder: Boolean = true,
     unselectedTextColor: Color = DduruTheme.colors.gray500,
-    unselectedBorderColor: Color = DduruTheme.colors.gray200,
+    unselectedBorderColor: Color = DduruTheme.colors.gray200
 ) {
     Box(
         modifier = modifier
@@ -163,7 +163,7 @@ private fun MatchingFilterSelectableChip(
 @Composable
 fun MatchingUnderlineInput(
     text: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier.height(48.dp),

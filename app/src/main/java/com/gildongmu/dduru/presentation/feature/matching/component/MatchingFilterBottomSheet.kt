@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
@@ -35,14 +34,13 @@ enum class MatchingFilterTab(val label: String) {
     DETAIL("상세")
 }
 
-
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun MatchingFilterBottomSheet(
     visible: Boolean,
     onDismiss: () -> Unit,
     onDestinationClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     if (!visible) return
 
@@ -77,7 +75,7 @@ private fun MatchingFilterBottomSheetContent(
     onClose: () -> Unit,
     onApply: () -> Unit,
     onDestinationClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     var selectedTab by remember { mutableStateOf(MatchingFilterTab.DETAIL) }
     var selectedStartDate by remember { mutableStateOf<LocalDate?>(null) }

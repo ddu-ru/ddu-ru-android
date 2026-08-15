@@ -41,7 +41,7 @@ fun MatchingDateFilterContent(
     selectedStartDate: LocalDate?,
     selectedEndDate: LocalDate?,
     onDateSelected: (LocalDate) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -100,7 +100,7 @@ fun MatchingDetailFilterContent(
     selectedCompanionType: MatchingCompanionType?,
     onCompanionTypeSelected: (MatchingCompanionType) -> Unit,
     onDestinationClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         MatchingFilterSection(title = "여행지") {
@@ -218,7 +218,7 @@ fun MatchingDetailFilterContent(
 fun MatchingFilterSection(
     modifier: Modifier = Modifier,
     title: String? = null,
-    content: @Composable ColumnScope.() -> Unit,
+    content: @Composable ColumnScope.() -> Unit
 ) {
     Column(
         modifier = modifier
@@ -241,7 +241,7 @@ fun MatchingFilterSection(
 
 @Composable
 private fun MatchingFilterDivider(
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Spacer(
         modifier = modifier
@@ -255,7 +255,7 @@ private fun MatchingFilterDivider(
 fun MatchingFilterFooter(
     onResetClick: () -> Unit,
     onApplyClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),

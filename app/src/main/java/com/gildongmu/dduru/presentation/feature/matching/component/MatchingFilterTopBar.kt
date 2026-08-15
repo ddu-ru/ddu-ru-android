@@ -24,7 +24,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun MatchingFilterHeader(
     onClose: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -52,7 +52,7 @@ fun MatchingFilterHeader(
 fun MatchingFilterTabRow(
     selectedTab: MatchingFilterTab,
     onTabSelected: (MatchingFilterTab) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier.fillMaxWidth(),
@@ -77,7 +77,7 @@ private fun MatchingFilterPill(
     text: String,
     selected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
