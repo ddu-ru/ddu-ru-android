@@ -30,6 +30,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalFocusManager
@@ -74,6 +75,7 @@ import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 
 @Composable
 fun MatchingEditPostRoute(
+    postId: Long,
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
@@ -81,6 +83,10 @@ fun MatchingEditPostRoute(
 ) {
     val uiState = viewModel.uiState.collectAsStateWithLifecycle().value
     val galleryLauncher = rememberGalleryLauncher(viewModel::onThumbnailImageSelected)
+
+    LaunchedEffect(postId) {
+        viewModel.loadPost(postId)
+    }
 
     when (val state = uiState) {
         UiState.Empty -> Unit

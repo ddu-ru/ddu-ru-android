@@ -16,6 +16,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.board.screen.BoardRoute
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatMainRoute
 import com.gildongmu.dduru.presentation.feature.home.HomeRoute
@@ -117,11 +118,13 @@ fun MainScreen(
 @Preview
 @Composable
 private fun MainScreenPreview() {
-    MainScreen(
-        onNavigateToHomeNotification = {},
-        onNavigateToHomeMenu = {},
-        onNavigateToChatRoom = {},
-        onNavigateToMatchingCreatePost = {},
-        onNavigateToMatchingDetail = {}
-    )
+    DduruTheme {
+        MainScreen(
+            onNavigateToHomeNotification = {},
+            onNavigateToHomeMenu = {},
+            onNavigateToChatRoom = {},
+            onNavigateToMatchingCreatePost = {},
+            onNavigateToMatchingDetail = {}
+        )
+    }
 }

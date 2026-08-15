@@ -5,8 +5,12 @@ import com.gildongmu.dduru.data.remote.dto.request.RefreshTokenRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.dto.response.LoginResponse
 import javax.inject.Inject
+import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
+import kotlinx.coroutines.sync.Mutex
+import kotlinx.coroutines.sync.withLock
+import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
@@ -25,13 +29,16 @@ class TokenAuthenticator @Inject constructor(
     private val json: Json
 ) : Authenticator {
     private val refreshClient = OkHttpClient()
+    private val refreshMutex = Mutex()
 
     override fun authenticate(route: Route?, response: Response): Request? {
         if (response.request.url.encodedPath == REFRESH_TOKEN_PATH) return null
         if (response.responseCount >= MAX_AUTH_ATTEMPTS) return null
 
         return runBlocking {
-            val refreshToken = tokenLocalDataSource.refreshToken.first() ?: return@runBlocking null
+            val refreshToken = tokenLocalDataSource.refreshToken.first()
+                ?.takeIf { it.isNotBlank() }
+                ?: return@runBlocking null
             val currentAccessToken = tokenLocalDataSource.accessToken.first()
             val requestAccessToken = response.request.header(AUTHORIZATION_HEADER)
                 ?.removePrefix(BEARER_PREFIX)
@@ -40,19 +47,44 @@ class TokenAuthenticator @Inject constructor(
                 return@runBlocking response.request.withAuthorization(currentAccessToken)
             }
 
-            val refreshedTokens = refreshAndSaveTokens(refreshToken) ?: return@runBlocking null
+            val refreshedTokens = refreshAndSaveTokens(
+                refreshToken = refreshToken,
+                staleAccessToken = requestAccessToken
+            ) ?: return@runBlocking null
 
             response.request.withAuthorization(refreshedTokens.accessToken)
         }
     }
 
-    suspend fun refreshAndSaveTokens(refreshToken: String): LoginResponse? {
-        val refreshedTokens = refreshTokens(refreshToken) ?: return null
+    suspend fun refreshAndSaveTokens(
+        refreshToken: String,
+        staleAccessToken: String? = null
+    ): LoginResponse? = refreshMutex.withLock {
+        val latestAccessToken = tokenLocalDataSource.accessToken.first()
+        val latestRefreshToken = tokenLocalDataSource.refreshToken.first()
+
+        if (
+            staleAccessToken != null &&
+            !latestAccessToken.isNullOrBlank() &&
+            latestAccessToken != staleAccessToken
+        ) {
+            return@withLock LoginResponse(
+                accessToken = latestAccessToken,
+                refreshToken = latestRefreshToken.orEmpty()
+            )
+        }
+
+        val validRefreshToken = refreshToken.takeIf { it.isNotBlank() }
+            ?: latestRefreshToken?.takeIf { it.isNotBlank() }
+            ?: return@withLock null
+        val refreshedTokens = withContext(Dispatchers.IO) {
+            refreshTokens(validRefreshToken)
+        } ?: return@withLock null
         tokenLocalDataSource.saveTokens(
             accessToken = refreshedTokens.accessToken,
             refreshToken = refreshedTokens.refreshToken
         )
-        return refreshedTokens
+        refreshedTokens
     }
 
     private fun refreshTokens(refreshToken: String): LoginResponse? {

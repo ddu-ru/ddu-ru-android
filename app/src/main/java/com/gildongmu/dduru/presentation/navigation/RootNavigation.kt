@@ -80,7 +80,6 @@ fun RootNavigation(
                     is RootNavRoute.Register -> NavEntry(route) {
                         SignupRoute(
                             onSignupComplete = {
-                                rootBackStack.clear()
                                 rootBackStack.add(RootNavRoute.RegisterSurvey)
                             }
                         )
@@ -89,7 +88,6 @@ fun RootNavigation(
                     is RootNavRoute.RegisterSurvey -> NavEntry(route) {
                         SurveyMainScreen(
                             onSurveyComplete = {
-                                rootBackStack.clear()
                                 rootBackStack.add(RootNavRoute.RegisterProfile)
                             },
                             onBackPressed = { navigateBack() }
@@ -167,6 +165,7 @@ fun RootNavigation(
 
                     is RootNavRoute.MatchingEditPost -> NavEntry(route) {
                         MatchingEditPostRoute(
+                            postId = route.postId,
                             onBackClick = { navigateBack() },
                             onSaveClick = { navigateBack() }
                         )

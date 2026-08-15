@@ -2,6 +2,7 @@ package com.gildongmu.dduru.presentation.feature.home.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxSize
@@ -76,14 +77,19 @@ internal fun HomeSubPageTopBar(
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Icon(
-            painter = painterResource(id = R.drawable.ic_chevron_left),
-            contentDescription = null,
-            tint = DduruTheme.colors.gray900,
+        Box(
             modifier = Modifier
-                .size(28.dp)
-                .noRippleClickable(onClick = onBackClick)
-        )
+                .size(48.dp)
+                .noRippleClickable(onClick = onBackClick),
+            contentAlignment = Alignment.Center
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_chevron_left),
+                contentDescription = "뒤로가기",
+                tint = DduruTheme.colors.gray900,
+                modifier = Modifier.size(28.dp)
+            )
+        }
 
         Text(
             text = title,

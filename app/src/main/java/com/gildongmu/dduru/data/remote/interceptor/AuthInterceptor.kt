@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.data.remote.interceptor
 
-import android.util.Base64
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
+import java.util.Base64
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
@@ -29,7 +29,10 @@ class AuthInterceptor @Inject constructor(
                 if (refreshToken.isNullOrBlank()) {
                     accessToken
                 } else {
-                    tokenAuthenticator.refreshAndSaveTokens(refreshToken)?.accessToken ?: accessToken
+                    tokenAuthenticator.refreshAndSaveTokens(
+                        refreshToken = refreshToken,
+                        staleAccessToken = accessToken
+                    )?.accessToken ?: accessToken
                 }
             } else {
                 accessToken
@@ -52,7 +55,7 @@ class AuthInterceptor @Inject constructor(
         return runCatching {
             val payload = split(".").getOrNull(JWT_PAYLOAD_INDEX) ?: return false
             val decodedPayload = String(
-                Base64.decode(payload, Base64.URL_SAFE or Base64.NO_PADDING or Base64.NO_WRAP),
+                Base64.getUrlDecoder().decode(payload),
                 Charsets.UTF_8
             )
             val expiresAt = json.parseToJsonElement(decodedPayload)

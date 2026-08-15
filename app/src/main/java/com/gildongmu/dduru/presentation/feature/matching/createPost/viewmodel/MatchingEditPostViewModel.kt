@@ -26,6 +26,12 @@ class MatchingEditPostViewModel @Inject constructor() : ViewModel() {
     )
     val uiState: StateFlow<UiState<MatchingEditPostUiState>> = _uiState.asStateFlow()
 
+    fun loadPost(postId: Long) {
+        updateUiState { currentState ->
+            currentState.copy(postId = postId)
+        }
+    }
+
     fun onDateSectionAction(action: DateSectionUiAction) {
         updateUiState { currentState ->
             currentState.copy(

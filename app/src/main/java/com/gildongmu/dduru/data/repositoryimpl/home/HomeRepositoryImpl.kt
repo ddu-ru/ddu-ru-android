@@ -85,7 +85,7 @@ class HomeRepositoryImpl @Inject constructor(
 
             if (response.status.isHomeSuccessStatus() && response.data != null) {
                 mapper(response.data)
-            } else if (response.status.isEmptyHomeStatus()) {
+            } else if (response.status.isHomeNoDataStatus()) {
                 throw ExceptionResponse(response.status)
             } else {
                 throw IllegalStateException("$errorMessage: status=${response.status}")
@@ -96,8 +96,10 @@ class HomeRepositoryImpl @Inject constructor(
     private suspend inline fun <T> runCatchingApi(block: suspend () -> T): Result<T> {
         return try {
             Result.success(block())
+        } catch (e: ExceptionResponse) {
+            Result.failure(e)
         } catch (e: HttpException) {
-            if (e.code().isEmptyHomeStatus()) {
+            if (e.code().isHomeNoDataStatus()) {
                 Result.failure(ExceptionResponse(e.code()))
             } else {
                 Result.failure(Exception("서버 오류: ${e.code()} - ${e.message()}"))
@@ -110,17 +112,15 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     private fun Int.isHomeSuccessStatus(): Boolean {
-        return this == HOME_SUCCESS_STATUS || this == HTTP_SUCCESS_STATUS
+        return this == HTTP_SUCCESS_STATUS
     }
 
-    private fun Int.isEmptyHomeStatus(): Boolean {
-        return this == HTTP_UNAUTHORIZED_STATUS || this == HTTP_NOT_FOUND_STATUS
+    private fun Int.isHomeNoDataStatus(): Boolean {
+        return this == HTTP_NOT_FOUND_STATUS
     }
 
     private companion object {
-        const val HOME_SUCCESS_STATUS = 0
         const val HTTP_SUCCESS_STATUS = 200
-        const val HTTP_UNAUTHORIZED_STATUS = 401
         const val HTTP_NOT_FOUND_STATUS = 404
     }
 }

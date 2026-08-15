@@ -24,12 +24,12 @@ import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -56,8 +56,8 @@ class ProfileViewModel @Inject constructor(
     )
     val uiState = _uiState.asStateFlow()
 
-    private val _sideEffect = MutableSharedFlow<ProfileSideEffect>()
-    val sideEffect: SharedFlow<ProfileSideEffect> = _sideEffect.asSharedFlow()
+    private val _sideEffect = Channel<ProfileSideEffect>(Channel.BUFFERED)
+    val sideEffect: Flow<ProfileSideEffect> = _sideEffect.receiveAsFlow()
 
     private val _characterImageRes = MutableStateFlow(R.drawable.img_penguin_personallity)
     val characterImageRes = _characterImageRes.asStateFlow()
@@ -180,7 +180,7 @@ class ProfileViewModel @Inject constructor(
                 _uiState.update {
                     it.copy(isSubmitting = false, isImageUploading = false)
                 }
-                _sideEffect.emit(ProfileSideEffect.NavigateToMain)
+                _sideEffect.send(ProfileSideEffect.NavigateToMain)
             }.onFailure { e ->
                 _uiState.update {
                     it.copy(
