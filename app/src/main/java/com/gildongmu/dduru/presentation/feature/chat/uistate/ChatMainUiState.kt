@@ -10,7 +10,7 @@ enum class ChatTab(val label: String) {
 }
 
 data class ChatRoomUiModel(
-    val id: String,
+    val id: Long,
     val displayName: String,
     val postTitle: String?,
     val participantCount: Int?,

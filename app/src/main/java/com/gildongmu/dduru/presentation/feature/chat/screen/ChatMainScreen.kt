@@ -30,6 +30,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
@@ -61,6 +62,17 @@ fun ChatMainRoute(
         }
     }
 
+    LaunchedEffect(Unit) {
+        viewModel.loadChatRooms()
+    }
+
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.RESUMED) {
+            viewModel.loadChatRooms()
+        }
+    }
+
     when (val state = uiState) {
         is UiState.Loading -> DduruLoadingScreen()
         is UiState.Success -> ChatMainScreen(
@@ -83,7 +95,7 @@ private fun ChatMainScreen(
     initialTab: ChatTab = ChatTab.ALL,
     initialSort: ChatSortOption = ChatSortOption.ALL,
     initialSortExpanded: Boolean = false,
-    onChatRoomClick: (String) -> Unit = {},
+    onChatRoomClick: (Long) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     onLoadMore: () -> Unit = {},
@@ -222,7 +234,7 @@ private fun ChatMainScreen(
 
 private val previewRooms = listOf(
     ChatRoomUiModel(
-        id = "1",
+        id = 1L,
         displayName = "username",
         postTitle = "제주 애월 2박 3일",
         participantCount = null,
@@ -232,7 +244,7 @@ private val previewRooms = listOf(
         roomType = ChatRoomType.PRIVATE
     ),
     ChatRoomUiModel(
-        id = "2",
+        id = 2L,
         displayName = "제주 애월 2박 3일",
         postTitle = null,
         participantCount = 3,
@@ -242,7 +254,7 @@ private val previewRooms = listOf(
         roomType = ChatRoomType.GROUP
     ),
     ChatRoomUiModel(
-        id = "3",
+        id = 3L,
         displayName = "username",
         postTitle = "제주 애월 2박 3일",
         participantCount = null,
@@ -252,7 +264,7 @@ private val previewRooms = listOf(
         roomType = ChatRoomType.PRIVATE
     ),
     ChatRoomUiModel(
-        id = "4",
+        id = 4L,
         displayName = "username",
         postTitle = "제주 애월 2박 3일",
         participantCount = null,
@@ -262,7 +274,7 @@ private val previewRooms = listOf(
         roomType = ChatRoomType.PRIVATE
     ),
     ChatRoomUiModel(
-        id = "5",
+        id = 5L,
         displayName = "제주 애월 2박 3일",
         postTitle = null,
         participantCount = 3,

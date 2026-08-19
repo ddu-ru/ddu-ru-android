@@ -15,11 +15,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -76,7 +78,8 @@ fun ChatRoomRoute(
         onMenuClick = viewModel::onMenuClick,
         onPlusClick = viewModel::onPlusClick,
         onSendClick = viewModel::onSendClick,
-        onInputChange = viewModel::onInputChange
+        onInputChange = viewModel::onInputChange,
+        onLoadMore = viewModel::loadMoreMessages
     )
 }
 
@@ -89,6 +92,7 @@ private fun ChatRoomScreen(
     onPlusClick: () -> Unit,
     onSendClick: (String) -> Unit,
     onInputChange: (String) -> Unit,
+    onLoadMore: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -107,7 +111,28 @@ private fun ChatRoomScreen(
             onMenuClick = onMenuClick
         )
 
+        val listState = rememberLazyListState()
+
+        val lastItemId = remember(uiState.items) {
+            uiState.items.lastOrNull()?.let {
+                if (it is ChatListItem.Message) it.message.id else null
+            }
+        }
+        LaunchedEffect(lastItemId) {
+            if (uiState.items.isNotEmpty()) {
+                listState.animateScrollToItem(uiState.items.size - 1)
+            }
+        }
+
+        val firstVisibleIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
+        LaunchedEffect(firstVisibleIndex) {
+            if (firstVisibleIndex == 0 && uiState.items.isNotEmpty()) {
+                onLoadMore()
+            }
+        }
+
         LazyColumn(
+            state = listState,
             verticalArrangement = Arrangement.spacedBy(4.dp),
             reverseLayout = false,
             modifier = Modifier

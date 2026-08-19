@@ -2,8 +2,10 @@ package com.gildongmu.dduru.presentation.feature.chat.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import com.gildongmu.dduru.core.common.extension.parseDateTime
 import com.gildongmu.dduru.core.common.extension.toRelativeTime
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.data.remote.websocket.StompChatClient
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomEntity
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomType
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
@@ -22,7 +24,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class ChatMainViewModel @Inject constructor(
-    private val chatRoomRepository: ChatRoomRepository
+    private val chatRoomRepository: ChatRoomRepository,
+    private val stompChatClient: StompChatClient
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<ChatMainUiState>>(UiState.Loading)
@@ -33,6 +36,7 @@ class ChatMainViewModel @Inject constructor(
 
     init {
         loadChatRooms()
+        subscribeToRoomListUpdates()
     }
 
     fun onChatRoomClick(chatRoomId: Long) {
@@ -58,7 +62,7 @@ class ChatMainViewModel @Inject constructor(
         }
     }
 
-    private fun loadChatRooms() {
+    fun loadChatRooms() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             chatRoomRepository.getChatRooms()
@@ -77,8 +81,43 @@ class ChatMainViewModel @Inject constructor(
         }
     }
 
+    private fun subscribeToRoomListUpdates() {
+        viewModelScope.launch {
+            runCatching {
+                stompChatClient.subscribeToRoomList().collect { event ->
+                    val updatedRoom = event.chatRoom
+                    val current = (_uiState.value as? UiState.Success)?.data
+                    if (current != null) {
+                        val exists = current.chatRooms.any { it.id == updatedRoom.chatRoomId }
+                        if (exists) {
+                            val updatedRooms = current.chatRooms.map { room ->
+                                if (room.id == updatedRoom.chatRoomId) {
+                                    room.copy(
+                                        lastMessagePreview = updatedRoom.lastMessage?.content,
+                                        lastMessageAt = updatedRoom.lastMessage?.createdAt
+                                            ?.parseDateTime()
+                                            ?.toRelativeTime()
+                                            ?: room.lastMessageAt,
+                                        unreadCount = updatedRoom.unreadCount.toInt().coerceAtMost(99)
+                                    )
+                                } else {
+                                    room
+                                }
+                            }
+                            _uiState.value = UiState.Success(current.copy(chatRooms = updatedRooms))
+                        } else {
+                            loadChatRooms()
+                        }
+                    } else {
+                        loadChatRooms()
+                    }
+                }
+            }
+        }
+    }
+
     private fun ChatRoomEntity.toUiModel() = ChatRoomUiModel(
-        id = chatRoomId.toString(),
+        id = chatRoomId,
         displayName = displayName,
         postTitle = postTitle,
         participantCount = if (roomType == ChatRoomType.GROUP) participantCount else null,
