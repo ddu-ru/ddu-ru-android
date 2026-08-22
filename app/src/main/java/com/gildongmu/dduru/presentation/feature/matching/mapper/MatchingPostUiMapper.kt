@@ -11,7 +11,7 @@ fun MatchingPostEntity.toUiModel(): MatchingPostCardUiModel {
     return MatchingPostCardUiModel(
         id = id,
         title = title,
-        authorName = author.nickname,
+        authorName = author.nickname ?: DEFAULT_AUTHOR_NAME,
         location = destination,
         dateRange = formatDateRange(startDate = startDate, endDate = endDate),
         currentMemberCount = recruitCount,
@@ -32,3 +32,5 @@ private fun String.toMatchingGender(): MatchingGender {
 private fun String.toMatchingCompanionType(): MatchingCompanionType {
     return MatchingCompanionType.entries.firstOrNull { it.code == this } ?: MatchingCompanionType.FULL
 }
+
+private const val DEFAULT_AUTHOR_NAME = "알 수 없음"

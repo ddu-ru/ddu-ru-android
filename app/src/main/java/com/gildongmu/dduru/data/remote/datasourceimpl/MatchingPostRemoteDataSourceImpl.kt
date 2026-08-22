@@ -2,9 +2,9 @@ package com.gildongmu.dduru.data.remote.datasourceimpl
 
 import com.gildongmu.dduru.data.remote.datasource.MatchingPostRemoteDataSource
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
-import com.gildongmu.dduru.data.remote.dto.response.matching.MatchingPostListResponse
 import com.gildongmu.dduru.data.remote.service.MatchingPostService
 import javax.inject.Inject
+import kotlinx.serialization.json.JsonElement
 
 class MatchingPostRemoteDataSourceImpl @Inject constructor(
     private val matchingPostService: MatchingPostService
@@ -23,7 +23,7 @@ class MatchingPostRemoteDataSourceImpl @Inject constructor(
         recruitmentStatus: String?,
         companionType: String?,
         sort: String?
-    ): ApiResponse<MatchingPostListResponse> {
+    ): ApiResponse<JsonElement> {
         return matchingPostService.getPosts(
             cursor = cursor,
             cursorValue = cursorValue,

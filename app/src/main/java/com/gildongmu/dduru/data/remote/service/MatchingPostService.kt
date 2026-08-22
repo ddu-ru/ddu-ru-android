@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.data.remote.service
 
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
-import com.gildongmu.dduru.data.remote.dto.response.matching.MatchingPostListResponse
+import kotlinx.serialization.json.JsonElement
 import retrofit2.http.GET
 import retrofit2.http.Query
 
@@ -21,5 +21,5 @@ interface MatchingPostService {
         @Query("recruitmentStatus") recruitmentStatus: String? = null,
         @Query("companionType") companionType: String? = null,
         @Query("sort") sort: String? = null
-    ): ApiResponse<MatchingPostListResponse>
+    ): ApiResponse<JsonElement>
 }

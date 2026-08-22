@@ -32,6 +32,6 @@ data class MatchingPostResponse(
 
 @Serializable
 data class MatchingPostAuthorResponse(
-    val nickname: String,
+    val nickname: String? = null,
     val isSuperHost: Boolean = false
 )

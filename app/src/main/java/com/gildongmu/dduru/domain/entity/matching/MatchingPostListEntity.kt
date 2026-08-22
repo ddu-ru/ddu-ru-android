@@ -27,6 +27,6 @@ data class MatchingPostEntity(
 )
 
 data class MatchingPostAuthorEntity(
-    val nickname: String,
+    val nickname: String?,
     val isSuperHost: Boolean
 )

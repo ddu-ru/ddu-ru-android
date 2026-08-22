@@ -171,6 +171,7 @@ private fun MatchingPostInfo(
                     MatchingCompanionType.FULL -> R.drawable.ic_home_users
                     MatchingCompanionType.PARTIAL -> R.drawable.ic_home_calendar
                     MatchingCompanionType.MEAL -> R.drawable.ic_hashtag
+                    MatchingCompanionType.UNSPECIFIED -> R.drawable.ic_home_users
                 }
             )
         }

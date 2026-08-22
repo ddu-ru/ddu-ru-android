@@ -49,5 +49,11 @@ enum class MatchingCompanionType(
         cardLabel = "식사동행",
         guideMessage = "식사 약속 위주로 가볍게 만나요",
         code = "MEAL"
+    ),
+    UNSPECIFIED(
+        selectionLabel = "상관없음",
+        cardLabel = "동행무관",
+        guideMessage = "동행 방식은 조율할 수 있어요",
+        code = "UNSPECIFIED"
     )
 }

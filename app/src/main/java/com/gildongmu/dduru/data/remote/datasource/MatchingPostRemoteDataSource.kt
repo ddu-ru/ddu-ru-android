@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.data.remote.datasource
 
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
-import com.gildongmu.dduru.data.remote.dto.response.matching.MatchingPostListResponse
+import kotlinx.serialization.json.JsonElement
 
 interface MatchingPostRemoteDataSource {
     suspend fun getPosts(
@@ -18,5 +18,5 @@ interface MatchingPostRemoteDataSource {
         recruitmentStatus: String? = null,
         companionType: String? = null,
         sort: String? = null
-    ): ApiResponse<MatchingPostListResponse>
+    ): ApiResponse<JsonElement>
 }
