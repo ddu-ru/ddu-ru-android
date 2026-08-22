@@ -6,6 +6,7 @@ import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
 import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
 import com.gildongmu.dduru.data.remote.service.AuthService
 import com.gildongmu.dduru.data.remote.service.ChatRoomService
+import com.gildongmu.dduru.data.remote.service.MatchingPostService
 import com.gildongmu.dduru.data.remote.service.ParticipationService
 import com.gildongmu.dduru.data.remote.service.SurveyService
 import com.gildongmu.dduru.data.remote.service.home.HomeService
@@ -135,5 +136,11 @@ object NetworkModule {
     @Singleton
     fun provideHomeService(retrofit: Retrofit): HomeService {
         return retrofit.create(HomeService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMatchingPostService(retrofit: Retrofit): MatchingPostService {
+        return retrofit.create(MatchingPostService::class.java)
     }
 }

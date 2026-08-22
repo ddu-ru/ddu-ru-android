@@ -1,6 +1,8 @@
 package com.gildongmu.dduru.presentation.feature.home.mapper
 
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.formatDateRange
+import com.gildongmu.dduru.core.common.extension.toDateLabel
 import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendation
 import com.gildongmu.dduru.domain.entity.home.HomePopularDestination
 import com.gildongmu.dduru.domain.entity.home.HomeSameAgeTrip
@@ -101,18 +103,6 @@ fun HomeUpcomingTrip.toUiState(): UpcomingTripUiState {
         dDay = dDay,
         taskCount = pendingTaskCount
     )
-}
-
-private fun formatDateRange(startDate: String, endDate: String): String {
-    val start = startDate.toDateLabel(includeYear = true)
-    val end = endDate.toDateLabel(includeYear = false)
-
-    return when {
-        start.isBlank() && end.isBlank() -> ""
-        end.isBlank() -> start
-        start.isBlank() -> end
-        else -> "$start - $end"
-    }
 }
 
 private fun String.toRecruitmentText(): String {
