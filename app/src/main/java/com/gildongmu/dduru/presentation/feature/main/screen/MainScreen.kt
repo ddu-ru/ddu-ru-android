@@ -21,7 +21,7 @@ import com.gildongmu.dduru.presentation.feature.board.screen.BoardRoute
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatMainRoute
 import com.gildongmu.dduru.presentation.feature.home.HomeRoute
 import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyRoute
-import com.gildongmu.dduru.presentation.feature.matching.MatchingRoute
+import com.gildongmu.dduru.presentation.feature.matching.screen.MatchingRoute
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar
 import com.gildongmu.dduru.presentation.navigation.BottomNavItem
 import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
