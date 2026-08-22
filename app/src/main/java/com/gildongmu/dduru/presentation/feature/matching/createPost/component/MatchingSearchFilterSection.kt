@@ -29,6 +29,7 @@ fun MatchingSearchFilterSection(
     searchQuery: String,
     selectedSort: String,
     onSearchQueryChange: (String) -> Unit,
+    onSearchFieldClick: () -> Unit,
     onFilterClick: () -> Unit,
     onSortClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -40,6 +41,7 @@ fun MatchingSearchFilterSection(
         MatchingSearchField(
             value = searchQuery,
             onValueChange = onSearchQueryChange,
+            onClick = onSearchFieldClick,
             modifier = Modifier
                 .fillMaxWidth()
                 .padding(horizontal = 16.dp)
@@ -70,15 +72,10 @@ fun MatchingSearchFilterSection(
 private fun MatchingSearchField(
     value: String,
     onValueChange: (String) -> Unit,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    BasicTextField(
-        value = value,
-        onValueChange = onValueChange,
-        singleLine = true,
-        textStyle = DduruTheme.typography.Body1.copy(
-            color = DduruTheme.colors.gray900
-        ),
+    Box(
         modifier = modifier
             .clip(RoundedCornerShape(99.dp))
             .background(DduruTheme.colors.gray0)
@@ -87,36 +84,54 @@ private fun MatchingSearchField(
                 color = DduruTheme.colors.gray200,
                 shape = RoundedCornerShape(99.dp)
             )
-            .padding(horizontal = 16.dp, vertical = 13.dp),
-        decorationBox = { innerTextField ->
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Box(
-                    modifier = Modifier.weight(1f),
-                    contentAlignment = Alignment.CenterStart
+    ) {
+        BasicTextField(
+            value = value,
+            onValueChange = onValueChange,
+            readOnly = true,
+            singleLine = true,
+            textStyle = DduruTheme.typography.Body1.copy(
+                color = DduruTheme.colors.gray900
+            ),
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(horizontal = 16.dp, vertical = 13.dp),
+            decorationBox = { innerTextField ->
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
-                    if (value.isEmpty()) {
-                        Text(
-                            text = "도시, 국가 혹은 해시태그 검색",
-                            style = DduruTheme.typography.Body1,
-                            color = DduruTheme.colors.gray500
-                        )
+                    Box(
+                        modifier = Modifier.weight(1f),
+                        contentAlignment = Alignment.CenterStart
+                    ) {
+                        if (value.isEmpty()) {
+                            Text(
+                                text = "도시, 국가 혹은 해시태그 검색",
+                                style = DduruTheme.typography.Body1,
+                                color = DduruTheme.colors.gray500
+                            )
+                        }
+
+                        innerTextField()
                     }
 
-                    innerTextField()
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_matching_searching),
+                        contentDescription = null,
+                        tint = DduruTheme.colors.gray400,
+                        modifier = Modifier.size(24.dp)
+                    )
                 }
-
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_matching_searching),
-                    contentDescription = null,
-                    tint = DduruTheme.colors.gray400,
-                    modifier = Modifier.size(24.dp)
-                )
             }
-        }
-    )
+        )
+
+        Box(
+            modifier = Modifier
+                .matchParentSize()
+                .noRippleClickable(onClick = onClick)
+        )
+    }
 }
 
 @Composable
@@ -170,6 +185,7 @@ private fun MatchingSearchFilterSectionPreview() {
             searchQuery = "",
             selectedSort = "최신순",
             onSearchQueryChange = {},
+            onSearchFieldClick = {},
             onFilterClick = {},
             onSortClick = {}
         )

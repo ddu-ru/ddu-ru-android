@@ -31,6 +31,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingFilterBottomSheet
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingPostListSection
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingSearchFilterSection
+import com.gildongmu.dduru.presentation.feature.matching.component.MatchingSearchScreen
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingTopHeader
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingWriteButton
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.MatchingSortBottomSheet
@@ -74,6 +75,10 @@ fun MatchingRoute(
                 onNotificationClick = viewModel::onNotificationClick,
                 onMenuClick = viewModel::onMenuClick,
                 onSearchQueryChange = viewModel::onSearchQueryChange,
+                onSearchFieldClick = viewModel::onSearchFieldClick,
+                onSearchBackClick = viewModel::onSearchBackClick,
+                onSearchKeywordClick = viewModel::onSearchKeywordClick,
+                onRecentSearchKeywordRemove = viewModel::onRecentSearchKeywordRemove,
                 onSortSelected = viewModel::onSortSelected,
                 onPostClick = viewModel::onPostClick,
                 onPostLikeClick = viewModel::onPostLikeClick,
@@ -89,6 +94,10 @@ private fun MatchingScreen(
     onNotificationClick: () -> Unit,
     onMenuClick: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
+    onSearchFieldClick: () -> Unit,
+    onSearchBackClick: () -> Unit,
+    onSearchKeywordClick: (String) -> Unit,
+    onRecentSearchKeywordRemove: (String) -> Unit,
     onSortSelected: (String) -> Unit,
     onPostClick: (Long) -> Unit,
     onPostLikeClick: (Long) -> Unit,
@@ -132,6 +141,7 @@ private fun MatchingScreen(
                     searchQuery = uiState.searchQuery,
                     selectedSort = uiState.selectedSort,
                     onSearchQueryChange = onSearchQueryChange,
+                    onSearchFieldClick = onSearchFieldClick,
                     onFilterClick = { isFilterSheetVisible = true },
                     onSortClick = { isSortSheetVisible = true },
                     modifier = Modifier.padding(top = 10.dp)
@@ -174,6 +184,19 @@ private fun MatchingScreen(
             onDismiss = { isFilterSheetVisible = false },
             onDestinationClick = {}
         )
+
+        if (uiState.isSearchScreenVisible) {
+            MatchingSearchScreen(
+                searchQuery = uiState.searchQuery,
+                recentKeywords = uiState.recentSearchKeywords,
+                popularKeywords = uiState.popularSearchKeywords,
+                onSearchQueryChange = onSearchQueryChange,
+                onSearchKeywordClick = onSearchKeywordClick,
+                onRecentKeywordRemove = onRecentSearchKeywordRemove,
+                onBackClick = onSearchBackClick,
+                modifier = Modifier.zIndex(2f)
+            )
+        }
     }
 }
 
@@ -186,6 +209,10 @@ private fun MatchingScreenPreview() {
             onNotificationClick = {},
             onMenuClick = {},
             onSearchQueryChange = {},
+            onSearchFieldClick = {},
+            onSearchBackClick = {},
+            onSearchKeywordClick = {},
+            onRecentSearchKeywordRemove = {},
             onSortSelected = {},
             onPostClick = {},
             onPostLikeClick = {},

@@ -38,6 +38,44 @@ class MatchingViewModel @Inject constructor() : ViewModel() {
         }
     }
 
+    fun onSearchFieldClick() {
+        updateMatchingUiState {
+            copy(isSearchScreenVisible = true)
+        }
+    }
+
+    fun onSearchBackClick() {
+        updateMatchingUiState {
+            copy(isSearchScreenVisible = false)
+        }
+    }
+
+    fun onSearchKeywordClick(keyword: String) {
+        val trimmedKeyword = keyword.trim()
+        if (trimmedKeyword.isBlank()) return
+
+        updateMatchingUiState {
+            copy(
+                searchQuery = trimmedKeyword,
+                isSearchScreenVisible = false,
+                recentSearchKeywords = listOf(trimmedKeyword)
+                    .plus(recentSearchKeywords.filterNot { it == trimmedKeyword })
+                    .take(5)
+                    .toPersistentList()
+            )
+        }
+    }
+
+    fun onRecentSearchKeywordRemove(keyword: String) {
+        updateMatchingUiState {
+            copy(
+                recentSearchKeywords = recentSearchKeywords
+                    .filterNot { it == keyword }
+                    .toPersistentList()
+            )
+        }
+    }
+
     fun onSortSelected(sort: String) {
         if ((_uiState.value as? UiState.Success)?.data?.selectedSort == sort) return
 

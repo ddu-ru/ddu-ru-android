@@ -11,6 +11,20 @@ import kotlinx.collections.immutable.persistentListOf
 @Immutable
 data class MatchingUiState(
     val searchQuery: String = "",
+    val isSearchScreenVisible: Boolean = false,
+    val recentSearchKeywords: ImmutableList<String> = persistentListOf("가오슝", "제주도"),
+    val popularSearchKeywords: ImmutableList<String> = persistentListOf(
+        "일본",
+        "이탈리아",
+        "이탈리아",
+        "밀라노",
+        "일본",
+        "이탈리아",
+        "밀라노",
+        "밀라노",
+        "밀라노",
+        "밀라노"
+    ),
     val selectedSort: String = "최신순",
     val posts: ImmutableList<MatchingPostCardUiModel> = persistentListOf()
 ) {
