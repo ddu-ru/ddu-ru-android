@@ -57,7 +57,7 @@ fun PastJourneyCard(
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .fillMaxWidth()
-                .aspectRatio(200f/130f)
+                .aspectRatio(200f / 130f)
                 .clip(PastJourneyImageShape)
         )
 
@@ -77,8 +77,8 @@ fun PastJourneyCard(
             Column(
                 modifier = Modifier.padding(
                     horizontal = 12.dp,
-                    vertical = 12.dp,
-                ),
+                    vertical = 12.dp
+                )
             ) {
                 Text(
                     text = title,
@@ -91,13 +91,13 @@ fun PastJourneyCard(
                 Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     Icon(
                         painter = painterResource(R.drawable.ic_home_location),
                         contentDescription = null,
                         tint = DduruTheme.colors.gray500,
-                        modifier = Modifier.size(8.dp),
+                        modifier = Modifier.size(8.dp)
                     )
 
                     Spacer(modifier = Modifier.width(2.dp))
@@ -106,7 +106,7 @@ fun PastJourneyCard(
                         text = location,
                         style = DduruTheme.typography.Micro3,
                         color = DduruTheme.colors.gray500,
-                        maxLines = 1,
+                        maxLines = 1
                     )
 
                     Box(
@@ -120,7 +120,7 @@ fun PastJourneyCard(
                         painter = painterResource(R.drawable.ic_ai_calendar),
                         contentDescription = null,
                         tint = DduruTheme.colors.gray500,
-                        modifier = Modifier.size(8.dp),
+                        modifier = Modifier.size(8.dp)
                     )
 
                     Spacer(modifier = Modifier.width(2.dp))
@@ -129,7 +129,7 @@ fun PastJourneyCard(
                         text = date,
                         style = DduruTheme.typography.Micro3,
                         color = DduruTheme.colors.gray500,
-                        maxLines = 1,
+                        maxLines = 1
                     )
                 }
 
@@ -148,9 +148,9 @@ fun PastJourneyCard(
                                 .border(
                                     width = 1.dp,
                                     color = DduruTheme.colors.gray0,
-                                    shape = CircleShape,
-                                ),
-                            )
+                                    shape = CircleShape
+                                )
+                        )
                     }
                 }
             }
@@ -171,10 +171,10 @@ private fun PastJourneyCardPreview() {
                 "https://i.pravatar.cc/96?img=12",
                 "https://i.pravatar.cc/96?img=32",
                 "https://i.pravatar.cc/96?img=47",
-                "https://i.pravatar.cc/96?img=60",
+                "https://i.pravatar.cc/96?img=60"
             ),
             onClick = {},
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp)
         )
     }
 }

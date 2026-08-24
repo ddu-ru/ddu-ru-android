@@ -176,7 +176,7 @@ private fun JourneyInformationContent(
     ) {
         Row(
             modifier = Modifier.fillMaxWidth(),
-            horizontalArrangement = Arrangement.spacedBy(32.dp),
+            horizontalArrangement = Arrangement.spacedBy(32.dp)
         ) {
             JourneySummaryItem(
                 iconRes = R.drawable.ic_journey_users,
@@ -231,7 +231,7 @@ private fun JourneySummaryItem(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Start,
+        horizontalArrangement = Arrangement.Start
     ) {
         Box(
             modifier = Modifier
@@ -254,7 +254,7 @@ private fun JourneySummaryItem(
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
                 text = label,
