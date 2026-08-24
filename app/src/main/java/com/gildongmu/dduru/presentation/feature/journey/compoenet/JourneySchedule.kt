@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.journey
+package com.gildongmu.dduru.presentation.feature.journey.compoenet
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

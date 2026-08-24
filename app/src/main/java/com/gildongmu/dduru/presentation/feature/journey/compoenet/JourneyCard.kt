@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.journey
+package com.gildongmu.dduru.presentation.feature.journey.compoenet
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
