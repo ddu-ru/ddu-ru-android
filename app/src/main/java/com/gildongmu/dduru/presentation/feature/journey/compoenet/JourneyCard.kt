@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -38,9 +39,9 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 private val JourneyCardShape = RoundedCornerShape(32.dp)
 private val JourneyImageShape = RoundedCornerShape(topStart = 32.dp, topEnd = 32.dp)
 
-private const val JOURNEY_CARD_RATIO = 343f / 351f
 private const val JOURNEY_IMAGE_RATIO = 343f / 240f
 private const val JOURNEY_INFO_RATIO = 343f / 144f
+private val JOURNEY_CONTENT_OVERLAP = 33.dp
 
 @Composable
 fun JourneyCard(
@@ -54,10 +55,9 @@ fun JourneyCard(
     onJourneyClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Box(
+    Column(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(JOURNEY_CARD_RATIO)
     ) {
         JourneyImageContent(
             imageUrl = imageUrl,
@@ -67,7 +67,6 @@ fun JourneyCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(JOURNEY_IMAGE_RATIO)
-                .align(Alignment.TopCenter)
         )
 
         JourneyInformationContent(
@@ -78,7 +77,7 @@ fun JourneyCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(JOURNEY_INFO_RATIO)
-                .align(Alignment.BottomCenter)
+                .offset(y = -JOURNEY_CONTENT_OVERLAP)
         )
     }
 }
@@ -168,14 +167,16 @@ private fun JourneyInformationContent(
                 shape = JourneyCardShape,
                 clip = false
             )
+            .fillMaxWidth()
             .clip(JourneyCardShape)
             .background(DduruTheme.colors.gray0)
-            .padding(start = 16.dp, top = 16.dp, end = 16.dp),
+            .padding(16.dp),
         verticalArrangement = Arrangement.Center,
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxWidth(),
+            horizontalArrangement = Arrangement.spacedBy(32.dp),
         ) {
             JourneySummaryItem(
                 iconRes = R.drawable.ic_journey_users,
@@ -205,7 +206,7 @@ private fun JourneyInformationContent(
             )
         }
 
-        Spacer(modifier = Modifier.height(8.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         DduruButton(
             text = "여정 들어가기",
@@ -214,7 +215,6 @@ private fun JourneyInformationContent(
             enabledColors = DduruButtonDefaults.filledEnabledColors,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp)
         )
     }
 }
@@ -231,7 +231,7 @@ private fun JourneySummaryItem(
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center
+        horizontalArrangement = Arrangement.Start,
     ) {
         Box(
             modifier = Modifier
@@ -253,7 +253,8 @@ private fun JourneySummaryItem(
         Spacer(modifier = Modifier.width(8.dp))
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(2.dp)
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(2.dp),
         ) {
             Text(
                 text = label,
