@@ -13,6 +13,11 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.chat.component.ApplicationCard
 import com.gildongmu.dduru.presentation.feature.chat.component.ApplicationCardAction
@@ -23,11 +28,29 @@ import com.gildongmu.dduru.presentation.feature.chat.component.ParticipationDial
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestItemUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestSectionUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestUiState
-import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatTab
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ReceivedApplicationStatus
+import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatRequestViewModel
 
 @Composable
-fun ChatRequestScreen(
+fun ChatRequestRoute(
+    viewModel: ChatRequestViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    when (val state = uiState) {
+        is UiState.Loading -> DduruLoadingScreen()
+        is UiState.Success -> ChatRequestScreen(
+            uiState = state.data,
+            onAcceptConfirm = viewModel::onAcceptConfirm,
+            onRejectConfirm = viewModel::onRejectConfirm
+        )
+        is UiState.Failure -> DduruFailureScreen(message = "요청 목록을 불러올 수 없습니다.")
+        else -> Unit
+    }
+}
+
+@Composable
+private fun ChatRequestScreen(
     uiState: ChatRequestUiState = ChatRequestUiState(),
     onRejectConfirm: (String) -> Unit = {},
     onAcceptConfirm: (String) -> Unit = {},
@@ -172,14 +195,7 @@ private val previewUiState = ChatRequestUiState(
 @Composable
 private fun ChatRequestScreenPreview() {
     DduruTheme {
-        ChatMainScreen(
-            requestUnreadCount = 2,
-            initialTab = ChatTab.REQUEST,
-            requestContent = {
-                ChatRequestScreen(uiState = previewUiState)
-            },
-            applicationContent = {}
-        )
+        ChatRequestScreen(uiState = previewUiState)
     }
 }
 
@@ -187,20 +203,13 @@ private fun ChatRequestScreenPreview() {
 @Composable
 private fun ChatRequestScreenDialogPreview() {
     DduruTheme {
-        ChatMainScreen(
-            requestUnreadCount = 2,
-            initialTab = ChatTab.REQUEST,
-            requestContent = {
-                Box(modifier = Modifier.fillMaxSize()) {
-                    ChatRequestScreen(uiState = previewUiState)
-                    ParticipationDialog(
-                        type = ParticipationDialogType.REJECT,
-                        onDismiss = {},
-                        onConfirm = {}
-                    )
-                }
-            },
-            applicationContent = {}
-        )
+        Box(modifier = Modifier.fillMaxSize()) {
+            ChatRequestScreen(uiState = previewUiState)
+            ParticipationDialog(
+                type = ParticipationDialogType.REJECT,
+                onDismiss = {},
+                onConfirm = {}
+            )
+        }
     }
 }

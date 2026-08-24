@@ -1,10 +1,18 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.screen
 
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingEditPostUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
+import java.time.LocalDate
 
 object MatchingCreatePostMockData {
     val popularTags = listOf("맛집", "힐링", "드라이브")
@@ -33,6 +41,35 @@ object MatchingCreatePostMockData {
         thumbnailAndTagUiState = ThumbnailAndTagUiState(
             regionName = "도쿄",
             countryName = "일본"
+        )
+    )
+}
+
+object MatchingEditPostMockData {
+    val screenUiState = MatchingEditPostUiState(
+        dateSectionUiState = DateSectionUiState(
+            selectedStartDate = LocalDate.of(2026, 8, 3),
+            selectedEndDate = LocalDate.of(2026, 8, 6)
+        ),
+        recruitmentSectionUiState = RecruitmentScreenUiState(
+            selectedCompanionType = MatchingCompanionType.FULL
+        ),
+        ageSectionUiState = AgeSectionUiState(
+            selectedGender = MatchingGender.ANY,
+            isAgeIrrelevant = true
+        ),
+        thumbnailAndTagUiState = ThumbnailAndTagUiState(
+            regionName = "후쿠오카",
+            countryName = "일본",
+            addedTags = listOf("맛집", "야경")
+        ),
+        popularTags = MatchingCreatePostMockData.popularTags
+    )
+
+    val enabledNextButtonUiState = screenUiState.copy(
+        postWritingUiState = PostWritingUiState(
+            title = "후쿠오카 여행방",
+            content = "맛집과 관광지를 함께 둘러볼 여행 메이트를 찾고 있어요."
         )
     )
 }

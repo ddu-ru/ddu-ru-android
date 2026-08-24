@@ -92,6 +92,7 @@ fun HomeSuperHost.toUiModel(): HomeSuperHostCardUiModel {
 
 fun HomeUpcomingTrip.toUiState(): UpcomingTripUiState {
     return UpcomingTripUiState(
+        hasUpcomingTrip = true,
         journeyId = journeyId,
         title = title,
         dateText = formatDateRange(startDate, endDate),

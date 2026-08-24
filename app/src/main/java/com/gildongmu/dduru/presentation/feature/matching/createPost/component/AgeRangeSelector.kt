@@ -4,8 +4,6 @@ import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -71,12 +69,6 @@ fun AgeRangeBar(
     val startIndex = selectedStart?.let { ages.indexOf(it) } ?: -1
     val endIndex = selectedEnd?.let { ages.indexOf(it) } ?: -1
 
-    val ageRangeText = when {
-        isAgeIrrelevant -> "연령무관"
-        selectedStart != null && selectedEnd != null -> "$selectedStart-${selectedEnd}세"
-        else -> "선택해주세요"
-    }
-
     fun segmentWidthPx(containerWidthPx: Float, capWidthPx: Float): Float {
         return ((containerWidthPx - capWidthPx * 2) / (ages.size - 1))
             .coerceAtLeast(0f)
@@ -104,31 +96,6 @@ fun AgeRangeBar(
     }
 
     Column(modifier = modifier) {
-        Row(
-            modifier = Modifier.fillMaxWidth(),
-            verticalAlignment = Alignment.CenterVertically
-        ) {
-            Text(
-                text = "함께하고 싶은 연령대",
-                modifier = Modifier.weight(1f),
-                style = DduruTheme.typography.Title3,
-                color = DduruTheme.colors.gray800
-            )
-
-            Text(
-                text = ageRangeText,
-                style = DduruTheme.typography.Title3,
-                color = if (isAgeIrrelevant || (selectedStart != null && selectedEnd != null)) {
-                    primary
-                } else {
-                    DduruTheme.colors.gray500
-                },
-                textAlign = TextAlign.End
-            )
-        }
-
-        Spacer(modifier = Modifier.height(16.dp))
-
         Box(
             modifier = Modifier
                 .fillMaxWidth()

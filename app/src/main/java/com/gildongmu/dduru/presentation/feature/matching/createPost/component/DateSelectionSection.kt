@@ -17,129 +17,18 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.toKoreanDateString
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiAction
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
-import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSelectionTarget
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingCreatePostStep
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @Composable
 fun DateSelectionSection(
     uiState: DateSectionUiState,
-    onUiStateChange: (DateSectionUiState) -> Unit,
+    onAction: (DateSectionUiAction) -> Unit,
     modifier: Modifier = Modifier
 ) {
-    fun formatDate(date: LocalDate?): String? {
-        return date?.format(DateTimeFormatter.ofPattern("yyyy년 MM월 dd일"))
-    }
-
-    fun handleDateSelected(date: LocalDate) {
-        val newUiState = when (uiState.selectionTarget) {
-            DateSelectionTarget.START -> {
-                val updatedState = if (
-                    uiState.selectedEndDate != null &&
-                    date.isAfter(uiState.selectedEndDate)
-                ) {
-                    uiState.copy(
-                        selectedStartDate = uiState.selectedEndDate,
-                        selectedEndDate = date
-                    )
-                } else {
-                    uiState.copy(selectedStartDate = date)
-                }
-
-                if (updatedState.selectedEndDate == null) {
-                    updatedState.copy(selectionTarget = DateSelectionTarget.END)
-                } else {
-                    updatedState
-                }
-            }
-
-            DateSelectionTarget.END -> {
-                when {
-                    uiState.selectedStartDate == null -> {
-                        uiState.copy(
-                            selectedStartDate = date,
-                            selectionTarget = DateSelectionTarget.END
-                        )
-                    }
-
-                    date.isBefore(uiState.selectedStartDate) -> {
-                        uiState.copy(
-                            selectedStartDate = date,
-                            selectedEndDate = uiState.selectedStartDate
-                        )
-                    }
-
-                    else -> {
-                        uiState.copy(selectedEndDate = date)
-                    }
-                }
-            }
-        }
-
-        onUiStateChange(newUiState)
-    }
-
-    fun selectStartDateField(): DateSectionUiState {
-        return uiState.copy(
-            selectionTarget = DateSelectionTarget.START,
-            selectedEndDate = if (uiState.selectedStartDate != null && uiState.selectedEndDate != null) {
-                null
-            } else {
-                uiState.selectedEndDate
-            }
-        )
-    }
-
-    fun selectEndDateField(): DateSectionUiState {
-        return uiState.copy(
-            selectionTarget = DateSelectionTarget.END,
-            selectedEndDate = if (uiState.selectedStartDate == null) {
-                null
-            } else {
-                uiState.selectedEndDate
-            }
-        )
-    }
-
-    fun resetRangeIfCompleted(state: DateSectionUiState): DateSectionUiState {
-        return if (state.selectedStartDate != null && state.selectedEndDate != null) {
-            state.copy(selectedEndDate = null)
-        } else {
-            state
-        }
-    }
-
-    fun handleStartBoxClick() {
-        val resetState = resetRangeIfCompleted(uiState)
-        val newUiState = resetState.copy(
-            selectionTarget = DateSelectionTarget.START,
-            selectedEndDate = if (resetState.selectedStartDate != null && resetState.selectedEndDate != null) {
-                null
-            } else {
-                resetState.selectedEndDate
-            }
-        )
-
-        onUiStateChange(newUiState)
-    }
-
-    fun handleEndBoxClick() {
-        val resetState = resetRangeIfCompleted(uiState)
-        val newUiState = resetState.copy(
-            selectionTarget = DateSelectionTarget.END,
-            selectedEndDate = if (resetState.selectedStartDate == null) {
-                null
-            } else {
-                resetState.selectedEndDate
-            }
-        )
-
-        onUiStateChange(newUiState)
-    }
-
     Column(
         modifier = modifier.fillMaxWidth()
     ) {
@@ -154,8 +43,8 @@ fun DateSelectionSection(
         ) {
             TripDatePickerBox(
                 label = "출발 날짜",
-                selectedDate = formatDate(uiState.selectedStartDate),
-                onClick = ::handleStartBoxClick,
+                selectedDate = uiState.selectedStartDate.toKoreanDateString(),
+                onClick = { onAction(DateSectionUiAction.StartDateClicked) },
                 modifier = Modifier.weight(1f)
             )
 
@@ -168,8 +57,8 @@ fun DateSelectionSection(
 
             TripDatePickerBox(
                 label = "도착 날짜",
-                selectedDate = formatDate(uiState.selectedEndDate),
-                onClick = ::handleEndBoxClick,
+                selectedDate = uiState.selectedEndDate.toKoreanDateString(),
+                onClick = { onAction(DateSectionUiAction.EndDateClicked) },
                 modifier = Modifier.weight(1f)
             )
         }
@@ -179,7 +68,7 @@ fun DateSelectionSection(
         DduruCalendar(
             selectedStartDate = uiState.selectedStartDate,
             selectedEndDate = uiState.selectedEndDate,
-            onDateSelected = ::handleDateSelected,
+            onDateSelected = { date -> onAction(DateSectionUiAction.DateSelected(date)) },
             modifier = Modifier
                 .fillMaxWidth()
                 .weight(389f)
@@ -196,7 +85,7 @@ private fun DateSelectionSectionPreview() {
         Surface(color = DduruTheme.colors.gray0) {
             DateSelectionSection(
                 uiState = DateSectionUiState(),
-                onUiStateChange = {},
+                onAction = {},
                 modifier = Modifier.padding(horizontal = 24.dp, vertical = 52.dp)
             )
         }

@@ -3,8 +3,10 @@ package com.gildongmu.dduru.data.di
 import com.gildongmu.dduru.BuildConfig
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
+import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
 import com.gildongmu.dduru.data.remote.service.AuthService
 import com.gildongmu.dduru.data.remote.service.ChatRoomService
+import com.gildongmu.dduru.data.remote.service.ParticipationService
 import com.gildongmu.dduru.data.remote.service.SurveyService
 import com.gildongmu.dduru.data.remote.service.home.HomeService
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -30,15 +32,46 @@ object NetworkModule {
     @Provides
     @Singleton
     fun provideAuthInterceptor(
-        tokenLocalDataSource: TokenLocalDataSource
+        tokenLocalDataSource: TokenLocalDataSource,
+        tokenAuthenticator: TokenAuthenticator,
+        json: Json
     ): AuthInterceptor {
-        return AuthInterceptor(tokenLocalDataSource)
+        return AuthInterceptor(
+            tokenLocalDataSource = tokenLocalDataSource,
+            tokenAuthenticator = tokenAuthenticator,
+            json = json
+        )
+    }
+
+    @Provides
+    @Singleton
+    fun provideJson(): Json {
+        return Json {
+            ignoreUnknownKeys = true
+            coerceInputValues = true
+            encodeDefaults = true
+        }
+    }
+
+    @Provides
+    @Singleton
+    fun provideTokenAuthenticator(
+        tokenLocalDataSource: TokenLocalDataSource,
+        baseUrl: String,
+        json: Json
+    ): TokenAuthenticator {
+        return TokenAuthenticator(
+            tokenLocalDataSource = tokenLocalDataSource,
+            baseUrl = baseUrl,
+            json = json
+        )
     }
 
     @Provides
     @Singleton
     fun provideOkHttpClient(
-        authInterceptor: AuthInterceptor
+        authInterceptor: AuthInterceptor,
+        tokenAuthenticator: TokenAuthenticator
     ): OkHttpClient {
         val logging = HttpLoggingInterceptor().apply {
             level = if (BuildConfig.DEBUG) {
@@ -52,6 +85,7 @@ object NetworkModule {
         return OkHttpClient.Builder()
             .retryOnConnectionFailure(false)
             .addInterceptor(authInterceptor)
+            .authenticator(tokenAuthenticator)
             .addInterceptor(logging)
             .connectTimeout(30, TimeUnit.SECONDS)
             .readTimeout(30, TimeUnit.SECONDS)
@@ -63,14 +97,9 @@ object NetworkModule {
     @Singleton
     fun provideRetrofit(
         okHttpClient: OkHttpClient,
-        baseUrl: String
+        baseUrl: String,
+        json: Json
     ): Retrofit {
-        val json = Json {
-            ignoreUnknownKeys = true
-            coerceInputValues = true
-            encodeDefaults = true
-        }
-
         return Retrofit.Builder()
             .baseUrl(baseUrl)
             .client(okHttpClient)
@@ -94,6 +123,12 @@ object NetworkModule {
     @Singleton
     fun provideChatRoomService(retrofit: Retrofit): ChatRoomService {
         return retrofit.create(ChatRoomService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideParticipationService(retrofit: Retrofit): ParticipationService {
+        return retrofit.create(ParticipationService::class.java)
     }
 
     @Provides

@@ -11,6 +11,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -24,6 +25,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.register.model.SurveyStatus
@@ -34,16 +36,18 @@ import com.gildongmu.dduru.presentation.feature.register.profile.component.PROFI
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
+import com.gildongmu.dduru.presentation.feature.register.profile.effect.ProfileSideEffect
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
-import com.gildongmu.dduru.presentation.feature.register.profile.util.rememberGalleryLauncher
 import com.gildongmu.dduru.presentation.feature.register.profile.viewmodel.ProfileViewModel
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun ProfileSettingRoute(
     modifier: Modifier = Modifier,
+    onProfileComplete: () -> Unit = {},
     viewModel: ProfileViewModel = hiltViewModel()
 ) {
     val state by viewModel.uiState.collectAsState()
@@ -54,6 +58,14 @@ fun ProfileSettingRoute(
 
     val galleryLauncher = rememberGalleryLauncher { uri: Uri? ->
         viewModel.onImageSelected(uri)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collectLatest { sideEffect ->
+            when (sideEffect) {
+                ProfileSideEffect.NavigateToMain -> onProfileComplete()
+            }
+        }
     }
 
     ProfileSettingScreen(

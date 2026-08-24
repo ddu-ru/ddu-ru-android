@@ -3,6 +3,7 @@ package com.gildongmu.dduru.data.repositoryimpl.home
 import com.gildongmu.dduru.data.mapper.home.toDomain
 import com.gildongmu.dduru.data.remote.datasource.home.HomeRemoteDataSource
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
+import com.gildongmu.dduru.domain.entity.ExceptionResponse
 import com.gildongmu.dduru.domain.entity.home.HomeInitialConfig
 import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendations
 import com.gildongmu.dduru.domain.entity.home.HomePopularDestinations
@@ -84,6 +85,8 @@ class HomeRepositoryImpl @Inject constructor(
 
             if (response.status.isHomeSuccessStatus() && response.data != null) {
                 mapper(response.data)
+            } else if (response.status.isHomeNoDataStatus()) {
+                throw ExceptionResponse(response.status)
             } else {
                 throw IllegalStateException("$errorMessage: status=${response.status}")
             }
@@ -93,8 +96,14 @@ class HomeRepositoryImpl @Inject constructor(
     private suspend inline fun <T> runCatchingApi(block: suspend () -> T): Result<T> {
         return try {
             Result.success(block())
+        } catch (e: ExceptionResponse) {
+            Result.failure(e)
         } catch (e: HttpException) {
-            Result.failure(Exception("서버 오류: ${e.code()} - ${e.message()}"))
+            if (e.code().isHomeNoDataStatus()) {
+                Result.failure(ExceptionResponse(e.code()))
+            } else {
+                Result.failure(Exception("서버 오류: ${e.code()} - ${e.message()}"))
+            }
         } catch (e: IOException) {
             Result.failure(Exception("네트워크 오류: 인터넷 연결을 확인해주세요."))
         } catch (e: Exception) {
@@ -103,11 +112,15 @@ class HomeRepositoryImpl @Inject constructor(
     }
 
     private fun Int.isHomeSuccessStatus(): Boolean {
-        return this == HOME_SUCCESS_STATUS || this == HTTP_SUCCESS_STATUS
+        return this == HTTP_SUCCESS_STATUS
+    }
+
+    private fun Int.isHomeNoDataStatus(): Boolean {
+        return this == HTTP_NOT_FOUND_STATUS
     }
 
     private companion object {
-        const val HOME_SUCCESS_STATUS = 0
         const val HTTP_SUCCESS_STATUS = 200
+        const val HTTP_NOT_FOUND_STATUS = 404
     }
 }
