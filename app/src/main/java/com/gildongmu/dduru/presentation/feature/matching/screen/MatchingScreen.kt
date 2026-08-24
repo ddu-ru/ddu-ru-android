@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.matching
+package com.gildongmu.dduru.presentation.feature.matching.screen
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +28,7 @@ import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.matching.component.MatchingFilterBottomSheet
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingPostListSection
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingSearchFilterSection
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingTopHeader
@@ -94,6 +95,7 @@ private fun MatchingScreen(
     onWriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isFilterSheetVisible by remember { mutableStateOf(false) }
     var isSortSheetVisible by remember { mutableStateOf(false) }
 
     Box(
@@ -130,7 +132,7 @@ private fun MatchingScreen(
                     searchQuery = uiState.searchQuery,
                     selectedSort = uiState.selectedSort,
                     onSearchQueryChange = onSearchQueryChange,
-                    onFilterClick = { isSortSheetVisible = true },
+                    onFilterClick = { isFilterSheetVisible = true },
                     onSortClick = { isSortSheetVisible = true },
                     modifier = Modifier.padding(top = 10.dp)
                 )
@@ -165,6 +167,12 @@ private fun MatchingScreen(
             selectedSort = uiState.selectedSort,
             onSortSelected = onSortSelected,
             onDismiss = { isSortSheetVisible = false }
+        )
+
+        MatchingFilterBottomSheet(
+            visible = isFilterSheetVisible,
+            onDismiss = { isFilterSheetVisible = false },
+            onDestinationClick = {}
         )
     }
 }
