@@ -7,31 +7,30 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.res.painterResource
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 data class JourneyScheduleDayUiState(
     val day: Int,
-    val dateText: String,
+    val dateText: String
 )
 
 data class JourneyScheduleItemUiState(
@@ -39,7 +38,7 @@ data class JourneyScheduleItemUiState(
     val endTime: String? = null,
     val title: String,
     val location: String? = null,
-    val memo: String? = null,
+    val memo: String? = null
 )
 
 @Composable
@@ -49,16 +48,16 @@ fun JourneySchedule(
     dDayText: String,
     schedules: List<JourneyScheduleItemUiState>,
     onDayClick: (Int) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
-        modifier = modifier.fillMaxWidth(),
+        modifier = modifier.fillMaxWidth()
     ) {
         JourneyScheduleHeader(
             days = days,
             selectedDay = selectedDay,
             dDayText = dDayText,
-            onDayClick = onDayClick,
+            onDayClick = onDayClick
         )
 
         Spacer(modifier = Modifier.height(8.dp))
@@ -69,7 +68,7 @@ fun JourneySchedule(
                 endTime = schedule.endTime,
                 title = schedule.title,
                 location = schedule.location,
-                memo = schedule.memo,
+                memo = schedule.memo
             )
         }
     }
@@ -81,12 +80,12 @@ private fun JourneyScheduleHeader(
     selectedDay: Int,
     dDayText: String,
     onDayClick: (Int) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     LazyRow(
         modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         items(days, key = JourneyScheduleDayUiState::day) { day ->
             val isSelected = day.day == selectedDay
@@ -94,26 +93,26 @@ private fun JourneyScheduleHeader(
                 modifier = Modifier
                     .background(
                         color = if (isSelected) DduruTheme.colors.secondary100 else DduruTheme.colors.gray200,
-                        shape = RoundedCornerShape(99.dp),
+                        shape = RoundedCornerShape(99.dp)
                     )
                     .noRippleClickable { onDayClick(day.day) }
                     .padding(
                         horizontal = 12.dp,
-                        vertical = 12.dp,
+                        vertical = 12.dp
                     ),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = "${day.day}일차",
                     style = DduruTheme.typography.Caption1,
-                    color = if (isSelected) DduruTheme.colors.primary else DduruTheme.colors.gray700,
+                    color = if (isSelected) DduruTheme.colors.primary else DduruTheme.colors.gray700
                 )
 
                 Text(
                     text = day.dateText,
                     style = DduruTheme.typography.Caption1,
-                    color = if (isSelected) DduruTheme.colors.primary else DduruTheme.colors.gray700,
+                    color = if (isSelected) DduruTheme.colors.primary else DduruTheme.colors.gray700
                 )
             }
         }
@@ -123,18 +122,18 @@ private fun JourneyScheduleHeader(
                 modifier = Modifier
                     .background(
                         color = DduruTheme.colors.gray100,
-                        shape = RoundedCornerShape(99.dp),
+                        shape = RoundedCornerShape(99.dp)
                     )
                     .padding(
                         horizontal = 12.dp,
-                        vertical = 12.dp,
+                        vertical = 12.dp
                     ),
-                contentAlignment = Alignment.Center,
+                contentAlignment = Alignment.Center
             ) {
                 Text(
                     text = dDayText,
                     style = DduruTheme.typography.Caption1,
-                    color = DduruTheme.colors.gray700,
+                    color = DduruTheme.colors.gray700
                 )
             }
         }
@@ -148,18 +147,18 @@ fun JourneyScheduleItem(
     title: String,
     modifier: Modifier = Modifier,
     location: String? = null,
-    memo: String? = null,
+    memo: String? = null
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.Top
     ) {
         Box(
             modifier = Modifier
                 .weight(40f)
-                .fillMaxHeight(),
+                .fillMaxHeight()
         ) {
             if (startTime == null && endTime == null) {
                 Icon(
@@ -168,12 +167,12 @@ fun JourneyScheduleItem(
                     tint = DduruTheme.colors.gray400,
                     modifier = Modifier
                         .width(12.dp)
-                        .align(Alignment.Center),
+                        .align(Alignment.Center)
                 )
             } else {
                 Column(
                     horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(4.dp),
+                    verticalArrangement = Arrangement.spacedBy(4.dp)
                 ) {
                     startTime?.let {
                         Text(
@@ -207,14 +206,14 @@ fun JourneyScheduleItem(
 
         Column(
             modifier = Modifier.weight(288f),
-            verticalArrangement = Arrangement.spacedBy(6.dp),
+            verticalArrangement = Arrangement.spacedBy(6.dp)
         ) {
             Text(
                 text = title,
                 style = DduruTheme.typography.Body1,
                 color = DduruTheme.colors.gray900,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                overflow = TextOverflow.Ellipsis
             )
 
             memo?.let {
@@ -223,7 +222,7 @@ fun JourneyScheduleItem(
                     style = DduruTheme.typography.Body2,
                     color = DduruTheme.colors.gray500,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
 
@@ -233,7 +232,7 @@ fun JourneyScheduleItem(
                     style = DduruTheme.typography.Body2,
                     color = DduruTheme.colors.gray500,
                     maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
+                    overflow = TextOverflow.Ellipsis
                 )
             }
         }
@@ -248,7 +247,7 @@ private fun JourneySchedulePreview() {
             days = listOf(
                 JourneyScheduleDayUiState(day = 1, dateText = "05.14"),
                 JourneyScheduleDayUiState(day = 2, dateText = "05.15"),
-                JourneyScheduleDayUiState(day = 3, dateText = "05.16"),
+                JourneyScheduleDayUiState(day = 3, dateText = "05.16")
             ),
             selectedDay = 1,
             dDayText = "D-13",
@@ -258,20 +257,20 @@ private fun JourneySchedulePreview() {
                     endTime = "12:30",
                     title = "인천국제공항 출발",
                     location = "인천국제공항 제1여객터미널",
-                    memo = "출발 2시간 전까지 도착",
+                    memo = "출발 2시간 전까지 도착"
                 ),
                 JourneyScheduleItemUiState(
                     startTime = "13:00",
                     title = "후쿠오카 공항 도착",
-                    location = "후쿠오카 공항 국제선 터미널",
+                    location = "후쿠오카 공항 국제선 터미널"
                 ),
                 JourneyScheduleItemUiState(
                     title = "호텔 체크인",
-                    memo = "체크인 후 짐 맡기기",
-                ),
+                    memo = "체크인 후 짐 맡기기"
+                )
             ),
             onDayClick = { },
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp)
         )
     }
 }

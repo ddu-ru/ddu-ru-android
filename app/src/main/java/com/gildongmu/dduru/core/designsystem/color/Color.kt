@@ -79,7 +79,7 @@ data class DduruColors(
     val journeyTodo: Color,
     val journeyTodoBg: Color,
     val journeyNews: Color,
-    val journeyNewsBg: Color,
+    val journeyNewsBg: Color
 )
 
 val defaultDduruColors = DduruColors(
@@ -119,7 +119,7 @@ val defaultDduruColors = DduruColors(
     journeyTodo = JourneyTodo,
     journeyTodoBg = JourneyTodoBg,
     journeyNews = JourneyNews,
-    journeyNewsBg = JourneyNewsBg,
+    journeyNewsBg = JourneyNewsBg
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }

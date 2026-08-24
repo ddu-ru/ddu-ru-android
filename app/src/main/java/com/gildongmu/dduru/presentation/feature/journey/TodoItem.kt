@@ -56,14 +56,14 @@ fun TodoItem(
                 .noRippleClickable {
                     onCheckedChange(!isCompleted)
                 },
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             if (isCompleted) {
                 Icon(
                     painter = painterResource(R.drawable.ic_check),
                     contentDescription = null,
                     tint = DduruTheme.colors.gray0,
-                    modifier = Modifier.width(10.dp),
+                    modifier = Modifier.width(10.dp)
                 )
             }
         }
@@ -125,14 +125,14 @@ private fun TodoItemPreview() {
     DduruTheme {
         Column(
             modifier = Modifier.padding(16.dp),
-            verticalArrangement = Arrangement.spacedBy(16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             TodoItem(
                 title = "숙소 예약하기",
                 caption = "8월 20일까지",
                 assignees = listOf("길동", "둘리"),
                 isCompleted = firstTodoCompleted,
-                onCheckedChange = { firstTodoCompleted = it },
+                onCheckedChange = { firstTodoCompleted = it }
             )
 
             TodoItem(
@@ -140,7 +140,7 @@ private fun TodoItemPreview() {
                 caption = "완료",
                 assignees = listOf("길동", "둘리"),
                 isCompleted = secondTodoCompleted,
-                onCheckedChange = { secondTodoCompleted = it },
+                onCheckedChange = { secondTodoCompleted = it }
             )
         }
     }

@@ -25,9 +25,9 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
@@ -52,12 +52,12 @@ fun JourneyCard(
     remainingTodoCount: Int,
     newNewsCount: Int,
     onJourneyClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .aspectRatio(JOURNEY_CARD_RATIO),
+            .aspectRatio(JOURNEY_CARD_RATIO)
     ) {
         JourneyImageContent(
             imageUrl = imageUrl,
@@ -67,7 +67,7 @@ fun JourneyCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(JOURNEY_IMAGE_RATIO)
-                .align(Alignment.TopCenter),
+                .align(Alignment.TopCenter)
         )
 
         JourneyInformationContent(
@@ -78,7 +78,7 @@ fun JourneyCard(
             modifier = Modifier
                 .fillMaxWidth()
                 .aspectRatio(JOURNEY_INFO_RATIO)
-                .align(Alignment.BottomCenter),
+                .align(Alignment.BottomCenter)
         )
     }
 }
@@ -89,17 +89,17 @@ private fun JourneyImageContent(
     dDay: String,
     title: String,
     period: String,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
-            .clip(JourneyImageShape),
+            .clip(JourneyImageShape)
     ) {
         AsyncImage(
             model = imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         )
 
         Box(
@@ -110,10 +110,10 @@ private fun JourneyImageContent(
                         colors = listOf(
                             Color.Transparent,
                             Color.Black.copy(alpha = 0.12f),
-                            Color.Black.copy(alpha = 0.72f),
-                        ),
-                    ),
-                ),
+                            Color.Black.copy(alpha = 0.72f)
+                        )
+                    )
+                )
         )
 
         Column(
@@ -122,13 +122,13 @@ private fun JourneyImageContent(
                 .padding(
                     start = 16.dp,
                     bottom = 49.dp
-                ),
+                )
         ) {
             Text(
                 text = dDay,
                 style = DduruTheme.typography.H1,
                 color = DduruTheme.colors.gray0,
-                maxLines = 1,
+                maxLines = 1
             )
 
             Spacer(modifier = Modifier.height(8.dp))
@@ -138,7 +138,7 @@ private fun JourneyImageContent(
                 style = DduruTheme.typography.H1,
                 color = DduruTheme.colors.gray0,
                 maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
+                overflow = TextOverflow.Ellipsis
             )
 
             Spacer(modifier = Modifier.height(4.dp))
@@ -147,7 +147,7 @@ private fun JourneyImageContent(
                 text = period,
                 style = DduruTheme.typography.Body2,
                 color = DduruTheme.colors.gray0,
-                maxLines = 1,
+                maxLines = 1
             )
         }
     }
@@ -159,23 +159,23 @@ private fun JourneyInformationContent(
     remainingTodoCount: Int,
     newNewsCount: Int,
     onJourneyClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .shadow(
                 elevation = 10.dp,
                 shape = JourneyCardShape,
-                clip = false,
+                clip = false
             )
             .clip(JourneyCardShape)
             .background(DduruTheme.colors.gray0)
             .padding(start = 16.dp, top = 16.dp, end = 16.dp),
         verticalArrangement = Arrangement.Center,
-        horizontalAlignment = Alignment.CenterHorizontally,
+        horizontalAlignment = Alignment.CenterHorizontally
     ) {
         Row(
-            modifier = Modifier.fillMaxWidth(),
+            modifier = Modifier.fillMaxWidth()
         ) {
             JourneySummaryItem(
                 iconRes = R.drawable.ic_journey_users,
@@ -183,7 +183,7 @@ private fun JourneyInformationContent(
                 value = "${memberCount}명",
                 iconBackgroundColor = DduruTheme.colors.secondary100,
                 iconTint = DduruTheme.colors.primary,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
             )
 
             JourneySummaryItem(
@@ -192,7 +192,7 @@ private fun JourneyInformationContent(
                 value = "${remainingTodoCount}개",
                 iconBackgroundColor = DduruTheme.colors.journeyTodoBg,
                 iconTint = DduruTheme.colors.journeyTodo,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
             )
 
             JourneySummaryItem(
@@ -201,7 +201,7 @@ private fun JourneyInformationContent(
                 value = "${newNewsCount}개",
                 iconBackgroundColor = DduruTheme.colors.journeyNewsBg,
                 iconTint = DduruTheme.colors.journeyNews,
-                modifier = Modifier.weight(1f),
+                modifier = Modifier.weight(1f)
             )
         }
 
@@ -214,7 +214,7 @@ private fun JourneyInformationContent(
             enabledColors = DduruButtonDefaults.filledEnabledColors,
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(16.dp),
+                .padding(16.dp)
         )
     }
 }
@@ -226,47 +226,47 @@ private fun JourneySummaryItem(
     value: String,
     iconBackgroundColor: Color,
     iconTint: Color,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.Center,
+        horizontalArrangement = Arrangement.Center
     ) {
         Box(
             modifier = Modifier
                 .size(40.dp)
                 .background(
                     color = iconBackgroundColor,
-                    shape = CircleShape,
+                    shape = CircleShape
                 ),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(iconRes),
                 contentDescription = null,
                 tint = iconTint,
-                modifier = Modifier.size(16.dp),
+                modifier = Modifier.size(16.dp)
             )
         }
 
         Spacer(modifier = Modifier.width(8.dp))
 
         Column(
-            verticalArrangement = Arrangement.spacedBy(2.dp),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
         ) {
             Text(
                 text = label,
                 style = DduruTheme.typography.Caption2,
                 color = DduruTheme.colors.gray700,
-                maxLines = 1,
+                maxLines = 1
             )
 
             Text(
                 text = value,
                 style = DduruTheme.typography.Title2,
                 color = DduruTheme.colors.black,
-                maxLines = 1,
+                maxLines = 1
             )
         }
     }
@@ -285,7 +285,7 @@ private fun JourneyCardPreview() {
             remainingTodoCount = 6,
             newNewsCount = 2,
             onJourneyClick = { },
-            modifier = Modifier.padding(16.dp),
+            modifier = Modifier.padding(16.dp)
         )
     }
 }
