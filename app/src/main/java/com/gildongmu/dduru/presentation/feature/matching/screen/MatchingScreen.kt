@@ -18,6 +18,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -36,6 +37,7 @@ import com.gildongmu.dduru.presentation.feature.matching.component.MatchingTopHe
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingWriteButton
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.MatchingSortBottomSheet
 import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffect
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingDestinationUiModel
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import com.gildongmu.dduru.presentation.feature.matching.viewmodel.MatchingViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -78,6 +80,7 @@ fun MatchingRoute(
                 onSearchFieldClick = viewModel::onSearchFieldClick,
                 onSearchBackClick = viewModel::onSearchBackClick,
                 onSearchKeywordClick = viewModel::onSearchKeywordClick,
+                onDestinationClick = viewModel::onDestinationClick,
                 onRecentSearchKeywordRemove = viewModel::onRecentSearchKeywordRemove,
                 onSortSelected = viewModel::onSortSelected,
                 onPostClick = viewModel::onPostClick,
@@ -97,6 +100,7 @@ private fun MatchingScreen(
     onSearchFieldClick: () -> Unit,
     onSearchBackClick: () -> Unit,
     onSearchKeywordClick: (String) -> Unit,
+    onDestinationClick: (MatchingDestinationUiModel) -> Unit,
     onRecentSearchKeywordRemove: (String) -> Unit,
     onSortSelected: (String) -> Unit,
     onPostClick: (Long) -> Unit,
@@ -115,6 +119,13 @@ private fun MatchingScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .blur(
+                    radius = if (uiState.isSearchScreenVisible) {
+                        16.dp
+                    } else {
+                        0.dp
+                    }
+                )
         ) {
             Column(
                 modifier = Modifier
@@ -158,7 +169,7 @@ private fun MatchingScreen(
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    bottom = 16.dp
+                    bottom = 132.dp
                 )
             )
         }
@@ -190,8 +201,12 @@ private fun MatchingScreen(
                 searchQuery = uiState.searchQuery,
                 recentKeywords = uiState.recentSearchKeywords,
                 popularKeywords = uiState.popularSearchKeywords,
+                destinations = uiState.destinationSearchResults,
+                isDestinationLoading = uiState.isDestinationSearchLoading,
+                hasDestinationSearchResult = uiState.hasDestinationSearchResult,
                 onSearchQueryChange = onSearchQueryChange,
                 onSearchKeywordClick = onSearchKeywordClick,
+                onDestinationClick = onDestinationClick,
                 onRecentKeywordRemove = onRecentSearchKeywordRemove,
                 onBackClick = onSearchBackClick,
                 modifier = Modifier.zIndex(2f)
@@ -212,6 +227,7 @@ private fun MatchingScreenPreview() {
             onSearchFieldClick = {},
             onSearchBackClick = {},
             onSearchKeywordClick = {},
+            onDestinationClick = {},
             onRecentSearchKeywordRemove = {},
             onSortSelected = {},
             onPostClick = {},

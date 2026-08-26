@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListScope
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -50,35 +51,64 @@ fun MatchingPostListSection(
         modifier = modifier.fillMaxSize(),
         contentPadding = contentPadding
     ) {
-        itemsIndexed(
+        matchingPostItems(
             items = items,
-            key = { _, item -> item.id },
-            contentType = { _, _ -> MatchingPostCardUiModel::class }
-        ) { index, item ->
-            val isFirstItem = index == 0
-            val isLastItem = index == items.lastIndex
+            onCardClick = onCardClick,
+            onLikeClick = onLikeClick
+        )
+    }
+}
 
-            Box(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .clip(
-                        RoundedCornerShape(
-                            topStart = if (isFirstItem) 16.dp else 0.dp,
-                            topEnd = if (isFirstItem) 16.dp else 0.dp,
-                            bottomStart = if (isLastItem) 16.dp else 0.dp,
-                            bottomEnd = if (isLastItem) 16.dp else 0.dp
-                        )
-                    )
-                    .background(DduruTheme.colors.gray0)
-            ) {
-                MatchingPostCard(
-                    item = item,
-                    showDivider = !isLastItem,
-                    onClick = { onCardClick(item.id) },
-                    onLikeClick = { onLikeClick(item.id) }
+fun LazyListScope.matchingPostItems(
+    items: ImmutableList<MatchingPostCardUiModel>,
+    onCardClick: (Long) -> Unit,
+    onLikeClick: (Long) -> Unit,
+    itemModifier: Modifier = Modifier
+) {
+    itemsIndexed(
+        items = items,
+        key = { _, item -> item.id },
+        contentType = { _, _ -> MatchingPostCardUiModel::class }
+    ) { index, item ->
+        MatchingPostListItem(
+            item = item,
+            isFirstItem = index == 0,
+            isLastItem = index == items.lastIndex,
+            onCardClick = onCardClick,
+            onLikeClick = onLikeClick,
+            modifier = itemModifier
+        )
+    }
+}
+
+@Composable
+private fun MatchingPostListItem(
+    item: MatchingPostCardUiModel,
+    isFirstItem: Boolean,
+    isLastItem: Boolean,
+    onCardClick: (Long) -> Unit,
+    onLikeClick: (Long) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Box(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(
+                RoundedCornerShape(
+                    topStart = if (isFirstItem) 16.dp else 0.dp,
+                    topEnd = if (isFirstItem) 16.dp else 0.dp,
+                    bottomStart = if (isLastItem) 16.dp else 0.dp,
+                    bottomEnd = if (isLastItem) 16.dp else 0.dp
                 )
-            }
-        }
+            )
+            .background(DduruTheme.colors.gray0)
+    ) {
+        MatchingPostCard(
+            item = item,
+            showDivider = !isLastItem,
+            onClick = { onCardClick(item.id) },
+            onLikeClick = { onLikeClick(item.id) }
+        )
     }
 }
 

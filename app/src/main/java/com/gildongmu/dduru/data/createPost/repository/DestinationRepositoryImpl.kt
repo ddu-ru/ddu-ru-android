@@ -18,7 +18,7 @@ class DestinationRepositoryImpl @Inject constructor(
             val response = destinationApi.getPopularDestinations()
 
             when (response.status) {
-                200 -> {
+                0, 200 -> {
                     if (response.data == null) {
                         Result.failure(Exception("서버 응답에 데이터가 없습니다"))
                     } else {
@@ -60,7 +60,7 @@ class DestinationRepositoryImpl @Inject constructor(
             val response = destinationApi.searchDestinations(keyword)
 
             when (response.status) {
-                200 -> {
+                0, 200 -> {
                     if (response.data == null) {
                         Result.failure(Exception("서버 응답에 데이터가 없습니다"))
                     } else {

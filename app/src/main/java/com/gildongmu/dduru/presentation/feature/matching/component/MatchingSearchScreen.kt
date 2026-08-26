@@ -15,6 +15,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.BasicTextField
@@ -26,7 +28,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.input.pointer.pointerInput
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalFocusManager
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.input.ImeAction
@@ -36,6 +38,7 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingDestinationUiModel
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 
@@ -44,58 +47,73 @@ fun MatchingSearchScreen(
     searchQuery: String,
     recentKeywords: ImmutableList<String>,
     popularKeywords: ImmutableList<String>,
+    destinations: ImmutableList<MatchingDestinationUiModel>,
+    isDestinationLoading: Boolean,
+    hasDestinationSearchResult: Boolean,
     onSearchQueryChange: (String) -> Unit,
     onSearchKeywordClick: (String) -> Unit,
+    onDestinationClick: (MatchingDestinationUiModel) -> Unit,
     onRecentKeywordRemove: (String) -> Unit,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    Column(
+    Box(
         modifier = modifier
             .fillMaxSize()
-            .pointerInput(Unit) {
-                awaitPointerEventScope {
-                    while (true) {
-                        val event = awaitPointerEvent()
-                        event.changes.forEach { it.consume() }
-                    }
-                }
-            }
-            .background(DduruTheme.colors.gray0.copy(alpha = 0.7f))
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp)
+            .background(Color.Transparent)
+            .noRippleClickable {}
     ) {
-        MatchingSearchTopBar(
-            onBackClick = onBackClick
-        )
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .statusBarsPadding()
+                .padding(horizontal = 16.dp)
+        ) {
+            MatchingSearchTopBar(
+                onBackClick = onBackClick
+            )
 
-        Spacer(modifier = Modifier.height(22.dp))
+            Spacer(modifier = Modifier.height(22.dp))
 
-        MatchingSearchInput(
-            value = searchQuery,
-            onValueChange = onSearchQueryChange,
-            onSearchClick = { onSearchKeywordClick(searchQuery) }
-        )
+            MatchingSearchInput(
+                value = searchQuery,
+                onValueChange = onSearchQueryChange,
+                onSearchClick = { onSearchKeywordClick(searchQuery) }
+            )
 
-        Spacer(modifier = Modifier.height(16.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
-        MatchingKeywordSection(
-            title = "최근 검색어",
-            keywords = recentKeywords,
-            removable = true,
-            onKeywordClick = onSearchKeywordClick,
-            onKeywordRemove = onRecentKeywordRemove
-        )
+            if (recentKeywords.isNotEmpty()) {
+                MatchingKeywordSection(
+                    title = "최근 검색어",
+                    keywords = recentKeywords,
+                    removable = true,
+                    onKeywordClick = onSearchKeywordClick,
+                    onKeywordRemove = onRecentKeywordRemove
+                )
 
-        Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(24.dp))
+            }
 
-        MatchingKeywordSection(
-            title = "인기 검색어",
-            keywords = popularKeywords,
-            removable = false,
-            onKeywordClick = onSearchKeywordClick,
-            onKeywordRemove = {}
-        )
+            MatchingKeywordSection(
+                title = "인기 검색어",
+                keywords = popularKeywords,
+                removable = false,
+                onKeywordClick = onSearchKeywordClick,
+                onKeywordRemove = {}
+            )
+
+            Spacer(modifier = Modifier.height(24.dp))
+
+            MatchingDestinationSection(
+                title = if (searchQuery.isBlank()) "인기 여행지" else "검색 결과",
+                destinations = destinations,
+                isLoading = isDestinationLoading,
+                hasResult = hasDestinationSearchResult,
+                onDestinationClick = onDestinationClick,
+                modifier = Modifier.weight(1f)
+            )
+        }
     }
 }
 
@@ -218,6 +236,105 @@ private fun MatchingSearchInput(
     )
 }
 
+@Composable
+private fun MatchingDestinationSection(
+    title: String,
+    destinations: ImmutableList<MatchingDestinationUiModel>,
+    isLoading: Boolean,
+    hasResult: Boolean,
+    onDestinationClick: (MatchingDestinationUiModel) -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier.fillMaxWidth(),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Text(
+            text = title,
+            style = DduruTheme.typography.Caption1,
+            color = DduruTheme.colors.gray700,
+            modifier = Modifier.fillMaxWidth()
+        )
+
+        when {
+            isLoading -> {
+                Text(
+                    text = "여행지를 불러오는 중",
+                    style = DduruTheme.typography.Body2,
+                    color = DduruTheme.colors.gray500,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+            }
+
+            hasResult && destinations.isEmpty() -> {
+                Text(
+                    text = "검색 결과가 없어요",
+                    style = DduruTheme.typography.Body2,
+                    color = DduruTheme.colors.gray500,
+                    modifier = Modifier.padding(vertical = 16.dp)
+                )
+            }
+
+            else -> {
+                LazyColumn(
+                    modifier = Modifier.fillMaxWidth(),
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    items(
+                        items = destinations,
+                        key = { it.id }
+                    ) { destination ->
+                        MatchingDestinationItem(
+                            destination = destination,
+                            onClick = { onDestinationClick(destination) }
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun MatchingDestinationItem(
+    destination: MatchingDestinationUiModel,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Row(
+        modifier = modifier
+            .fillMaxWidth()
+            .clip(RoundedCornerShape(16.dp))
+            .background(DduruTheme.colors.gray0)
+            .border(
+                width = 1.dp,
+                color = DduruTheme.colors.gray200,
+                shape = RoundedCornerShape(16.dp)
+            )
+            .noRippleClickable(onClick = onClick)
+            .padding(12.dp),
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
+        Column(
+            modifier = Modifier.weight(1f),
+            verticalArrangement = Arrangement.spacedBy(2.dp)
+        ) {
+            Text(
+                text = destination.city,
+                style = DduruTheme.typography.Body1,
+                color = DduruTheme.colors.gray900
+            )
+
+            Text(
+                text = destination.countryName,
+                style = DduruTheme.typography.Caption2,
+                color = DduruTheme.colors.gray500
+            )
+        }
+    }
+}
+
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun MatchingKeywordSection(
@@ -311,8 +428,20 @@ private fun MatchingSearchScreenPreview() {
                 "밀라노",
                 "밀라노"
             ),
+            destinations = persistentListOf(
+                MatchingDestinationUiModel(
+                    id = 1L,
+                    countryCode = "KR",
+                    countryName = "대한민국",
+                    city = "제주도",
+                    image = null
+                )
+            ),
+            isDestinationLoading = false,
+            hasDestinationSearchResult = true,
             onSearchQueryChange = {},
             onSearchKeywordClick = {},
+            onDestinationClick = {},
             onRecentKeywordRemove = {},
             onBackClick = {}
         )
