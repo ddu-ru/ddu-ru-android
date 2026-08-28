@@ -37,19 +37,20 @@ private val PastJourneyImageShape = RoundedCornerShape(topStart = 16.dp, topEnd 
 
 @Composable
 fun PastJourneyCard(
+    id: Int,
     title: String,
     location: String,
     date: String,
     imageUrl: String?,
     memberImageUrls: List<String>,
-    onClick: () -> Unit,
+    onClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .width(200.dp)
             .clip(PastJourneyCardShape)
-            .noRippleClickable(onClick = onClick)
+            .noRippleClickable { onClick(id) }
     ) {
         AsyncImage(
             model = imageUrl,
@@ -163,6 +164,7 @@ fun PastJourneyCard(
 private fun PastJourneyCardPreview() {
     DduruTheme {
         PastJourneyCard(
+            id = 1,
             title = "후쿠오카 미식 여행",
             location = "후쿠오카 일본",
             date = "08.27 - 08.30",
