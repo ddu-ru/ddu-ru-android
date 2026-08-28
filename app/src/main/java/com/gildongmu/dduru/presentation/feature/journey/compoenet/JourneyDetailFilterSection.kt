@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.journey.compoenet
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -59,29 +60,40 @@ private fun JourneyDetailFilterItem(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val contentColor = if (isSelected) DduruTheme.colors.gray0 else DduruTheme.colors.gray500
+    val contentColor = if (isSelected) DduruTheme.colors.gray0 else DduruTheme.colors.gray600
     val itemModifier = modifier
         .background(
             color = if (isSelected) DduruTheme.colors.black else DduruTheme.colors.gray50,
             shape = RoundedCornerShape(99.dp)
         )
+        .then(
+            if (isSelected) {
+                Modifier
+            } else {
+                Modifier.border(
+                    width = 1.dp,
+                    color = DduruTheme.colors.gray50,
+                    shape = RoundedCornerShape(99.dp)
+                )
+            }
+        )
         .noRippleClickable(onClick = onClick)
         .padding(
-            horizontal = 18.dp,
-            vertical = 12.dp
+            horizontal = 16.dp,
+            vertical = 8.dp
         )
 
     if (type == JourneyDetailFilterType.FIXED) {
         Icon(
             painter = painterResource(R.drawable.ic_filter_fixed),
-            contentDescription = "고정",
+            contentDescription = null,
             tint = contentColor,
-            modifier = itemModifier.size(20.dp)
+            modifier = itemModifier.size(16.dp)
         )
     } else {
         Text(
             text = requireNotNull(type.label),
-            style = DduruTheme.typography.Body1,
+            style = DduruTheme.typography.Body2,
             color = contentColor,
             modifier = itemModifier
         )
