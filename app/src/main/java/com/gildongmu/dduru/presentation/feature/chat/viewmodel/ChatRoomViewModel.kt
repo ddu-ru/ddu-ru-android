@@ -203,8 +203,11 @@ class ChatRoomViewModel @Inject constructor(
         val sameGroup = lastMsg.senderId == prevMsg.senderId && lastMsg.time == prevMsg.time
         if (sameGroup) {
             val prevPos = prevMsg.position
-            val newPrevPos = if (prevPos == MessagePosition.SINGLE || prevPos == MessagePosition.HEAD)
-                MessagePosition.HEAD else MessagePosition.MIDDLE
+            val newPrevPos = if (prevPos == MessagePosition.SINGLE || prevPos == MessagePosition.HEAD) {
+                MessagePosition.HEAD
+            } else {
+                MessagePosition.MIDDLE
+            }
             items[prevIdx] = (items[prevIdx] as ChatListItem.Message).let {
                 it.copy(message = it.message.copy(position = newPrevPos))
             }
