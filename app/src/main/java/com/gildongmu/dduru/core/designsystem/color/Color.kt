@@ -29,6 +29,7 @@ val Gray9E = Color(0xFF9E9E9E)
 val Black = Color(0xFF000000)
 val ValidationRed = Color(0xFFFF2828)
 val KakaoYellow = Color(0xFFFEE500)
+val PinnedPostBackground = Color(0xFFFFFAF4)
 val BadgeOrange = Color(0xFFFF6C28)
 val AcceptGreen = Color(0xFF2A9669)
 val AcceptGreenBg = Color(0xFFC8F2DE)
@@ -66,6 +67,7 @@ data class DduruColors(
 
     val validationRed: Color,
     val kakaoYellow: Color,
+    val pinnedPostBackground: Color,
     val badgeOrange: Color,
     val acceptGreen: Color,
     val acceptGreenBg: Color,
@@ -101,6 +103,7 @@ val defaultDduruColors = DduruColors(
     black = Black,
 
     kakaoYellow = KakaoYellow,
+    pinnedPostBackground = PinnedPostBackground,
     validationRed = ValidationRed,
     badgeOrange = BadgeOrange,
     acceptGreen = AcceptGreen,

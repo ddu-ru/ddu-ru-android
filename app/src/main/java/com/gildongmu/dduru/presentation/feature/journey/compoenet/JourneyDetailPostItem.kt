@@ -31,7 +31,7 @@ fun JourneyDetailPostItem(
     profileImageUrl: String?,
     username: String,
     createdAt: String,
-    content: String,
+    title: String,
     imageUrls: List<String>,
     commentCount: Int,
     isPinned: Boolean,
@@ -45,7 +45,7 @@ fun JourneyDetailPostItem(
             .fillMaxWidth()
             .background(
                 if (isPinned) {
-                    DduruTheme.colors.secondary100
+                    DduruTheme.colors.pinnedPostBackground
                 } else {
                     DduruTheme.colors.gray0
                 }
@@ -87,20 +87,18 @@ fun JourneyDetailPostItem(
                 )
             }
 
-            Spacer(modifier = Modifier.height(8.dp))
+            Spacer(modifier = Modifier.height(4.dp))
 
-            // 본문
             Text(
-                text = content,
-                style = DduruTheme.typography.Body1,
-                color = DduruTheme.colors.gray900,
+                text = title,
+                style = DduruTheme.typography.Caption2,
+                color = DduruTheme.colors.gray846,
             )
 
             if (imageUrls.isNotEmpty() || commentCount > 0) {
-                Spacer(modifier = Modifier.height(20.dp))
-
+                Spacer(modifier = Modifier.height(12.dp))
                 Row(
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    horizontalArrangement = Arrangement.spacedBy(4.dp),
                     verticalAlignment = Alignment.CenterVertically,
                 ) {
                     imageUrls.take(3).forEach { imageUrl ->
@@ -108,7 +106,7 @@ fun JourneyDetailPostItem(
                             model = imageUrl,
                             contentDescription = null,
                             modifier = Modifier
-                                .size(24.dp)
+                                .size(16.dp)
                                 .clip(CircleShape),
                             contentScale = ContentScale.Crop,
                         )
@@ -117,7 +115,7 @@ fun JourneyDetailPostItem(
                     if (commentCount > 0) {
                         Text(
                             text = "${commentCount}개의 댓글",
-                            style = DduruTheme.typography.Body2,
+                            style = DduruTheme.typography.Caption2,
                             color = DduruTheme.colors.primary,
                             modifier = Modifier.clickable(
                                 onClick = onCommentClick,
@@ -128,40 +126,39 @@ fun JourneyDetailPostItem(
             }
         }
 
-        // 우측 액션
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
             verticalAlignment = Alignment.Top,
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_comment_outline),
-                contentDescription = "댓글",
+                painter = painterResource(R.drawable.ic_bottom_nav_chat),
+                contentDescription = null,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(16.dp)
                     .clickable(onClick = onCommentClick),
-                tint = DduruTheme.colors.gray300,
+                tint = DduruTheme.colors.gray400,
             )
 
             Icon(
-                painter = painterResource(R.drawable.ic_pin_outline),
-                contentDescription = "고정",
+                painter = painterResource(R.drawable.ic_filter_fixed2),
+                contentDescription = null,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(16.dp)
                     .clickable(onClick = onPinClick),
                 tint = if (isPinned) {
                     DduruTheme.colors.primary
                 } else {
-                    DduruTheme.colors.gray300
+                    DduruTheme.colors.gray400
                 },
             )
 
             Icon(
                 painter = painterResource(R.drawable.ic_more_vertical),
-                contentDescription = "더보기",
+                contentDescription = null,
                 modifier = Modifier
-                    .size(24.dp)
+                    .size(16.dp)
                     .clickable(onClick = onMoreClick),
-                tint = DduruTheme.colors.gray300,
+                tint = DduruTheme.colors.gray400,
             )
         }
     }
@@ -175,10 +172,29 @@ private fun JourneyDetailPostItemPreview() {
             profileImageUrl = null,
             username = "둘루",
             createdAt = "10분 전",
-            content = "제주도 여행 일정 공유합니다! 맛집 추천도 편하게 남겨주세요.",
+            title = "제주도 여행 일정 공유합니다! 맛집 추천도 편하게 남겨주세요.",
             imageUrls = emptyList(),
             commentCount = 12,
             isPinned = true,
+            onCommentClick = {},
+            onPinClick = {},
+            onMoreClick = {},
+        )
+    }
+}
+
+@Preview(showBackground = true, widthDp = 375)
+@Composable
+private fun JourneyDetailUnpinnedPostItemPreview() {
+    DduruTheme {
+        JourneyDetailPostItem(
+            profileImageUrl = null,
+            username = "둘루",
+            createdAt = "10분 전",
+            title = "제주도 여행 일정 공유합니다! 맛집 추천도 편하게 남겨주세요.",
+            imageUrls = emptyList(),
+            commentCount = 12,
+            isPinned = false,
             onCommentClick = {},
             onPinClick = {},
             onMoreClick = {},
