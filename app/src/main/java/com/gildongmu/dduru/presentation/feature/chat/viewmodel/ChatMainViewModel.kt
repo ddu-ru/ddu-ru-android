@@ -14,12 +14,14 @@ import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatMainUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiModel
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.isActive
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -83,35 +85,39 @@ class ChatMainViewModel @Inject constructor(
 
     private fun subscribeToRoomListUpdates() {
         viewModelScope.launch {
-            runCatching {
-                stompChatClient.subscribeToRoomList().collect { event ->
-                    val updatedRoom = event.chatRoom
-                    val current = (_uiState.value as? UiState.Success)?.data
-                    if (current != null) {
-                        val exists = current.chatRooms.any { it.id == updatedRoom.chatRoomId }
-                        if (exists) {
-                            val updatedRooms = current.chatRooms.map { room ->
-                                if (room.id == updatedRoom.chatRoomId) {
-                                    room.copy(
-                                        lastMessagePreview = updatedRoom.lastMessage?.content,
-                                        lastMessageAt = updatedRoom.lastMessage?.createdAt
-                                            ?.parseDateTime()
-                                            ?.toRelativeTime()
-                                            ?: room.lastMessageAt,
-                                        unreadCount = updatedRoom.unreadCount.toInt().coerceAtMost(99)
-                                    )
-                                } else {
-                                    room
+            while (isActive) {
+                runCatching {
+                    stompChatClient.subscribeToRoomList().collect { event ->
+                        val updatedRoom = event.chatRoom
+                        val current = (_uiState.value as? UiState.Success)?.data
+                        if (current != null) {
+                            val exists = current.chatRooms.any { it.id == updatedRoom.chatRoomId }
+                            if (exists) {
+                                val updatedRooms = current.chatRooms.map { room ->
+                                    if (room.id == updatedRoom.chatRoomId) {
+                                        room.copy(
+                                            lastMessagePreview = updatedRoom.lastMessage?.content,
+                                            lastMessageAt = updatedRoom.lastMessage?.createdAt
+                                                ?.parseDateTime()
+                                                ?.toRelativeTime()
+                                                ?: room.lastMessageAt,
+                                            unreadCount = updatedRoom.unreadCount.toInt()
+                                                .coerceAtMost(99)
+                                        )
+                                    } else {
+                                        room
+                                    }
                                 }
+                                _uiState.value = UiState.Success(current.copy(chatRooms = updatedRooms))
+                            } else {
+                                loadChatRooms()
                             }
-                            _uiState.value = UiState.Success(current.copy(chatRooms = updatedRooms))
                         } else {
                             loadChatRooms()
                         }
-                    } else {
-                        loadChatRooms()
                     }
                 }
+                delay(1000L)
             }
         }
     }

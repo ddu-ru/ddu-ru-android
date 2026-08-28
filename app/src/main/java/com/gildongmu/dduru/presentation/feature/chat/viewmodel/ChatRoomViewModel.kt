@@ -160,22 +160,28 @@ class ChatRoomViewModel @Inject constructor(
                                     }
                                     if (alreadyExists) return@update state
 
-                                    if (isMySentMessage) {
+                                    val newItems = if (isMySentMessage) {
                                         val tempIndex = state.items.indexOfFirst {
-                                            it is ChatListItem.Message && it.message.id.startsWith("temp-")
+                                            it is ChatListItem.Message &&
+                                                it.message.id.startsWith("temp-")
                                         }
                                         if (tempIndex >= 0) {
-                                            val newItems = state.items.toMutableList()
-                                            newItems[tempIndex] = newItem.copy(
-                                                message = newItem.message.copy(unreadCount = 1)
-                                            )
-                                            state.copy(items = newItems)
+                                            state.items.toMutableList().also {
+                                                it[tempIndex] = newItem.copy(
+                                                    message = newItem.message.copy(unreadCount = 1)
+                                                )
+                                            }
                                         } else {
-                                            state.copy(items = state.items + newItem)
+                                            (state.items + newItem).toMutableList()
                                         }
                                     } else {
-                                        state.copy(items = state.items + newItem)
+                                        (state.items + newItem).toMutableList()
                                     }
+
+                                    state.copy(items = recalculateTailPositions(newItems))
+                                }
+                                if (!isMySentMessage) {
+                                    markAsRead(chatRoomId, messageId.toLong())
                                 }
                             }
                         }
@@ -185,6 +191,28 @@ class ChatRoomViewModel @Inject constructor(
                 }
             }
         }
+    }
+
+    private fun recalculateTailPositions(items: MutableList<ChatListItem>): List<ChatListItem> {
+        val msgIndices = items.indices.filter { items[it] is ChatListItem.Message }
+        if (msgIndices.size < 2) return items
+        val lastIdx = msgIndices.last()
+        val prevIdx = msgIndices[msgIndices.size - 2]
+        val lastMsg = (items[lastIdx] as ChatListItem.Message).message
+        val prevMsg = (items[prevIdx] as ChatListItem.Message).message
+        val sameGroup = lastMsg.senderId == prevMsg.senderId && lastMsg.time == prevMsg.time
+        if (sameGroup) {
+            val prevPos = prevMsg.position
+            val newPrevPos = if (prevPos == MessagePosition.SINGLE || prevPos == MessagePosition.HEAD)
+                MessagePosition.HEAD else MessagePosition.MIDDLE
+            items[prevIdx] = (items[prevIdx] as ChatListItem.Message).let {
+                it.copy(message = it.message.copy(position = newPrevPos))
+            }
+            items[lastIdx] = (items[lastIdx] as ChatListItem.Message).let {
+                it.copy(message = it.message.copy(position = MessagePosition.TAIL))
+            }
+        }
+        return items
     }
 
     fun markAsRead(chatRoomId: Long, lastReadMessageId: Long) {

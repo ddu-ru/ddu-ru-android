@@ -56,7 +56,7 @@ fun ChatSortDropdown(
                     color = DduruTheme.colors.gray200,
                     shape = RoundedCornerShape(99.dp)
                 )
-                .noRippleClickable { onExpandedChange(!expanded) }
+                .noRippleClickable { if (!expanded) onExpandedChange(true) }
                 .padding(horizontal = 12.dp, vertical = 8.dp),
             horizontalArrangement = Arrangement.spacedBy(4.dp),
             verticalAlignment = Alignment.CenterVertically

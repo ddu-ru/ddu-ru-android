@@ -29,6 +29,8 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.gildongmu.dduru.R
@@ -62,13 +64,9 @@ fun ChatMainRoute(
         }
     }
 
-    LaunchedEffect(Unit) {
-        viewModel.loadChatRooms()
-    }
-
-    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
+    val lifecycleOwner = LocalLifecycleOwner.current
     LaunchedEffect(lifecycleOwner) {
-        lifecycleOwner.lifecycle.repeatOnLifecycle(androidx.lifecycle.Lifecycle.State.RESUMED) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
             viewModel.loadChatRooms()
         }
     }
@@ -189,7 +187,8 @@ private fun ChatMainScreen(
                     val listState = rememberLazyListState()
                     val shouldLoadMore by remember {
                         derivedStateOf {
-                            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                            val lastVisibleIndex =
+                                listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
                             val totalItems = listState.layoutInfo.totalItemsCount
                             totalItems > 0 && lastVisibleIndex >= totalItems - 3
                         }
