@@ -219,6 +219,22 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     fun markAsRead(chatRoomId: Long, lastReadMessageId: Long) {
+        _uiState.update { state ->
+            state.copy(
+                items = state.items.map { item ->
+                    if (item is ChatListItem.Message) {
+                        val msgId = item.message.id.toLongOrNull() ?: return@map item
+                        if (msgId <= lastReadMessageId) {
+                            item.copy(message = item.message.copy(unreadCount = 0))
+                        } else {
+                            item
+                        }
+                    } else {
+                        item
+                    }
+                }
+            )
+        }
         viewModelScope.launch {
             chatRoomRepository.markAsRead(chatRoomId, lastReadMessageId)
         }
