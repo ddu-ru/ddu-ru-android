@@ -78,18 +78,18 @@ fun JourneyDetailMemberSection(
         Spacer(modifier = Modifier.height(16.dp))
 
         BoxWithConstraints(modifier = Modifier.fillMaxWidth()) {
-                val itemWidth = maxWidth * 0.2f - 1.dp
+            val itemWidth = maxWidth * 0.2f - 1.dp
 
-                FlowRow(
-                    modifier = Modifier.fillMaxWidth(),
-                    maxItemsInEachRow = 5,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                ) {
-                    members.forEach { member ->
-                        JourneyMemberItem(
-                            member = member,
-                            modifier = Modifier.width(itemWidth),
-                        )
+            FlowRow(
+                modifier = Modifier.fillMaxWidth(),
+                maxItemsInEachRow = 5,
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                members.forEach { member ->
+                    JourneyMemberItem(
+                        member = member,
+                        modifier = Modifier.width(itemWidth)
+                    )
                 }
             }
         }
