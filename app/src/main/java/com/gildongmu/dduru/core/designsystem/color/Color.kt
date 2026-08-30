@@ -35,6 +35,10 @@ val AcceptGreenBg = Color(0xFFC8F2DE)
 val RejectRed = Color(0xFFEF4343)
 val RejectRedBg = Color(0xFFF6E1E1)
 val RejectConfirmBg = Color(0xFFFFE9E9)
+val JourneyTodo = Color(0xFF22A6B3)
+val JourneyTodoBg = Color(0xFFE8F8F8)
+val JourneyNews = Color(0xFFEB5757)
+val JourneyNewsBg = Color(0xFFFFEEEE)
 
 @Immutable
 data class DduruColors(
@@ -71,7 +75,11 @@ data class DduruColors(
     val acceptGreenBg: Color,
     val rejectRed: Color,
     val rejectRedBg: Color,
-    val rejectConfirmBg: Color
+    val rejectConfirmBg: Color,
+    val journeyTodo: Color,
+    val journeyTodoBg: Color,
+    val journeyNews: Color,
+    val journeyNewsBg: Color
 )
 
 val defaultDduruColors = DduruColors(
@@ -107,7 +115,11 @@ val defaultDduruColors = DduruColors(
     acceptGreenBg = AcceptGreenBg,
     rejectRed = RejectRed,
     rejectRedBg = RejectRedBg,
-    rejectConfirmBg = RejectConfirmBg
+    rejectConfirmBg = RejectConfirmBg,
+    journeyTodo = JourneyTodo,
+    journeyTodoBg = JourneyTodoBg,
+    journeyNews = JourneyNews,
+    journeyNewsBg = JourneyNewsBg
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }
