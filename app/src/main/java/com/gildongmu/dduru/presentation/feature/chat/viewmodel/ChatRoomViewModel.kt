@@ -12,7 +12,6 @@ import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.MessagePosition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
-import java.time.LocalTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -224,7 +223,7 @@ class ChatRoomViewModel @Inject constructor(
                 items = state.items.map { item ->
                     if (item is ChatListItem.Message) {
                         val msgId = item.message.id.toLongOrNull() ?: return@map item
-                        if (msgId <= lastReadMessageId) {
+                        if (msgId <= lastReadMessageId && !item.message.isMine) {
                             item.copy(message = item.message.copy(unreadCount = 0))
                         } else {
                             item
@@ -238,6 +237,11 @@ class ChatRoomViewModel @Inject constructor(
         viewModelScope.launch {
             chatRoomRepository.markAsRead(chatRoomId, lastReadMessageId)
         }
+    }
+
+    fun cancelSubscription() {
+        subscriptionJob?.cancel()
+        subscriptionJob = null
     }
 
     fun onBackClick() {
@@ -262,19 +266,31 @@ class ChatRoomViewModel @Inject constructor(
         if (text.isBlank()) return
         _uiState.update { it.copy(inputText = "") }
         pendingSentContents.add(text)
+        val now = LocalDateTime.now()
         val optimisticItem = ChatListItem.Message(
             ChatMessageUiState(
                 id = "temp-${System.currentTimeMillis()}",
                 senderId = "",
                 senderName = "",
                 content = text,
-                time = LocalTime.now().format(TIME_FORMATTER),
+                time = now.format(TIME_FORMATTER),
                 unreadCount = 1,
                 isMine = true,
                 position = MessagePosition.SINGLE
             )
         )
-        _uiState.update { it.copy(items = it.items + optimisticItem) }
+        _uiState.update { state ->
+            val todayLabel = now.format(DATE_DIVIDER_FORMATTER)
+            val lastDateLabel = state.items
+                .filterIsInstance<ChatListItem.DateDivider>()
+                .lastOrNull()?.date
+            val itemsToAdd = if (lastDateLabel != todayLabel) {
+                listOf(ChatListItem.DateDivider(todayLabel), optimisticItem)
+            } else {
+                listOf(optimisticItem)
+            }
+            state.copy(items = state.items + itemsToAdd)
+        }
         viewModelScope.launch {
             runCatching { stompChatClient.ensureConnectedAndSend(chatRoomId, text) }
         }
