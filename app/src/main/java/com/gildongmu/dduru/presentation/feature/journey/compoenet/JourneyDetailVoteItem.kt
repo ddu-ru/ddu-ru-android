@@ -45,11 +45,11 @@ fun JourneyDetailVoteItem(
         Column {
             Text(
                 text = title,
-                style = DduruTheme.typography.Title2,
+                style = DduruTheme.typography.Body1,
                 color = DduruTheme.colors.gray900,
             )
 
-            Spacer(modifier = Modifier.height(12.dp))
+            Spacer(modifier = Modifier.height(8.dp))
 
             Row(
                 verticalAlignment = Alignment.CenterVertically,
@@ -57,23 +57,23 @@ fun JourneyDetailVoteItem(
                 Text(
                     text = "${participantCount}명 참여",
                     style = DduruTheme.typography.Body2,
-                    color = DduruTheme.colors.gray400,
+                    color = DduruTheme.colors.gray500,
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(11.dp))
 
                 Text(
                     text = "•",
                     style = DduruTheme.typography.Body2,
-                    color = DduruTheme.colors.gray400,
+                    color = DduruTheme.colors.gray500,
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(11.dp))
 
                 Text(
                     text = if (isInProgress) "진행중" else "종료",
                     style = DduruTheme.typography.Body2,
-                    color = DduruTheme.colors.gray400,
+                    color = DduruTheme.colors.gray500,
                 )
             }
 
@@ -82,7 +82,7 @@ fun JourneyDetailVoteItem(
             Text(
                 text = "$endDate 종료",
                 style = DduruTheme.typography.Body2,
-                color = DduruTheme.colors.gray400,
+                color = DduruTheme.colors.gray500,
             )
         }
     }
