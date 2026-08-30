@@ -1,10 +1,15 @@
 package com.gildongmu.dduru.presentation.feature.journey.state
 
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyNewsItemUiState
+import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyScheduleDayUiState
+import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyScheduleItemUiState
 
 data class JourneyUiState(
-    val ongoingJourney: OngoingJourneyUiState? = fakeOngoingJourney,
+    val ongoingJourneys: List<OngoingJourneyUiState> = fakeOngoingJourneys,
     val todos: List<JourneyTodoUiState> = fakeTodos,
+    val scheduleDays: List<JourneyScheduleDayUiState> = fakeScheduleDays,
+    val selectedScheduleDay: Int = fakeScheduleDays.first().day,
+    val schedules: List<JourneyScheduleItemUiState> = fakeSchedules,
     val news: List<JourneyNewsItemUiState> = fakeNews,
     val pastJourneys: List<PastJourneyUiState> = fakePastJourneys
 )
@@ -37,15 +42,27 @@ data class PastJourneyUiState(
     val memberImageUrls: List<String>
 )
 
-private val fakeOngoingJourney = OngoingJourneyUiState(
-    id = 1L,
-    imageUrl = "https://images.unsplash.com/photo-1528164344705-47542687000d",
-    dDay = "D-23",
-    title = "후쿠오카 미식 여행",
-    period = "2026. 08. 27 - 2026. 08. 30",
-    memberCount = 4,
-    remainingTodoCount = 6,
-    newNewsCount = 2
+private val fakeOngoingJourneys = listOf(
+    OngoingJourneyUiState(
+        id = 1L,
+        imageUrl = "https://images.unsplash.com/photo-1528164344705-47542687000d",
+        dDay = "D-23",
+        title = "후쿠오카 미식 여행",
+        period = "2026. 08. 27 - 2026. 08. 30",
+        memberCount = 4,
+        remainingTodoCount = 6,
+        newNewsCount = 2
+    ),
+    OngoingJourneyUiState(
+        id = 2L,
+        imageUrl = "https://images.unsplash.com/photo-1500534623283-312aade485b7",
+        dDay = "D-31",
+        title = "강릉 바다 여행",
+        period = "2026. 09. 04 - 2026. 09. 06",
+        memberCount = 3,
+        remainingTodoCount = 2,
+        newNewsCount = 1
+    )
 )
 
 private val fakeTodos = listOf(
@@ -79,6 +96,43 @@ private val fakeNews = listOf(
         journeyTitle = "후쿠오카 미식 여행",
         timeText = "1시간 전",
         isUnread = true
+    ),
+    JourneyNewsItemUiState(
+        id = 3L,
+        title = "새로운 댓글이 달렸어요",
+        journeyTitle = "후쿠오카 미식 여행",
+        timeText = "어제",
+        isUnread = false
+    ),
+    JourneyNewsItemUiState(
+        id = 4L,
+        title = "투표가 시작됐어요",
+        journeyTitle = "강릉 바다 여행",
+        timeText = "어제",
+        isUnread = false
+    )
+)
+
+private val fakeScheduleDays = listOf(
+    JourneyScheduleDayUiState(day = 1, dateText = "08. 27"),
+    JourneyScheduleDayUiState(day = 2, dateText = "08. 28"),
+    JourneyScheduleDayUiState(day = 3, dateText = "08. 29"),
+    JourneyScheduleDayUiState(day = 4, dateText = "08. 30")
+)
+
+private val fakeSchedules = listOf(
+    JourneyScheduleItemUiState(
+        startTime = "10:00",
+        endTime = "12:30",
+        title = "인천국제공항 출발",
+        location = "인천국제공항 제1여객터미널",
+        memo = "출발 2시간 전까지 도착"
+    ),
+    JourneyScheduleItemUiState(
+        startTime = "13:50",
+        endTime = "15:30",
+        title = "후쿠오카 공항 도착",
+        location = "후쿠오카 공항"
     )
 )
 
@@ -104,6 +158,18 @@ private val fakePastJourneys = listOf(
         memberImageUrls = listOf(
             "https://i.pravatar.cc/96?img=20",
             "https://i.pravatar.cc/96?img=30"
+        )
+    ),
+    PastJourneyUiState(
+        id = 3,
+        title = "부산 야경 여행",
+        location = "부산",
+        date = "02. 14 - 02. 16",
+        imageUrl = "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee",
+        memberImageUrls = listOf(
+            "https://i.pravatar.cc/96?img=14",
+            "https://i.pravatar.cc/96?img=24",
+            "https://i.pravatar.cc/96?img=34"
         )
     )
 )

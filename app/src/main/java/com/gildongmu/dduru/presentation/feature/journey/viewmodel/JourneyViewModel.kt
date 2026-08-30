@@ -27,4 +27,14 @@ class JourneyViewModel @Inject constructor() : ViewModel() {
             )
         }
     }
+
+    fun onScheduleDayClick(day: Int) {
+        val currentState = _uiState.value
+
+        if (currentState is UiState.Success) {
+            _uiState.value = UiState.Success(
+                currentState.data.copy(selectedScheduleDay = day)
+            )
+        }
+    }
 }
