@@ -39,10 +39,20 @@ import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneySchedul
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.PastJourneyCard
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.TodoItem
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyUiState
+import com.gildongmu.dduru.presentation.feature.journey.state.journeyPreviewUiState
 import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyViewModel
 
 @Composable
 fun JourneyRoute(
+    onExploreClick: () -> Unit = {},
+    onCreateJourneyClick: () -> Unit = {},
+    onJourneyClick: (Long) -> Unit = {},
+    onTodoAllClick: () -> Unit = {},
+    onScheduleAllClick: () -> Unit = {},
+    onNewsAllClick: () -> Unit = {},
+    onNewsClick: (Long) -> Unit = {},
+    onPastJourneyAllClick: () -> Unit = {},
+    onPastJourneyClick: (Int) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: JourneyViewModel = hiltViewModel()
 ) {
@@ -57,6 +67,15 @@ fun JourneyRoute(
                 uiState = state.data,
                 onTodoCheckedChange = viewModel::onTodoCheckedChange,
                 onScheduleDayClick = viewModel::onScheduleDayClick,
+                onExploreClick = onExploreClick,
+                onCreateJourneyClick = onCreateJourneyClick,
+                onJourneyClick = onJourneyClick,
+                onTodoAllClick = onTodoAllClick,
+                onScheduleAllClick = onScheduleAllClick,
+                onNewsAllClick = onNewsAllClick,
+                onNewsClick = onNewsClick,
+                onPastJourneyAllClick = onPastJourneyAllClick,
+                onPastJourneyClick = onPastJourneyClick,
                 modifier = modifier
             )
         }
@@ -66,8 +85,17 @@ fun JourneyRoute(
 @Composable
 private fun JourneyScreen(
     uiState: JourneyUiState,
-    onTodoCheckedChange: (Long, Boolean) -> Unit = { _, _ -> },
-    onScheduleDayClick: (Int) -> Unit = {},
+    onTodoCheckedChange: (Long, Boolean) -> Unit,
+    onScheduleDayClick: (Int) -> Unit,
+    onExploreClick: () -> Unit,
+    onCreateJourneyClick: () -> Unit,
+    onJourneyClick: (Long) -> Unit,
+    onTodoAllClick: () -> Unit,
+    onScheduleAllClick: () -> Unit,
+    onNewsAllClick: () -> Unit,
+    onNewsClick: (Long) -> Unit,
+    onPastJourneyAllClick: () -> Unit,
+    onPastJourneyClick: (Int) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -94,8 +122,8 @@ private fun JourneyScreen(
             ) {
                 if (uiState.ongoingJourneys.isEmpty()) {
                     JourneyEmptyCard(
-                        onExploreClick = {},
-                        onCreateJourneyClick = {}
+                        onExploreClick = onExploreClick,
+                        onCreateJourneyClick = onCreateJourneyClick
                     )
                 } else {
                     val pagerState = rememberPagerState(
@@ -105,7 +133,8 @@ private fun JourneyScreen(
                     HorizontalPager(
                         state = pagerState,
                         contentPadding = PaddingValues(end = 32.dp),
-                        pageSpacing = 8.dp
+                        pageSpacing = 8.dp,
+                        key = { page -> uiState.ongoingJourneys[page].id }
                     ) { page ->
                         val journey = uiState.ongoingJourneys[page]
 
@@ -117,7 +146,7 @@ private fun JourneyScreen(
                             memberCount = journey.memberCount,
                             remainingTodoCount = journey.remainingTodoCount,
                             newNewsCount = journey.newNewsCount,
-                            onJourneyClick = {},
+                            onJourneyClick = { onJourneyClick(journey.id) },
                             modifier = Modifier.fillMaxWidth()
                         )
                     }
@@ -131,7 +160,7 @@ private fun JourneyScreen(
                     title = "내가 할 일",
                     count = uiState.todos.size,
                     countColor = DduruTheme.colors.primary,
-                    onAllClick = {}
+                    onAllClick = onTodoAllClick
                 ) {
                     Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                         uiState.todos.take(MAX_VISIBLE_TODO_COUNT).forEach { todo ->
@@ -154,12 +183,12 @@ private fun JourneyScreen(
             item {
                 JourneySection(
                     title = "다가오는 일정",
-                    onAllClick = {}
+                    onAllClick = onScheduleAllClick
                 ) {
                     JourneySchedule(
                         days = uiState.scheduleDays,
                         selectedDay = uiState.selectedScheduleDay,
-                        dDayText = uiState.ongoingJourneys.first().dDay,
+                        dDayText = uiState.scheduleDDayText,
                         schedules = uiState.schedules,
                         onDayClick = onScheduleDayClick
                     )
@@ -173,11 +202,11 @@ private fun JourneyScreen(
                     title = "새 소식",
                     count = uiState.news.size,
                     countColor = DduruTheme.colors.primary,
-                    onAllClick = {}
+                    onAllClick = onNewsAllClick
                 ) {
                     JourneyNewsSection(
                         news = uiState.news.take(MAX_VISIBLE_NEWS_COUNT),
-                        onNewsClick = {}
+                        onNewsClick = onNewsClick
                     )
                 }
             }
@@ -189,7 +218,7 @@ private fun JourneyScreen(
                     title = "지난 여정 기록",
                     count = uiState.pastJourneys.size,
                     countColor = DduruTheme.colors.gray600,
-                    onAllClick = {}
+                    onAllClick = onPastJourneyAllClick
                 ) {
                     LazyRow(horizontalArrangement = Arrangement.spacedBy(12.dp)) {
                         items(uiState.pastJourneys, key = { it.id }) { journey ->
@@ -200,7 +229,7 @@ private fun JourneyScreen(
                                 date = journey.date,
                                 imageUrl = journey.imageUrl,
                                 memberImageUrls = journey.memberImageUrls,
-                                onClick = {}
+                                onClick = onPastJourneyClick
                             )
                         }
                     }
@@ -277,6 +306,40 @@ private const val MAX_VISIBLE_NEWS_COUNT = 3
 @Composable
 private fun JourneyScreenPreview() {
     DduruTheme {
-        JourneyScreen(uiState = JourneyUiState())
+        JourneyScreen(
+            uiState = journeyPreviewUiState,
+            onTodoCheckedChange = { _, _ -> },
+            onScheduleDayClick = {},
+            onExploreClick = {},
+            onCreateJourneyClick = {},
+            onJourneyClick = {},
+            onTodoAllClick = {},
+            onScheduleAllClick = {},
+            onNewsAllClick = {},
+            onNewsClick = {},
+            onPastJourneyAllClick = {},
+            onPastJourneyClick = {}
+        )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun JourneyEmptyScreenPreview() {
+    DduruTheme {
+        JourneyScreen(
+            uiState = JourneyUiState(),
+            onTodoCheckedChange = { _, _ -> },
+            onScheduleDayClick = {},
+            onExploreClick = {},
+            onCreateJourneyClick = {},
+            onJourneyClick = {},
+            onTodoAllClick = {},
+            onScheduleAllClick = {},
+            onNewsAllClick = {},
+            onNewsClick = {},
+            onPastJourneyAllClick = {},
+            onPastJourneyClick = {}
+        )
     }
 }

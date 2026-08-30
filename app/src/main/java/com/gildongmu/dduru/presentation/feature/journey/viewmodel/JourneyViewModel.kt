@@ -31,7 +31,7 @@ class JourneyViewModel @Inject constructor() : ViewModel() {
     fun onScheduleDayClick(day: Int) {
         val currentState = _uiState.value
 
-        if (currentState is UiState.Success) {
+        if (currentState is UiState.Success && currentState.data.scheduleDays.any { it.day == day }) {
             _uiState.value = UiState.Success(
                 currentState.data.copy(selectedScheduleDay = day)
             )
