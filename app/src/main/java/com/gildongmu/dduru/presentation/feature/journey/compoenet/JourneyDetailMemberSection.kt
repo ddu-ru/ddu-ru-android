@@ -33,7 +33,6 @@ data class JourneyMemberUiState(
     val role: String
 )
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun JourneyDetailMemberSection(
     members: List<JourneyMemberUiState>,
