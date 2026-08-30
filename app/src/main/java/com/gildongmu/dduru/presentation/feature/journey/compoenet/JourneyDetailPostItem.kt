@@ -38,7 +38,7 @@ fun JourneyDetailPostItem(
     onCommentClick: () -> Unit,
     onPinClick: () -> Unit,
     onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
@@ -52,8 +52,8 @@ fun JourneyDetailPostItem(
             )
             .padding(
                 horizontal = 20.dp,
-                vertical = 20.dp,
-            ),
+                vertical = 20.dp
+            )
     ) {
         AsyncImage(
             model = profileImageUrl ?: R.drawable.img_blank_profile,
@@ -61,21 +61,21 @@ fun JourneyDetailPostItem(
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape),
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Crop
         )
 
         Spacer(modifier = Modifier.width(12.dp))
 
         Column(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = username,
                     style = DduruTheme.typography.Caption1,
-                    color = DduruTheme.colors.gray846,
+                    color = DduruTheme.colors.gray846
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -83,7 +83,7 @@ fun JourneyDetailPostItem(
                 Text(
                     text = createdAt,
                     style = DduruTheme.typography.Caption2,
-                    color = DduruTheme.colors.gray500,
+                    color = DduruTheme.colors.gray500
                 )
             }
 
@@ -92,14 +92,14 @@ fun JourneyDetailPostItem(
             Text(
                 text = title,
                 style = DduruTheme.typography.Caption2,
-                color = DduruTheme.colors.gray846,
+                color = DduruTheme.colors.gray846
             )
 
             if (imageUrls.isNotEmpty() || commentCount > 0) {
                 Spacer(modifier = Modifier.height(12.dp))
                 Row(
                     horizontalArrangement = Arrangement.spacedBy(4.dp),
-                    verticalAlignment = Alignment.CenterVertically,
+                    verticalAlignment = Alignment.CenterVertically
                 ) {
                     imageUrls.take(3).forEach { imageUrl ->
                         AsyncImage(
@@ -108,7 +108,7 @@ fun JourneyDetailPostItem(
                             modifier = Modifier
                                 .size(16.dp)
                                 .clip(CircleShape),
-                            contentScale = ContentScale.Crop,
+                            contentScale = ContentScale.Crop
                         )
                     }
 
@@ -118,8 +118,8 @@ fun JourneyDetailPostItem(
                             style = DduruTheme.typography.Caption2,
                             color = DduruTheme.colors.primary,
                             modifier = Modifier.clickable(
-                                onClick = onCommentClick,
-                            ),
+                                onClick = onCommentClick
+                            )
                         )
                     }
                 }
@@ -128,7 +128,7 @@ fun JourneyDetailPostItem(
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(16.dp),
-            verticalAlignment = Alignment.Top,
+            verticalAlignment = Alignment.Top
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_bottom_nav_chat),
@@ -136,7 +136,7 @@ fun JourneyDetailPostItem(
                 modifier = Modifier
                     .size(16.dp)
                     .clickable(onClick = onCommentClick),
-                tint = DduruTheme.colors.gray400,
+                tint = DduruTheme.colors.gray400
             )
 
             Icon(
@@ -149,7 +149,7 @@ fun JourneyDetailPostItem(
                     DduruTheme.colors.primary
                 } else {
                     DduruTheme.colors.gray400
-                },
+                }
             )
 
             Icon(
@@ -158,7 +158,7 @@ fun JourneyDetailPostItem(
                 modifier = Modifier
                     .size(16.dp)
                     .clickable(onClick = onMoreClick),
-                tint = DduruTheme.colors.gray400,
+                tint = DduruTheme.colors.gray400
             )
         }
     }
@@ -178,7 +178,7 @@ private fun JourneyDetailPostItemPreview() {
             isPinned = true,
             onCommentClick = {},
             onPinClick = {},
-            onMoreClick = {},
+            onMoreClick = {}
         )
     }
 }
@@ -197,7 +197,7 @@ private fun JourneyDetailUnpinnedPostItemPreview() {
             isPinned = false,
             onCommentClick = {},
             onPinClick = {},
-            onMoreClick = {},
+            onMoreClick = {}
         )
     }
 }
