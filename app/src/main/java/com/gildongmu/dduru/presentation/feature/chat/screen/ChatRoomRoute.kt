@@ -486,4 +486,3 @@ private fun ChatRoomScreenGroupPreview() {
         )
     }
 }
-
