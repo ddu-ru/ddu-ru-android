@@ -63,7 +63,7 @@ fun JourneyDetailVoteItem(
                 Spacer(modifier = Modifier.width(11.dp))
 
                 Text(
-                    text = "•",
+                    text = "·",
                     style = DduruTheme.typography.Body2,
                     color = DduruTheme.colors.gray500
                 )
