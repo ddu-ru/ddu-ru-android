@@ -5,8 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
-import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxHeight
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -15,9 +15,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -41,7 +38,7 @@ import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyPostCom
 fun JourneyPostComposeRoute(
     modifier: Modifier = Modifier,
     viewModel: JourneyPostComposeViewModel = hiltViewModel(),
-    onBackClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val galleryLauncher = rememberGalleryLauncher(viewModel::onPhotoSelected)
@@ -53,9 +50,8 @@ fun JourneyPostComposeRoute(
         onAddPhotoClick = { galleryLauncher.launch("image/*") },
         onRemovePhotoClick = viewModel::onRemovePhotoClick,
         onSubmitClick = viewModel::onSubmitClick,
-        modifier = modifier,
+        modifier = modifier
     )
-
 }
 
 @Composable
@@ -63,18 +59,18 @@ private fun JourneyPostAuthor(
     username: String,
     createdAt: String,
     profileImageUrl: String?,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier,
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        horizontalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         AsyncImage(
             model = profileImageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.size(32.dp).clip(CircleShape),
+            modifier = Modifier.size(32.dp).clip(CircleShape)
         )
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
             Text(text = username, style = DduruTheme.typography.Caption1, color = DduruTheme.colors.gray846)
@@ -91,18 +87,18 @@ fun JourneyPostComposeScreen(
     onAddPhotoClick: () -> Unit,
     onRemovePhotoClick: (Int) -> Unit,
     onSubmitClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
             .statusBarsPadding()
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
     ) {
         JourneyPostComposeTopBar(
-            enabled = uiState.canSubmit && !uiState.isOverMaxLength,
+            enabled = uiState.canSubmit,
             onBackClick = onBackClick,
-            onSubmitClick = onSubmitClick,
+            onSubmitClick = onSubmitClick
         )
 
         Spacer(modifier = Modifier.height(30.dp))
@@ -110,7 +106,7 @@ fun JourneyPostComposeScreen(
         JourneyPostAuthor(
             username = uiState.username,
             createdAt = uiState.createdAt,
-            profileImageUrl = uiState.profileImageUrl,
+            profileImageUrl = uiState.profileImageUrl
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -119,7 +115,7 @@ fun JourneyPostComposeScreen(
             value = uiState.content,
             onValueChange = onContentChange,
             isError = uiState.isOverMaxLength,
-            modifier = Modifier.fillMaxHeight(1f / 3f),
+            modifier = Modifier.fillMaxHeight(1f / 3f)
         )
 
         Spacer(modifier = Modifier.height(24.dp))
@@ -127,7 +123,7 @@ fun JourneyPostComposeScreen(
         Text(
             text = "사진 추가",
             style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray800,
+            color = DduruTheme.colors.gray800
         )
 
         Spacer(modifier = Modifier.height(16.dp))
@@ -135,39 +131,40 @@ fun JourneyPostComposeScreen(
         JourneyPostPhotoSection(
             photos = uiState.selectedPhotos,
             onAddPhotoClick = onAddPhotoClick,
-            onRemovePhotoClick = onRemovePhotoClick,
+            onRemovePhotoClick = onRemovePhotoClick
         )
     }
 }
 
 @Composable
 private fun JourneyPostComposePreviewContent(
-    uiState: JourneyPostComposeUiState,
+    uiState: JourneyPostComposeUiState
 ) {
-    var selectedPhotos by remember { mutableStateOf(uiState.selectedPhotos) }
-
     JourneyPostComposeScreen(
-        uiState = uiState.copy(selectedPhotos = selectedPhotos),
+        uiState = uiState,
         onBackClick = {},
         onContentChange = {},
         onAddPhotoClick = {},
         onRemovePhotoClick = {},
-        onSubmitClick = {},
+        onSubmitClick = {}
     )
-
 }
 
 @Preview(
     name = "게시글 작성 - 기본",
     showBackground = true,
     showSystemUi = true,
-    device = Devices.PIXEL_7,
+    device = Devices.PIXEL_7
 )
 @Composable
 private fun JourneyPostComposeScreenPreview() {
     DduruTheme {
         JourneyPostComposePreviewContent(
-            uiState = JourneyPostComposeUiState(username = "길동", createdAt = "방금 전"),
+            uiState = JourneyPostComposeUiState(
+                username = "길동",
+                createdAt = "방금 전",
+                profileImageUrl = "android.resource://com.gildongmu.dduru/drawable/img_blank_profile"
+            )
         )
     }
 }
@@ -176,7 +173,7 @@ private fun JourneyPostComposeScreenPreview() {
     name = "게시글 작성 - 글자 수 초과",
     showBackground = true,
     showSystemUi = true,
-    device = Devices.PIXEL_7,
+    device = Devices.PIXEL_7
 )
 @Composable
 private fun JourneyPostComposeScreenErrorPreview() {
@@ -185,8 +182,9 @@ private fun JourneyPostComposeScreenErrorPreview() {
             uiState = JourneyPostComposeUiState(
                 username = "길동",
                 createdAt = "방금 전",
-                content = "가".repeat(MAX_POST_LENGTH + 1),
-            ),
+                profileImageUrl = "android.resource://com.gildongmu.dduru/drawable/img_blank_profile",
+                content = "가".repeat(MAX_POST_LENGTH + 1)
+            )
         )
     }
 }
@@ -195,7 +193,7 @@ private fun JourneyPostComposeScreenErrorPreview() {
     name = "게시글 작성 - 사진 추가됨",
     showBackground = true,
     showSystemUi = true,
-    device = Devices.PIXEL_7,
+    device = Devices.PIXEL_7
 )
 @Composable
 private fun JourneyPostComposeScreenWithPhotosPreview() {
@@ -204,9 +202,10 @@ private fun JourneyPostComposeScreenWithPhotosPreview() {
             uiState = JourneyPostComposeUiState(
                 username = "길동",
                 createdAt = "방금 전",
+                profileImageUrl = "android.resource://com.gildongmu.dduru/drawable/img_blank_profile",
                 content = "제주에서 보낸 첫날, 정말 즐거웠어요!",
-                selectedPhotos = previewSelectedPhotos(),
-            ),
+                selectedPhotos = previewSelectedPhotos()
+            )
         )
     }
 }
@@ -214,5 +213,5 @@ private fun JourneyPostComposeScreenWithPhotosPreview() {
 private fun previewSelectedPhotos(): List<Uri> = listOf(
     Uri.parse("android.resource://com.gildongmu.dduru/drawable/img_journey_preview_coast"),
     Uri.parse("android.resource://com.gildongmu.dduru/drawable/img_journey_preview_coast"),
-    Uri.parse("android.resource://com.gildongmu.dduru/drawable/img_journey_preview_coast"),
+    Uri.parse("android.resource://com.gildongmu.dduru/drawable/img_journey_preview_coast")
 )

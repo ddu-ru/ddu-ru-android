@@ -7,10 +7,10 @@ data class JourneyPostComposeUiState(
     val createdAt: String = "",
     val profileImageUrl: String? = null,
     val content: String = "",
-    val selectedPhotos: List<Uri> = emptyList(),
+    val selectedPhotos: List<Uri> = emptyList()
 ) {
     val canSubmit: Boolean
-        get() = content.isNotBlank()
+        get() = content.isNotBlank() && !isOverMaxLength
 
     val isOverMaxLength: Boolean
         get() = content.length > MAX_POST_LENGTH

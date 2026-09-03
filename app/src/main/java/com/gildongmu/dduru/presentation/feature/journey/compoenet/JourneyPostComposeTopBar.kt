@@ -8,8 +8,8 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -29,12 +29,13 @@ fun JourneyPostComposeTopBar(
     enabled: Boolean,
     onBackClick: () -> Unit,
     onSubmitClick: () -> Unit,
+    modifier: Modifier = Modifier
 ) {
     Row(
-        modifier = Modifier
+        modifier = modifier
             .fillMaxWidth(),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Box(
             modifier = Modifier
@@ -42,23 +43,23 @@ fun JourneyPostComposeTopBar(
                 .dduruDualShadow(
                     firstAlpha = 0.08f,
                     secondAlpha = 0.10f,
-                    shape = CircleShape,
+                    shape = CircleShape
                 )
                 .clip(CircleShape)
                 .background(DduruTheme.colors.gray0)
                 .border(
                     width = 1.dp,
                     color = DduruTheme.colors.gray0.copy(alpha = 0.3f),
-                    shape = CircleShape,
+                    shape = CircleShape
                 )
                 .noRippleClickable(onClick = onBackClick),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_chevron_left),
                 contentDescription = null,
                 tint = DduruTheme.colors.black,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(24.dp)
             )
         }
 
@@ -72,14 +73,17 @@ fun JourneyPostComposeTopBar(
             modifier = Modifier
                 .clip(RoundedCornerShape(99.dp))
                 .background(
-                    if (enabled) DduruTheme.colors.primary
-                    else DduruTheme.colors.gray200
+                    if (enabled) {
+                        DduruTheme.colors.primary
+                    } else {
+                        DduruTheme.colors.gray200
+                    }
                 )
                 .then(if (enabled) Modifier.noRippleClickable(onClick = onSubmitClick) else Modifier)
                 .padding(
                     horizontal = 16.dp,
-                    vertical = 8.dp,
-                ),
+                    vertical = 8.dp
+                )
         ) {
             Text(
                 text = "완료",
@@ -87,7 +91,7 @@ fun JourneyPostComposeTopBar(
                     DduruTheme.colors.gray0
                 } else {
                     DduruTheme.colors.gray400
-                },
+                }
             )
         }
     }

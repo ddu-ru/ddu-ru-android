@@ -9,6 +9,7 @@ import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.update
 
 @HiltViewModel
 class JourneyPostComposeViewModel @Inject constructor() : ViewModel() {
@@ -16,21 +17,29 @@ class JourneyPostComposeViewModel @Inject constructor() : ViewModel() {
     val uiState: StateFlow<JourneyPostComposeUiState> = _uiState.asStateFlow()
 
     fun onContentChange(content: String) {
-        _uiState.value = _uiState.value.copy(content = content)
+        _uiState.update { it.copy(content = content) }
     }
 
     fun onPhotoSelected(photo: Uri) {
-        if (photo !in _uiState.value.selectedPhotos) {
-            _uiState.value = _uiState.value.copy(
-                selectedPhotos = (_uiState.value.selectedPhotos + photo).take(MAX_PHOTO_COUNT),
-            )
+        _uiState.update { currentState ->
+            if (photo in currentState.selectedPhotos || currentState.selectedPhotos.size >= MAX_PHOTO_COUNT) {
+                currentState
+            } else {
+                currentState.copy(selectedPhotos = currentState.selectedPhotos + photo)
+            }
         }
     }
 
     fun onRemovePhotoClick(index: Int) {
-        _uiState.value = _uiState.value.copy(
-            selectedPhotos = _uiState.value.selectedPhotos.filterIndexed { photoIndex, _ -> photoIndex != index },
-        )
+        _uiState.update { currentState ->
+            if (index !in currentState.selectedPhotos.indices) {
+                currentState
+            } else {
+                currentState.copy(
+                    selectedPhotos = currentState.selectedPhotos.filterIndexed { photoIndex, _ -> photoIndex != index }
+                )
+            }
+        }
     }
 
     fun onSubmitClick() = Unit

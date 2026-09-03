@@ -23,7 +23,7 @@ fun JourneyPostContentField(
     value: String,
     onValueChange: (String) -> Unit,
     isError: Boolean,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
@@ -33,28 +33,30 @@ fun JourneyPostContentField(
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray200,
-                shape = RoundedCornerShape(16.dp),
+                shape = RoundedCornerShape(16.dp)
             )
-            .padding(horizontal = 16.dp, vertical = 17.dp),
+            .padding(horizontal = 16.dp, vertical = 17.dp)
     ) {
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier.fillMaxSize(),
             textStyle = DduruTheme.typography.Body2.copy(
-                color = DduruTheme.colors.gray958,
+                color = DduruTheme.colors.gray958
             ),
             decorationBox = { innerTextField ->
-                if (value.isEmpty()) {
-                    Text(
-                        text = "내용을 자유롭게 작성해 보세요",
-                        style = DduruTheme.typography.Body2,
-                        color = DduruTheme.colors.gray400,
-                    )
-                }
+                Box(modifier = Modifier.fillMaxWidth()) {
+                    if (value.isEmpty()) {
+                        Text(
+                            text = "내용을 자유롭게 작성해 보세요",
+                            style = DduruTheme.typography.Body2,
+                            color = DduruTheme.colors.gray400
+                        )
+                    }
 
-                innerTextField()
-            },
+                    innerTextField()
+                }
+            }
         )
 
         Text(
@@ -65,7 +67,7 @@ fun JourneyPostContentField(
                 DduruTheme.colors.validationRed
             } else {
                 DduruTheme.colors.gray400
-            },
+            }
         )
     }
 }
@@ -77,7 +79,7 @@ private fun JourneyPostContentFieldPreview() {
         JourneyPostContentField(
             value = "제주에서 보낸 첫날, 정말 즐거웠어요!",
             onValueChange = {},
-            isError = false,
+            isError = false
         )
     }
 }
