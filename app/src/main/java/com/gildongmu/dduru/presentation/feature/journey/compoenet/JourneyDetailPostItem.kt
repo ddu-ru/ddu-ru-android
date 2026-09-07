@@ -116,10 +116,7 @@ fun JourneyDetailPostItem(
                         Text(
                             text = "${commentCount}개의 댓글",
                             style = DduruTheme.typography.Caption2,
-                            color = DduruTheme.colors.primary,
-                            modifier = Modifier.clickable(
-                                onClick = onCommentClick
-                            )
+                            color = DduruTheme.colors.primary
                         )
                     }
                 }

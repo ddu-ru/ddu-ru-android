@@ -19,6 +19,8 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 enum class JourneyDetailFilterType(val label: String?) {
     FIXED(null),
@@ -31,7 +33,7 @@ enum class JourneyDetailFilterType(val label: String?) {
 
 @Composable
 fun JourneyDetailFilterSection(
-    filters: List<JourneyDetailFilterType>,
+    filters: ImmutableList<JourneyDetailFilterType>,
     selectedFilter: JourneyDetailFilterType,
     onFilterClick: (JourneyDetailFilterType) -> Unit,
     modifier: Modifier = Modifier
@@ -105,7 +107,7 @@ private fun JourneyDetailFilterItem(
 private fun JourneyDetailFilterSectionPreview() {
     DduruTheme {
         JourneyDetailFilterSection(
-            filters = listOf(
+            filters = persistentListOf(
                 JourneyDetailFilterType.FIXED,
                 JourneyDetailFilterType.NOTICE,
                 JourneyDetailFilterType.BOARD,
