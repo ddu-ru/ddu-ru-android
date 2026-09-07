@@ -24,10 +24,12 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.MAX_PHOTO_COUNT
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun JourneyPostPhotoSection(
-    photos: List<Uri>,
+    photos: ImmutableList<Uri>,
     onAddPhotoClick: () -> Unit,
     onRemovePhotoClick: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -94,6 +96,6 @@ fun JourneyPostPhotoSection(
 @Composable
 private fun JourneyPostPhotoSectionPreview() {
     DduruTheme {
-        JourneyPostPhotoSection(photos = emptyList(), onAddPhotoClick = {}, onRemovePhotoClick = {})
+        JourneyPostPhotoSection(photos = persistentListOf(), onAddPhotoClick = {}, onRemovePhotoClick = {})
     }
 }

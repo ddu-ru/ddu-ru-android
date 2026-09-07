@@ -22,6 +22,8 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -210,8 +212,8 @@ private fun JourneyPostComposeScreenWithPhotosPreview() {
     }
 }
 
-private fun previewSelectedPhotos(): List<Uri> = listOf(
+private fun previewSelectedPhotos(): ImmutableList<Uri> = listOf(
     Uri.parse("android.resource://com.gildongmu.dduru/drawable/img_journey_preview_coast"),
     Uri.parse("android.resource://com.gildongmu.dduru/drawable/img_journey_preview_coast"),
     Uri.parse("android.resource://com.gildongmu.dduru/drawable/img_journey_preview_coast")
-)
+).toImmutableList()

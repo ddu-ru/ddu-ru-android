@@ -10,6 +10,7 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
+import kotlinx.collections.immutable.toImmutableList
 
 @HiltViewModel
 class JourneyPostComposeViewModel @Inject constructor() : ViewModel() {
@@ -25,7 +26,7 @@ class JourneyPostComposeViewModel @Inject constructor() : ViewModel() {
             if (photo in currentState.selectedPhotos || currentState.selectedPhotos.size >= MAX_PHOTO_COUNT) {
                 currentState
             } else {
-                currentState.copy(selectedPhotos = currentState.selectedPhotos + photo)
+                currentState.copy(selectedPhotos = (currentState.selectedPhotos + photo).toImmutableList())
             }
         }
     }
@@ -36,7 +37,9 @@ class JourneyPostComposeViewModel @Inject constructor() : ViewModel() {
                 currentState
             } else {
                 currentState.copy(
-                    selectedPhotos = currentState.selectedPhotos.filterIndexed { photoIndex, _ -> photoIndex != index }
+                    selectedPhotos = currentState.selectedPhotos
+                        .filterIndexed { photoIndex, _ -> photoIndex != index }
+                        .toImmutableList()
                 )
             }
         }
