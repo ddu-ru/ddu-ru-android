@@ -6,11 +6,11 @@ import com.gildongmu.dduru.presentation.feature.journey.state.JourneyPostCompose
 import com.gildongmu.dduru.presentation.feature.journey.state.MAX_PHOTO_COUNT
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
-import kotlinx.collections.immutable.toImmutableList
 
 @HiltViewModel
 class JourneyPostComposeViewModel @Inject constructor() : ViewModel() {

@@ -22,8 +22,6 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Devices
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import kotlinx.collections.immutable.ImmutableList
-import kotlinx.collections.immutable.toImmutableList
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
@@ -35,6 +33,8 @@ import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyPostPho
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyPostComposeUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.MAX_POST_LENGTH
 import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyPostComposeViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun JourneyPostComposeRoute(
