@@ -33,8 +33,16 @@ class ChatRoomRepositoryImpl @Inject constructor(
     override suspend fun getChatRooms(roomType: String?, cursor: String?): Result<ChatRoomListResult> {
         return try {
             val response = chatRoomService.getChatRooms(roomType = roomType, cursor = cursor)
-            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
-            val data = response.data ?: return Result.failure(Exception("Response data is null"))
+            if (response.status != 200) {
+                return Result.failure(
+                    when (response.status) {
+                        403 -> Exception("FORBIDDEN")
+                        404 -> Exception("NOT_FOUND")
+                        else -> Exception("SERVER_ERROR")
+                    }
+                )
+            }
+            val data = response.data ?: return Result.failure(Exception("OTHER"))
             Result.success(
                 ChatRoomListResult(
                     chatRooms = data.chatRooms.map { it.toEntity() },
@@ -43,18 +51,27 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 )
             )
         } catch (e: Exception) {
-            Result.failure(e)
+            if (e.message in listOf("FORBIDDEN", "NOT_FOUND", "SERVER_ERROR", "OTHER")) {
+                Result.failure(e)
+            } else {
+                Result.failure(Exception("NETWORK_ERROR"))
+            }
         }
     }
 
     override suspend fun getMessages(chatRoomId: Long, beforeMessageId: Long?): Result<ChatMessagesResultEntity> {
         return try {
-            val response = chatRoomService.getMessages(
-                chatRoomId = chatRoomId,
-                beforeMessageId = beforeMessageId
-            )
-            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
-            val data = response.data ?: return Result.failure(Exception("Response data is null"))
+            val response = chatRoomService.getMessages(chatRoomId = chatRoomId, beforeMessageId = beforeMessageId)
+            if (response.status != 200) {
+                return Result.failure(
+                    when (response.status) {
+                        403 -> Exception("FORBIDDEN")
+                        404 -> Exception("NOT_FOUND")
+                        else -> Exception("SERVER_ERROR")
+                    }
+                )
+            }
+            val data = response.data ?: return Result.failure(Exception("OTHER"))
             Result.success(
                 ChatMessagesResultEntity(
                     roomInfo = data.roomInfo.toEntity(),
@@ -64,7 +81,11 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 )
             )
         } catch (e: Exception) {
-            Result.failure(e)
+            if (e.message in listOf("FORBIDDEN", "NOT_FOUND", "SERVER_ERROR", "OTHER")) {
+                Result.failure(e)
+            } else {
+                Result.failure(Exception("NETWORK_ERROR"))
+            }
         }
     }
 
@@ -74,21 +95,45 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 chatRoomId = chatRoomId,
                 request = ChatReadRequest(lastReadMessageId = lastReadMessageId)
             )
-            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
+            if (response.status != 200) {
+                return Result.failure(
+                    when (response.status) {
+                        403 -> Exception("FORBIDDEN")
+                        404 -> Exception("NOT_FOUND")
+                        else -> Exception("SERVER_ERROR")
+                    }
+                )
+            }
             Result.success(Unit)
         } catch (e: Exception) {
-            Result.failure(e)
+            if (e.message in listOf("FORBIDDEN", "NOT_FOUND", "SERVER_ERROR", "OTHER")) {
+                Result.failure(e)
+            } else {
+                Result.failure(Exception("NETWORK_ERROR"))
+            }
         }
     }
 
     override suspend fun createPrivateChatRoom(postId: Long): Result<Long> {
         return try {
             val response = chatRoomService.createPrivateChatRoom(postId = postId)
-            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
-            val data = response.data ?: return Result.failure(Exception("Response data is null"))
+            if (response.status != 200) {
+                return Result.failure(
+                    when (response.status) {
+                        403 -> Exception("FORBIDDEN")
+                        404 -> Exception("NOT_FOUND")
+                        else -> Exception("SERVER_ERROR")
+                    }
+                )
+            }
+            val data = response.data ?: return Result.failure(Exception("OTHER"))
             Result.success(data.roomId)
         } catch (e: Exception) {
-            Result.failure(e)
+            if (e.message in listOf("FORBIDDEN", "NOT_FOUND", "SERVER_ERROR", "OTHER")) {
+                Result.failure(e)
+            } else {
+                Result.failure(Exception("NETWORK_ERROR"))
+            }
         }
     }
 

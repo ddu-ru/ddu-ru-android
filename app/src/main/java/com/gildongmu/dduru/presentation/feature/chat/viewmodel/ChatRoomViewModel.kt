@@ -73,12 +73,23 @@ class ChatRoomViewModel @Inject constructor(
                     startRoomSubscription(chatRoomId)
                 }
                 .onFailure { throwable ->
-                    val msg = throwable.message ?: ""
-                    _uiState.update { it.copy(isLoading = false, errorMessage = msg) }
-                    when {
-                        msg.contains("400") || msg.contains("403") || msg.contains("404") ->
-                            _sideEffect.emit(ChatRoomSideEffect.NavigateBack)
-                        else -> Unit
+                    val code = throwable.message ?: "OTHER"
+                    val (userMessage, isRetryable) = when (code) {
+                        "FORBIDDEN" -> "접근할 수 없는 채팅방이에요." to false
+                        "NOT_FOUND" -> "존재하지 않는 채팅방이에요." to false
+                        "NETWORK_ERROR" -> "연결이 원활하지 않아요. 잠시 후 다시 시도해 주세요." to true
+                        "SERVER_ERROR" -> "일시적인 오류가 발생했어요. 잠시 후 다시 시도해 주세요." to true
+                        else -> "채팅방을 불러오지 못했어요. 다시 시도해 주세요." to true
+                    }
+                    _uiState.update {
+                        it.copy(
+                            isLoading = false,
+                            errorMessage = userMessage,
+                            isRetryable = isRetryable
+                        )
+                    }
+                    if (code == "FORBIDDEN" || code == "NOT_FOUND") {
+                        _sideEffect.emit(ChatRoomSideEffect.NavigateBack)
                     }
                 }
         }
@@ -242,6 +253,11 @@ class ChatRoomViewModel @Inject constructor(
     fun cancelSubscription() {
         subscriptionJob?.cancel()
         subscriptionJob = null
+    }
+
+    fun retryLoadMessages() {
+        _uiState.update { it.copy(errorMessage = null, isRetryable = false) }
+        loadMessages(chatRoomId)
     }
 
     fun onBackClick() {

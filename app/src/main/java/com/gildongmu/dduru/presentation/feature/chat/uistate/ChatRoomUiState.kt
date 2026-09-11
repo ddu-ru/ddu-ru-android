@@ -28,5 +28,6 @@ data class ChatRoomUiState(
     val items: List<ChatListItem> = emptyList(),
     val inputText: String = "",
     val isLoading: Boolean = false,
-    val errorMessage: String? = null
+    val errorMessage: String? = null,
+    val isRetryable: Boolean = false
 )
