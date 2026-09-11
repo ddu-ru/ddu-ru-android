@@ -12,6 +12,8 @@ import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.MessagePosition
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDateTime
+import java.time.ZoneId
+import java.time.ZonedDateTime
 import java.time.format.DateTimeFormatter
 import java.time.temporal.ChronoUnit
 import javax.inject.Inject
@@ -31,6 +33,8 @@ private val DATE_DIVIDER_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPatt
 private val TIME_FORMATTER: DateTimeFormatter = DateTimeFormatter.ofPattern("HH:mm")
 private const val GROUPING_THRESHOLD_MINUTES = 5L
 
+private data class PendingSentMessage(val tempId: String, val content: String)
+
 @HiltViewModel
 class ChatRoomViewModel @Inject constructor(
     private val chatRoomRepository: ChatRoomRepository,
@@ -45,7 +49,7 @@ class ChatRoomViewModel @Inject constructor(
 
     private var chatRoomId: Long = -1
     private var subscriptionJob: Job? = null
-    private val pendingSentContents = mutableListOf<String>()
+    private val pendingSentMessages = mutableListOf<PendingSentMessage>()
     private var isLoadingMore = false
     private var hasMoreMessages = true
 
@@ -55,7 +59,7 @@ class ChatRoomViewModel @Inject constructor(
             _uiState.update { it.copy(isLoading = true, errorMessage = null) }
             chatRoomRepository.getMessages(chatRoomId, beforeMessageId = null)
                 .onSuccess { result ->
-                    hasMoreMessages = result.messages.isNotEmpty()
+                    hasMoreMessages = result.hasNext
                     val roomInfo = result.roomInfo
                     _uiState.update {
                         it.copy(
@@ -106,9 +110,8 @@ class ChatRoomViewModel @Inject constructor(
         viewModelScope.launch {
             chatRoomRepository.getMessages(chatRoomId, beforeMessageId = firstMessageId)
                 .onSuccess { result ->
-                    if (result.messages.isEmpty()) {
-                        hasMoreMessages = false
-                    } else {
+                    hasMoreMessages = result.hasNext
+                    if (result.messages.isNotEmpty()) {
                         val newItems = result.messages.toChatListItems()
                         _uiState.update { it.copy(items = newItems + it.items) }
                     }
@@ -146,11 +149,10 @@ class ChatRoomViewModel @Inject constructor(
                             }
                             else -> {
                                 val messageId = event.messageId?.toString() ?: return@collect
-                                val createdAt = event.createdAt?.let {
-                                    runCatching { LocalDateTime.parse(it) }.getOrNull()
-                                } ?: return@collect
+                                val createdAt = event.createdAt?.parseDateTime() ?: return@collect
                                 val content = event.userMessage?.text ?: event.content ?: ""
-                                val isMySentMessage = pendingSentContents.contains(content)
+                                val pendingSentMessage = pendingSentMessages.firstOrNull { it.content == content }
+                                val isMySentMessage = pendingSentMessage != null
                                 val newItem = ChatListItem.Message(
                                     ChatMessageUiState(
                                         id = messageId,
@@ -163,7 +165,7 @@ class ChatRoomViewModel @Inject constructor(
                                         position = MessagePosition.SINGLE
                                     )
                                 )
-                                if (isMySentMessage) pendingSentContents.remove(content)
+                                if (isMySentMessage) pendingSentMessages.remove(pendingSentMessage)
                                 _uiState.update { state ->
                                     val alreadyExists = state.items.any {
                                         it is ChatListItem.Message && it.message.id == messageId
@@ -173,7 +175,7 @@ class ChatRoomViewModel @Inject constructor(
                                     val newItems = if (isMySentMessage) {
                                         val tempIndex = state.items.indexOfFirst {
                                             it is ChatListItem.Message &&
-                                                it.message.id.startsWith("temp-")
+                                                it.message.id == pendingSentMessage?.tempId
                                         }
                                         if (tempIndex >= 0) {
                                             state.items.toMutableList().also {
@@ -281,11 +283,12 @@ class ChatRoomViewModel @Inject constructor(
     fun onSendClick(text: String) {
         if (text.isBlank()) return
         _uiState.update { it.copy(inputText = "") }
-        pendingSentContents.add(text)
+        val tempId = "temp-${System.currentTimeMillis()}"
+        pendingSentMessages.add(PendingSentMessage(tempId, text))
         val now = LocalDateTime.now()
         val optimisticItem = ChatListItem.Message(
             ChatMessageUiState(
-                id = "temp-${System.currentTimeMillis()}",
+                id = tempId,
                 senderId = "",
                 senderName = "",
                 content = text,
@@ -319,6 +322,15 @@ class ChatRoomViewModel @Inject constructor(
             stompChatClient.disconnectRoom()
         }
     }
+
+    private fun String.parseDateTime(): LocalDateTime =
+        try {
+            ZonedDateTime.parse(this)
+                .withZoneSameInstant(ZoneId.systemDefault())
+                .toLocalDateTime()
+        } catch (e: Exception) {
+            LocalDateTime.parse(this)
+        }
 }
 
 private fun List<MessageEntity>.toChatListItems(): List<ChatListItem> {

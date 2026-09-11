@@ -163,6 +163,7 @@ private fun ChatRoomScreen(
         }
 
         val listState = rememberLazyListState()
+        var isInitialScrollComplete by remember(uiState.roomName) { mutableStateOf(false) }
 
         val lastItemId = remember(uiState.items) {
             uiState.items.lastOrNull()?.let {
@@ -172,12 +173,13 @@ private fun ChatRoomScreen(
         LaunchedEffect(lastItemId) {
             if (uiState.items.isNotEmpty()) {
                 listState.animateScrollToItem(uiState.items.size - 1)
+                isInitialScrollComplete = true
             }
         }
 
         val firstVisibleIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
         LaunchedEffect(firstVisibleIndex) {
-            if (firstVisibleIndex == 0 && uiState.items.isNotEmpty()) {
+            if (firstVisibleIndex == 0 && uiState.items.isNotEmpty() && isInitialScrollComplete) {
                 onLoadMore()
             }
         }
