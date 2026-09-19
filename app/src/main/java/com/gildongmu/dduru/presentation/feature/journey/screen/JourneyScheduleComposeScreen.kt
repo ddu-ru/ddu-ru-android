@@ -24,6 +24,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gildongmu.dduru.core.common.extension.toKoreanTime
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleCategorySection
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleComposeTopBar
@@ -121,6 +122,8 @@ fun JourneyScheduleComposeScreen(
             .verticalScroll(rememberScrollState())
             .padding(horizontal = 16.dp)
     ) {
+        Spacer(modifier = Modifier.height(8.dp))
+
         JourneyScheduleComposeTopBar(
             enabled = uiState.canSubmit,
             onBackClick = onBackClick,
@@ -136,7 +139,7 @@ fun JourneyScheduleComposeScreen(
             onValueChange = onTitleChange
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         JourneyScheduleTextField(
             label = "장소",
@@ -145,7 +148,7 @@ fun JourneyScheduleComposeScreen(
             onValueChange = onLocationChange
         )
 
-        Spacer(modifier = Modifier.height(24.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         JourneyScheduleDaySection(
             days = uiState.days,
@@ -153,7 +156,7 @@ fun JourneyScheduleComposeScreen(
             onDayClick = onDayClick
         )
 
-        Spacer(modifier = Modifier.height(28.dp))
+        Spacer(modifier = Modifier.height(32.dp))
 
         JourneyScheduleTimeSection(
             startTime = uiState.startTime,
@@ -165,7 +168,7 @@ fun JourneyScheduleComposeScreen(
         )
 
         if (uiState.isMemoAdded) {
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             JourneyScheduleMemoSection(
                 memo = uiState.memo,
@@ -175,7 +178,7 @@ fun JourneyScheduleComposeScreen(
         }
 
         if (uiState.isCategoryAdded) {
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             JourneyScheduleCategorySection(
                 selectedCategory = uiState.selectedCategory,
@@ -185,7 +188,7 @@ fun JourneyScheduleComposeScreen(
         }
 
         if (!uiState.isMemoAdded || !uiState.isCategoryAdded) {
-            Spacer(modifier = Modifier.height(28.dp))
+            Spacer(modifier = Modifier.height(32.dp))
 
             JourneyScheduleOptionSection(
                 showMemoOption = !uiState.isMemoAdded,
@@ -237,10 +240,26 @@ private fun JourneyScheduleComposeScreenPreview() = DduruTheme {
     )
 }
 
-private enum class TimePickerTarget { START, END }
-
-private fun Int.toKoreanTime(minute: Int): String {
-    val period = if (this < 12) "오전" else "오후"
-    val hour = if (this % 12 == 0) 12 else this % 12
-    return "$period $hour:${minute.toString().padStart(2, '0')}"
+@Preview(name = "일정 생성 - 초기 화면", showBackground = true, widthDp = 375, heightDp = 812)
+@Composable
+private fun JourneyScheduleComposeInitialScreenPreview() = DduruTheme {
+    JourneyScheduleComposeScreen(
+        uiState = JourneyScheduleComposeUiState(),
+        onBackClick = {},
+        onTitleChange = {},
+        onLocationChange = {},
+        onDayClick = {},
+        onStartTimeClick = {},
+        onAddEndTimeClick = {},
+        onEndTimeClick = {},
+        onMemoOptionClick = {},
+        onMemoChange = {},
+        onRemoveMemoClick = {},
+        onCategoryOptionClick = {},
+        onCategoryClick = {},
+        onRemoveCategoryClick = {},
+        onSubmitClick = {}
+    )
 }
+
+private enum class TimePickerTarget { START, END }

@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -50,11 +51,6 @@ fun JourneyScheduleComposeTopBar(
                 )
                 .clip(CircleShape)
                 .background(DduruTheme.colors.gray0)
-                .border(
-                    width = 1.dp,
-                    color = DduruTheme.colors.gray0.copy(alpha = 0.3f),
-                    shape = CircleShape
-                )
                 .noRippleClickable(onClick = onBackClick),
             contentAlignment = Alignment.Center
         ) {
@@ -79,15 +75,14 @@ fun JourneyScheduleComposeTopBar(
             enabledColors = DduruButtonEnabledColors(
                 backgroundColor = DduruTheme.colors.primary,
                 textColor = DduruTheme.colors.gray0,
-                borderColor = DduruTheme.colors.primary
+                borderColor = Color.Transparent
             ),
             disabledColors = DduruButtonDisabledColors(
                 backgroundColor = DduruTheme.colors.gray200,
                 textColor = DduruTheme.colors.gray400,
-                borderColor = DduruTheme.colors.gray200
+                borderColor = Color.Transparent
             ),
             textStyle = DduruTheme.typography.Body2,
-            contentPadding = PaddingValues(horizontal = 16.dp, vertical = 8.dp),
             shape = RoundedCornerShape(99.dp)
         )
     }

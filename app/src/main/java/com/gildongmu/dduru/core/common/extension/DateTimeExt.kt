@@ -24,3 +24,9 @@ fun LocalDateTime.toRelativeTime(): String {
         else -> "${days}일 전"
     }
 }
+
+fun Int.toKoreanTime(minute: Int): String {
+    val period = if (this < 12) "오전" else "오후"
+    val hour = if (this % 12 == 0) 12 else this % 12
+    return "$period $hour:${minute.toString().padStart(2, '0')}"
+}
