@@ -14,6 +14,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
@@ -63,5 +64,13 @@ fun JourneyAdminTopBar(
             style = DduruTheme.typography.H1,
             color = DduruTheme.colors.black
         )
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun JourneyAdminTopBarPreview() {
+    DduruTheme {
+        JourneyAdminTopBar(onBackClick = {})
     }
 }

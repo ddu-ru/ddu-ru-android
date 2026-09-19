@@ -157,9 +157,9 @@ fun JourneyAdminScreen(
 )
 @Composable
 private fun JourneyAdminScreenPreview() {
-    DduruTheme {
-        JourneyAdminScreen(
-            uiState = JourneyAdminUiState(
+    var uiState by remember {
+        mutableStateOf(
+            JourneyAdminUiState(
                 members = listOf(
                     JourneyAdminMember(
                         id = 1L,
@@ -172,36 +172,105 @@ private fun JourneyAdminScreenPreview() {
                     JourneyAdminMember(
                         id = 2L,
                         username = "username",
-                        roles = listOf(
-                            "총무"
-                        )
+                        roles = listOf("총무")
                     ),
                     JourneyAdminMember(
                         id = 3L,
                         username = "username",
-                        roles = listOf(
-                            "총무"
-                        )
+                        roles = listOf("총무")
                     ),
                     JourneyAdminMember(
                         id = 4L,
                         username = "username",
-                        roles = listOf(
-                            "총무"
-                        )
+                        roles = listOf("총무")
                     ),
                     JourneyAdminMember(
                         id = 5L,
                         username = "username",
-                        roles = listOf(
-                            "총무"
-                        )
+                        roles = listOf("총무")
                     )
                 )
-            ),
-            onBackClick = {},
-            onMemberClick = {},
-            onKickMemberClick = {}
+            )
         )
+    }
+    var roleMember by remember { mutableStateOf<JourneyAdminMember?>(null) }
+    var selectedRoles by remember { mutableStateOf<List<String>>(emptyList()) }
+    var isKickBottomSheetVisible by remember { mutableStateOf(false) }
+    var kickTargetMember by remember { mutableStateOf<JourneyAdminMember?>(null) }
+
+    DduruTheme {
+        JourneyAdminScreen(
+            uiState = uiState,
+            onBackClick = {},
+            onMemberClick = { memberId ->
+                uiState.members.find { it.id == memberId }?.let { member ->
+                    roleMember = member
+                    selectedRoles = member.roles
+                }
+            },
+            onKickMemberClick = {
+                isKickBottomSheetVisible = true
+            }
+        )
+
+        roleMember?.let { member ->
+            JourneyAdminRoleBottomSheet(
+                member = member,
+                selectedRoles = selectedRoles,
+                onRoleClick = { role ->
+                    selectedRoles = if (role in selectedRoles) {
+                        selectedRoles - role
+                    } else {
+                        selectedRoles + role
+                    }
+                },
+                onCustomRoleClick = {
+                    // TODO: 직접 입력 역할 기능 연결
+                },
+                onDismiss = {
+                    roleMember = null
+                },
+                onConfirm = {
+                    uiState = uiState.copy(
+                        members = uiState.members.map { previewMember ->
+                            if (previewMember.id == member.id) {
+                                previewMember.copy(roles = selectedRoles)
+                            } else {
+                                previewMember
+                            }
+                        }
+                    )
+                    roleMember = null
+                }
+            )
+        }
+
+        if (isKickBottomSheetVisible) {
+            JourneyAdminKickBottomSheet(
+                members = uiState.members,
+                onKickClick = { member ->
+                    kickTargetMember = member
+                },
+                onDismiss = {
+                    isKickBottomSheetVisible = false
+                    kickTargetMember = null
+                }
+            )
+        }
+
+        kickTargetMember?.let { member ->
+            JourneyAdminKickConfirmDialog(
+                onDismiss = {
+                    kickTargetMember = null
+                },
+                onConfirm = {
+                    uiState = uiState.copy(
+                        members = uiState.members.filterNot { it.id == member.id }
+                    )
+                    kickTargetMember = null
+                    isKickBottomSheetVisible = false
+                }
+            )
+        }
     }
 }

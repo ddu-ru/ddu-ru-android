@@ -15,8 +15,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
 
@@ -41,7 +43,7 @@ fun JourneyAdminMemberInfo(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = member.profileImageUrl,
+            model = R.drawable.img_blank_profile,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
@@ -68,5 +70,16 @@ fun JourneyAdminMemberInfo(
                 )
             }
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun JourneyAdminMemberInfoPreview() {
+    DduruTheme {
+        JourneyAdminMemberInfo(
+            member = journeyAdminPreviewMember,
+            showBackground = true
+        )
     }
 }

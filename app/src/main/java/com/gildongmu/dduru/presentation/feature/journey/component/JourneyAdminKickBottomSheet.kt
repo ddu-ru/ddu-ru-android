@@ -2,23 +2,30 @@ package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
+import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
 
@@ -56,14 +63,14 @@ fun JourneyAdminKickBottomSheet(
                     color = DduruTheme.colors.black
                 )
 
-                Text(
-                    text = "×",
+                Icon(
+                    painter = painterResource(R.drawable.ic_x_pass),
+                    contentDescription = "닫기",
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
-                        .noRippleClickable(onClick = onDismiss)
-                        .padding(8.dp),
-                    style = DduruTheme.typography.H1,
-                    color = DduruTheme.colors.gray500
+                        .size(24.dp)
+                        .noRippleClickable(onClick = onDismiss),
+                    tint = DduruTheme.colors.gray500
                 )
             }
 
@@ -72,8 +79,7 @@ fun JourneyAdminKickBottomSheet(
             members.forEachIndexed { index, member ->
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 12.dp),
+                        .fillMaxWidth(),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     JourneyAdminMemberInfo(
@@ -84,8 +90,14 @@ fun JourneyAdminKickBottomSheet(
                     DduruButton(
                         text = "강퇴",
                         onClick = { onKickClick(member) },
-                        enabledColors = DduruButtonDefaults.whiteEnabledColors,
-                        disabledColors = DduruButtonDefaults.whiteDisabledColors
+                        enabledColors = DduruButtonEnabledColors(
+                            backgroundColor = DduruTheme.colors.gray0,
+                            textColor = DduruTheme.colors.journeyKick,
+                            borderColor = DduruTheme.colors.gray200
+                        ),
+                        disabledColors = DduruButtonDefaults.whiteDisabledColors,
+                        contentPadding = PaddingValues(horizontal = 153.dp, vertical = 13.dp),
+                        shape = RoundedCornerShape(16.dp)
                     )
                 }
 
@@ -106,5 +118,17 @@ fun JourneyAdminKickBottomSheet(
                 disabledColors = DduruButtonDefaults.whiteDisabledColors
             )
         }
+    }
+}
+
+@Preview(showBackground = true)
+@Composable
+private fun JourneyAdminKickBottomSheetPreview() {
+    DduruTheme {
+        JourneyAdminKickBottomSheet(
+            members = journeyAdminPreviewMembers,
+            onKickClick = {},
+            onDismiss = {}
+        )
     }
 }
