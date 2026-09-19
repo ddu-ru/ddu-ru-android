@@ -28,6 +28,7 @@ fun JourneyScheduleTimeSection(
     startTime: String?,
     endTime: String?,
     isEndTimeAdded: Boolean,
+    errorMessage: String?,
     onStartTimeClick: () -> Unit,
     onAddEndTimeClick: () -> Unit,
     onEndTimeClick: () -> Unit,
@@ -77,6 +78,8 @@ fun JourneyScheduleTimeSection(
                 )
             }
         }
+
+        JourneyScheduleTimeValidationMessage(message = errorMessage)
     }
 }
 
@@ -127,6 +130,7 @@ private fun JourneyScheduleTimeSectionPreview() = DduruTheme {
         startTime = "오전 10:00",
         endTime = "",
         isEndTimeAdded = true,
+        errorMessage = "종료 시간은 시작 시간 이후로 설정해 주세요.",
         onStartTimeClick = {},
         onAddEndTimeClick = {},
         onEndTimeClick = {},

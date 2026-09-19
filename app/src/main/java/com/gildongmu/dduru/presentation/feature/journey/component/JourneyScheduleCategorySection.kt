@@ -60,7 +60,7 @@ fun JourneyScheduleCategorySection(
                         .clip(RoundedCornerShape(99.dp))
                         .background(
                             if (selected) {
-                                DduruTheme.colors.gray200
+                                DduruTheme.colors.secondary100
                             } else {
                                 DduruTheme.colors.gray100
                             }
@@ -73,7 +73,11 @@ fun JourneyScheduleCategorySection(
                             vertical = 12.dp
                         ),
                     style = DduruTheme.typography.Caption1,
-                    color = DduruTheme.colors.gray700
+                    color = if (selected) {
+                        DduruTheme.colors.primary
+                    } else {
+                        DduruTheme.colors.gray700
+                    }
                 )
             }
         }

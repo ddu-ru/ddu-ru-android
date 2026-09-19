@@ -1,5 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.journey.screen
 
+import android.app.TimePickerDialog
+import android.text.format.DateFormat
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,22 +10,19 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.Button
-import androidx.compose.material3.ExperimentalMaterial3Api
-import androidx.compose.material3.Text
-import androidx.compose.material3.TimePicker
-import androidx.compose.material3.rememberTimePickerState
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.toKoreanTime
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleCategorySection
@@ -38,7 +37,6 @@ import com.gildongmu.dduru.presentation.feature.journey.state.JourneyScheduleCom
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyScheduleDay
 import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyScheduleComposeViewModel
 
-@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JourneyScheduleComposeRoute(
     onBackClick: () -> Unit,
@@ -47,7 +45,6 @@ fun JourneyScheduleComposeRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var timePickerTarget by remember { mutableStateOf<TimePickerTarget?>(null) }
-    val timePickerState = rememberTimePickerState(initialHour = 9, initialMinute = 0)
 
     JourneyScheduleComposeScreen(
         uiState = uiState,
@@ -71,28 +68,73 @@ fun JourneyScheduleComposeRoute(
         modifier = modifier
     )
 
-    if (timePickerTarget != null) {
-        AlertDialog(
-            onDismissRequest = { timePickerTarget = null },
-            title = { Text(if (timePickerTarget == TimePickerTarget.START) "시작 시간" else "종료 시간") },
-            text = { TimePicker(state = timePickerState) },
-            confirmButton = {
-                Button(
-                    onClick = {
-                        val time = timePickerState.hour.toKoreanTime(timePickerState.minute)
-                        if (timePickerTarget == TimePickerTarget.START) {
-                            viewModel.onStartTimeChange(time)
-                        } else {
-                            viewModel.onEndTimeChange(time)
-                        }
-                        timePickerTarget = null
-                    }
-                ) { Text("확인") }
-            },
-            dismissButton = {
-                Button(onClick = { timePickerTarget = null }) { Text("취소") }
+    JourneyScheduleTimePicker(
+        target = timePickerTarget,
+        selectedTime = if (timePickerTarget == TimePickerTarget.START) uiState.startTime else uiState.endTime,
+        minimumTime = uiState.startTime,
+        onTimeSelected = { time ->
+            if (timePickerTarget == TimePickerTarget.START) {
+                viewModel.onStartTimeChange(time)
+            } else {
+                viewModel.onEndTimeChange(time)
             }
-        )
+            timePickerTarget = null
+        },
+        onInvalidTime = viewModel::onTimeValidationFailed,
+        onDismiss = { timePickerTarget = null }
+    )
+}
+
+@Composable
+private fun JourneyScheduleTimePicker(
+    target: TimePickerTarget?,
+    selectedTime: String?,
+    minimumTime: String?,
+    onTimeSelected: (String) -> Unit,
+    onInvalidTime: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    if (target == null) return
+
+    val context = LocalContext.current
+    DisposableEffect(target) {
+        val minimumMinutes = if (target == TimePickerTarget.END) {
+            minimumTime?.toHourAndMinute()?.toMinutes()
+        } else {
+            null
+        }
+        if (minimumMinutes == LAST_TIME_MINUTES) {
+            onInvalidTime("시작 시간이 오후 11:59이면 종료 시간을 설정할 수 없어요.")
+            onDismiss()
+            onDispose { }
+        } else {
+            val selectedMinutes = selectedTime.toHourAndMinute().toMinutes()
+            val initialMinutes = if (target == TimePickerTarget.END && minimumMinutes != null) {
+                maxOf(selectedMinutes, minimumMinutes + 1)
+            } else {
+                selectedMinutes
+            }
+            val dialog = TimePickerDialog(
+                context,
+                R.style.Theme_Dduru_TimePickerSpinner,
+                { _, selectedHour, selectedMinute ->
+                    val selectedTimeMinutes = (selectedHour to selectedMinute).toMinutes()
+                    if (minimumMinutes != null && selectedTimeMinutes <= minimumMinutes) {
+                        onInvalidTime("종료 시간은 시작 시간 이후로 설정해 주세요.")
+                    } else {
+                        onTimeSelected(selectedHour.toKoreanTime(selectedMinute))
+                    }
+                },
+                initialMinutes / MINUTES_PER_HOUR,
+                initialMinutes % MINUTES_PER_HOUR,
+                DateFormat.is24HourFormat(context)
+            ).apply {
+                setOnDismissListener { onDismiss() }
+                show()
+            }
+
+            onDispose { dialog.dismiss() }
+        }
     }
 }
 
@@ -162,6 +204,7 @@ fun JourneyScheduleComposeScreen(
             startTime = uiState.startTime,
             endTime = uiState.endTime,
             isEndTimeAdded = uiState.isEndTimeAdded,
+            errorMessage = uiState.timeErrorMessage,
             onStartTimeClick = onStartTimeClick,
             onAddEndTimeClick = onAddEndTimeClick,
             onEndTimeClick = onEndTimeClick
@@ -205,8 +248,8 @@ fun JourneyScheduleComposeScreen(
 @Preview(name = "일정 생성", showBackground = true, widthDp = 375, heightDp = 812)
 @Composable
 private fun JourneyScheduleComposeScreenPreview() = DduruTheme {
-    JourneyScheduleComposeScreen(
-        uiState = JourneyScheduleComposeUiState(
+    JourneyScheduleComposePreviewContent(
+        initialUiState = JourneyScheduleComposeUiState(
             title = "시부야 스크램블 집합",
             location = "시부야 스크램블 교차로",
             days = listOf(
@@ -222,44 +265,78 @@ private fun JourneyScheduleComposeScreenPreview() = DduruTheme {
             memo = "늦지 않게 도착하기",
             isCategoryAdded = true,
             selectedCategory = JourneyScheduleCategory.TOUR
-        ),
-        onBackClick = {},
-        onTitleChange = {},
-        onLocationChange = {},
-        onDayClick = {},
-        onStartTimeClick = {},
-        onAddEndTimeClick = {},
-        onEndTimeClick = {},
-        onMemoOptionClick = {},
-        onMemoChange = {},
-        onRemoveMemoClick = {},
-        onCategoryOptionClick = {},
-        onCategoryClick = {},
-        onRemoveCategoryClick = {},
-        onSubmitClick = {}
+        )
     )
 }
 
 @Preview(name = "일정 생성 - 초기 화면", showBackground = true, widthDp = 375, heightDp = 812)
 @Composable
 private fun JourneyScheduleComposeInitialScreenPreview() = DduruTheme {
-    JourneyScheduleComposeScreen(
-        uiState = JourneyScheduleComposeUiState(),
-        onBackClick = {},
-        onTitleChange = {},
-        onLocationChange = {},
-        onDayClick = {},
-        onStartTimeClick = {},
-        onAddEndTimeClick = {},
-        onEndTimeClick = {},
-        onMemoOptionClick = {},
-        onMemoChange = {},
-        onRemoveMemoClick = {},
-        onCategoryOptionClick = {},
-        onCategoryClick = {},
-        onRemoveCategoryClick = {},
-        onSubmitClick = {}
+    JourneyScheduleComposePreviewContent(
+        initialUiState = JourneyScheduleComposeUiState()
     )
 }
 
 private enum class TimePickerTarget { START, END }
+
+@Composable
+private fun JourneyScheduleComposePreviewContent(initialUiState: JourneyScheduleComposeUiState) {
+    var uiState by remember { mutableStateOf(initialUiState) }
+    var timePickerTarget by remember { mutableStateOf<TimePickerTarget?>(null) }
+
+    JourneyScheduleComposeScreen(
+        uiState = uiState,
+        onBackClick = {},
+        onTitleChange = { uiState = uiState.copy(title = it) },
+        onLocationChange = { uiState = uiState.copy(location = it) },
+        onDayClick = { uiState = uiState.copy(selectedDay = it) },
+        onStartTimeClick = { timePickerTarget = TimePickerTarget.START },
+        onAddEndTimeClick = {
+            uiState = uiState.copy(isEndTimeAdded = true)
+            timePickerTarget = TimePickerTarget.END
+        },
+        onEndTimeClick = { timePickerTarget = TimePickerTarget.END },
+        onMemoOptionClick = { uiState = uiState.copy(isMemoAdded = true) },
+        onMemoChange = { uiState = uiState.copy(memo = it) },
+        onRemoveMemoClick = { uiState = uiState.copy(isMemoAdded = false, memo = "") },
+        onCategoryOptionClick = { uiState = uiState.copy(isCategoryAdded = true) },
+        onCategoryClick = { uiState = uiState.copy(selectedCategory = it) },
+        onRemoveCategoryClick = { uiState = uiState.copy(isCategoryAdded = false, selectedCategory = null) },
+        onSubmitClick = {}
+    )
+
+    JourneyScheduleTimePicker(
+        target = timePickerTarget,
+        selectedTime = if (timePickerTarget == TimePickerTarget.START) uiState.startTime else uiState.endTime,
+        minimumTime = uiState.startTime,
+        onTimeSelected = { time ->
+            uiState = if (timePickerTarget == TimePickerTarget.START) {
+                uiState.copy(startTime = time, timeErrorMessage = null)
+            } else {
+                uiState.copy(endTime = time, timeErrorMessage = null)
+            }
+            timePickerTarget = null
+        },
+        onInvalidTime = { uiState = uiState.copy(timeErrorMessage = it) },
+        onDismiss = { timePickerTarget = null }
+    )
+}
+
+private fun String?.toHourAndMinute(): Pair<Int, Int> {
+    val time = this ?: return DEFAULT_TIME
+    val match = KOREAN_TIME_REGEX.matchEntire(time) ?: return DEFAULT_TIME
+    val hour = match.groupValues[2].toInt()
+    val minute = match.groupValues[3].toInt()
+    val hour24 = when (match.groupValues[1]) {
+        "오전" -> if (hour == 12) 0 else hour
+        else -> if (hour == 12) 12 else hour + 12
+    }
+    return hour24 to minute
+}
+
+private fun Pair<Int, Int>.toMinutes(): Int = first * MINUTES_PER_HOUR + second
+
+private val KOREAN_TIME_REGEX = Regex("(오전|오후) (\\d{1,2}):(\\d{2})")
+private val DEFAULT_TIME = 9 to 0
+private const val MINUTES_PER_HOUR = 60
+private const val LAST_TIME_MINUTES = 23 * MINUTES_PER_HOUR + 59

@@ -29,7 +29,15 @@ class JourneyScheduleComposeViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onStartTimeChange(time: String?) {
-        _uiState.update { it.copy(startTime = time) }
+        _uiState.update { state ->
+            state.copy(
+                startTime = time,
+                timeErrorMessage = null,
+                endTime = state.endTime?.takeUnless { endTime ->
+                    time != null && endTime.toMinutes() <= time.toMinutes()
+                }
+            )
+        }
     }
 
     fun onAddEndTimeClick() {
@@ -37,7 +45,17 @@ class JourneyScheduleComposeViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onEndTimeChange(time: String?) {
-        _uiState.update { it.copy(endTime = time) }
+        _uiState.update { state ->
+            val isValid = time == null || state.startTime == null || time.toMinutes() > state.startTime.toMinutes()
+            state.copy(
+                endTime = if (isValid) time else state.endTime,
+                timeErrorMessage = if (isValid) null else END_TIME_VALIDATION_MESSAGE
+            )
+        }
+    }
+
+    fun onTimeValidationFailed(message: String) {
+        _uiState.update { it.copy(timeErrorMessage = message) }
     }
 
     fun onMemoOptionClick() {
@@ -77,5 +95,22 @@ class JourneyScheduleComposeViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onSubmitClick() {
+    }
+
+    private fun String.toMinutes(): Int {
+        val match = KOREAN_TIME_REGEX.matchEntire(this) ?: return Int.MAX_VALUE
+        val hour = match.groupValues[2].toInt()
+        val minute = match.groupValues[3].toInt()
+        val hour24 = when (match.groupValues[1]) {
+            "오전" -> if (hour == 12) 0 else hour
+            else -> if (hour == 12) 12 else hour + 12
+        }
+        return hour24 * MINUTES_PER_HOUR + minute
+    }
+
+    private companion object {
+        const val MINUTES_PER_HOUR = 60
+        const val END_TIME_VALIDATION_MESSAGE = "종료 시간은 시작 시간 이후로 설정해 주세요."
+        val KOREAN_TIME_REGEX = Regex("(오전|오후) (\\d{1,2}):(\\d{2})")
     }
 }

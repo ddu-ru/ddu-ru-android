@@ -8,6 +8,7 @@ data class JourneyScheduleComposeUiState(
     val startTime: String? = null,
     val endTime: String? = null,
     val isEndTimeAdded: Boolean = false,
+    val timeErrorMessage: String? = null,
     val isMemoAdded: Boolean = false,
     val memo: String = "",
     val isCategoryAdded: Boolean = false,

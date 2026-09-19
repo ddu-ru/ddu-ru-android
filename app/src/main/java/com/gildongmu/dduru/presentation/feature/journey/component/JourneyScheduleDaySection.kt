@@ -75,7 +75,11 @@ fun JourneyScheduleDaySection(
                     Text(
                         text = item.date,
                         style = DduruTheme.typography.Caption1,
-                        color = DduruTheme.colors.gray0.copy(alpha = 0.5f)
+                        color = if (selected) {
+                            DduruTheme.colors.gray0.copy(alpha = 0.5f)
+                        } else {
+                            DduruTheme.colors.gray700.copy(alpha = 0.5f)
+                        }
                     )
                 }
             }
