@@ -71,7 +71,7 @@ private fun JourneyScheduleOptionChip(
             .clip(RoundedCornerShape(99.dp))
             .background(DduruTheme.colors.gray200)
             .noRippleClickable(onClick = onClick)
-            .padding( 12.dp),
+            .padding(12.dp),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = androidx.compose.ui.Alignment.CenterVertically
     ) {

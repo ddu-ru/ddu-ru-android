@@ -94,7 +94,7 @@ private fun JourneyScheduleTimeRow(
             .fillMaxWidth()
             .padding(vertical = 4.dp),
         verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween,
+        horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
             text = label,
@@ -121,7 +121,6 @@ private fun JourneyScheduleTimeRow(
         )
     }
 }
-
 
 @Preview(showBackground = true, widthDp = 375)
 @Composable
