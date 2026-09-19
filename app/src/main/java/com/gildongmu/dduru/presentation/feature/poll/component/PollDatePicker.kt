@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.chat.component
+package com.gildongmu.dduru.presentation.feature.poll.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -66,17 +66,7 @@ fun PollDatePicker(
                         color = DduruTheme.colors.gray800
                     )
                 }
-                Icon(
-                    painter = painterResource(R.drawable.ic_chevron_right),
-                    contentDescription = null,
-                    modifier = Modifier.size(16.dp),
-                    tint = DduruTheme.colors.gray600
-                )
             }
-            HorizontalDivider(
-                color = DduruTheme.colors.gray200,
-                thickness = 2.dp
-            )
         }
     }
 }
