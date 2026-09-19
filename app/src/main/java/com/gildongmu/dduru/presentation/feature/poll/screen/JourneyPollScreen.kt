@@ -109,7 +109,6 @@ fun JourneyPollScreen(
     }
 }
 
-
 @Preview(name = "작성 후", showBackground = true, widthDp = 375, heightDp = 812)
 @Composable
 private fun JourneyPollScreenAfterCreatePreview() = DduruTheme {
