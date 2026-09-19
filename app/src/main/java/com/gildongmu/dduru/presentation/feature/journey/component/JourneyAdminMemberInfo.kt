@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -21,12 +22,14 @@ import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
+import com.gildongmu.dduru.presentation.feature.journey.state.journeyAdminPreviewMember
 
 @Composable
 fun JourneyAdminMemberInfo(
     member: JourneyAdminMember,
     modifier: Modifier = Modifier,
-    showBackground: Boolean = false
+    showBackground: Boolean = false,
+    profileImageModel: Any? = member.profileImageUrl
 ) {
     Row(
         modifier = modifier
@@ -36,6 +39,7 @@ fun JourneyAdminMemberInfo(
                         .clip(RoundedCornerShape(16.dp))
                         .background(DduruTheme.colors.gray100)
                         .padding(16.dp)
+                        .fillMaxWidth()
                 } else {
                     Modifier
                 }
@@ -43,30 +47,30 @@ fun JourneyAdminMemberInfo(
         verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = R.drawable.img_blank_profile,
+            model = profileImageModel,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
-                .size(40.dp)
+                .size(28.dp)
                 .clip(CircleShape)
         )
 
-        Spacer(modifier = Modifier.size(12.dp))
+        Spacer(modifier = Modifier.size(8.dp))
 
         Column(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = member.username,
-                style = DduruTheme.typography.Body1,
+                style = DduruTheme.typography.Caption1,
                 color = DduruTheme.colors.black
             )
 
             if (member.roles.isNotEmpty()) {
                 Text(
                     text = member.roles.joinToString(" · "),
-                    style = DduruTheme.typography.Caption1,
-                    color = DduruTheme.colors.gray500
+                    style = DduruTheme.typography.Caption2,
+                    color = DduruTheme.colors.gray600
                 )
             }
         }
@@ -79,7 +83,8 @@ private fun JourneyAdminMemberInfoPreview() {
     DduruTheme {
         JourneyAdminMemberInfo(
             member = journeyAdminPreviewMember,
-            showBackground = true
+            showBackground = true,
+            profileImageModel = R.drawable.img_blank_profile
         )
     }
 }

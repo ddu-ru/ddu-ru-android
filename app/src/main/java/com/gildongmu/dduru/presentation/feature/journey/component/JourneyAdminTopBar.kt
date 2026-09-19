@@ -29,7 +29,7 @@ fun JourneyAdminTopBar(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp)
+            .height(48.dp)
     ) {
         Box(
             modifier = Modifier
@@ -52,7 +52,7 @@ fun JourneyAdminTopBar(
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_chevron_left),
-                contentDescription = "뒤로가기",
+                contentDescription = null,
                 tint = DduruTheme.colors.black,
                 modifier = Modifier.size(24.dp)
             )

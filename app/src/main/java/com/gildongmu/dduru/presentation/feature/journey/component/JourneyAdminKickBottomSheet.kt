@@ -28,6 +28,7 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
+import com.gildongmu.dduru.presentation.feature.journey.state.journeyAdminPreviewMembers
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -79,7 +80,8 @@ fun JourneyAdminKickBottomSheet(
             members.forEachIndexed { index, member ->
                 Row(
                     modifier = Modifier
-                        .fillMaxWidth(),
+                        .fillMaxWidth()
+                        .padding(vertical = 16.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     JourneyAdminMemberInfo(
@@ -96,8 +98,8 @@ fun JourneyAdminKickBottomSheet(
                             borderColor = DduruTheme.colors.gray200
                         ),
                         disabledColors = DduruButtonDefaults.whiteDisabledColors,
-                        contentPadding = PaddingValues(horizontal = 153.dp, vertical = 13.dp),
-                        shape = RoundedCornerShape(16.dp)
+                        contentPadding = PaddingValues(horizontal = 36.dp, vertical = 13.dp),
+                        shape = RoundedCornerShape(99.dp)
                     )
                 }
 

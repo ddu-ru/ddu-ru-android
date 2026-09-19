@@ -32,11 +32,11 @@ fun JourneyAdminMemberManagement(
     ) {
         Text(
             text = "멤버 관리",
-            style = DduruTheme.typography.Body1,
+            style = DduruTheme.typography.Title3,
             color = DduruTheme.colors.gray800
         )
 
-        Spacer(modifier = Modifier.height(20.dp))
+        Spacer(modifier = Modifier.height(16.dp))
 
         Row(
             modifier = Modifier
@@ -47,14 +47,11 @@ fun JourneyAdminMemberManagement(
                 )
                 .border(
                     width = 1.dp,
-                    color = DduruTheme.colors.gray200,
+                    color = DduruTheme.colors.gray300,
                     shape = RoundedCornerShape(16.dp)
                 )
                 .noRippleClickable(onClick = onKickMemberClick)
-                .padding(
-                    horizontal = 20.dp,
-                    vertical = 20.dp
-                ),
+                .padding(16.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
@@ -67,7 +64,7 @@ fun JourneyAdminMemberManagement(
 
             Text(
                 text = "멤버 강퇴하기",
-                style = DduruTheme.typography.Body1,
+                style = DduruTheme.typography.Body2,
                 color = DduruTheme.colors.validationRed
             )
         }

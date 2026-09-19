@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
@@ -8,21 +9,26 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.ExperimentalMaterial3Api
+import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.DEFAULT_JOURNEY_ROLES
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
+import com.gildongmu.dduru.presentation.feature.journey.state.journeyAdminPreviewMember
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -51,25 +57,24 @@ fun JourneyAdminRoleBottomSheet(
                     vertical = 24.dp
                 )
         ) {
-            Row(
-                modifier = Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.CenterVertically,
-                horizontalArrangement = Arrangement.Center
+            Box(
+                modifier = Modifier.fillMaxWidth()
             ) {
                 Text(
                     text = "역할 설정",
+                    modifier = Modifier.align(Alignment.Center),
                     style = DduruTheme.typography.H1,
                     color = DduruTheme.colors.black
                 )
 
-                Text(
-                    text = "×",
+                Icon(
+                    painter = painterResource(R.drawable.ic_x_pass),
+                    contentDescription = "닫기",
                     modifier = Modifier
-                        .align(Alignment.CenterVertically)
-                        .noRippleClickable(onClick = onDismiss)
-                        .padding(12.dp),
-                    style = DduruTheme.typography.H1,
-                    color = DduruTheme.colors.gray500
+                        .align(Alignment.CenterEnd)
+                        .size(12.dp)
+                        .noRippleClickable(onClick = onDismiss),
+                    tint = DduruTheme.colors.gray500
                 )
             }
 
@@ -124,7 +129,7 @@ fun JourneyAdminRoleBottomSheet(
                 )
             }
 
-            Spacer(modifier = Modifier.height(32.dp))
+            Spacer(modifier = Modifier.height(24.dp))
 
             Row(
                 modifier = Modifier.fillMaxWidth(),

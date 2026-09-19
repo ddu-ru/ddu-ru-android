@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
@@ -14,6 +13,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
+import com.gildongmu.dduru.presentation.feature.journey.state.journeyAdminPreviewMembers
 
 @Composable
 fun JourneyAdminMemberList(
@@ -37,11 +37,7 @@ fun JourneyAdminMemberList(
                 member = member,
                 onClick = {
                     onMemberClick(member.id)
-                },
-                modifier = Modifier.padding(
-                    horizontal = 16.dp,
-                    vertical = 16.dp
-                )
+                }
             )
 
             if (index != members.lastIndex) {

@@ -120,7 +120,7 @@ fun JourneyAdminScreen(
             .fillMaxSize()
             .statusBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp)
+            .padding(top = 16.dp, start = 16.dp, end = 16.dp)
     ) {
         JourneyAdminTopBar(
             onBackClick = onBackClick
@@ -130,8 +130,8 @@ fun JourneyAdminScreen(
 
         androidx.compose.material3.Text(
             text = "멤버별 역할",
-            style = com.gildongmu.dduru.core.designsystem.theme.DduruTheme.typography.Body1,
-            color = com.gildongmu.dduru.core.designsystem.theme.DduruTheme.colors.gray800
+            style = DduruTheme.typography.Body1,
+            color = DduruTheme.colors.gray800
         )
 
         Spacer(modifier = Modifier.height(20.dp))
@@ -157,6 +157,8 @@ fun JourneyAdminScreen(
 )
 @Composable
 private fun JourneyAdminScreenPreview() {
+    val blankProfileImage =
+        "android.resource://com.gildongmu.dduru/drawable/img_blank_profile"
     var uiState by remember {
         mutableStateOf(
             JourneyAdminUiState(
@@ -164,6 +166,7 @@ private fun JourneyAdminScreenPreview() {
                     JourneyAdminMember(
                         id = 1L,
                         username = "username",
+                        profileImageUrl = blankProfileImage,
                         roles = listOf(
                             "호스트",
                             "총무"
@@ -172,21 +175,25 @@ private fun JourneyAdminScreenPreview() {
                     JourneyAdminMember(
                         id = 2L,
                         username = "username",
+                        profileImageUrl = blankProfileImage,
                         roles = listOf("총무")
                     ),
                     JourneyAdminMember(
                         id = 3L,
                         username = "username",
+                        profileImageUrl = blankProfileImage,
                         roles = listOf("총무")
                     ),
                     JourneyAdminMember(
                         id = 4L,
                         username = "username",
+                        profileImageUrl = blankProfileImage,
                         roles = listOf("총무")
                     ),
                     JourneyAdminMember(
                         id = 5L,
                         username = "username",
+                        profileImageUrl = blankProfileImage,
                         roles = listOf("총무")
                     )
                 )
@@ -225,7 +232,6 @@ private fun JourneyAdminScreenPreview() {
                     }
                 },
                 onCustomRoleClick = {
-                    // TODO: 직접 입력 역할 기능 연결
                 },
                 onDismiss = {
                     roleMember = null
