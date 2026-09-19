@@ -5,41 +5,106 @@ import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyAdminKickBottomSheet
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyAdminKickConfirmDialog
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyAdminMemberList
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyAdminMemberManagement
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyAdminRoleBottomSheet
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyAdminTopBar
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
-import com.gildongmu.dduru.presentation.feature.journey.state.JourneyMemberRole
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminUiState
 import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyAdminViewModel
 
 @Composable
 fun JourneyAdminRoute(
     onBackClick: () -> Unit,
-    onMemberClick: (Long) -> Unit,
-    onKickMemberClick: () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: JourneyAdminViewModel = hiltViewModel(),
+    viewModel: JourneyAdminViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    var roleMember by remember { mutableStateOf<JourneyAdminMember?>(null) }
+    var selectedRoles by remember { mutableStateOf<List<String>>(emptyList()) }
+    var isKickBottomSheetVisible by remember { mutableStateOf(false) }
+    var kickTargetMember by remember { mutableStateOf<JourneyAdminMember?>(null) }
 
     JourneyAdminScreen(
         uiState = uiState,
         onBackClick = onBackClick,
-        onMemberClick = onMemberClick,
-        onKickMemberClick = onKickMemberClick,
-        modifier = modifier,
+        onMemberClick = { memberId ->
+            uiState.members.find { it.id == memberId }?.let { member ->
+                roleMember = member
+                selectedRoles = member.roles
+            }
+        },
+        onKickMemberClick = {
+            isKickBottomSheetVisible = true
+        },
+        modifier = modifier
     )
+
+    roleMember?.let { member ->
+        JourneyAdminRoleBottomSheet(
+            member = member,
+            selectedRoles = selectedRoles,
+            onRoleClick = { role ->
+                selectedRoles = if (role in selectedRoles) {
+                    selectedRoles - role
+                } else {
+                    selectedRoles + role
+                }
+            },
+            onCustomRoleClick = {
+                // TODO: 직접 입력 역할 기능 연결
+            },
+            onDismiss = {
+                roleMember = null
+            },
+            onConfirm = {
+                viewModel.updateMemberRoles(member.id, selectedRoles)
+                roleMember = null
+            }
+        )
+    }
+
+    if (isKickBottomSheetVisible) {
+        JourneyAdminKickBottomSheet(
+            members = uiState.members,
+            onKickClick = { member ->
+                kickTargetMember = member
+            },
+            onDismiss = {
+                isKickBottomSheetVisible = false
+                kickTargetMember = null
+            }
+        )
+    }
+
+    kickTargetMember?.let { member ->
+        JourneyAdminKickConfirmDialog(
+            onDismiss = {
+                kickTargetMember = null
+            },
+            onConfirm = {
+                viewModel.kickMember(member.id)
+                kickTargetMember = null
+                isKickBottomSheetVisible = false
+            }
+        )
+    }
 }
 
 @Composable
@@ -48,16 +113,17 @@ fun JourneyAdminScreen(
     onBackClick: () -> Unit,
     onMemberClick: (Long) -> Unit,
     onKickMemberClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .verticalScroll(rememberScrollState())
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
     ) {
         JourneyAdminTopBar(
-            onBackClick = onBackClick,
+            onBackClick = onBackClick
         )
 
         Spacer(modifier = Modifier.height(40.dp))
@@ -65,20 +131,20 @@ fun JourneyAdminScreen(
         androidx.compose.material3.Text(
             text = "멤버별 역할",
             style = com.gildongmu.dduru.core.designsystem.theme.DduruTheme.typography.Body1,
-            color = com.gildongmu.dduru.core.designsystem.theme.DduruTheme.colors.gray800,
+            color = com.gildongmu.dduru.core.designsystem.theme.DduruTheme.colors.gray800
         )
 
         Spacer(modifier = Modifier.height(20.dp))
 
         JourneyAdminMemberList(
             members = uiState.members,
-            onMemberClick = onMemberClick,
+            onMemberClick = onMemberClick
         )
 
         Spacer(modifier = Modifier.height(44.dp))
 
         JourneyAdminMemberManagement(
-            onKickMemberClick = onKickMemberClick,
+            onKickMemberClick = onKickMemberClick
         )
 
         Spacer(modifier = Modifier.height(32.dp))
@@ -87,7 +153,7 @@ fun JourneyAdminScreen(
 
 @Preview(
     showBackground = true,
-    showSystemUi = true,
+    showSystemUi = true
 )
 @Composable
 private fun JourneyAdminScreenPreview() {
@@ -99,43 +165,43 @@ private fun JourneyAdminScreenPreview() {
                         id = 1L,
                         username = "username",
                         roles = listOf(
-                            JourneyMemberRole.HOST,
-                            JourneyMemberRole.GENERAL_AFFAIRS,
-                        ),
+                            "호스트",
+                            "총무"
+                        )
                     ),
                     JourneyAdminMember(
                         id = 2L,
                         username = "username",
                         roles = listOf(
-                            JourneyMemberRole.GENERAL_AFFAIRS,
-                        ),
+                            "총무"
+                        )
                     ),
                     JourneyAdminMember(
                         id = 3L,
                         username = "username",
                         roles = listOf(
-                            JourneyMemberRole.GENERAL_AFFAIRS,
-                        ),
+                            "총무"
+                        )
                     ),
                     JourneyAdminMember(
                         id = 4L,
                         username = "username",
                         roles = listOf(
-                            JourneyMemberRole.GENERAL_AFFAIRS,
-                        ),
+                            "총무"
+                        )
                     ),
                     JourneyAdminMember(
                         id = 5L,
                         username = "username",
                         roles = listOf(
-                            JourneyMemberRole.GENERAL_AFFAIRS,
-                        ),
-                    ),
-                ),
+                            "총무"
+                        )
+                    )
+                )
             ),
             onBackClick = {},
             onMemberClick = {},
-            onKickMemberClick = {},
+            onKickMemberClick = {}
         )
     }
 }

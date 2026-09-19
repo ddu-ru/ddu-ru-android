@@ -23,12 +23,12 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun JourneyAdminTopBar(
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(56.dp),
+            .height(56.dp)
     ) {
         Box(
             modifier = Modifier
@@ -37,23 +37,23 @@ fun JourneyAdminTopBar(
                 .dduruDualShadow(
                     firstAlpha = 0.08f,
                     secondAlpha = 0.10f,
-                    shape = CircleShape,
+                    shape = CircleShape
                 )
                 .clip(CircleShape)
                 .background(DduruTheme.colors.gray0)
                 .border(
                     width = 1.dp,
                     color = DduruTheme.colors.gray0.copy(alpha = 0.3f),
-                    shape = CircleShape,
+                    shape = CircleShape
                 )
                 .noRippleClickable(onClick = onBackClick),
-            contentAlignment = Alignment.Center,
+            contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_chevron_left),
                 contentDescription = "뒤로가기",
                 tint = DduruTheme.colors.black,
-                modifier = Modifier.size(24.dp),
+                modifier = Modifier.size(24.dp)
             )
         }
 
@@ -61,7 +61,7 @@ fun JourneyAdminTopBar(
             text = "멤버별 역할 관리",
             modifier = Modifier.align(Alignment.Center),
             style = DduruTheme.typography.H1,
-            color = DduruTheme.colors.black,
+            color = DduruTheme.colors.black
         )
     }
 }

@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.journey.component
 
-import androidx.compose.foundation.border
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
@@ -18,7 +18,7 @@ import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
 fun JourneyAdminMemberList(
     members: List<JourneyAdminMember>,
     onMemberClick: (Long) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -28,8 +28,8 @@ fun JourneyAdminMemberList(
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray200,
-                shape = RoundedCornerShape(16.dp),
-            ),
+                shape = RoundedCornerShape(16.dp)
+            )
     ) {
         members.forEachIndexed { index, member ->
             JourneyAdminMemberItem(
@@ -39,13 +39,13 @@ fun JourneyAdminMemberList(
                 },
                 modifier = Modifier.padding(
                     horizontal = 16.dp,
-                    vertical = 16.dp,
-                ),
+                    vertical = 16.dp
+                )
             )
 
             if (index != members.lastIndex) {
                 HorizontalDivider(
-                    color = DduruTheme.colors.gray200,
+                    color = DduruTheme.colors.gray200
                 )
             }
         }

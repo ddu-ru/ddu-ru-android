@@ -25,40 +25,40 @@ import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
 fun JourneyAdminMemberItem(
     member: JourneyAdminMember,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .noRippleClickable(onClick = onClick),
-        verticalAlignment = Alignment.CenterVertically,
+        verticalAlignment = Alignment.CenterVertically
     ) {
         AsyncImage(
-            model = member.profileImageUrl,
+            model = R.drawable.img_blank_profile,
             contentDescription = null,
             contentScale = ContentScale.Crop,
             modifier = Modifier
                 .size(40.dp)
-                .clip(androidx.compose.foundation.shape.CircleShape),
+                .clip(androidx.compose.foundation.shape.CircleShape)
         )
 
         Spacer(modifier = Modifier.size(12.dp))
 
         Column(
             modifier = Modifier.weight(1f),
-            verticalArrangement = Arrangement.spacedBy(4.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             Text(
                 text = member.username,
                 style = DduruTheme.typography.Body1,
-                color = DduruTheme.colors.black,
+                color = DduruTheme.colors.black
             )
 
             if (member.roles.isNotEmpty()) {
                 Text(
-                    text = member.roles.joinToString(" · ") { it.label },
+                    text = member.roles.joinToString(" · "),
                     style = DduruTheme.typography.Body2,
-                    color = DduruTheme.colors.gray500,
+                    color = DduruTheme.colors.gray500
                 )
             }
         }
@@ -67,7 +67,7 @@ fun JourneyAdminMemberItem(
             painter = painterResource(R.drawable.ic_chevron_right),
             contentDescription = null,
             modifier = Modifier.size(24.dp),
-            tint = DduruTheme.colors.gray500,
+            tint = DduruTheme.colors.gray500
         )
     }
 }
