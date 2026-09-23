@@ -77,6 +77,17 @@ fun MainScreen(
                         HomeRoute(
                             navigateToNotification = onNavigateToHomeNotification,
                             navigateToMenu = onNavigateToHomeMenu,
+                            navigateToMatching = {
+                                navigateToBottomRoute(BottomNavRoute.Matching)
+                            },
+                            navigateToUpcomingTripTask = {
+                                navigateToBottomRoute(BottomNavRoute.MyPage)
+                            },
+                            navigateToDestination = {
+                                navigateToBottomRoute(BottomNavRoute.Matching)
+                            },
+                            navigateToSuperHost = onNavigateToMatchingDetail,
+                            navigateToCompanion = onNavigateToMatchingDetail,
                             navigateToCreateTravelRoom = onNavigateToMatchingCreatePost,
                             navigateToWriteCommunity = {
                                 navigateToBottomRoute(BottomNavRoute.Board)
@@ -85,6 +96,8 @@ fun MainScreen(
                     }
                     is BottomNavRoute.Matching -> NavEntry(route) {
                         MatchingRoute(
+                            navigateToNotification = onNavigateToHomeNotification,
+                            navigateToMenu = onNavigateToHomeMenu,
                             navigateToCreatePost = onNavigateToMatchingCreatePost,
                             navigateToPostDetail = onNavigateToMatchingDetail
                         )
