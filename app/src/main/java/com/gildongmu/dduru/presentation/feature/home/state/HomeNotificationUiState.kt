@@ -25,18 +25,22 @@ data class HomeNotificationUiState(
     val filteredNotifications: ImmutableList<HomeNotificationItemUiState>
         get() = when (selectedFilter) {
             HomeNotificationFilter.ALL -> notifications
-            HomeNotificationFilter.UNREAD -> notifications
-                .filter { !it.isRead }
-                .toImmutableList()
-            HomeNotificationFilter.MATCHING -> notifications.filter {
-                it.category == HomeNotificationCategory.MATCHING
-            }.toImmutableList()
-            HomeNotificationFilter.SCHEDULE -> notifications.filter {
-                it.category == HomeNotificationCategory.SCHEDULE
-            }.toImmutableList()
-            HomeNotificationFilter.MESSAGE -> notifications.filter {
-                it.category == HomeNotificationCategory.MESSAGE
-            }.toImmutableList()
+            HomeNotificationFilter.UNREAD ->
+                notifications
+                    .filter { !it.isRead }
+                    .toImmutableList()
+            HomeNotificationFilter.MATCHING ->
+                notifications
+                    .filter { it.category == HomeNotificationCategory.MATCHING }
+                    .toImmutableList()
+            HomeNotificationFilter.SCHEDULE ->
+                notifications
+                    .filter { it.category == HomeNotificationCategory.SCHEDULE }
+                    .toImmutableList()
+            HomeNotificationFilter.MESSAGE ->
+                notifications
+                    .filter { it.category == HomeNotificationCategory.MESSAGE }
+                    .toImmutableList()
         }
 
     companion object {
