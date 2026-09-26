@@ -28,6 +28,9 @@ import com.gildongmu.dduru.presentation.feature.journey.component.JourneyAdminTo
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminUiState
 import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyAdminViewModel
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun JourneyAdminRoute(
@@ -37,7 +40,7 @@ fun JourneyAdminRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     var roleMember by remember { mutableStateOf<JourneyAdminMember?>(null) }
-    var selectedRoles by remember { mutableStateOf<List<String>>(emptyList()) }
+    var selectedRoles by remember { mutableStateOf<ImmutableList<String>>(persistentListOf()) }
     var isKickBottomSheetVisible by remember { mutableStateOf(false) }
     var kickTargetMember by remember { mutableStateOf<JourneyAdminMember?>(null) }
 
@@ -62,9 +65,9 @@ fun JourneyAdminRoute(
             selectedRoles = selectedRoles,
             onRoleClick = { role ->
                 selectedRoles = if (role in selectedRoles) {
-                    selectedRoles - role
+                    selectedRoles.filterNot { it == role }.toImmutableList()
                 } else {
-                    selectedRoles + role
+                    (selectedRoles + role).toImmutableList()
                 }
             },
             onCustomRoleClick = {
@@ -162,12 +165,12 @@ private fun JourneyAdminScreenPreview() {
     var uiState by remember {
         mutableStateOf(
             JourneyAdminUiState(
-                members = listOf(
+                members = persistentListOf(
                     JourneyAdminMember(
                         id = 1L,
                         username = "username",
                         profileImageUrl = blankProfileImage,
-                        roles = listOf(
+                        roles = persistentListOf(
                             "호스트",
                             "총무"
                         )
@@ -176,32 +179,32 @@ private fun JourneyAdminScreenPreview() {
                         id = 2L,
                         username = "username",
                         profileImageUrl = blankProfileImage,
-                        roles = listOf("총무")
+                        roles = persistentListOf("총무")
                     ),
                     JourneyAdminMember(
                         id = 3L,
                         username = "username",
                         profileImageUrl = blankProfileImage,
-                        roles = listOf("총무")
+                        roles = persistentListOf("총무")
                     ),
                     JourneyAdminMember(
                         id = 4L,
                         username = "username",
                         profileImageUrl = blankProfileImage,
-                        roles = listOf("총무")
+                        roles = persistentListOf("총무")
                     ),
                     JourneyAdminMember(
                         id = 5L,
                         username = "username",
                         profileImageUrl = blankProfileImage,
-                        roles = listOf("총무")
+                        roles = persistentListOf("총무")
                     )
                 )
             )
         )
     }
     var roleMember by remember { mutableStateOf<JourneyAdminMember?>(null) }
-    var selectedRoles by remember { mutableStateOf<List<String>>(emptyList()) }
+    var selectedRoles by remember { mutableStateOf<ImmutableList<String>>(persistentListOf()) }
     var isKickBottomSheetVisible by remember { mutableStateOf(false) }
     var kickTargetMember by remember { mutableStateOf<JourneyAdminMember?>(null) }
 
@@ -226,9 +229,9 @@ private fun JourneyAdminScreenPreview() {
                 selectedRoles = selectedRoles,
                 onRoleClick = { role ->
                     selectedRoles = if (role in selectedRoles) {
-                        selectedRoles - role
+                        selectedRoles.filterNot { it == role }.toImmutableList()
                     } else {
-                        selectedRoles + role
+                        (selectedRoles + role).toImmutableList()
                     }
                 },
                 onCustomRoleClick = {
@@ -244,7 +247,7 @@ private fun JourneyAdminScreenPreview() {
                             } else {
                                 previewMember
                             }
-                        }
+                        }.toImmutableList()
                     )
                     roleMember = null
                 }
@@ -271,7 +274,7 @@ private fun JourneyAdminScreenPreview() {
                 },
                 onConfirm = {
                     uiState = uiState.copy(
-                        members = uiState.members.filterNot { it.id == member.id }
+                        members = uiState.members.filterNot { it.id == member.id }.toImmutableList()
                     )
                     kickTargetMember = null
                     isKickBottomSheetVisible = false

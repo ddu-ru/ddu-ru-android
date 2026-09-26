@@ -29,12 +29,13 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.DEFAULT_JOURNEY_ROLES
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
 import com.gildongmu.dduru.presentation.feature.journey.state.journeyAdminPreviewMember
+import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JourneyAdminRoleBottomSheet(
     member: JourneyAdminMember,
-    selectedRoles: List<String>,
+    selectedRoles: ImmutableList<String>,
     onRoleClick: (String) -> Unit,
     onCustomRoleClick: () -> Unit,
     onDismiss: () -> Unit,

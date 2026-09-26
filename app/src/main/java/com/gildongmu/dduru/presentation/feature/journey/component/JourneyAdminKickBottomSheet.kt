@@ -29,13 +29,15 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyAdminMember
 import com.gildongmu.dduru.presentation.feature.journey.state.journeyAdminPreviewMembers
+import kotlinx.collections.immutable.ImmutableList
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun JourneyAdminKickBottomSheet(
-    members: List<JourneyAdminMember>,
+    members: ImmutableList<JourneyAdminMember>,
     onKickClick: (JourneyAdminMember) -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    modifier: Modifier = Modifier,
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
@@ -44,7 +46,8 @@ fun JourneyAdminKickBottomSheet(
             topStart = 24.dp,
             topEnd = 24.dp
         ),
-        containerColor = DduruTheme.colors.gray0
+        containerColor = DduruTheme.colors.gray0,
+        modifier = modifier
     ) {
         Column(
             modifier = Modifier
@@ -66,7 +69,7 @@ fun JourneyAdminKickBottomSheet(
 
                 Icon(
                     painter = painterResource(R.drawable.ic_x_pass),
-                    contentDescription = "닫기",
+                    contentDescription = null,
                     modifier = Modifier
                         .align(Alignment.CenterEnd)
                         .size(24.dp)
