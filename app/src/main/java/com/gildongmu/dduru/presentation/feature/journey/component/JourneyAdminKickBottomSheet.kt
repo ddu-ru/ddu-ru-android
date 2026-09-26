@@ -37,7 +37,7 @@ fun JourneyAdminKickBottomSheet(
     members: ImmutableList<JourneyAdminMember>,
     onKickClick: (JourneyAdminMember) -> Unit,
     onDismiss: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
