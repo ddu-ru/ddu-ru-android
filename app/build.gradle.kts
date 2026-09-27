@@ -7,8 +7,18 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.devtools.ksp)
-    alias(libs.plugins.google.services)
+    alias(libs.plugins.google.services) apply false
     alias(libs.plugins.ktlint)
+}
+
+val hasGoogleServicesConfig = listOf(
+    "google-services.json",
+    "src/debug/google-services.json",
+    "src/release/google-services.json"
+).any { path -> file(path).exists() }
+
+if (hasGoogleServicesConfig) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 val localProperties = Properties().apply {
