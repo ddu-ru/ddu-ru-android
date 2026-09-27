@@ -34,7 +34,8 @@ fun MainScreen(
     onNavigateToHomeMenu: () -> Unit,
     onNavigateToChatRoom: (Long) -> Unit,
     onNavigateToMatchingCreatePost: () -> Unit,
-    onNavigateToMatchingDetail: (Long) -> Unit
+    onNavigateToMatchingDetail: (Long) -> Unit,
+    initialRoute: BottomNavRoute = BottomNavRoute.Home
 ) {
     val bottomNavItems = remember {
         listOf(
@@ -46,7 +47,7 @@ fun MainScreen(
         )
     }
 
-    val bottomNavBackStack = rememberNavBackStack(BottomNavRoute.Home)
+    val bottomNavBackStack = rememberNavBackStack(initialRoute)
     val currentRoute = bottomNavBackStack.lastOrNull() as? BottomNavRoute
         ?: BottomNavRoute.Home
     val hazeState = remember { HazeState() }

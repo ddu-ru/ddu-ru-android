@@ -4,6 +4,7 @@ import androidx.compose.animation.ContentTransform
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
@@ -26,6 +27,8 @@ import com.gildongmu.dduru.presentation.feature.register.survey.SurveyMainScreen
 
 @Composable
 fun RootNavigation(
+    pendingNotificationRoute: RootNavRoute? = null,
+    onNotificationRouteConsumed: () -> Unit = {},
     rootViewModel: RootViewModel = hiltViewModel()
 ) {
     val startDestination by rootViewModel.startDestination.collectAsStateWithLifecycle()
@@ -38,6 +41,21 @@ fun RootNavigation(
             if (rootBackStack.size > 1) {
                 rootBackStack.removeLastOrNull()
             }
+        }
+        LaunchedEffect(pendingNotificationRoute) {
+            val route = pendingNotificationRoute ?: return@LaunchedEffect
+            if (startDestination !is RootNavRoute.Login) {
+                rootBackStack.clear()
+                when (route) {
+                    is RootNavRoute.Main,
+                    is RootNavRoute.MainTab -> rootBackStack.add(route)
+                    else -> {
+                        rootBackStack.add(RootNavRoute.Main)
+                        rootBackStack.add(route)
+                    }
+                }
+            }
+            onNotificationRouteConsumed()
         }
 
         NavDisplay(
@@ -120,6 +138,27 @@ fun RootNavigation(
                             onNavigateToMatchingDetail = { postId ->
                                 rootBackStack.add(RootNavRoute.MatchingDetail(postId))
                             }
+                        )
+                    }
+
+                    is RootNavRoute.MainTab -> NavEntry(route) {
+                        MainScreen(
+                            onNavigateToHomeNotification = {
+                                rootBackStack.add(RootNavRoute.HomeNotification)
+                            },
+                            onNavigateToHomeMenu = {
+                                rootBackStack.add(RootNavRoute.HomeMenu)
+                            },
+                            onNavigateToChatRoom = { chatRoomId ->
+                                rootBackStack.add(RootNavRoute.ChatRoom(chatRoomId))
+                            },
+                            onNavigateToMatchingCreatePost = {
+                                rootBackStack.add(RootNavRoute.MatchingCreatePost)
+                            },
+                            onNavigateToMatchingDetail = { postId ->
+                                rootBackStack.add(RootNavRoute.MatchingDetail(postId))
+                            },
+                            initialRoute = route.bottomNavRoute
                         )
                     }
 
