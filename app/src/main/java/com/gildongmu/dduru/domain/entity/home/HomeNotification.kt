@@ -6,11 +6,26 @@ data class HomeNotification(
     val body: String,
     val timeAgo: String,
     val category: HomeNotificationCategory,
-    val isRead: Boolean
+    val isRead: Boolean,
+    val type: String,
+    val resourceType: HomeNotificationResourceType,
+    val resourceId: Long?
 )
 
 enum class HomeNotificationCategory {
     MATCHING,
+    MESSAGE,
     SCHEDULE,
-    MESSAGE
+    RECRUITMENT,
+    SYSTEM
+}
+
+enum class HomeNotificationResourceType {
+    MATCH,
+    JOURNEY,
+    JOURNEY_POST,
+    SCHEDULE,
+    POST,
+    CHAT_ROOM,
+    UNKNOWN
 }

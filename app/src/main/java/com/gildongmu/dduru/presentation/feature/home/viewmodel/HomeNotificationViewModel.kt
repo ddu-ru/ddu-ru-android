@@ -34,15 +34,21 @@ class HomeNotificationViewModel @Inject constructor(
     fun onMarkAllAsReadClick() {
         viewModelScope.launch {
             homeNotificationRepository.markAllAsRead()
-                .onSuccess { loadNotifications() }
+                .onSuccess { updateAllNotificationsReadState() }
                 .onFailure { _uiState.value = UiState.Failure }
         }
     }
 
-    fun onDeleteAllClick() {
+    fun onDeleteAllClick() = Unit
+
+    fun onNotificationClick(notification: HomeNotificationItemUiState) {
+        if (notification.isRead) return
+
         viewModelScope.launch {
-            homeNotificationRepository.deleteAll()
-                .onSuccess { loadNotifications() }
+            homeNotificationRepository.markAsRead(notification.id)
+                .onSuccess {
+                    updateNotificationReadState(notification.id)
+                }
                 .onFailure { _uiState.value = UiState.Failure }
         }
     }
@@ -74,6 +80,34 @@ class HomeNotificationViewModel @Inject constructor(
         val currentState = (_uiState.value as? UiState.Success)?.data ?: return
         _uiState.value = UiState.Success(currentState.reducer())
     }
+
+    private fun updateNotificationReadState(notificationId: Long) {
+        updateUiState {
+            val updatedNotifications = notifications.map { notification ->
+                if (notification.id == notificationId) {
+                    notification.copy(isRead = true)
+                } else {
+                    notification
+                }
+            }.toImmutableList()
+
+            copy(
+                unreadCount = updatedNotifications.count { !it.isRead },
+                notifications = updatedNotifications
+            )
+        }
+    }
+
+    private fun updateAllNotificationsReadState() {
+        updateUiState {
+            copy(
+                unreadCount = 0,
+                notifications = notifications.map { notification ->
+                    notification.copy(isRead = true)
+                }.toImmutableList()
+            )
+        }
+    }
 }
 
 private fun HomeNotification.toUiState(): HomeNotificationItemUiState {
@@ -83,6 +117,9 @@ private fun HomeNotification.toUiState(): HomeNotificationItemUiState {
         body = body,
         timeAgo = timeAgo,
         category = category,
-        isRead = isRead
+        isRead = isRead,
+        type = type,
+        resourceType = resourceType,
+        resourceId = resourceId
     )
 }

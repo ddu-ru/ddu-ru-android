@@ -21,6 +21,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationItemUiState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationUiState
@@ -29,6 +30,7 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun HomeNotificationList(
     notifications: ImmutableList<HomeNotificationItemUiState>,
+    onNotificationClick: (HomeNotificationItemUiState) -> Unit,
     modifier: Modifier = Modifier
 ) {
     LazyColumn(
@@ -40,7 +42,10 @@ fun HomeNotificationList(
             key = { notification -> notification.id },
             contentType = { HomeNotificationItemUiState::class }
         ) { notification ->
-            HomeNotificationListItem(notification = notification)
+            HomeNotificationListItem(
+                notification = notification,
+                onClick = { onNotificationClick(notification) }
+            )
         }
     }
 }
@@ -48,11 +53,13 @@ fun HomeNotificationList(
 @Composable
 private fun HomeNotificationListItem(
     notification: HomeNotificationItemUiState,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .noRippleClickable(onClick = onClick)
             .padding(top = 24.dp)
     ) {
         Row(
@@ -117,6 +124,7 @@ private fun HomeNotificationListPreview() {
     DduruTheme {
         HomeNotificationList(
             notifications = HomeNotificationUiState.preview.notifications,
+            onNotificationClick = {},
             modifier = Modifier
                 .fillMaxWidth()
                 .height(260.dp)

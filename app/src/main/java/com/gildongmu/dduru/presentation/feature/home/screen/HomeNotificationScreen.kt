@@ -28,6 +28,7 @@ import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationL
 import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationMoreMenu
 import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationTopBar
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationFilter
+import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationItemUiState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationUiState
 import com.gildongmu.dduru.presentation.feature.home.viewmodel.HomeNotificationViewModel
 
@@ -49,6 +50,7 @@ fun HomeNotificationRoute(
             uiState = state.data,
             onBackClick = onBackClick,
             onFilterClick = viewModel::onFilterClick,
+            onNotificationClick = viewModel::onNotificationClick,
             onMarkAllAsReadClick = viewModel::onMarkAllAsReadClick,
             onDeleteAllClick = viewModel::onDeleteAllClick,
             modifier = modifier
@@ -62,6 +64,7 @@ private fun HomeNotificationScreen(
     uiState: HomeNotificationUiState,
     onBackClick: () -> Unit,
     onFilterClick: (HomeNotificationFilter) -> Unit,
+    onNotificationClick: (HomeNotificationItemUiState) -> Unit,
     onMarkAllAsReadClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -100,6 +103,7 @@ private fun HomeNotificationScreen(
             } else {
                 HomeNotificationList(
                     notifications = notifications,
+                    onNotificationClick = onNotificationClick,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -134,6 +138,7 @@ private fun HomeNotificationScreenPreview() {
             uiState = HomeNotificationUiState.preview,
             onBackClick = {},
             onFilterClick = {},
+            onNotificationClick = {},
             onMarkAllAsReadClick = {},
             onDeleteAllClick = {}
         )
@@ -148,6 +153,7 @@ private fun HomeNotificationEmptyScreenPreview() {
             uiState = HomeNotificationUiState(),
             onBackClick = {},
             onFilterClick = {},
+            onNotificationClick = {},
             onMarkAllAsReadClick = {},
             onDeleteAllClick = {}
         )
