@@ -22,15 +22,17 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-36"
 
       - name: Create local.properties
         env:
           DEBUG_BASE_URL: ${{ secrets.DEBUG_BASE_URL }}
           RELEASE_BASE_URL: ${{ secrets.RELEASE_BASE_URL }}
         run: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "debug.base.url=\"${DEBUG_BASE_URL}\"" >> local.properties
           echo "release.base.url=\"${RELEASE_BASE_URL}\"" >> local.properties
 
@@ -64,8 +66,10 @@ jobs:
           java-version: 17
           distribution: 'temurin'
 
-      - name: Set up Android SDK
-        uses: android-actions/setup-android@v3
+      - name: Install Android SDK packages
+        run: |
+          yes | sdkmanager --licenses
+          sdkmanager "platform-tools" "platforms;android-36"
 
       - name: Create local.properties
         env:
@@ -74,7 +78,7 @@ jobs:
           GOOGLE_CLIENT_ID: ${{ secrets.GOOGLE_CLIENT_ID }}
           KAKAO_API_KEY: ${{ secrets.KAKAO_API_KEY }}
         run: |
-          echo "sdk.dir=$ANDROID_SDK_ROOT" > local.properties
+          echo "sdk.dir=${ANDROID_HOME}" > local.properties
           echo "debug.base.url=\"${DEBUG_BASE_URL}\"" >> local.properties
           echo "release.base.url=\"${RELEASE_BASE_URL}\"" >> local.properties
           echo "google.client.id=\"${GOOGLE_CLIENT_ID}\"" >> local.properties
