@@ -32,6 +32,7 @@ import com.gildongmu.dduru.presentation.feature.journey.state.JourneyScheduleCat
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyScheduleComposeUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyScheduleDay
 import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyScheduleComposeViewModel
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun JourneyScheduleComposeRoute(
@@ -200,7 +201,7 @@ private fun JourneyScheduleComposeScreenPreview() = DduruTheme {
         uiState = JourneyScheduleComposeUiState(
             title = "시부야 스크램블 집합",
             location = "시부야 스크램블 교차로",
-            days = listOf(
+            days = persistentListOf(
                 JourneyScheduleDay(1, "05.12"),
                 JourneyScheduleDay(2, "05.13"),
                 JourneyScheduleDay(3, "05.14")

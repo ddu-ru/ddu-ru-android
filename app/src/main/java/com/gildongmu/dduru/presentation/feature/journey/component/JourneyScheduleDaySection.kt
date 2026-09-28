@@ -19,10 +19,12 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyScheduleDay
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun JourneyScheduleDaySection(
-    days: List<JourneyScheduleDay>,
+    days: ImmutableList<JourneyScheduleDay>,
     selectedDay: Int?,
     onDayClick: (Int) -> Unit,
     modifier: Modifier = Modifier
@@ -91,7 +93,7 @@ fun JourneyScheduleDaySection(
 @Composable
 private fun JourneyScheduleDaySectionPreview() = DduruTheme {
     JourneyScheduleDaySection(
-        days = listOf(
+        days = persistentListOf(
             JourneyScheduleDay(1, "05.12"),
             JourneyScheduleDay(2, "05.13"),
             JourneyScheduleDay(3, "05.14")

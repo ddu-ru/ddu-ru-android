@@ -1,9 +1,12 @@
 package com.gildongmu.dduru.presentation.feature.journey.state
 
+import kotlinx.collections.immutable.ImmutableList
+import kotlinx.collections.immutable.persistentListOf
+
 data class JourneyScheduleComposeUiState(
     val title: String = "",
     val location: String = "",
-    val days: List<JourneyScheduleDay> = emptyList(),
+    val days: ImmutableList<JourneyScheduleDay> = persistentListOf(),
     val selectedDay: Int? = null,
     val startTime: String? = null,
     val endTime: String? = null,
