@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -70,6 +71,13 @@ fun JourneySchedule(
                 location = schedule.location,
                 memo = schedule.memo
             )
+
+            if (index < schedules.lastIndex) {
+                HorizontalDivider(
+                    thickness = 1.dp,
+                    color = DduruTheme.colors.gray100
+                )
+            }
         }
     }
 }
@@ -153,7 +161,7 @@ fun JourneyScheduleItem(
         modifier = modifier
             .fillMaxWidth()
             .height(IntrinsicSize.Min),
-        verticalAlignment = Alignment.Top
+        verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
             modifier = Modifier
