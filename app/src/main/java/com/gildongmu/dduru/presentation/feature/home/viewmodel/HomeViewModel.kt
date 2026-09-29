@@ -79,7 +79,9 @@ class HomeViewModel @Inject constructor(
         updateAiMatchingUsedCount()
     }
 
-    fun onSuperHostMoreClick() = Unit
+    fun onSuperHostMoreClick() {
+        emitSideEffect(HomeSideEffect.NavigateToMatching)
+    }
 
     fun onSuperHostClick(id: Long) {
         emitSideEffect(HomeSideEffect.NavigateToSuperHost(id))
@@ -95,7 +97,9 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    fun onCompanionMoreClick() = Unit
+    fun onCompanionMoreClick() {
+        emitSideEffect(HomeSideEffect.NavigateToMatching)
+    }
 
     fun onCompanionClick(id: Long) {
         emitSideEffect(HomeSideEffect.NavigateToCompanion(id))
