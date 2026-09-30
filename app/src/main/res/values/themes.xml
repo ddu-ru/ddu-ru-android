@@ -2,4 +2,12 @@
 <resources>
 
     <style name="Theme.Dduru_android" parent="android:Theme.Material.Light.NoActionBar" />
+
+    <style name="Theme.Dduru.TimePickerSpinner" parent="android:Theme.Material.Light.Dialog.Alert">
+        <item name="android:timePickerStyle">@style/Widget.Dduru.TimePickerSpinner</item>
+    </style>
+
+    <style name="Widget.Dduru.TimePickerSpinner" parent="@android:style/Widget.Material.TimePicker">
+        <item name="android:timePickerMode">spinner</item>
+    </style>
 </resources>
