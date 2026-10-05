@@ -29,15 +29,22 @@ fun DduruIconButton(
     buttonSize: Dp = 48.dp,
     iconSize: Dp = 12.dp,
     shape: Shape = CircleShape,
+    showShadow: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .size(buttonSize)
-            .dduruDualShadow(
-                firstAlpha = 0.08f,
-                secondAlpha = 0.10f,
-                shape = shape
+            .then(
+                if (showShadow) {
+                    Modifier.dduruDualShadow(
+                        firstAlpha = 0.08f,
+                        secondAlpha = 0.10f,
+                        shape = shape
+                    )
+                } else {
+                    Modifier
+                }
             )
             .clip(shape)
             .background(backgroundColor)

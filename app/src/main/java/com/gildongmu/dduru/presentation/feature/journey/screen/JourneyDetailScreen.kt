@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.lazy.LazyColumn
@@ -32,6 +31,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailFilterSection
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailFilterType
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailHeader
+import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailActionBar
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailMemberSection
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailPostItem
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailVoteItem
@@ -47,6 +47,9 @@ fun JourneyDetailRoute(
     onBackClick: () -> Unit,
     onManageMembersClick: () -> Unit,
     onChatRoomClick: () -> Unit,
+    onNotificationClick: () -> Unit = {},
+    onShareClick: () -> Unit = {},
+    onMoreClick: () -> Unit = {},
     onPostCommentClick: (Long) -> Unit = {},
     onPostPinClick: (Long) -> Unit = {},
     onPostMoreClick: (Long) -> Unit = {},
@@ -61,6 +64,9 @@ fun JourneyDetailRoute(
         onBackClick = onBackClick,
         onManageMembersClick = onManageMembersClick,
         onChatRoomClick = onChatRoomClick,
+        onNotificationClick = onNotificationClick,
+        onShareClick = onShareClick,
+        onMoreClick = onMoreClick,
         onFilterClick = viewModel::onFilterClick,
         onPostCommentClick = onPostCommentClick,
         onPostPinClick = onPostPinClick,
@@ -76,6 +82,9 @@ fun JourneyDetailScreen(
     onBackClick: () -> Unit,
     onManageMembersClick: () -> Unit,
     onChatRoomClick: () -> Unit,
+    onNotificationClick: () -> Unit = {},
+    onShareClick: () -> Unit = {},
+    onMoreClick: () -> Unit = {},
     onFilterClick: (JourneyDetailFilterType) -> Unit,
     onPostCommentClick: (Long) -> Unit = {},
     onPostPinClick: (Long) -> Unit = {},
@@ -95,7 +104,9 @@ fun JourneyDetailScreen(
             .background(DduruTheme.colors.gray50)
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize(),
+            modifier = Modifier
+                .fillMaxSize()
+                .background(DduruTheme.colors.gray0),
         ) {
             item {
                 JourneyDetailHeader(
@@ -160,11 +171,22 @@ fun JourneyDetailScreen(
 
         DduruIconButton(
             onClick = onBackClick,
-            iconRes = R.drawable.ic_arrow_back,
+            iconRes = R.drawable.ic_chevron_left,
             iconSize = 24.dp,
+            backgroundColor = DduruTheme.colors.gray0.copy(alpha = 0.50f),
+            showShadow = false,
             modifier = Modifier
                 .align(Alignment.TopStart)
                 .padding(start = 16.dp, top = 16.dp)
+        )
+
+        JourneyDetailActionBar(
+            onNotificationClick = onNotificationClick,
+            onShareClick = onShareClick,
+            onMoreClick = onMoreClick,
+            modifier = Modifier
+                .align(Alignment.TopEnd)
+                .padding(top = 16.dp, end = 16.dp)
         )
     }
 }
