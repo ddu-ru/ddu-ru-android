@@ -1,16 +1,16 @@
- package com.gildongmu.dduru.presentation.feature.journey.screen
+package com.gildongmu.dduru.presentation.feature.journey.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.offset
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -28,10 +28,10 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruIconButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailActionBar
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailFilterSection
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailFilterType
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailHeader
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailActionBar
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailMemberSection
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailPostItem
 import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailVoteItem
@@ -47,6 +47,7 @@ fun JourneyDetailRoute(
     onBackClick: () -> Unit,
     onManageMembersClick: () -> Unit,
     onChatRoomClick: () -> Unit,
+    modifier: Modifier = Modifier,
     onNotificationClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
@@ -54,7 +55,6 @@ fun JourneyDetailRoute(
     onPostPinClick: (Long) -> Unit = {},
     onPostMoreClick: (Long) -> Unit = {},
     onVoteClick: (Long) -> Unit = {},
-    modifier: Modifier = Modifier,
     viewModel: JourneyDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -106,7 +106,7 @@ fun JourneyDetailScreen(
         LazyColumn(
             modifier = Modifier
                 .fillMaxSize()
-                .background(DduruTheme.colors.gray0),
+                .background(DduruTheme.colors.gray0)
         ) {
             item {
                 JourneyDetailHeader(
@@ -114,7 +114,7 @@ fun JourneyDetailScreen(
                     dDay = uiState.dDay,
                     title = uiState.title,
                     period = uiState.period,
-                    modifier = Modifier.aspectRatio(375f/300f)
+                    modifier = Modifier.aspectRatio(375f / 300f)
                 )
             }
 
@@ -133,38 +133,42 @@ fun JourneyDetailScreen(
                 ) {
                     JourneyDetailMemberSection(
                         members = uiState.members,
-                        onManageClick = onManageMembersClick,
+                        onManageClick = onManageMembersClick
                     )
 
-                ChatRoomShortcutButton(
-                    onClick = onChatRoomClick,
-                )
-
-                Column(
-                    modifier = Modifier.fillMaxWidth(),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    Text(
-                        text = "콘텐츠 모아보기",
-                        style = DduruTheme.typography.Title2,
-                        color = DduruTheme.colors.gray800,
+                    ChatRoomShortcutButton(
+                        onClick = onChatRoomClick
                     )
 
-                    JourneyDetailFilterSection(
-                        filters = DETAIL_FILTERS,
-                        selectedFilter = uiState.selectedFilter,
-                        onFilterClick = onFilterClick,
-                    )
+                    Column(
+                        modifier = Modifier.fillMaxWidth(),
+                        verticalArrangement = Arrangement.spacedBy(16.dp)
+                    ) {
+                        Text(
+                            text = "콘텐츠 모아보기",
+                            style = DduruTheme.typography.Title2,
+                            color = DduruTheme.colors.gray800
+                        )
 
-                    JourneyDetailContentList(
-                        posts = filteredPosts,
-                        votes = if (uiState.selectedFilter == JourneyDetailFilterType.VOTE) uiState.votes else emptyList(),
-                        onPostCommentClick = onPostCommentClick,
-                        onPostPinClick = onPostPinClick,
-                        onPostMoreClick = onPostMoreClick,
-                        onVoteClick = onVoteClick
-                    )
-                }
+                        JourneyDetailFilterSection(
+                            filters = DETAIL_FILTERS,
+                            selectedFilter = uiState.selectedFilter,
+                            onFilterClick = onFilterClick
+                        )
+
+                        JourneyDetailContentList(
+                            posts = filteredPosts,
+                            votes = if (uiState.selectedFilter == JourneyDetailFilterType.VOTE) {
+                                uiState.votes
+                            } else {
+                                emptyList()
+                            },
+                            onPostCommentClick = onPostCommentClick,
+                            onPostPinClick = onPostPinClick,
+                            onPostMoreClick = onPostMoreClick,
+                            onVoteClick = onVoteClick
+                        )
+                    }
                 }
             }
         }
