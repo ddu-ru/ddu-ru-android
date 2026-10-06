@@ -32,9 +32,9 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditHeader
 import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditTabRow
+import com.gildongmu.dduru.presentation.feature.mypage.component.TravelStyleDescriptionBox
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelStyleTagChip
 import com.gildongmu.dduru.presentation.feature.mypage.model.TravelStyleTag
-import com.gildongmu.dduru.presentation.feature.register.survey.component.ResultDescriptionBox
 
 private const val TRAVEL_STYLE_TAB_INDEX = 2
 
@@ -119,13 +119,14 @@ fun ProfileEditTravelStyleScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            ResultDescriptionBox(items = descriptions)
+            TravelStyleDescriptionBox(items = descriptions)
 
             Spacer(modifier = Modifier.height(32.dp))
 
             DduruButton(
                 text = "테스트 다시하기",
                 onClick = onRetestClick,
+                textStyle = DduruTheme.typography.H1,
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 18.dp, vertical = 3.dp),
                 modifier = Modifier
@@ -133,7 +134,7 @@ fun ProfileEditTravelStyleScreen(
                     .height(48.dp)
             )
 
-            Spacer(modifier = Modifier.height(40.dp))
+            Spacer(modifier = Modifier.height(93.dp))
         }
     }
 }

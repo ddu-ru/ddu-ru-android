@@ -62,10 +62,12 @@ fun ProfileEditTabRow(
 @Composable
 private fun ProfileEditTabRowPreview() {
     DduruTheme {
-        ProfileEditTabRow(
-            selectedIndex = 2,
-            onTabClick = {},
-            modifier = Modifier.padding(16.dp)
-        )
+        Box(modifier = Modifier.background(DduruTheme.colors.gray50)) {
+            ProfileEditTabRow(
+                selectedIndex = 2,
+                onTabClick = {},
+                modifier = Modifier.padding(16.dp)
+            )
+        }
     }
 }
