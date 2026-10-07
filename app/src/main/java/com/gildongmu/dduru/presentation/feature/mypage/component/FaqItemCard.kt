@@ -56,7 +56,7 @@ fun FaqItemCard(
 
             Icon(
                 painter = painterResource(id = R.drawable.ic_chevron_down),
-                contentDescription = if (isExpanded) "답변 접기" else "답변 펼치기",
+                contentDescription = null,
                 tint = DduruTheme.colors.gray700,
                 modifier = Modifier
                     .size(12.dp)
