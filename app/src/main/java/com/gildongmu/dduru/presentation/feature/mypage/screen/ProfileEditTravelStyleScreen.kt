@@ -1,7 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.mypage.screen
 
-import androidx.annotation.DrawableRes
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -26,6 +24,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -42,7 +41,7 @@ private const val TRAVEL_STYLE_TAB_INDEX = 2
 fun ProfileEditTravelStyleScreen(
     styleName: String,
     bubbleMessage: String,
-    @DrawableRes imageRes: Int,
+    imageUrl: String,
     tags: List<TravelStyleTag>,
     descriptions: List<String>,
     onBackClick: () -> Unit,
@@ -89,9 +88,11 @@ fun ProfileEditTravelStyleScreen(
                 )
             }
 
-            Image(
-                painter = painterResource(id = imageRes),
+            AsyncImage(
+                model = imageUrl,
                 contentDescription = null,
+                placeholder = painterResource(id = R.drawable.img_travel_style_result),
+                error = painterResource(id = R.drawable.img_travel_style_result),
                 contentScale = ContentScale.Fit,
                 modifier = Modifier
                     .width(192.dp)
@@ -139,14 +140,14 @@ fun ProfileEditTravelStyleScreen(
     }
 }
 
-@Preview(showBackground = true, heightDp = 882, name = "나의 여행 스타일")
+@Preview(showBackground = true, heightDp = 882, name = "36400 나의 여행 스타일")
 @Composable
 private fun ProfileEditTravelStyleScreenPreview() {
     DduruTheme {
         ProfileEditTravelStyleScreen(
             styleName = "스윗",
             bubbleMessage = "모두가 편안해야\n내가 편해요!",
-            imageRes = R.drawable.img_travel_style_result,
+            imageUrl = "",
             tags = listOf(
                 TravelStyleTag(emoji = "🍜", label = "맛집러"),
                 TravelStyleTag(emoji = "📸", label = "기록파"),

@@ -42,7 +42,7 @@ fun TravelStyleTagChip(
 
         Icon(
             painter = painterResource(id = R.drawable.ic_x_gray),
-            contentDescription = if (isActive) "태그 끄기" else "태그 켜기",
+            contentDescription = null,
             tint = DduruTheme.colors.gray700,
             modifier = Modifier
                 .size(12.dp)
