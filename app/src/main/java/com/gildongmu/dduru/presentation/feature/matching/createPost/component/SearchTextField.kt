@@ -30,7 +30,8 @@ fun SearchTextField(
     onValueChange: (String) -> Unit,
     onSearchClick: () -> Unit,
     placeholderMessage: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showClearButton: Boolean = false
 ) {
     val focusManager = LocalFocusManager.current
 
@@ -55,17 +56,27 @@ fun SearchTextField(
             }
         ),
         trailingIcon = {
-            IconButton(
-                onClick = {
-                    focusManager.clearFocus()
-                    onSearchClick()
+            if (showClearButton && value.isNotEmpty()) {
+                IconButton(onClick = { onValueChange("") }) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_x_gray),
+                        contentDescription = null,
+                        tint = DduruTheme.colors.gray400
+                    )
                 }
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_matching_searching),
-                    contentDescription = "검색",
-                    tint = DduruTheme.colors.gray500
-                )
+            } else {
+                IconButton(
+                    onClick = {
+                        focusManager.clearFocus()
+                        onSearchClick()
+                    }
+                ) {
+                    Icon(
+                        painter = painterResource(id = R.drawable.ic_matching_searching),
+                        contentDescription = "검색",
+                        tint = DduruTheme.colors.gray500
+                    )
+                }
             }
         },
         maxLines = 1

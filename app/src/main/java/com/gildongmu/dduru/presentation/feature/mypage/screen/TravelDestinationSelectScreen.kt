@@ -37,9 +37,9 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.NoSearchResults
+import com.gildongmu.dduru.presentation.feature.matching.createPost.component.SearchTextField
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
-import com.gildongmu.dduru.presentation.feature.mypage.component.ClearableSearchTextField
 import com.gildongmu.dduru.presentation.feature.mypage.uistate.MAX_PREFERRED_DESTINATION_COUNT
 import com.gildongmu.dduru.presentation.feature.mypage.uistate.TravelDestinationSelectUiState
 
@@ -69,10 +69,12 @@ fun TravelDestinationSelectScreen(
                 .verticalScroll(rememberScrollState())
                 .padding(horizontal = 16.dp)
         ) {
-            ClearableSearchTextField(
+            SearchTextField(
                 value = uiState.searchQuery,
                 onValueChange = onSearchQueryChange,
+                onSearchClick = {},
                 placeholderMessage = "여행지 선택",
+                showClearButton = true,
                 modifier = Modifier.fillMaxWidth()
             )
 

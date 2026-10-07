@@ -18,7 +18,6 @@ data class TravelDestinationSelectUiState(
     val isMaxSelected: Boolean
         get() = selectedLocations.size >= MAX_PREFERRED_DESTINATION_COUNT
 
-    // 이전에 저장한 여행지 + 이번에 고른 여행지. 선택된 항목이 위, 선택 해제된 항목이 아래
     val pinnedLocations: List<LocationSearchItemUiState>
         get() = selectedLocations +
             (savedLocations + selectedLocations).distinct().filterNot { it in selectedLocations }
