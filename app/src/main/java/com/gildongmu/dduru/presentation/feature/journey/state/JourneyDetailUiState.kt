@@ -10,6 +10,7 @@ data class JourneyDetailUiState(
     val period: String = "",
     val members: List<JourneyMemberUiState> = emptyList(),
     val posts: List<JourneyDetailPostUiState> = emptyList(),
+    val filteredPosts: List<JourneyDetailPostUiState> = emptyList(),
     val votes: List<JourneyDetailVoteUiState> = emptyList(),
     val selectedFilter: JourneyDetailFilterType = JourneyDetailFilterType.FIXED
 )

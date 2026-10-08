@@ -92,12 +92,6 @@ fun JourneyDetailScreen(
     onVoteClick: (Long) -> Unit = {},
     modifier: Modifier = Modifier
 ) {
-    val filteredPosts = when (uiState.selectedFilter) {
-        JourneyDetailFilterType.FIXED -> uiState.posts.filter { it.isPinned }
-        JourneyDetailFilterType.VOTE -> emptyList()
-        else -> uiState.posts.filter { it.category == uiState.selectedFilter }
-    }
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -157,7 +151,7 @@ fun JourneyDetailScreen(
                         )
 
                         JourneyDetailContentList(
-                            posts = filteredPosts,
+                            posts = uiState.filteredPosts,
                             votes = if (uiState.selectedFilter == JourneyDetailFilterType.VOTE) {
                                 uiState.votes
                             } else {
@@ -299,6 +293,17 @@ private fun JourneyDetailScreenPreview() {
                         createdAt = "1시간 전",
                         title = "숙소 근처 카페 리스트 공유해요.",
                         commentCount = 3
+                    )
+                ),
+                filteredPosts = listOf(
+                    JourneyDetailPostUiState(
+                        id = 1,
+                        category = JourneyDetailFilterType.NOTICE,
+                        username = "둘루",
+                        createdAt = "10분 전",
+                        title = "여행 일정 공유합니다! 맛집 추천도 편하게 남겨주세요.",
+                        commentCount = 12,
+                        isPinned = true
                     )
                 ),
                 votes = listOf(
