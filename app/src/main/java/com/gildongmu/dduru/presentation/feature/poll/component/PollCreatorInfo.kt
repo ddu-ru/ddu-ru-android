@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.chat.component
+package com.gildongmu.dduru.presentation.feature.poll.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement

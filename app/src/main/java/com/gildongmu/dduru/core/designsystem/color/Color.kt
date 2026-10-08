@@ -40,6 +40,8 @@ val JourneyTodo = Color(0xFF22A6B3)
 val JourneyTodoBg = Color(0xFFE8F8F8)
 val JourneyNews = Color(0xFFEB5757)
 val JourneyNewsBg = Color(0xFFFFEEEE)
+val JourneyKick = Color(0xFFF25353)
+val JourneyKickText = Color(0xFFFF0000)
 
 @Immutable
 data class DduruColors(
@@ -81,7 +83,9 @@ data class DduruColors(
     val journeyTodo: Color,
     val journeyTodoBg: Color,
     val journeyNews: Color,
-    val journeyNewsBg: Color
+    val journeyNewsBg: Color,
+    val journeyKick: Color,
+    val journeyKickText: Color
 )
 
 val defaultDduruColors = DduruColors(
@@ -122,7 +126,9 @@ val defaultDduruColors = DduruColors(
     journeyTodo = JourneyTodo,
     journeyTodoBg = JourneyTodoBg,
     journeyNews = JourneyNews,
-    journeyNewsBg = JourneyNewsBg
+    journeyNewsBg = JourneyNewsBg,
+    journeyKick = JourneyKick,
+    journeyKickText = JourneyKickText
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }
