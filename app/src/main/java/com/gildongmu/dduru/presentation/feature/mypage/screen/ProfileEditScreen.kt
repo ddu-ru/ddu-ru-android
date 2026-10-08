@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.mypage.screen
 
+import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,8 +39,12 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.LabelValueRow
 import com.gildongmu.dduru.presentation.feature.register.profile.component.NicknameInput
-import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageCircle
+import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
+import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileIntroduction
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
+import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
 
 enum class ProfileEditTab(val label: String) {
     INFO("내 정보"),
@@ -47,17 +52,15 @@ enum class ProfileEditTab(val label: String) {
     STYLE("나의 여행 스타일")
 }
 
-enum class ProfileEditPhotoSlot { CURRENT, NEW }
-
 @Composable
 fun ProfileEditScreen(
     selectedTab: ProfileEditTab,
     onTabClick: (ProfileEditTab) -> Unit,
-    currentPhoto: Any,
-    newPhoto: Any,
-    selectedPhotoSlot: ProfileEditPhotoSlot,
-    onPhotoSlotClick: (ProfileEditPhotoSlot) -> Unit,
-    photoActionLabel: String,
+    imageOptions: List<ProfileImageCropOption>,
+    selectedImageOption: ProfileEditOption,
+    selectedImageUri: Uri?,
+    characterBackgroundColor: Color,
+    onImageOptionSelected: (ProfileImageCropOption) -> Unit,
     onPhotoActionClick: () -> Unit,
     nickname: String,
     onNicknameChange: (String) -> Unit,
@@ -71,7 +74,14 @@ fun ProfileEditScreen(
     onBackClick: () -> Unit,
     onSaveClick: () -> Unit,
     modifier: Modifier = Modifier,
-    isCurrentPhotoLocked: Boolean = false,
+    isCharacterLocked: Boolean = false,
+    showAvatarEditDialog: Boolean = false,
+    avatarEditBackgroundColor: Color = DduruTheme.colors.gray100,
+    avatarImageRes: Int = R.drawable.img_penguin_personallity,
+    avatarName: String = "",
+    onAvatarBackgroundColorSelected: (Color) -> Unit = {},
+    onAvatarEditConfirm: () -> Unit = {},
+    onAvatarEditDismiss: () -> Unit = {},
     showLeaveConfirmDialog: Boolean = false,
     onLeaveConfirmDismiss: () -> Unit = {},
     onLeaveConfirm: () -> Unit = {}
@@ -95,19 +105,19 @@ fun ProfileEditScreen(
 
             Spacer(modifier = Modifier.height(24.dp))
 
-            PhotoSelectionRow(
-                currentPhoto = currentPhoto,
-                newPhoto = newPhoto,
-                selectedPhotoSlot = selectedPhotoSlot,
-                onPhotoSlotClick = onPhotoSlotClick,
-                isCurrentPhotoLocked = isCurrentPhotoLocked,
-                modifier = Modifier.fillMaxWidth()
-            )
-
-            Spacer(modifier = Modifier.height(24.dp))
-
-            Box(modifier = Modifier.fillMaxWidth(), contentAlignment = Alignment.Center) {
-                PhotoActionChip(text = photoActionLabel, onClick = onPhotoActionClick)
+            Box(
+                modifier = Modifier.fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                ProfileImageSelector(
+                    options = imageOptions,
+                    selectedOption = selectedImageOption,
+                    selectedImageUri = selectedImageUri,
+                    characterBackgroundColor = characterBackgroundColor,
+                    isLocked = isCharacterLocked,
+                    onOptionSelected = onImageOptionSelected,
+                    onActionClick = onPhotoActionClick
+                )
             }
 
             Spacer(modifier = Modifier.height(16.dp))
@@ -155,6 +165,17 @@ fun ProfileEditScreen(
             onSaveClick = onSaveClick,
             modifier = Modifier.align(Alignment.TopCenter)
         )
+
+        if (showAvatarEditDialog) {
+            ProfileCharacterCustomDialog(
+                selectedBg = avatarEditBackgroundColor,
+                characterImage = avatarImageRes,
+                avatarName = avatarName,
+                onBgColorSelected = onAvatarBackgroundColorSelected,
+                onConfirm = onAvatarEditConfirm,
+                onDismiss = onAvatarEditDismiss
+            )
+        }
 
         if (showLeaveConfirmDialog) {
             Box(
@@ -290,282 +311,87 @@ private fun ProfileEditTabRow(
     }
 }
 
-@Composable
-private fun PhotoActionChip(
-    text: String,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .clip(RoundedCornerShape(99.dp))
-            .background(DduruTheme.colors.gray200)
-            .noRippleClickable(onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
-    ) {
-        Text(
-            text = text,
-            style = DduruTheme.typography.Body4,
-            color = DduruTheme.colors.gray700
-        )
-    }
-}
+private val PreviewImageOptions = listOf(
+    ProfileImageCropOption(
+        image = R.drawable.img_penguin_personallity,
+        type = ProfileEditOption.CHARACTER,
+        scale = 1.6f,
+        offsetRatio = 0.16f
+    ),
+    ProfileImageCropOption(
+        image = R.drawable.img_blank_profile,
+        type = ProfileEditOption.CUSTOM
+    )
+)
 
 @Composable
-private fun PhotoSelectionRow(
-    currentPhoto: Any,
-    newPhoto: Any,
-    selectedPhotoSlot: ProfileEditPhotoSlot,
-    onPhotoSlotClick: (ProfileEditPhotoSlot) -> Unit,
-    isCurrentPhotoLocked: Boolean,
-    modifier: Modifier = Modifier
+private fun ProfileEditScreenPreviewHost(
+    initialOption: ProfileEditOption = ProfileEditOption.CUSTOM,
+    isCharacterLocked: Boolean = false,
+    showAvatarEditDialog: Boolean = false,
+    showLeaveConfirmDialog: Boolean = false
 ) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(16.dp, Alignment.CenterHorizontally)
-    ) {
-        PhotoSlot(
-            image = currentPhoto,
-            isSelected = selectedPhotoSlot == ProfileEditPhotoSlot.CURRENT,
-            isLocked = isCurrentPhotoLocked,
-            onClick = { onPhotoSlotClick(ProfileEditPhotoSlot.CURRENT) }
-        )
+    var tab by remember { mutableStateOf(ProfileEditTab.INFO) }
+    var option by remember { mutableStateOf(initialOption) }
+    var nickname by remember { mutableStateOf("") }
+    var bio by remember { mutableStateOf("") }
+    var avatarBg by remember { mutableStateOf(ProfileBackgroundColorList.first().color) }
 
-        PhotoSlot(
-            image = newPhoto,
-            isSelected = selectedPhotoSlot == ProfileEditPhotoSlot.NEW,
-            isLocked = false,
-            onClick = { onPhotoSlotClick(ProfileEditPhotoSlot.NEW) }
-        )
-    }
+    ProfileEditScreen(
+        selectedTab = tab,
+        onTabClick = { tab = it },
+        imageOptions = PreviewImageOptions,
+        selectedImageOption = option,
+        selectedImageUri = null,
+        characterBackgroundColor = avatarBg,
+        onImageOptionSelected = { option = it.type },
+        onPhotoActionClick = {},
+        nickname = nickname,
+        onNicknameChange = { nickname = it },
+        onRandomNicknameClick = {},
+        bio = bio,
+        onBioChange = { bio = it },
+        birthDate = "2001.05.14",
+        gender = "여성",
+        phoneNumber = "010-1234-3232",
+        isSaveEnabled = nickname.isNotBlank(),
+        onBackClick = {},
+        onSaveClick = {},
+        isCharacterLocked = isCharacterLocked,
+        showAvatarEditDialog = showAvatarEditDialog,
+        avatarEditBackgroundColor = avatarBg,
+        avatarName = "뚜르 무드",
+        onAvatarBackgroundColorSelected = { avatarBg = it },
+        showLeaveConfirmDialog = showLeaveConfirmDialog
+    )
 }
 
-@Composable
-private fun PhotoSlot(
-    image: Any,
-    isSelected: Boolean,
-    isLocked: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier,
-        horizontalAlignment = Alignment.CenterHorizontally,
-        verticalArrangement = Arrangement.spacedBy(12.dp)
-    ) {
-        ProfileImageCircle(
-            image = image,
-            backgroundColor = DduruTheme.colors.gray100,
-            size = 100.dp,
-            isLocked = isLocked
-        )
-
-        PhotoCheckIndicator(
-            isSelected = isSelected,
-            isDisabled = isLocked,
-            onClick = onClick
-        )
-    }
-}
-
-@Composable
-private fun PhotoCheckIndicator(
-    isSelected: Boolean,
-    isDisabled: Boolean,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .size(16.dp)
-            .clip(CircleShape)
-            .background(
-                when {
-                    isSelected -> DduruTheme.colors.primary
-                    isDisabled -> DduruTheme.colors.gray200
-                    else -> DduruTheme.colors.gray0
-                }
-            )
-            .border(width = 1.dp, color = DduruTheme.colors.gray300, shape = CircleShape)
-            .then(if (!isDisabled) Modifier.noRippleClickable(onClick) else Modifier),
-        contentAlignment = Alignment.Center
-    ) {
-        if (isSelected) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_check),
-                contentDescription = null,
-                tint = DduruTheme.colors.gray0,
-                modifier = Modifier.size(10.dp)
-            )
-        }
-    }
-}
-
-@Preview(showBackground = true, name = "기본")
+@Preview(showBackground = true, name = "기본 (사진 선택)")
 @Composable
 private fun ProfileEditScreenPreview() {
-    DduruTheme {
-        var tab by remember { mutableStateOf(ProfileEditTab.INFO) }
-        var slot by remember { mutableStateOf(ProfileEditPhotoSlot.NEW) }
-        var nickname by remember { mutableStateOf("") }
-        var bio by remember { mutableStateOf("") }
-
-        ProfileEditScreen(
-            selectedTab = tab,
-            onTabClick = { tab = it },
-            currentPhoto = R.drawable.img_penguin_personallity,
-            newPhoto = R.drawable.img_blank_profile,
-            selectedPhotoSlot = slot,
-            onPhotoSlotClick = { slot = it },
-            photoActionLabel = "사진 변경",
-            onPhotoActionClick = {},
-            nickname = nickname,
-            onNicknameChange = { nickname = it },
-            onRandomNicknameClick = {},
-            bio = bio,
-            onBioChange = { bio = it },
-            birthDate = "2001.05.14",
-            gender = "여성",
-            phoneNumber = "010-1234-3232",
-            isSaveEnabled = nickname.isNotBlank(),
-            onBackClick = {},
-            onSaveClick = {}
-        )
-    }
+    DduruTheme { ProfileEditScreenPreviewHost() }
 }
 
-@Preview(showBackground = true, name = "현재 사진 선택 + 배경색 편집")
+@Preview(showBackground = true, name = "아바타 선택")
 @Composable
-private fun ProfileEditScreenCurrentSelectedPreview() {
-    DduruTheme {
-        var tab by remember { mutableStateOf(ProfileEditTab.INFO) }
-        var slot by remember { mutableStateOf(ProfileEditPhotoSlot.CURRENT) }
-        var nickname by remember { mutableStateOf("") }
-        var bio by remember { mutableStateOf("") }
-
-        ProfileEditScreen(
-            selectedTab = tab,
-            onTabClick = { tab = it },
-            currentPhoto = R.drawable.img_penguin_personallity,
-            newPhoto = R.drawable.img_blank_profile,
-            selectedPhotoSlot = slot,
-            onPhotoSlotClick = { slot = it },
-            photoActionLabel = "배경색 편집",
-            onPhotoActionClick = {},
-            nickname = nickname,
-            onNicknameChange = { nickname = it },
-            onRandomNicknameClick = {},
-            bio = bio,
-            onBioChange = { bio = it },
-            birthDate = "2001.05.14",
-            gender = "여성",
-            phoneNumber = "010-1234-3232",
-            isSaveEnabled = nickname.isNotBlank(),
-            onBackClick = {},
-            onSaveClick = {}
-        )
-    }
+private fun ProfileEditScreenCharacterPreview() {
+    DduruTheme { ProfileEditScreenPreviewHost(initialOption = ProfileEditOption.CHARACTER) }
 }
 
-@Preview(showBackground = true, name = "새 사진 선택 + 사진 변경")
-@Composable
-private fun ProfileEditScreenNewSelectedPreview() {
-    DduruTheme {
-        var tab by remember { mutableStateOf(ProfileEditTab.INFO) }
-        var slot by remember { mutableStateOf(ProfileEditPhotoSlot.NEW) }
-        var nickname by remember { mutableStateOf("") }
-        var bio by remember { mutableStateOf("") }
-
-        ProfileEditScreen(
-            selectedTab = tab,
-            onTabClick = { tab = it },
-            currentPhoto = R.drawable.img_penguin_personallity,
-            newPhoto = R.drawable.img_blank_profile,
-            selectedPhotoSlot = slot,
-            onPhotoSlotClick = { slot = it },
-            photoActionLabel = "사진 변경",
-            onPhotoActionClick = {},
-            nickname = nickname,
-            onNicknameChange = { nickname = it },
-            onRandomNicknameClick = {},
-            bio = bio,
-            onBioChange = { bio = it },
-            birthDate = "2001.05.14",
-            gender = "여성",
-            phoneNumber = "010-1234-3232",
-            isSaveEnabled = nickname.isNotBlank(),
-            onBackClick = {},
-            onSaveClick = {}
-        )
-    }
-}
-
-@Preview(showBackground = true, name = "기존 사진 잠금")
+@Preview(showBackground = true, name = "아바타 잠금")
 @Composable
 private fun ProfileEditScreenLockedPreview() {
-    DduruTheme {
-        var tab by remember { mutableStateOf(ProfileEditTab.INFO) }
-        var slot by remember { mutableStateOf(ProfileEditPhotoSlot.NEW) }
-        var nickname by remember { mutableStateOf("") }
-        var bio by remember { mutableStateOf("") }
+    DduruTheme { ProfileEditScreenPreviewHost(isCharacterLocked = true) }
+}
 
-        ProfileEditScreen(
-            selectedTab = tab,
-            onTabClick = { tab = it },
-            currentPhoto = R.drawable.img_penguin_personallity,
-            newPhoto = R.drawable.img_blank_profile,
-            selectedPhotoSlot = slot,
-            onPhotoSlotClick = { slot = it },
-            photoActionLabel = "사진 변경",
-            onPhotoActionClick = {},
-            nickname = nickname,
-            onNicknameChange = { nickname = it },
-            onRandomNicknameClick = {},
-            bio = bio,
-            onBioChange = { bio = it },
-            birthDate = "2001.05.14",
-            gender = "여성",
-            phoneNumber = "010-1234-3232",
-            isSaveEnabled = nickname.isNotBlank(),
-            onBackClick = {},
-            onSaveClick = {},
-            isCurrentPhotoLocked = true
-        )
-    }
+@Preview(showBackground = true, name = "아바타 편집 다이얼로그")
+@Composable
+private fun ProfileEditScreenAvatarEditPreview() {
+    DduruTheme { ProfileEditScreenPreviewHost(showAvatarEditDialog = true) }
 }
 
 @Preview(showBackground = true, name = "나가기 확인 모달")
 @Composable
 private fun ProfileEditScreenLeaveConfirmPreview() {
-    DduruTheme {
-        var tab by remember { mutableStateOf(ProfileEditTab.INFO) }
-        var slot by remember { mutableStateOf(ProfileEditPhotoSlot.NEW) }
-        var nickname by remember { mutableStateOf("") }
-        var bio by remember { mutableStateOf("") }
-
-        ProfileEditScreen(
-            selectedTab = tab,
-            onTabClick = { tab = it },
-            currentPhoto = R.drawable.img_penguin_personallity,
-            newPhoto = R.drawable.img_blank_profile,
-            selectedPhotoSlot = slot,
-            onPhotoSlotClick = { slot = it },
-            photoActionLabel = "사진 변경",
-            onPhotoActionClick = {},
-            nickname = nickname,
-            onNicknameChange = { nickname = it },
-            onRandomNicknameClick = {},
-            bio = bio,
-            onBioChange = { bio = it },
-            birthDate = "2001.05.14",
-            gender = "여성",
-            phoneNumber = "010-1234-3232",
-            isSaveEnabled = nickname.isNotBlank(),
-            onBackClick = {},
-            onSaveClick = {},
-            showLeaveConfirmDialog = true,
-            onLeaveConfirmDismiss = {},
-            onLeaveConfirm = {}
-        )
-    }
+    DduruTheme { ProfileEditScreenPreviewHost(showLeaveConfirmDialog = true) }
 }
