@@ -1,7 +1,15 @@
 package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.MoreVert
@@ -26,13 +34,13 @@ fun JourneyCommentItem(
     onReplyClick: () -> Unit,
     onPinClick: () -> Unit,
     onMoreClick: () -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
             .fillMaxWidth()
             .padding(horizontal = 16.dp, vertical = 16.dp),
-        verticalAlignment = Alignment.Top,
+        verticalAlignment = Alignment.Top
     ) {
         AsyncImage(
             model = comment.profileImageUrl ?: R.drawable.img_blank_profile,
@@ -40,21 +48,21 @@ fun JourneyCommentItem(
             modifier = Modifier
                 .size(32.dp)
                 .clip(CircleShape),
-            contentScale = ContentScale.Crop,
+            contentScale = ContentScale.Crop
         )
 
         Spacer(modifier = Modifier.width(12.dp))
 
         Column(
-            modifier = Modifier.weight(1f),
+            modifier = Modifier.weight(1f)
         ) {
             Row(
-                verticalAlignment = Alignment.CenterVertically,
+                verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
                     text = comment.username,
                     style = DduruTheme.typography.Caption1,
-                    color = DduruTheme.colors.gray846,
+                    color = DduruTheme.colors.gray846
                 )
 
                 Spacer(modifier = Modifier.width(8.dp))
@@ -62,7 +70,7 @@ fun JourneyCommentItem(
                 Text(
                     text = comment.createdAt,
                     style = DduruTheme.typography.Caption2,
-                    color = DduruTheme.colors.gray500,
+                    color = DduruTheme.colors.gray500
                 )
             }
 
@@ -71,13 +79,13 @@ fun JourneyCommentItem(
             Text(
                 text = comment.content,
                 style = DduruTheme.typography.Caption2,
-                color = DduruTheme.colors.gray846,
+                color = DduruTheme.colors.gray846
             )
         }
 
         Row(
             horizontalArrangement = Arrangement.spacedBy(12.dp),
-            verticalAlignment = Alignment.CenterVertically,
+            verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_bottom_nav_chat),
@@ -85,7 +93,7 @@ fun JourneyCommentItem(
                 tint = DduruTheme.colors.gray400,
                 modifier = Modifier
                     .size(16.dp)
-                    .clickable(onClick = onReplyClick),
+                    .clickable(onClick = onReplyClick)
             )
 
             Icon(
@@ -98,7 +106,7 @@ fun JourneyCommentItem(
                 },
                 modifier = Modifier
                     .size(16.dp)
-                    .clickable(onClick = onPinClick),
+                    .clickable(onClick = onPinClick)
             )
 
             Icon(
@@ -107,7 +115,7 @@ fun JourneyCommentItem(
                 tint = DduruTheme.colors.gray400,
                 modifier = Modifier
                     .size(16.dp)
-                    .clickable(onClick = onMoreClick),
+                    .clickable(onClick = onMoreClick)
             )
         }
     }
@@ -121,11 +129,11 @@ private fun JourneyCommentItemPreview() {
             id = 1L,
             username = "길동무",
             createdAt = "4월 25일 12:23",
-            content = "여행 정보가 정말 유용하네요. 감사합니다!",
+            content = "여행 정보가 정말 유용하네요. 감사합니다!"
         ),
         onReplyClick = {},
         onPinClick = {},
-        onMoreClick = {},
+        onMoreClick = {}
     )
 }
 
@@ -138,10 +146,10 @@ private fun JourneyPinnedCommentItemPreview() {
             username = "여행지기",
             createdAt = "4월 25일 12:23",
             content = "모임 장소는 시청역 3번 출구 앞입니다.",
-            isPinned = true,
+            isPinned = true
         ),
         onReplyClick = {},
         onPinClick = {},
-        onMoreClick = {},
+        onMoreClick = {}
     )
 }

@@ -42,7 +42,7 @@ fun JourneyCommentRoute(
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onMoreClick: (Long) -> Unit = {},
-    viewModel: JourneyCommentViewModel = hiltViewModel(),
+    viewModel: JourneyCommentViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
@@ -58,7 +58,7 @@ fun JourneyCommentRoute(
         onReplyClick = viewModel::onReplyClick,
         onPinClick = viewModel::onPinClick,
         onMoreClick = onMoreClick,
-        modifier = modifier,
+        modifier = modifier
     )
 }
 
@@ -71,7 +71,7 @@ fun JourneyCommentScreen(
     onReplyClick: (JourneyCommentItemUiState) -> Unit,
     onPinClick: (Long) -> Unit,
     onMoreClick: (Long) -> Unit,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     val listState = rememberLazyListState()
 
@@ -89,16 +89,16 @@ fun JourneyCommentScreen(
                 onSendClick = onSendClick,
                 modifier = Modifier
                     .padding(horizontal = 24.dp)
-                    .padding(bottom = 24.dp),
+                    .padding(bottom = 24.dp)
             )
-        },
+        }
     ) { innerPadding ->
         LazyColumn(
             state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
-            contentPadding = PaddingValues(bottom = 16.dp),
+            contentPadding = PaddingValues(bottom = 16.dp)
         ) {
             uiState.post?.let { post ->
                 item(key = "post-${post.id}") {
@@ -106,7 +106,7 @@ fun JourneyCommentScreen(
                         comment = post,
                         onReplyClick = { onReplyClick(post) },
                         onPinClick = { onPinClick(post.id) },
-                        onMoreClick = { onMoreClick(post.id) },
+                        onMoreClick = { onMoreClick(post.id) }
                     )
 
                     HorizontalDivider(color = DduruTheme.colors.gray100)
@@ -118,19 +118,19 @@ fun JourneyCommentScreen(
                     text = "댓글 ${uiState.comments.size}",
                     style = DduruTheme.typography.Title3,
                     color = DduruTheme.colors.gray846,
-                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp),
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp)
                 )
             }
 
             items(
                 items = uiState.comments,
-                key = { it.id },
+                key = { it.id }
             ) { comment ->
                 JourneyCommentItem(
                     comment = comment,
                     onReplyClick = { onReplyClick(comment) },
                     onPinClick = { onPinClick(comment.id) },
-                    onMoreClick = { onMoreClick(comment.id) },
+                    onMoreClick = { onMoreClick(comment.id) }
                 )
 
                 HorizontalDivider(color = DduruTheme.colors.gray100)
@@ -141,26 +141,26 @@ fun JourneyCommentScreen(
 
 @Composable
 private fun JourneyCommentTopBar(
-    onBackClick: () -> Unit,
+    onBackClick: () -> Unit
 ) {
     Box(
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
-            .padding(horizontal = 16.dp),
+            .padding(horizontal = 16.dp)
     ) {
         DduruIconButton(
             onClick = onBackClick,
             iconRes = R.drawable.ic_chevron_left,
             iconSize = 24.dp,
-            modifier = Modifier.align(Alignment.CenterStart),
+            modifier = Modifier.align(Alignment.CenterStart)
         )
 
         Text(
             text = "댓글",
             style = DduruTheme.typography.H1,
             color = DduruTheme.colors.black,
-            modifier = Modifier.align(Alignment.Center),
+            modifier = Modifier.align(Alignment.Center)
         )
     }
 }
@@ -175,7 +175,7 @@ private fun JourneyCommentScreenPreview() {
             username = "여행자 ${index + 1}",
             createdAt = "4월 25일 12:23",
             content = "여행 정보가 정말 유용하네요. 감사합니다!",
-            isPinned = index == 0,
+            isPinned = index == 0
         )
     }
 
@@ -185,16 +185,16 @@ private fun JourneyCommentScreenPreview() {
                 id = 1L,
                 username = "여행지기",
                 createdAt = "4월 25일 12:23",
-                content = "후쿠오카 여행 관련해서 궁금한 점을 남겨주세요.",
+                content = "후쿠오카 여행 관련해서 궁금한 점을 남겨주세요."
             ),
             comments = comments,
-            commentText = commentText,
+            commentText = commentText
         ),
         onCommentTextChange = { commentText = it },
         onSendClick = {},
         onBackClick = {},
         onReplyClick = {},
         onPinClick = {},
-        onMoreClick = {},
+        onMoreClick = {}
     )
 }

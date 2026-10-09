@@ -3,7 +3,7 @@ package com.gildongmu.dduru.presentation.feature.journey.state
 data class JourneyCommentUiState(
     val post: JourneyCommentItemUiState? = null,
     val comments: List<JourneyCommentItemUiState> = emptyList(),
-    val commentText: String = "",
+    val commentText: String = ""
 )
 
 data class JourneyCommentItemUiState(
@@ -12,5 +12,5 @@ data class JourneyCommentItemUiState(
     val username: String,
     val createdAt: String,
     val content: String,
-    val isPinned: Boolean = false,
+    val isPinned: Boolean = false
 )

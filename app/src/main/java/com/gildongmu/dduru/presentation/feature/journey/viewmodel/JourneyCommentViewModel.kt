@@ -16,7 +16,7 @@ class JourneyCommentViewModel @Inject constructor() : ViewModel() {
 
     fun setInitialContent(
         post: JourneyCommentItemUiState,
-        comments: List<JourneyCommentItemUiState>,
+        comments: List<JourneyCommentItemUiState>
     ) {
         _uiState.update { it.copy(post = post, comments = comments) }
     }
@@ -41,9 +41,9 @@ class JourneyCommentViewModel @Inject constructor() : ViewModel() {
                         id = nextId,
                         username = "나",
                         createdAt = "방금",
-                        content = content,
+                        content = content
                     ),
-                    commentText = "",
+                    commentText = ""
                 )
             }
         }
@@ -57,7 +57,7 @@ class JourneyCommentViewModel @Inject constructor() : ViewModel() {
         _uiState.update { currentState ->
             currentState.copy(
                 post = currentState.post?.togglePin(commentId),
-                comments = currentState.comments.map { it.togglePin(commentId) },
+                comments = currentState.comments.map { it.togglePin(commentId) }
             )
         }
     }
