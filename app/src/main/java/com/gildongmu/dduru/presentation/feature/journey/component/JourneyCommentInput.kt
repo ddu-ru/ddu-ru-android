@@ -20,6 +20,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun JourneyCommentInput(
@@ -35,31 +36,22 @@ fun JourneyCommentInput(
             .fillMaxWidth()
             .shadow(
                 elevation = 12.dp,
-                shape = RoundedCornerShape(32.dp),
+                shape = RoundedCornerShape(99.dp),
             )
             .background(
-                color = Color.White,
-                shape = RoundedCornerShape(32.dp),
+                color = DduruTheme.colors.gray0,
+                shape = RoundedCornerShape(99.dp),
             )
-            .padding(
-                start = 20.dp,
-                end = 6.dp,
-                top = 6.dp,
-                bottom = 6.dp,
-            ),
-        verticalAlignment = Alignment.Bottom,
+            .padding(horizontal = 4.dp, vertical = 4.dp),
+        verticalAlignment = Alignment.CenterVertically,
     ) {
         BasicTextField(
             value = value,
             onValueChange = onValueChange,
             modifier = Modifier
                 .weight(1f)
-                .padding(vertical = 12.dp),
-            textStyle = TextStyle(
-                fontSize = 15.sp,
-                lineHeight = 24.sp,
-                color = Color.Black,
-            ),
+                .padding(horizontal = 10.dp),
+            textStyle = DduruTheme.typography.Body2,
             keyboardOptions = KeyboardOptions(
                 imeAction = ImeAction.Default,
             ),
@@ -70,8 +62,8 @@ fun JourneyCommentInput(
                     if (value.isEmpty()) {
                         Text(
                             text = "답글 달기",
-                            color = Color(0xFFD1D5DB),
-                            fontSize = 15.sp,
+                            style = DduruTheme.typography.Body2,
+                            color = DduruTheme.colors.gray300,
                         )
                     }
 
@@ -87,18 +79,19 @@ fun JourneyCommentInput(
                 .size(52.dp)
                 .background(
                     color = if (canSend) {
-                        Color(0xFF2D9CFF)
+                        DduruTheme.colors.primary
                     } else {
-                        Color(0xFFE9EAED)
+                        DduruTheme.colors.gray200
                     },
-                    shape = RoundedCornerShape(50),
-                ),
+                    shape = RoundedCornerShape(24.dp),
+                )
+                .padding(10.dp),
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_arrow_up),
-                contentDescription = "댓글 전송",
-                tint = if (canSend) Color.White else Color(0xFFBFC3C9),
-                modifier = Modifier.size(28.dp),
+                contentDescription = null,
+                tint = if (canSend) DduruTheme.colors.gray0 else DduruTheme.colors.gray400,
+                modifier = Modifier.size(24.dp),
             )
         }
     }
@@ -119,7 +112,7 @@ private fun JourneyCommentInputEmptyPreview() {
 @Composable
 private fun JourneyCommentInputFilledPreview() {
     JourneyCommentInput(
-        value = "좋은 정보 감사합니다!",
+        value = "좋은 정보 감사합니다!\n좋은 정보 감사합니다!",
         onValueChange = {},
         onSendClick = {},
         modifier = Modifier.padding(24.dp),

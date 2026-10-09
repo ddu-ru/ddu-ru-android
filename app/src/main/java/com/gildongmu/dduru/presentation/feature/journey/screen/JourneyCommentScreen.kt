@@ -1,56 +1,90 @@
 package com.gildongmu.dduru.presentation.feature.journey.screen
 
-import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.imePadding
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowBack
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
-import androidx.compose.material3.IconButton
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
-import androidx.compose.runtime.*
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.shadow
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.SpanStyle
-import androidx.compose.ui.text.buildAnnotatedString
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.withStyle
-import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.designsystem.component.DduruIconButton
+import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyCommentInput
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyCommentItem
-import com.gildongmu.dduru.presentation.feature.journey.component.JourneyCommentItemUiModel
+import com.gildongmu.dduru.presentation.feature.journey.state.JourneyCommentItemUiState
+import com.gildongmu.dduru.presentation.feature.journey.state.JourneyCommentUiState
+import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyCommentViewModel
+
+@Composable
+fun JourneyCommentRoute(
+    post: JourneyCommentItemUiState,
+    comments: List<JourneyCommentItemUiState>,
+    onBackClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    onMoreClick: (Long) -> Unit = {},
+    viewModel: JourneyCommentViewModel = hiltViewModel(),
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(post, comments) {
+        viewModel.setInitialContent(post, comments)
+    }
+
+    JourneyCommentScreen(
+        uiState = uiState,
+        onBackClick = onBackClick,
+        onCommentTextChange = viewModel::onCommentTextChange,
+        onSendClick = viewModel::onSendClick,
+        onReplyClick = viewModel::onReplyClick,
+        onPinClick = viewModel::onPinClick,
+        onMoreClick = onMoreClick,
+        modifier = modifier,
+    )
+}
 
 @Composable
 fun JourneyCommentScreen(
-    post: JourneyCommentItemUiModel,
-    comments: List<JourneyCommentItemUiModel>,
-    commentText: String,
+    uiState: JourneyCommentUiState,
     onCommentTextChange: (String) -> Unit,
     onSendClick: () -> Unit,
     onBackClick: () -> Unit,
+    onReplyClick: (JourneyCommentItemUiState) -> Unit,
+    onPinClick: (Long) -> Unit,
+    onMoreClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
 ) {
+    val listState = rememberLazyListState()
+
     Scaffold(
         modifier = modifier
             .fillMaxSize()
+            .statusBarsPadding()
             .imePadding(),
-        containerColor = Color(0xFFF8F9FA),
-        topBar = {
-            JourneyCommentTopBar(
-                onBackClick = onBackClick,
-            )
-        },
+        containerColor = DduruTheme.colors.gray50,
+        topBar = { JourneyCommentTopBar(onBackClick = onBackClick) },
         bottomBar = {
             JourneyCommentInput(
-                value = commentText,
+                value = uiState.commentText,
                 onValueChange = onCommentTextChange,
                 onSendClick = onSendClick,
                 modifier = Modifier
@@ -60,60 +94,46 @@ fun JourneyCommentScreen(
         },
     ) { innerPadding ->
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(innerPadding),
+            contentPadding = PaddingValues(bottom = 16.dp),
         ) {
-            item {
-                JourneyCommentItem(
-                    comment = post,
-                    onReplyClick = {},
-                    onPinClick = {},
-                    onMoreClick = {},
-                )
+            uiState.post?.let { post ->
+                item(key = "post-${post.id}") {
+                    JourneyCommentItem(
+                        comment = post,
+                        onReplyClick = { onReplyClick(post) },
+                        onPinClick = { onPinClick(post.id) },
+                        onMoreClick = { onMoreClick(post.id) },
+                    )
 
-                HorizontalDivider(
-                    color = Color(0xFFEEEEEE),
-                )
+                    HorizontalDivider(color = DduruTheme.colors.gray100)
+                }
             }
 
-            item {
+            item(key = "comment-count") {
                 Text(
-                    text = buildAnnotatedString {
-                        append("댓글 ")
-
-                        withStyle(
-                            SpanStyle(
-                                color = Color(0xFF2D9CFF),
-                                fontWeight = FontWeight.SemiBold,
-                            ),
-                        ) {
-                            append(comments.size.toString())
-                        }
-                    },
-                    fontSize = 16.sp,
-                    color = Color(0xFF303030),
-                    modifier = Modifier.padding(
-                        horizontal = 24.dp,
-                        vertical = 28.dp,
-                    ),
+                    text = "댓글 ${uiState.comments.size}",
+                    style = DduruTheme.typography.Title3,
+                    color = DduruTheme.colors.gray846,
+                    modifier = Modifier.padding(horizontal = 24.dp, vertical = 28.dp),
                 )
             }
 
             items(
-                items = comments,
+                items = uiState.comments,
                 key = { it.id },
             ) { comment ->
                 JourneyCommentItem(
                     comment = comment,
-                    onReplyClick = {},
-                    onPinClick = {},
-                    onMoreClick = {},
+                    onReplyClick = { onReplyClick(comment) },
+                    onPinClick = { onPinClick(comment.id) },
+                    onMoreClick = { onMoreClick(comment.id) },
                 )
 
-                HorizontalDivider(
-                    color = Color(0xFFEEEEEE),
-                )
+                HorizontalDivider(color = DduruTheme.colors.gray100)
             }
         }
     }
@@ -126,67 +146,55 @@ private fun JourneyCommentTopBar(
     Box(
         modifier = Modifier
             .fillMaxWidth()
-            .height(88.dp)
-            .padding(horizontal = 24.dp),
+            .height(48.dp)
+            .padding(horizontal = 16.dp),
     ) {
-        IconButton(
+        DduruIconButton(
             onClick = onBackClick,
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .size(56.dp)
-                .shadow(
-                    elevation = 8.dp,
-                    shape = CircleShape,
-                )
-                .background(Color.White, CircleShape),
-        ) {
-            Icon(
-                imageVector = Icons.AutoMirrored.Filled.ArrowBack,
-                contentDescription = "뒤로가기",
-                tint = Color.Black,
-            )
-        }
+            iconRes = R.drawable.ic_chevron_left,
+            iconSize = 24.dp,
+            modifier = Modifier.align(Alignment.CenterStart),
+        )
 
         Text(
             text = "댓글",
-            fontSize = 20.sp,
-            fontWeight = FontWeight.Bold,
-            color = Color.Black,
+            style = DduruTheme.typography.H1,
+            color = DduruTheme.colors.black,
             modifier = Modifier.align(Alignment.Center),
         )
     }
 }
 
-@Preview(showBackground = true)
+@Preview(showBackground = true, widthDp = 375, heightDp = 812)
 @Composable
 private fun JourneyCommentScreenPreview() {
     var commentText by remember { mutableStateOf("") }
+    val comments = List(12) { index ->
+        JourneyCommentItemUiState(
+            id = (index + 2).toLong(),
+            username = "여행자 ${index + 1}",
+            createdAt = "4월 25일 12:23",
+            content = "여행 정보가 정말 유용하네요. 감사합니다!",
+            isPinned = index == 0,
+        )
+    }
 
     JourneyCommentScreen(
-        post = JourneyCommentItemUiModel(
-            id = 1L,
-            username = "username",
-            createdAt = "4월 25일 12:23",
-            content = "Text",
-        ),
-        comments = listOf(
-            JourneyCommentItemUiModel(
-                id = 2L,
-                username = "username",
+        uiState = JourneyCommentUiState(
+            post = JourneyCommentItemUiState(
+                id = 1L,
+                username = "여행지기",
                 createdAt = "4월 25일 12:23",
-                content = "Text",
+                content = "후쿠오카 여행 관련해서 궁금한 점을 남겨주세요.",
             ),
-            JourneyCommentItemUiModel(
-                id = 3L,
-                username = "username",
-                createdAt = "4월 25일 12:23",
-                content = "Text",
-            ),
+            comments = comments,
+            commentText = commentText,
         ),
-        commentText = commentText,
         onCommentTextChange = { commentText = it },
         onSendClick = {},
         onBackClick = {},
+        onReplyClick = {},
+        onPinClick = {},
+        onMoreClick = {},
     )
 }
-

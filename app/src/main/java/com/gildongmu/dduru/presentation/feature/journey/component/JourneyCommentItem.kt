@@ -1,37 +1,28 @@
 package com.gildongmu.dduru.presentation.feature.journey.component
 
-import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.outlined.ChatBubbleOutline
 import androidx.compose.material.icons.outlined.MoreVert
-import androidx.compose.material.icons.outlined.PushPin
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
-import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
-
-data class JourneyCommentItemUiModel(
-    val id: Long,
-    val username: String,
-    val createdAt: String,
-    val content: String,
-    val isPinned: Boolean = false,
-)
+import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.journey.state.JourneyCommentItemUiState
 
 @Composable
 fun JourneyCommentItem(
-    comment: JourneyCommentItemUiModel,
+    comment: JourneyCommentItemUiState,
     onReplyClick: () -> Unit,
     onPinClick: () -> Unit,
     onMoreClick: () -> Unit,
@@ -40,16 +31,19 @@ fun JourneyCommentItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .padding(horizontal = 24.dp, vertical = 20.dp),
+            .padding(horizontal = 16.dp, vertical = 16.dp),
         verticalAlignment = Alignment.Top,
     ) {
-        Box(
+        AsyncImage(
+            model = comment.profileImageUrl ?: R.drawable.img_blank_profile,
+            contentDescription = null,
             modifier = Modifier
-                .size(48.dp)
-                .background(Color(0xFFF0F0F0), CircleShape),
+                .size(32.dp)
+                .clip(CircleShape),
+            contentScale = ContentScale.Crop,
         )
 
-        Spacer(modifier = Modifier.width(16.dp))
+        Spacer(modifier = Modifier.width(12.dp))
 
         Column(
             modifier = Modifier.weight(1f),
@@ -59,17 +53,16 @@ fun JourneyCommentItem(
             ) {
                 Text(
                     text = comment.username,
-                    fontSize = 14.sp,
-                    fontWeight = FontWeight.SemiBold,
-                    color = Color(0xFF303030),
+                    style = DduruTheme.typography.Caption1,
+                    color = DduruTheme.colors.gray846,
                 )
 
-                Spacer(modifier = Modifier.width(12.dp))
+                Spacer(modifier = Modifier.width(8.dp))
 
                 Text(
                     text = comment.createdAt,
-                    fontSize = 13.sp,
-                    color = Color(0xFF9CA3AF),
+                    style = DduruTheme.typography.Caption2,
+                    color = DduruTheme.colors.gray500,
                 )
             }
 
@@ -77,8 +70,8 @@ fun JourneyCommentItem(
 
             Text(
                 text = comment.content,
-                fontSize = 14.sp,
-                color = Color(0xFF303030),
+                style = DduruTheme.typography.Caption2,
+                color = DduruTheme.colors.gray846,
             )
         }
 
@@ -87,33 +80,33 @@ fun JourneyCommentItem(
             verticalAlignment = Alignment.CenterVertically,
         ) {
             Icon(
-                painter = painterResource(R.drawable.ic_arrow_up),
+                painter = painterResource(R.drawable.ic_bottom_nav_chat),
                 contentDescription = null,
-                tint = Color(0xFFBDC1C6),
+                tint = DduruTheme.colors.gray400,
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(16.dp)
                     .clickable(onClick = onReplyClick),
             )
 
             Icon(
-                imageVector = Icons.Outlined.PushPin,
-                contentDescription = "고정",
+                painter = painterResource(R.drawable.ic_filter_fixed2),
+                contentDescription = null,
                 tint = if (comment.isPinned) {
-                    Color(0xFF2D9CFF)
+                    DduruTheme.colors.primary
                 } else {
-                    Color(0xFFBDC1C6)
+                    DduruTheme.colors.gray400
                 },
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(16.dp)
                     .clickable(onClick = onPinClick),
             )
 
             Icon(
                 imageVector = Icons.Outlined.MoreVert,
-                contentDescription = "더보기",
-                tint = Color(0xFFBDC1C6),
+                contentDescription = null,
+                tint = DduruTheme.colors.gray400,
                 modifier = Modifier
-                    .size(20.dp)
+                    .size(16.dp)
                     .clickable(onClick = onMoreClick),
             )
         }
@@ -124,7 +117,7 @@ fun JourneyCommentItem(
 @Composable
 private fun JourneyCommentItemPreview() {
     JourneyCommentItem(
-        comment = JourneyCommentItemUiModel(
+        comment = JourneyCommentItemUiState(
             id = 1L,
             username = "길동무",
             createdAt = "4월 25일 12:23",
@@ -140,7 +133,7 @@ private fun JourneyCommentItemPreview() {
 @Composable
 private fun JourneyPinnedCommentItemPreview() {
     JourneyCommentItem(
-        comment = JourneyCommentItemUiModel(
+        comment = JourneyCommentItemUiState(
             id = 2L,
             username = "여행지기",
             createdAt = "4월 25일 12:23",
