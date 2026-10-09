@@ -3,6 +3,9 @@ package com.gildongmu.dduru.data.di
 import com.gildongmu.dduru.data.register.nickname.repositoryimpl.NicknameRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.AuthRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ChatRoomRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.JourneyCommentRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.JourneyPostRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.JourneyRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ParticipationRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.SurveyRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.home.FakeHomeNotificationRepository
@@ -10,6 +13,9 @@ import com.gildongmu.dduru.data.repositoryimpl.home.HomeRepositoryImpl
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
+import com.gildongmu.dduru.domain.repository.JourneyCommentRepository
+import com.gildongmu.dduru.domain.repository.JourneyPostRepository
+import com.gildongmu.dduru.domain.repository.JourneyRepository
 import com.gildongmu.dduru.domain.repository.ParticipationRepository
 import com.gildongmu.dduru.domain.repository.SurveyRepository
 import com.gildongmu.dduru.domain.repository.home.HomeNotificationRepository
@@ -59,6 +65,24 @@ abstract class RepositoryModule {
     abstract fun bindChatRoomRepository(
         impl: ChatRoomRepositoryImpl
     ): ChatRoomRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindJourneyPostRepository(
+        impl: JourneyPostRepositoryImpl
+    ): JourneyPostRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindJourneyCommentRepository(
+        impl: JourneyCommentRepositoryImpl
+    ): JourneyCommentRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindJourneyRepository(
+        impl: JourneyRepositoryImpl
+    ): JourneyRepository
 
     @Binds
     @Singleton

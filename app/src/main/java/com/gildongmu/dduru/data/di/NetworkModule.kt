@@ -6,6 +6,9 @@ import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
 import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
 import com.gildongmu.dduru.data.remote.service.AuthService
 import com.gildongmu.dduru.data.remote.service.ChatRoomService
+import com.gildongmu.dduru.data.remote.service.JourneyCommentService
+import com.gildongmu.dduru.data.remote.service.JourneyPostService
+import com.gildongmu.dduru.data.remote.service.JourneyService
 import com.gildongmu.dduru.data.remote.service.ParticipationService
 import com.gildongmu.dduru.data.remote.service.SurveyService
 import com.gildongmu.dduru.data.remote.service.home.HomeService
@@ -123,6 +126,24 @@ object NetworkModule {
     @Singleton
     fun provideChatRoomService(retrofit: Retrofit): ChatRoomService {
         return retrofit.create(ChatRoomService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideJourneyPostService(retrofit: Retrofit): JourneyPostService {
+        return retrofit.create(JourneyPostService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideJourneyCommentService(retrofit: Retrofit): JourneyCommentService {
+        return retrofit.create(JourneyCommentService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideJourneyService(retrofit: Retrofit): JourneyService {
+        return retrofit.create(JourneyService::class.java)
     }
 
     @Provides
