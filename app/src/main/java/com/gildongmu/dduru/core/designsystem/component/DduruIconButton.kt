@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -28,22 +29,29 @@ fun DduruIconButton(
     buttonSize: Dp = 48.dp,
     iconSize: Dp = 12.dp,
     shape: Shape = CircleShape,
+    showShadow: Boolean = true,
     modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier
             .size(buttonSize)
-            .dduruDualShadow(
-                firstAlpha = 0.08f,
-                secondAlpha = 0.10f,
-                shape = shape
+            .then(
+                if (showShadow) {
+                    Modifier.dduruDualShadow(
+                        firstAlpha = 0.08f,
+                        secondAlpha = 0.10f,
+                        shape = shape
+                    )
+                } else {
+                    Modifier
+                }
             )
             .clip(shape)
             .background(backgroundColor)
             .noRippleClickable(onClick = onClick),
         contentAlignment = Alignment.Center
     ) {
-        androidx.compose.material3.Icon(
+        Icon(
             painter = painterResource(iconRes),
             contentDescription = null,
             tint = iconTint,
