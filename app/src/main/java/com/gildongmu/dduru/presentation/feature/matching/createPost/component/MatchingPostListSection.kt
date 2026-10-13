@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.matching.createPost.component
+package com.gildongmu.dduru.presentation.feature.matching.component
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -82,13 +82,12 @@ fun MatchingPostListSection(
 }
 
 @Composable
-fun MatchingPostCard(
+private fun MatchingPostCard(
     item: MatchingPostCardUiModel,
     showDivider: Boolean,
     onClick: () -> Unit,
     onLikeClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    showAuthor: Boolean = true
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
@@ -105,7 +104,6 @@ fun MatchingPostCard(
         ) {
             MatchingPostInfo(
                 item = item,
-                showAuthor = showAuthor,
                 modifier = Modifier.weight(1f)
             )
 
@@ -136,8 +134,7 @@ private fun MatchingPostDivider(
 @Composable
 private fun MatchingPostInfo(
     item: MatchingPostCardUiModel,
-    modifier: Modifier = Modifier,
-    showAuthor: Boolean = true
+    modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier,
@@ -154,9 +151,7 @@ private fun MatchingPostInfo(
                 overflow = TextOverflow.Ellipsis
             )
 
-            if (showAuthor) {
-                MatchingAuthorLine(item = item)
-            }
+            MatchingAuthorLine(item = item)
 
             MatchingMetaLine(item = item)
         }
