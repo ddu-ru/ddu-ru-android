@@ -14,6 +14,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Shape
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
@@ -31,30 +32,43 @@ fun FilterChipRow(
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         labels.forEachIndexed { index, label ->
-            val isSelected = index == selectedIndex
-
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(if (isSelected) DduruTheme.colors.black else DduruTheme.colors.gray50)
-                    .then(
-                        if (isSelected) {
-                            Modifier
-                        } else {
-                            Modifier.border(width = 1.dp, color = DduruTheme.colors.gray100, shape = CircleShape)
-                        }
-                    )
-                    .noRippleClickable { onChipClick(index) }
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = label,
-                    style = DduruTheme.typography.Body4,
-                    color = if (isSelected) DduruTheme.colors.gray0 else DduruTheme.colors.gray600
-                )
-            }
+            FilterChip(
+                label = label,
+                isSelected = index == selectedIndex,
+                onClick = { onChipClick(index) }
+            )
         }
+    }
+}
+
+@Composable
+fun FilterChip(
+    label: String,
+    isSelected: Boolean,
+    onClick: () -> Unit,
+    modifier: Modifier = Modifier,
+    shape: Shape = CircleShape
+) {
+    Box(
+        modifier = modifier
+            .clip(shape)
+            .background(if (isSelected) DduruTheme.colors.black else DduruTheme.colors.gray50)
+            .then(
+                if (isSelected) {
+                    Modifier
+                } else {
+                    Modifier.border(width = 1.dp, color = DduruTheme.colors.gray100, shape = shape)
+                }
+            )
+            .noRippleClickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Text(
+            text = label,
+            style = DduruTheme.typography.Body4,
+            color = if (isSelected) DduruTheme.colors.gray0 else DduruTheme.colors.gray600
+        )
     }
 }
 
