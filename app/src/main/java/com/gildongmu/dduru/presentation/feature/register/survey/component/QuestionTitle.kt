@@ -15,7 +15,7 @@ fun QuestionTitle(
     Text(
         text = text,
         style = DduruTheme.typography.Title1.copy(
-            lineHeight = (18 * 1.8).sp
+            lineHeight = (18 * 1.4).sp
         ),
         color = DduruTheme.colors.gray900,
         textAlign = TextAlign.Center,

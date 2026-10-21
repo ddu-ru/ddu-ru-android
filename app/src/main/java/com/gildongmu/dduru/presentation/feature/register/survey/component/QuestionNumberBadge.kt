@@ -12,14 +12,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun QuestionNumberBadge(
     currentQuestion: Int,
     totalQuestions: Int,
-    label: String = "Question",
+    label: String = "Survey",
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -53,10 +52,7 @@ fun QuestionNumberBadge(
                 )
                 Text(
                     text = "/",
-                    style = DduruTheme.typography.Micro.copy(
-                        fontSize = 8.sp,
-                        lineHeight = 8.sp
-                    ),
+                    style = DduruTheme.typography.Micro,
                     color = DduruTheme.colors.primary,
                     textAlign = TextAlign.Center
                 )

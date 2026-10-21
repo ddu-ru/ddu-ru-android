@@ -1,27 +1,24 @@
 package com.gildongmu.dduru.presentation.feature.register.survey.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxWithConstraints
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
+import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentHeight
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.collectAsState
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import androidx.compose.ui.zIndex
-import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.register.survey.SurveyViewModel
 
 @Composable
 fun SurveyQuestionLayout(
@@ -32,52 +29,56 @@ fun SurveyQuestionLayout(
     onBackClick: () -> Unit,
     content: @Composable () -> Unit,
     modifier: Modifier = Modifier,
-    viewModel: SurveyViewModel = hiltViewModel()
+    questionNote: String? = null
 ) {
-    val token by viewModel.accessToken.collectAsState()
-
-    Box(
+    BoxWithConstraints(
         modifier = modifier
             .fillMaxSize()
-            .background(color = DduruTheme.colors.gray50),
-        contentAlignment = Alignment.TopCenter
+            .background(color = DduruTheme.colors.gray50)
     ) {
-        BackButton(
-            onClick = onBackClick,
-            modifier = Modifier
-                .align(Alignment.TopStart)
-                .padding(top = 40.dp, start = 16.dp)
-                .zIndex(10f)
-        )
-
-        PenguinCharacter(
-            modifier = Modifier
-                .align(Alignment.TopCenter)
-                .padding(top = 55.dp)
-                .zIndex(5f)
-        )
-
         Column(
+            verticalArrangement = Arrangement.SpaceBetween,
+            horizontalAlignment = Alignment.CenterHorizontally,
             modifier = Modifier
                 .fillMaxWidth()
                 .verticalScroll(rememberScrollState())
-                .padding(top = 100.dp, start = 16.dp, end = 16.dp, bottom = 24.dp),
-            horizontalAlignment = Alignment.CenterHorizontally
+                .heightIn(min = maxHeight)
+                .statusBarsPadding()
+                .navigationBarsPadding()
+                .padding(horizontal = 16.dp)
         ) {
-            QuestionCard(
-                questionNumber = questionNumber,
-                totalQuestions = totalQuestions,
-                questionTitle = questionTitle,
-                imageUrl = imageUrl,
-                token = token,
+            Box(modifier = Modifier.fillMaxWidth()) {
+                QuestionCard(
+                    questionNumber = questionNumber,
+                    totalQuestions = totalQuestions,
+                    questionTitle = questionTitle,
+                    questionNote = questionNote,
+                    imageUrl = imageUrl,
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 64.dp)
+                )
+
+                PenguinCharacter(
+                    modifier = Modifier
+                        .align(Alignment.TopCenter)
+                        .padding(top = 10.dp)
+                        .offset(x = 2.dp)
+                )
+
+                BackButton(
+                    onClick = onBackClick,
+                    modifier = Modifier.align(Alignment.TopStart)
+                )
+            }
+
+            Box(
                 modifier = Modifier
-                    .width(343.dp)
-                    .wrapContentHeight()
-            )
-
-            Spacer(modifier = Modifier.height(32.dp))
-
-            content()
+                    .fillMaxWidth()
+                    .padding(top = 32.dp, bottom = 42.dp)
+            ) {
+                content()
+            }
         }
     }
 }
