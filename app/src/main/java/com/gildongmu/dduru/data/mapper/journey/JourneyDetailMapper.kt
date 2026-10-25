@@ -8,14 +8,14 @@ import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyPinnedNoticeR
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyUpdateResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.MyJourneyListResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.MyJourneyResponse
-import com.gildongmu.dduru.domain.entity.journey.JourneyDetail
-import com.gildongmu.dduru.domain.entity.journey.JourneyMember
-import com.gildongmu.dduru.domain.entity.journey.JourneyMemberRole
-import com.gildongmu.dduru.domain.entity.journey.JourneyMemberRoleUpdate
-import com.gildongmu.dduru.domain.entity.journey.JourneyPinnedNotice
-import com.gildongmu.dduru.domain.entity.journey.JourneyUpdate
-import com.gildongmu.dduru.domain.entity.journey.MyJourney
-import com.gildongmu.dduru.domain.entity.journey.MyJourneyList
+import com.gildongmu.dduru.domain.journey.entity.JourneyDetail
+import com.gildongmu.dduru.domain.journey.entity.JourneyMember
+import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRole
+import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRoleUpdate
+import com.gildongmu.dduru.domain.journey.entity.JourneyPinnedNotice
+import com.gildongmu.dduru.domain.journey.entity.JourneyUpdate
+import com.gildongmu.dduru.domain.journey.entity.MyJourney
+import com.gildongmu.dduru.domain.journey.entity.MyJourneyList
 
 fun JourneyDetailResponse.toDomain(): JourneyDetail = JourneyDetail(
     journeyId = journeyId,

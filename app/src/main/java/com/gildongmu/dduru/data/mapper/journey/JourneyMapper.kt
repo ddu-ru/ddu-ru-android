@@ -7,13 +7,13 @@ import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyPostListRespo
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyPostNoticeResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyPostResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyProfileImageResponse
-import com.gildongmu.dduru.domain.entity.journey.JourneyAuthor
-import com.gildongmu.dduru.domain.entity.journey.JourneyComment
-import com.gildongmu.dduru.domain.entity.journey.JourneyCommentList
-import com.gildongmu.dduru.domain.entity.journey.JourneyPost
-import com.gildongmu.dduru.domain.entity.journey.JourneyPostNotice
-import com.gildongmu.dduru.domain.entity.journey.JourneyPostPage
-import com.gildongmu.dduru.domain.entity.journey.JourneyProfileImage
+import com.gildongmu.dduru.domain.journey.entity.JourneyAuthor
+import com.gildongmu.dduru.domain.journey.entity.JourneyComment
+import com.gildongmu.dduru.domain.journey.entity.JourneyCommentList
+import com.gildongmu.dduru.domain.journey.entity.JourneyPost
+import com.gildongmu.dduru.domain.journey.entity.JourneyPostNotice
+import com.gildongmu.dduru.domain.journey.entity.JourneyPostPage
+import com.gildongmu.dduru.domain.journey.entity.JourneyProfileImage
 
 fun JourneyPostListResponse.toDomain(): JourneyPostPage = JourneyPostPage(
     journeyId = journeyId,

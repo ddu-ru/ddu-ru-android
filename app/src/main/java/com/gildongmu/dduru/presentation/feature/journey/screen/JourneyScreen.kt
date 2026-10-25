@@ -56,7 +56,7 @@ fun JourneyRoute(
     onNewsAllClick: () -> Unit = {},
     onNewsClick: (Long) -> Unit = {},
     onPastJourneyAllClick: () -> Unit = {},
-    onPastJourneyClick: (Int) -> Unit = {},
+    onPastJourneyClick: (Long) -> Unit = {},
     modifier: Modifier = Modifier,
     viewModel: JourneyViewModel = hiltViewModel()
 ) {
@@ -103,7 +103,7 @@ private fun JourneyScreen(
     onNewsAllClick: () -> Unit,
     onNewsClick: (Long) -> Unit,
     onPastJourneyAllClick: () -> Unit,
-    onPastJourneyClick: (Int) -> Unit,
+    onPastJourneyClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Scaffold(

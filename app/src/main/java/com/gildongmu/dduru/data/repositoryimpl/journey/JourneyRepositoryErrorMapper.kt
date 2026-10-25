@@ -1,7 +1,7 @@
-package com.gildongmu.dduru.data.repositoryimpl
+package com.gildongmu.dduru.data.repositoryimpl.journey
 
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
-import com.gildongmu.dduru.domain.entity.journey.JourneyApiException
+import com.gildongmu.dduru.domain.journey.entity.JourneyApiException
 import kotlinx.serialization.json.Json
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive

@@ -1,9 +1,9 @@
-package com.gildongmu.dduru.domain.repository
+package com.gildongmu.dduru.domain.journey.repository
 
-import com.gildongmu.dduru.domain.entity.journey.JourneyPost
-import com.gildongmu.dduru.domain.entity.journey.JourneyPostCommand
-import com.gildongmu.dduru.domain.entity.journey.JourneyPostNotice
-import com.gildongmu.dduru.domain.entity.journey.JourneyPostPage
+import com.gildongmu.dduru.domain.journey.entity.JourneyPost
+import com.gildongmu.dduru.domain.journey.entity.JourneyPostCommand
+import com.gildongmu.dduru.domain.journey.entity.JourneyPostNotice
+import com.gildongmu.dduru.domain.journey.entity.JourneyPostPage
 
 interface JourneyPostRepository {
     suspend fun getJourneyPosts(

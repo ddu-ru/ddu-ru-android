@@ -1,12 +1,12 @@
-package com.gildongmu.dduru.domain.repository
+package com.gildongmu.dduru.domain.journey.repository
 
-import com.gildongmu.dduru.domain.entity.journey.JourneyDetail
-import com.gildongmu.dduru.domain.entity.journey.JourneyMember
-import com.gildongmu.dduru.domain.entity.journey.JourneyMemberRole
-import com.gildongmu.dduru.domain.entity.journey.JourneyMemberRoleUpdate
-import com.gildongmu.dduru.domain.entity.journey.JourneyUpdate
-import com.gildongmu.dduru.domain.entity.journey.JourneyUpdateCommand
-import com.gildongmu.dduru.domain.entity.journey.MyJourneyList
+import com.gildongmu.dduru.domain.journey.entity.JourneyDetail
+import com.gildongmu.dduru.domain.journey.entity.JourneyMember
+import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRole
+import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRoleUpdate
+import com.gildongmu.dduru.domain.journey.entity.JourneyUpdate
+import com.gildongmu.dduru.domain.journey.entity.JourneyUpdateCommand
+import com.gildongmu.dduru.domain.journey.entity.MyJourneyList
 
 interface JourneyRepository {
     suspend fun getJourneyDetail(journeyId: Long): Result<JourneyDetail>

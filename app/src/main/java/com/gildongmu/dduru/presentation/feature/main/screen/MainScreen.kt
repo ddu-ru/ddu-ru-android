@@ -108,7 +108,11 @@ fun MainScreen(
                             onNavigateToChatRoom = onNavigateToChatRoom
                         )
                     }
-                    is BottomNavRoute.MyPage -> NavEntry(route) { JourneyRoute() }
+                    is BottomNavRoute.MyPage -> NavEntry(route) {
+                        JourneyRoute(
+                            onCreateJourneyClick = onNavigateToMatchingCreatePost
+                        )
+                    }
                     else -> NavEntry(route) { Text("잘못된 접근입니다.") }
                 }
             }

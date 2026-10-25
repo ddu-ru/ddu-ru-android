@@ -1,14 +1,15 @@
-package com.gildongmu.dduru.data.repositoryimpl
+package com.gildongmu.dduru.data.repositoryimpl.journey
 
 import com.gildongmu.dduru.data.mapper.journey.toDomain
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyPostNoticeRequest
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyPostRequest
+import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.service.JourneyPostService
-import com.gildongmu.dduru.domain.entity.journey.JourneyPost
-import com.gildongmu.dduru.domain.entity.journey.JourneyPostCommand
-import com.gildongmu.dduru.domain.entity.journey.JourneyPostNotice
-import com.gildongmu.dduru.domain.entity.journey.JourneyPostPage
-import com.gildongmu.dduru.domain.repository.JourneyPostRepository
+import com.gildongmu.dduru.domain.journey.entity.JourneyPost
+import com.gildongmu.dduru.domain.journey.entity.JourneyPostCommand
+import com.gildongmu.dduru.domain.journey.entity.JourneyPostNotice
+import com.gildongmu.dduru.domain.journey.entity.JourneyPostPage
+import com.gildongmu.dduru.domain.journey.repository.JourneyPostRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json
@@ -83,7 +84,7 @@ class JourneyPostRepositoryImpl @Inject constructor(
         Result.failure(exception)
     }
 
-    private fun <T> com.gildongmu.dduru.data.remote.dto.response.ApiResponse<T>.requireData(): T {
+    private fun <T> ApiResponse<T>.requireData(): T {
         if (status != 0 && status !in 200..299) throw toJourneyApiException()
         return data ?: throw IllegalStateException("Response data is null")
     }

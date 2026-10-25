@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.domain.entity.journey
+package com.gildongmu.dduru.domain.journey.entity
 
 data class JourneyPostCommand(
     val content: String,

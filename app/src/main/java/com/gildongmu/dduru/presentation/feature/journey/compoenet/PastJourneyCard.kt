@@ -37,13 +37,13 @@ private val PastJourneyImageShape = RoundedCornerShape(topStart = 16.dp, topEnd 
 
 @Composable
 fun PastJourneyCard(
-    id: Int,
+    id: Long,
     title: String,
     location: String,
     date: String,
     imageUrl: String?,
     memberImageUrls: List<String>,
-    onClick: (Int) -> Unit,
+    onClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(

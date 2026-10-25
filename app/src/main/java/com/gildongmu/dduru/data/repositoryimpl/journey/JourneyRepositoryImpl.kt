@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.data.repositoryimpl
+package com.gildongmu.dduru.data.repositoryimpl.journey
 
 import com.gildongmu.dduru.data.mapper.journey.toDomain
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyMemberRoleRequest
@@ -6,14 +6,14 @@ import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyMemberRoleUpda
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyUpdateRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.service.JourneyService
-import com.gildongmu.dduru.domain.entity.journey.JourneyDetail
-import com.gildongmu.dduru.domain.entity.journey.JourneyMember
-import com.gildongmu.dduru.domain.entity.journey.JourneyMemberRole
-import com.gildongmu.dduru.domain.entity.journey.JourneyMemberRoleUpdate
-import com.gildongmu.dduru.domain.entity.journey.JourneyUpdate
-import com.gildongmu.dduru.domain.entity.journey.JourneyUpdateCommand
-import com.gildongmu.dduru.domain.entity.journey.MyJourneyList
-import com.gildongmu.dduru.domain.repository.JourneyRepository
+import com.gildongmu.dduru.domain.journey.entity.JourneyDetail
+import com.gildongmu.dduru.domain.journey.entity.JourneyMember
+import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRole
+import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRoleUpdate
+import com.gildongmu.dduru.domain.journey.entity.JourneyUpdate
+import com.gildongmu.dduru.domain.journey.entity.JourneyUpdateCommand
+import com.gildongmu.dduru.domain.journey.entity.MyJourneyList
+import com.gildongmu.dduru.domain.journey.repository.JourneyRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
 import kotlinx.serialization.json.Json

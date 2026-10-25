@@ -35,7 +35,7 @@ data class JourneyTodoUiState(
 )
 
 data class PastJourneyUiState(
-    val id: Int,
+    val id: Long,
     val title: String,
     val location: String,
     val date: String,

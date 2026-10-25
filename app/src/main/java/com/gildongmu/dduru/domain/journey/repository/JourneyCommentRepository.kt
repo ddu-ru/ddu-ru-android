@@ -1,8 +1,8 @@
-package com.gildongmu.dduru.domain.repository
+package com.gildongmu.dduru.domain.journey.repository
 
-import com.gildongmu.dduru.domain.entity.journey.JourneyComment
-import com.gildongmu.dduru.domain.entity.journey.JourneyCommentCommand
-import com.gildongmu.dduru.domain.entity.journey.JourneyCommentList
+import com.gildongmu.dduru.domain.journey.entity.JourneyComment
+import com.gildongmu.dduru.domain.journey.entity.JourneyCommentCommand
+import com.gildongmu.dduru.domain.journey.entity.JourneyCommentList
 
 interface JourneyCommentRepository {
     suspend fun getJourneyComments(journeyId: Long, journeyPostId: Long): Result<JourneyCommentList>
