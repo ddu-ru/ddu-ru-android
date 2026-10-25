@@ -24,6 +24,8 @@ data class HomeNotificationItemUiState(
 data class HomeNotificationUiState(
     val selectedFilter: HomeNotificationFilter = HomeNotificationFilter.ALL,
     val unreadCount: Int = 0,
+    val hasNext: Boolean = false,
+    val isLoadingMore: Boolean = false,
     val notifications: ImmutableList<HomeNotificationItemUiState> = persistentListOf()
 ) {
     val filteredNotifications: ImmutableList<HomeNotificationItemUiState>

@@ -68,6 +68,7 @@ fun HomeNotificationRoute(
             onBackClick = onBackClick,
             onFilterClick = viewModel::onFilterClick,
             onNotificationClick = viewModel::onNotificationClick,
+            onLoadMoreNotifications = viewModel::loadMoreNotifications,
             onMarkAllAsReadClick = viewModel::onMarkAllAsReadClick,
             onDeleteAllClick = viewModel::onDeleteAllClick,
             modifier = modifier
@@ -82,6 +83,7 @@ private fun HomeNotificationScreen(
     onBackClick: () -> Unit,
     onFilterClick: (HomeNotificationFilter) -> Unit,
     onNotificationClick: (HomeNotificationItemUiState) -> Unit,
+    onLoadMoreNotifications: () -> Unit,
     onMarkAllAsReadClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -121,6 +123,9 @@ private fun HomeNotificationScreen(
                 HomeNotificationList(
                     notifications = notifications,
                     onNotificationClick = onNotificationClick,
+                    onLoadMoreNotifications = onLoadMoreNotifications,
+                    hasNext = uiState.hasNext,
+                    isLoadingMore = uiState.isLoadingMore,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -156,6 +161,7 @@ private fun HomeNotificationScreenPreview() {
             onBackClick = {},
             onFilterClick = {},
             onNotificationClick = {},
+            onLoadMoreNotifications = {},
             onMarkAllAsReadClick = {},
             onDeleteAllClick = {}
         )
@@ -171,6 +177,7 @@ private fun HomeNotificationEmptyScreenPreview() {
             onBackClick = {},
             onFilterClick = {},
             onNotificationClick = {},
+            onLoadMoreNotifications = {},
             onMarkAllAsReadClick = {},
             onDeleteAllClick = {}
         )

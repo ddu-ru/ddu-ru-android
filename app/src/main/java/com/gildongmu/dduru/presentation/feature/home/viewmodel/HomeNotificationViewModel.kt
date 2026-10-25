@@ -30,6 +30,8 @@ class HomeNotificationViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<HomeNotificationSideEffect>()
     val sideEffect: SharedFlow<HomeNotificationSideEffect> = _sideEffect.asSharedFlow()
 
+    private var nextCursor: Long? = null
+
     init {
         loadNotifications()
     }
@@ -67,12 +69,37 @@ class HomeNotificationViewModel @Inject constructor(
         }
     }
 
+    fun loadMoreNotifications() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        val cursor = nextCursor ?: return
+        if (!currentState.hasNext || currentState.isLoadingMore) return
+
+        updateUiState { copy(isLoadingMore = true) }
+        viewModelScope.launch {
+            homeNotificationRepository.getNotifications(cursor)
+                .onSuccess { page ->
+                    nextCursor = page.nextCursor
+                    updateUiState {
+                        copy(
+                            hasNext = page.hasNext,
+                            isLoadingMore = false,
+                            notifications = (notifications + page.notifications.map { it.toUiState() })
+                                .toImmutableList()
+                        )
+                    }
+                }
+                .onFailure {
+                    updateUiState { copy(isLoadingMore = false) }
+                }
+        }
+    }
+
     private fun loadNotifications() {
         viewModelScope.launch {
             val notificationsResult = homeNotificationRepository.getNotifications()
             val unreadCountResult = homeNotificationRepository.getUnreadCount()
 
-            val notifications = notificationsResult.getOrElse {
+            val notificationPage = notificationsResult.getOrElse {
                 _uiState.value = UiState.Failure
                 return@launch
             }
@@ -84,9 +111,11 @@ class HomeNotificationViewModel @Inject constructor(
             _uiState.value = UiState.Success(
                 HomeNotificationUiState(
                     unreadCount = unreadCount,
-                    notifications = notifications.map { it.toUiState() }.toImmutableList()
+                    hasNext = notificationPage.hasNext,
+                    notifications = notificationPage.notifications.map { it.toUiState() }.toImmutableList()
                 )
             )
+            nextCursor = notificationPage.nextCursor
         }
     }
 

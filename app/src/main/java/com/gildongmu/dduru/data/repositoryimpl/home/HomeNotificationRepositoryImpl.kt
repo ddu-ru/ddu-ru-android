@@ -3,6 +3,7 @@ package com.gildongmu.dduru.data.repositoryimpl.home
 import com.gildongmu.dduru.data.mapper.home.toDomain
 import com.gildongmu.dduru.data.remote.datasource.home.HomeNotificationRemoteDataSource
 import com.gildongmu.dduru.domain.entity.home.HomeNotification
+import com.gildongmu.dduru.domain.entity.home.HomeNotificationPage
 import com.gildongmu.dduru.domain.repository.home.HomeNotificationRepository
 import java.io.IOException
 import javax.inject.Inject
@@ -11,15 +12,19 @@ import retrofit2.HttpException
 class HomeNotificationRepositoryImpl @Inject constructor(
     private val homeNotificationRemoteDataSource: HomeNotificationRemoteDataSource
 ) : HomeNotificationRepository {
-    override suspend fun getNotifications(): Result<List<HomeNotification>> {
+    override suspend fun getNotifications(cursor: Long?): Result<HomeNotificationPage> {
         return runCatchingNotificationApi {
             val response = homeNotificationRemoteDataSource.getNotifications(
-                cursor = null,
+                cursor = cursor,
                 size = NOTIFICATION_PAGE_SIZE
             )
 
             if (response.status.isNotificationSuccessStatus() && response.data != null) {
-                response.data.notifications.map { it.toDomain() }
+                HomeNotificationPage(
+                    notifications = response.data.notifications.map { it.toDomain() },
+                    nextCursor = response.data.nextCursor,
+                    hasNext = response.data.hasNext
+                )
             } else {
                 throw IllegalStateException("알림 목록 조회 실패: status=${response.status}")
             }

@@ -12,6 +12,12 @@ data class HomeNotification(
     val resourceId: Long?
 )
 
+data class HomeNotificationPage(
+    val notifications: List<HomeNotification>,
+    val nextCursor: Long?,
+    val hasNext: Boolean
+)
+
 enum class HomeNotificationCategory {
     MATCHING,
     MESSAGE,
