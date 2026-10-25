@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
@@ -23,19 +24,25 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruIconButton
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailActionBar
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailFilterSection
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailFilterType
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailHeader
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailMemberSection
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailPostItem
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailVoteItem
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyMemberUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailActionBar
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailFilterSection
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailFilterType
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailHeader
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailMemberSection
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailPostItem
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailVoteItem
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyMemberUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyWritingButton
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailPostUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailVoteUiState
@@ -44,6 +51,7 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun JourneyDetailRoute(
+    journeyId: Long,
     onBackClick: () -> Unit,
     onManageMembersClick: () -> Unit,
     onChatRoomClick: () -> Unit,
@@ -52,28 +60,45 @@ fun JourneyDetailRoute(
     onShareClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
     onPostCommentClick: (Long) -> Unit = {},
+    onPostClick: (Long) -> Unit = {},
     onPostPinClick: (Long) -> Unit = {},
     onPostMoreClick: (Long) -> Unit = {},
     onVoteClick: (Long) -> Unit = {},
+    onWritePostClick: () -> Unit = {},
+    onWriteScheduleClick: () -> Unit = {},
+    onWriteVoteClick: () -> Unit = {},
     viewModel: JourneyDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    JourneyDetailScreen(
-        uiState = uiState,
-        onBackClick = onBackClick,
-        onManageMembersClick = onManageMembersClick,
-        onChatRoomClick = onChatRoomClick,
-        onNotificationClick = onNotificationClick,
-        onShareClick = onShareClick,
-        onMoreClick = onMoreClick,
-        onFilterClick = viewModel::onFilterClick,
-        onPostCommentClick = onPostCommentClick,
-        onPostPinClick = onPostPinClick,
-        onPostMoreClick = onPostMoreClick,
-        onVoteClick = onVoteClick,
-        modifier = modifier
-    )
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.refreshJourneyDetail(journeyId)
+    }
+
+    when (val state = uiState) {
+        UiState.Empty -> Unit
+        UiState.Loading -> DduruLoadingScreen()
+        UiState.Failure -> DduruFailureScreen(message = "여정 정보를 불러오지 못했어요.")
+        is UiState.Success -> JourneyDetailScreen(
+            uiState = state.data,
+            onBackClick = onBackClick,
+            onManageMembersClick = onManageMembersClick,
+            onChatRoomClick = onChatRoomClick,
+            onNotificationClick = onNotificationClick,
+            onShareClick = onShareClick,
+            onMoreClick = onMoreClick,
+            onFilterClick = viewModel::onFilterClick,
+            onPostCommentClick = onPostCommentClick,
+            onPostClick = onPostClick,
+            onPostPinClick = viewModel::onPostPinClick,
+            onPostMoreClick = onPostMoreClick,
+            onVoteClick = onVoteClick,
+            onWritePostClick = onWritePostClick,
+            onWriteScheduleClick = onWriteScheduleClick,
+            onWriteVoteClick = onWriteVoteClick,
+            modifier = modifier
+        )
+    }
 }
 
 @Composable
@@ -87,9 +112,13 @@ fun JourneyDetailScreen(
     onMoreClick: () -> Unit = {},
     onFilterClick: (JourneyDetailFilterType) -> Unit,
     onPostCommentClick: (Long) -> Unit = {},
+    onPostClick: (Long) -> Unit = {},
     onPostPinClick: (Long) -> Unit = {},
     onPostMoreClick: (Long) -> Unit = {},
     onVoteClick: (Long) -> Unit = {},
+    onWritePostClick: () -> Unit = {},
+    onWriteScheduleClick: () -> Unit = {},
+    onWriteVoteClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Box(
@@ -127,6 +156,7 @@ fun JourneyDetailScreen(
                 ) {
                     JourneyDetailMemberSection(
                         members = uiState.members,
+                        canManageMembers = uiState.isOwner,
                         onManageClick = onManageMembersClick
                     )
 
@@ -158,6 +188,7 @@ fun JourneyDetailScreen(
                                 emptyList()
                             },
                             onPostCommentClick = onPostCommentClick,
+                            onPostClick = onPostClick,
                             onPostPinClick = onPostPinClick,
                             onPostMoreClick = onPostMoreClick,
                             onVoteClick = onVoteClick
@@ -186,6 +217,19 @@ fun JourneyDetailScreen(
                 .align(Alignment.TopEnd)
                 .padding(top = 16.dp, end = 16.dp)
         )
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 16.dp, bottom = 16.dp)
+        ) {
+            JourneyWritingButton(
+                onWritePostClick = onWritePostClick,
+                onWriteScheduleClick = onWriteScheduleClick,
+                onWriteVoteClick = onWriteVoteClick
+            )
+        }
     }
 }
 
@@ -208,6 +252,7 @@ private fun JourneyDetailContentList(
     posts: List<JourneyDetailPostUiState>,
     votes: List<JourneyDetailVoteUiState>,
     onPostCommentClick: (Long) -> Unit,
+    onPostClick: (Long) -> Unit,
     onPostPinClick: (Long) -> Unit,
     onPostMoreClick: (Long) -> Unit,
     onVoteClick: (Long) -> Unit
@@ -231,6 +276,7 @@ private fun JourneyDetailContentList(
             imageUrls = post.imageUrls,
             commentCount = post.commentCount,
             isPinned = post.isPinned,
+            onPostClick = { onPostClick(post.id) },
             onCommentClick = { onPostCommentClick(post.id) },
             onPinClick = { onPostPinClick(post.id) },
             onMoreClick = { onPostMoreClick(post.id) }
@@ -251,7 +297,6 @@ private fun JourneyDetailContentList(
 
 private val DETAIL_FILTERS = persistentListOf(
     JourneyDetailFilterType.FIXED,
-    JourneyDetailFilterType.NOTICE,
     JourneyDetailFilterType.BOARD,
     JourneyDetailFilterType.SCHEDULE,
     JourneyDetailFilterType.PHOTO,
@@ -279,7 +324,7 @@ private fun JourneyDetailScreenPreview() {
                 posts = listOf(
                     JourneyDetailPostUiState(
                         id = 1,
-                        category = JourneyDetailFilterType.NOTICE,
+                        category = JourneyDetailFilterType.BOARD,
                         username = "둘루",
                         createdAt = "10분 전",
                         title = "여행 일정 공유합니다! 맛집 추천도 편하게 남겨주세요.",
@@ -298,7 +343,7 @@ private fun JourneyDetailScreenPreview() {
                 filteredPosts = listOf(
                     JourneyDetailPostUiState(
                         id = 1,
-                        category = JourneyDetailFilterType.NOTICE,
+                        category = JourneyDetailFilterType.BOARD,
                         username = "둘루",
                         createdAt = "10분 전",
                         title = "여행 일정 공유합니다! 맛집 추천도 편하게 남겨주세요.",

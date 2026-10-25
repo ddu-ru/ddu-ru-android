@@ -33,13 +33,12 @@ import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyCard
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyEmptyCard
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyNewsSection
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneySchedule
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.PastJourneyCard
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.TodoItem
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyCard
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyEmptyCard
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyNewsSection
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneySchedule
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyTopBar
+import com.gildongmu.dduru.presentation.feature.journey.component.PastJourneyCard
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.journeyPreviewUiState
 import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyViewModel
@@ -163,30 +162,7 @@ private fun JourneyScreen(
                 }
             }
 
-            if (uiState.ongoingJourneys.isNotEmpty() && uiState.todos.isNotEmpty()) {
-                item {
-                    JourneySection(
-                        title = "내가 할 일",
-                        count = uiState.todos.size,
-                        countColor = DduruTheme.colors.primary,
-                        onAllClick = onTodoAllClick
-                    ) {
-                        Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
-                            uiState.todos.take(MAX_VISIBLE_TODO_COUNT).forEach { todo ->
-                                TodoItem(
-                                    title = todo.title,
-                                    caption = todo.caption,
-                                    assignees = todo.assignees,
-                                    isCompleted = todo.isCompleted,
-                                    onCheckedChange = { isCompleted ->
-                                        onTodoCheckedChange(todo.id, isCompleted)
-                                    }
-                                )
-                            }
-                        }
-                    }
-                }
-            }
+            // TODO API 연동 전까지 나의 여정 메인의 할 일 섹션은 노출하지 않습니다.
 
             if (uiState.ongoingJourneys.isNotEmpty() && uiState.scheduleDays.isNotEmpty()) {
                 item {
@@ -309,7 +285,6 @@ private fun JourneySection(
     }
 }
 
-private const val MAX_VISIBLE_TODO_COUNT = 3
 private const val MAX_VISIBLE_NEWS_COUNT = 3
 
 @Preview(showBackground = true)

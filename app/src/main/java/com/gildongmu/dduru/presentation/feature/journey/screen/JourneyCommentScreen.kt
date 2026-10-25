@@ -27,7 +27,10 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruIconButton
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyCommentInput
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyCommentItem
@@ -37,8 +40,8 @@ import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyComment
 
 @Composable
 fun JourneyCommentRoute(
-    post: JourneyCommentItemUiState,
-    comments: List<JourneyCommentItemUiState>,
+    journeyId: Long,
+    postId: Long,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     onMoreClick: (Long) -> Unit = {},
@@ -46,20 +49,23 @@ fun JourneyCommentRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(post, comments) {
-        viewModel.setInitialContent(post, comments)
-    }
+    LaunchedEffect(journeyId, postId) { viewModel.loadPostDetail(journeyId, postId) }
 
-    JourneyCommentScreen(
-        uiState = uiState,
-        onBackClick = onBackClick,
-        onCommentTextChange = viewModel::onCommentTextChange,
-        onSendClick = viewModel::onSendClick,
-        onReplyClick = viewModel::onReplyClick,
-        onPinClick = viewModel::onPinClick,
-        onMoreClick = onMoreClick,
-        modifier = modifier
-    )
+    when (val state = uiState) {
+        UiState.Empty -> Unit
+        UiState.Loading -> DduruLoadingScreen()
+        UiState.Failure -> DduruFailureScreen(message = "게시글을 불러오지 못했어요.")
+        is UiState.Success -> JourneyCommentScreen(
+            uiState = state.data,
+            onBackClick = onBackClick,
+            onCommentTextChange = viewModel::onCommentTextChange,
+            onSendClick = viewModel::onSendClick,
+            onReplyClick = viewModel::onReplyClick,
+            onPinClick = viewModel::onPinClick,
+            onMoreClick = onMoreClick,
+            modifier = modifier
+        )
+    }
 }
 
 @Composable

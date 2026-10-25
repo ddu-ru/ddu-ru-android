@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.journey.compoenet
+package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -60,6 +60,7 @@ fun PastJourneyCard(
                 .fillMaxWidth()
                 .aspectRatio(200f / 130f)
                 .clip(PastJourneyImageShape)
+                .background(DduruTheme.colors.gray300)
         )
 
         Box(

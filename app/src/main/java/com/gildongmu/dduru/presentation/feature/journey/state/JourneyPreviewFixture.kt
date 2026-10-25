@@ -1,8 +1,8 @@
 package com.gildongmu.dduru.presentation.feature.journey.state
 
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyNewsItemUiState
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyScheduleDayUiState
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyScheduleItemUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyNewsItemUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleDayUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleItemUiState
 
 internal val journeyPreviewUiState = JourneyUiState(
     ongoingJourneys = listOf(

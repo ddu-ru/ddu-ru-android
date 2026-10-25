@@ -34,7 +34,8 @@ fun MainScreen(
     onNavigateToHomeMenu: () -> Unit,
     onNavigateToChatRoom: (Long) -> Unit,
     onNavigateToMatchingCreatePost: () -> Unit,
-    onNavigateToMatchingDetail: (Long) -> Unit
+    onNavigateToMatchingDetail: (Long) -> Unit,
+    onNavigateToJourneyDetail: (Long) -> Unit
 ) {
     val bottomNavItems = remember {
         listOf(
@@ -110,7 +111,8 @@ fun MainScreen(
                     }
                     is BottomNavRoute.MyPage -> NavEntry(route) {
                         JourneyRoute(
-                            onCreateJourneyClick = onNavigateToMatchingCreatePost
+                            onCreateJourneyClick = onNavigateToMatchingCreatePost,
+                            onJourneyClick = onNavigateToJourneyDetail
                         )
                     }
                     else -> NavEntry(route) { Text("잘못된 접근입니다.") }
@@ -141,7 +143,8 @@ private fun MainScreenPreview() {
             onNavigateToHomeMenu = {},
             onNavigateToChatRoom = {},
             onNavigateToMatchingCreatePost = {},
-            onNavigateToMatchingDetail = {}
+            onNavigateToMatchingDetail = {},
+            onNavigateToJourneyDetail = {}
         )
     }
 }

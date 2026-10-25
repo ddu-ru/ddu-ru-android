@@ -7,7 +7,7 @@ data class JourneyDetailResponse(
     val journeyId: Long,
     val groupRoomId: Long,
     val title: String,
-    val photoUrl: String,
+    val photoUrl: String?,
     val startDate: String,
     val endDate: String,
     val recruitCount: Int,
@@ -67,7 +67,7 @@ data class MyJourneyListResponse(
 data class MyJourneyResponse(
     val journeyId: Long,
     val title: String,
-    val photoUrl: String,
+    val photoUrl: String?,
     val startDate: String,
     val endDate: String,
     val tripDurationText: String,

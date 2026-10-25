@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.journey.screen
 
 import android.net.Uri
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -27,9 +28,9 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyPostComposeTopBar
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyPostContentField
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyPostPhotoSection
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyPostComposeTopBar
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyPostContentField
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyPostPhotoSection
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyPostComposeUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.MAX_POST_LENGTH
 import com.gildongmu.dduru.presentation.feature.journey.viewmodel.JourneyPostComposeViewModel
@@ -38,9 +39,11 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun JourneyPostComposeRoute(
+    journeyId: Long,
     modifier: Modifier = Modifier,
     viewModel: JourneyPostComposeViewModel = hiltViewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onPostCreated: (Long) -> Unit
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val galleryLauncher = rememberGalleryLauncher(viewModel::onPhotoSelected)
@@ -51,7 +54,7 @@ fun JourneyPostComposeRoute(
         onContentChange = viewModel::onContentChange,
         onAddPhotoClick = { galleryLauncher.launch("image/*") },
         onRemovePhotoClick = viewModel::onRemovePhotoClick,
-        onSubmitClick = viewModel::onSubmitClick,
+        onSubmitClick = { viewModel.onSubmitClick(journeyId, onPostCreated) },
         modifier = modifier
     )
 }
@@ -94,6 +97,7 @@ fun JourneyPostComposeScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(DduruTheme.colors.gray50)
             .statusBarsPadding()
             .padding(horizontal = 16.dp)
     ) {

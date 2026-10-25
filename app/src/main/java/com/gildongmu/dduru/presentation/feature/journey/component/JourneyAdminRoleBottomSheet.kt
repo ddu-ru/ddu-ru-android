@@ -1,24 +1,38 @@
 package com.gildongmu.dduru.presentation.feature.journey.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.defaultMinSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.BasicTextField
+import androidx.compose.foundation.text.KeyboardActions
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Icon
 import androidx.compose.material3.ModalBottomSheet
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.focus.FocusRequester
+import androidx.compose.ui.focus.focusRequester
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
@@ -37,10 +51,11 @@ fun JourneyAdminRoleBottomSheet(
     member: JourneyAdminMember,
     selectedRoles: ImmutableList<String>,
     onRoleClick: (String) -> Unit,
-    onCustomRoleClick: () -> Unit,
+    onCustomRoleAdd: (String) -> Unit,
     onDismiss: () -> Unit,
     onConfirm: () -> Unit
 ) {
+    var isCustomRoleInputVisible by remember { mutableStateOf(false) }
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         dragHandle = null,
@@ -123,11 +138,20 @@ fun JourneyAdminRoleBottomSheet(
                         )
                     }
 
-                JourneyAdminRoleChip(
-                    text = "＋ 직접 입력",
-                    selected = false,
-                    onClick = onCustomRoleClick
-                )
+                if (isCustomRoleInputVisible) {
+                    InlineCustomRoleInput(
+                        onSubmit = { role ->
+                            onCustomRoleAdd(role)
+                            isCustomRoleInputVisible = false
+                        }
+                    )
+                } else {
+                    JourneyAdminRoleChip(
+                        text = "＋ 직접 입력",
+                        selected = false,
+                        onClick = { isCustomRoleInputVisible = true }
+                    )
+                }
             }
 
             Spacer(modifier = Modifier.height(24.dp))
@@ -154,6 +178,35 @@ fun JourneyAdminRoleBottomSheet(
     }
 }
 
+@Composable
+private fun InlineCustomRoleInput(
+    onSubmit: (String) -> Unit
+) {
+    var value by remember { mutableStateOf("") }
+    val focusRequester = remember { FocusRequester() }
+
+    LaunchedEffect(Unit) { focusRequester.requestFocus() }
+
+    BasicTextField(
+        value = value,
+        onValueChange = { value = it },
+        modifier = Modifier
+            .defaultMinSize(minWidth = 108.dp)
+            .clip(RoundedCornerShape(99.dp))
+            .background(DduruTheme.colors.gray50)
+            .focusRequester(focusRequester)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
+        singleLine = true,
+        textStyle = DduruTheme.typography.Body2.copy(color = DduruTheme.colors.gray800),
+        keyboardOptions = KeyboardOptions(imeAction = ImeAction.Done),
+        keyboardActions = KeyboardActions(
+            onDone = {
+                value.trim().takeIf(String::isNotEmpty)?.let(onSubmit)
+            }
+        )
+    )
+}
+
 @Preview(showBackground = true)
 @Composable
 private fun JourneyAdminRoleBottomSheetPreview() {
@@ -162,7 +215,7 @@ private fun JourneyAdminRoleBottomSheetPreview() {
             member = journeyAdminPreviewMember,
             selectedRoles = journeyAdminPreviewMember.roles,
             onRoleClick = {},
-            onCustomRoleClick = {},
+            onCustomRoleAdd = {},
             onDismiss = {},
             onConfirm = {}
         )

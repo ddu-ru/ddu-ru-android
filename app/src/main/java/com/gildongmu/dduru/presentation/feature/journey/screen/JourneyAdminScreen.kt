@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.journey.screen
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,7 +9,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -18,6 +21,9 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyAdminKickBottomSheet
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyAdminKickConfirmDialog
@@ -34,6 +40,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 @Composable
 fun JourneyAdminRoute(
+    journeyId: Long,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: JourneyAdminViewModel = hiltViewModel()
@@ -44,20 +51,30 @@ fun JourneyAdminRoute(
     var isKickBottomSheetVisible by remember { mutableStateOf(false) }
     var kickTargetMember by remember { mutableStateOf<JourneyAdminMember?>(null) }
 
-    JourneyAdminScreen(
-        uiState = uiState,
-        onBackClick = onBackClick,
-        onMemberClick = { memberId ->
-            uiState.members.find { it.id == memberId }?.let { member ->
-                roleMember = member
-                selectedRoles = member.roles
-            }
-        },
-        onKickMemberClick = {
-            isKickBottomSheetVisible = true
-        },
-        modifier = modifier
-    )
+    LaunchedEffect(journeyId) { viewModel.loadMembers(journeyId) }
+    LaunchedEffect(viewModel) {
+        viewModel.roleUpdateSucceeded.collect { memberId ->
+            if (roleMember?.id == memberId) roleMember = null
+        }
+    }
+
+    when (val state = uiState) {
+        UiState.Empty -> Unit
+        UiState.Loading -> DduruLoadingScreen()
+        UiState.Failure -> DduruFailureScreen(message = "여정 멤버를 불러오지 못했어요.")
+        is UiState.Success -> JourneyAdminScreen(
+            uiState = state.data,
+            onBackClick = onBackClick,
+            onMemberClick = { memberId ->
+                state.data.members.find { it.id == memberId }?.let { member ->
+                    roleMember = member
+                    selectedRoles = member.roles
+                }
+            },
+            onKickMemberClick = { isKickBottomSheetVisible = true },
+            modifier = modifier
+        )
+    }
 
     roleMember?.let { member ->
         JourneyAdminRoleBottomSheet(
@@ -70,22 +87,21 @@ fun JourneyAdminRoute(
                     (selectedRoles + role).toImmutableList()
                 }
             },
-            onCustomRoleClick = {
-                // TODO: 직접 입력 역할 기능 연결
+            onCustomRoleAdd = { role ->
+                if (role !in selectedRoles) selectedRoles = (selectedRoles + role).toImmutableList()
             },
             onDismiss = {
                 roleMember = null
             },
             onConfirm = {
                 viewModel.updateMemberRoles(member.id, selectedRoles)
-                roleMember = null
             }
         )
     }
 
     if (isKickBottomSheetVisible) {
         JourneyAdminKickBottomSheet(
-            members = uiState.members,
+            members = (uiState as? UiState.Success)?.data?.members ?: persistentListOf(),
             onKickClick = { member ->
                 kickTargetMember = member
             },
@@ -121,6 +137,7 @@ fun JourneyAdminScreen(
     Column(
         modifier = modifier
             .fillMaxSize()
+            .background(DduruTheme.colors.gray50)
             .statusBarsPadding()
             .verticalScroll(rememberScrollState())
             .padding(top = 16.dp, start = 16.dp, end = 16.dp)
@@ -234,7 +251,7 @@ private fun JourneyAdminScreenPreview() {
                         (selectedRoles + role).toImmutableList()
                     }
                 },
-                onCustomRoleClick = {
+                onCustomRoleAdd = {
                 },
                 onDismiss = {
                     roleMember = null

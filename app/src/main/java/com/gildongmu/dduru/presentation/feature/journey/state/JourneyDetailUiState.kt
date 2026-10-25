@@ -1,13 +1,14 @@
 package com.gildongmu.dduru.presentation.feature.journey.state
 
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailFilterType
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyMemberUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailFilterType
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyMemberUiState
 
 data class JourneyDetailUiState(
     val imageUrl: String? = null,
     val dDay: String = "",
     val title: String = "",
     val period: String = "",
+    val isOwner: Boolean = false,
     val members: List<JourneyMemberUiState> = emptyList(),
     val posts: List<JourneyDetailPostUiState> = emptyList(),
     val filteredPosts: List<JourneyDetailPostUiState> = emptyList(),

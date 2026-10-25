@@ -11,6 +11,7 @@ data class JourneyAdminMember(
     val id: Long,
     val username: String,
     val profileImageUrl: String? = null,
+    val isHost: Boolean = false,
     val roles: ImmutableList<String> = persistentListOf()
 )
 

@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.journey.compoenet
+package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -26,7 +26,6 @@ import kotlinx.collections.immutable.persistentListOf
 
 enum class JourneyDetailFilterType(val label: String?) {
     FIXED(null),
-    NOTICE("공지"),
     BOARD("게시판"),
     SCHEDULE("일정"),
     PHOTO("사진"),
@@ -113,13 +112,12 @@ private fun JourneyDetailFilterSectionPreview() {
         JourneyDetailFilterSection(
             filters = persistentListOf(
                 JourneyDetailFilterType.FIXED,
-                JourneyDetailFilterType.NOTICE,
                 JourneyDetailFilterType.BOARD,
                 JourneyDetailFilterType.SCHEDULE,
                 JourneyDetailFilterType.PHOTO,
                 JourneyDetailFilterType.VOTE
             ),
-            selectedFilter = JourneyDetailFilterType.NOTICE,
+            selectedFilter = JourneyDetailFilterType.BOARD,
             onFilterClick = {},
             modifier = Modifier.padding(16.dp)
         )

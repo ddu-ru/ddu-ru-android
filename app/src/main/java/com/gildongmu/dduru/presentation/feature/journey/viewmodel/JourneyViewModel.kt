@@ -1,8 +1,8 @@
 package com.gildongmu.dduru.presentation.feature.journey.viewmodel
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gildongmu.dduru.core.common.extension.toDotDate
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.domain.journey.entity.MyJourney
 import com.gildongmu.dduru.domain.journey.entity.MyJourneyList
@@ -33,9 +33,14 @@ class JourneyViewModel @Inject constructor(
             _uiState.value = UiState.Loading
             journeyRepository.getMyJourneys().fold(
                 onSuccess = { journeys ->
+                    Log.d(
+                        TAG,
+                        "나의 여정 조회 성공: 진행 중 ${journeys.activeJourneys.size}개, 완료 ${journeys.completedJourneys.size}개"
+                    )
                     _uiState.value = UiState.Success(journeys.toUiState())
                 },
-                onFailure = {
+                onFailure = { throwable ->
+                    Log.e(TAG, "나의 여정 조회 실패", throwable)
                     _uiState.value = UiState.Failure
                 }
             )
@@ -65,6 +70,10 @@ class JourneyViewModel @Inject constructor(
             )
         }
     }
+
+    private companion object {
+        const val TAG = "JourneyViewModel"
+    }
 }
 
 private fun MyJourneyList.toUiState(): JourneyUiState = JourneyUiState(
@@ -77,8 +86,11 @@ private fun MyJourney.toOngoingJourneyUiState(): OngoingJourneyUiState = Ongoing
     imageUrl = photoUrl,
     dDay = startDDay,
     title = title,
-    period = "${startDate.toDotDate()} - ${endDate.toDotDate()}",
+    period = "$startDate - $endDate · $tripDurationText",
+    tripDurationText = tripDurationText,
     memberCount = recruitCount,
+    recruitCapacity = recruitCapacity,
+    isOwner = isOwner,
     remainingTodoCount = 0,
     newNewsCount = 0
 )
@@ -87,7 +99,11 @@ private fun MyJourney.toPastJourneyUiState(): PastJourneyUiState = PastJourneyUi
     id = journeyId,
     title = title,
     location = destination,
-    date = "${startDate.toDotDate()} - ${endDate.toDotDate()}",
+    date = "$startDate - $endDate · $tripDurationText",
     imageUrl = photoUrl,
+    tripDurationText = tripDurationText,
+    memberCount = recruitCount,
+    recruitCapacity = recruitCapacity,
+    isOwner = isOwner,
     memberImageUrls = emptyList()
 )

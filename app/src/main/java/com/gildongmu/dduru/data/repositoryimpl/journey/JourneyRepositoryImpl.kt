@@ -5,6 +5,7 @@ import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyMemberRoleRequ
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyMemberRoleUpdateRequest
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyUpdateRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
+import com.gildongmu.dduru.data.remote.dto.response.journey.MyJourneyListResponse
 import com.gildongmu.dduru.data.remote.service.JourneyService
 import com.gildongmu.dduru.domain.journey.entity.JourneyDetail
 import com.gildongmu.dduru.domain.journey.entity.JourneyMember
@@ -73,7 +74,7 @@ class JourneyRepositoryImpl @Inject constructor(
     }
 
     override suspend fun getMyJourneys(): Result<MyJourneyList> = request {
-        journeyService.getMyJourneys().requireData().toDomain()
+        journeyService.getMyJourneys().toMyJourneyList()
     }
 
     private suspend fun <T> request(block: suspend () -> T): Result<T> = try {
@@ -89,5 +90,13 @@ class JourneyRepositoryImpl @Inject constructor(
     private fun <T> ApiResponse<T>.requireData(): T {
         if (status != 0 && status !in 200..299) throw toJourneyApiException()
         return data ?: throw IllegalStateException("Response data is null")
+    }
+
+    private fun ApiResponse<MyJourneyListResponse>.toMyJourneyList(): MyJourneyList {
+        if (status != 0 && status !in 200..299) throw toJourneyApiException()
+        return data?.toDomain() ?: MyJourneyList(
+            activeJourneys = emptyList(),
+            completedJourneys = emptyList()
+        )
     }
 }
