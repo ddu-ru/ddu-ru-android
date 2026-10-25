@@ -12,15 +12,21 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationItemUiState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationUiState
@@ -29,10 +35,29 @@ import kotlinx.collections.immutable.ImmutableList
 @Composable
 fun HomeNotificationList(
     notifications: ImmutableList<HomeNotificationItemUiState>,
+    onNotificationClick: (HomeNotificationItemUiState) -> Unit,
+    onLoadMoreNotifications: () -> Unit,
+    hasNext: Boolean,
+    isLoadingMore: Boolean,
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            lastVisibleIndex >= notifications.lastIndex - LOAD_MORE_THRESHOLD
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore, hasNext, isLoadingMore) {
+        if (shouldLoadMore && hasNext && !isLoadingMore) {
+            onLoadMoreNotifications()
+        }
+    }
+
     LazyColumn(
         modifier = modifier,
+        state = listState,
         contentPadding = PaddingValues(top = 16.dp, bottom = 24.dp)
     ) {
         items(
@@ -40,19 +65,26 @@ fun HomeNotificationList(
             key = { notification -> notification.id },
             contentType = { HomeNotificationItemUiState::class }
         ) { notification ->
-            HomeNotificationListItem(notification = notification)
+            HomeNotificationListItem(
+                notification = notification,
+                onClick = { onNotificationClick(notification) }
+            )
         }
     }
 }
 
+private const val LOAD_MORE_THRESHOLD = 3
+
 @Composable
 private fun HomeNotificationListItem(
     notification: HomeNotificationItemUiState,
+    onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
         modifier = modifier
             .fillMaxWidth()
+            .noRippleClickable(onClick = onClick)
             .padding(top = 24.dp)
     ) {
         Row(
@@ -117,6 +149,10 @@ private fun HomeNotificationListPreview() {
     DduruTheme {
         HomeNotificationList(
             notifications = HomeNotificationUiState.preview.notifications,
+            onNotificationClick = {},
+            onLoadMoreNotifications = {},
+            hasNext = false,
+            isLoadingMore = false,
             modifier = Modifier
                 .fillMaxWidth()
                 .height(260.dp)

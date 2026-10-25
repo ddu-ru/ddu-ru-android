@@ -5,14 +5,18 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.domain.entity.home.HomeNotification
 import com.gildongmu.dduru.domain.repository.home.HomeNotificationRepository
+import com.gildongmu.dduru.presentation.feature.home.effect.HomeNotificationSideEffect
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationFilter
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationItemUiState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -22,6 +26,11 @@ class HomeNotificationViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<HomeNotificationUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeNotificationUiState>> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<HomeNotificationSideEffect>()
+    val sideEffect: SharedFlow<HomeNotificationSideEffect> = _sideEffect.asSharedFlow()
+
+    private var nextCursor: Long? = null
 
     init {
         loadNotifications()
@@ -34,16 +43,54 @@ class HomeNotificationViewModel @Inject constructor(
     fun onMarkAllAsReadClick() {
         viewModelScope.launch {
             homeNotificationRepository.markAllAsRead()
-                .onSuccess { loadNotifications() }
+                .onSuccess { updateAllNotificationsReadState() }
                 .onFailure { _uiState.value = UiState.Failure }
         }
     }
 
-    fun onDeleteAllClick() {
+    fun onDeleteAllClick() = Unit
+
+    fun onNotificationClick(notification: HomeNotificationItemUiState) {
         viewModelScope.launch {
-            homeNotificationRepository.deleteAll()
-                .onSuccess { loadNotifications() }
-                .onFailure { _uiState.value = UiState.Failure }
+            _sideEffect.emit(
+                HomeNotificationSideEffect.NavigateToResource(
+                    resourceType = notification.resourceType,
+                    resourceId = notification.resourceId
+                )
+            )
+
+            if (!notification.isRead) {
+                homeNotificationRepository.markAsRead(notification.id)
+                    .onSuccess {
+                        updateNotificationReadState(notification.id)
+                    }
+                    .onFailure { _uiState.value = UiState.Failure }
+            }
+        }
+    }
+
+    fun loadMoreNotifications() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        val cursor = nextCursor ?: return
+        if (!currentState.hasNext || currentState.isLoadingMore) return
+
+        updateUiState { copy(isLoadingMore = true) }
+        viewModelScope.launch {
+            homeNotificationRepository.getNotifications(cursor)
+                .onSuccess { page ->
+                    nextCursor = page.nextCursor
+                    updateUiState {
+                        copy(
+                            hasNext = page.hasNext,
+                            isLoadingMore = false,
+                            notifications = (notifications + page.notifications.map { it.toUiState() })
+                                .toImmutableList()
+                        )
+                    }
+                }
+                .onFailure {
+                    updateUiState { copy(isLoadingMore = false) }
+                }
         }
     }
 
@@ -52,7 +99,7 @@ class HomeNotificationViewModel @Inject constructor(
             val notificationsResult = homeNotificationRepository.getNotifications()
             val unreadCountResult = homeNotificationRepository.getUnreadCount()
 
-            val notifications = notificationsResult.getOrElse {
+            val notificationPage = notificationsResult.getOrElse {
                 _uiState.value = UiState.Failure
                 return@launch
             }
@@ -64,15 +111,45 @@ class HomeNotificationViewModel @Inject constructor(
             _uiState.value = UiState.Success(
                 HomeNotificationUiState(
                     unreadCount = unreadCount,
-                    notifications = notifications.map { it.toUiState() }.toImmutableList()
+                    hasNext = notificationPage.hasNext,
+                    notifications = notificationPage.notifications.map { it.toUiState() }.toImmutableList()
                 )
             )
+            nextCursor = notificationPage.nextCursor
         }
     }
 
     private fun updateUiState(reducer: HomeNotificationUiState.() -> HomeNotificationUiState) {
         val currentState = (_uiState.value as? UiState.Success)?.data ?: return
         _uiState.value = UiState.Success(currentState.reducer())
+    }
+
+    private fun updateNotificationReadState(notificationId: Long) {
+        updateUiState {
+            val updatedNotifications = notifications.map { notification ->
+                if (notification.id == notificationId) {
+                    notification.copy(isRead = true)
+                } else {
+                    notification
+                }
+            }.toImmutableList()
+
+            copy(
+                unreadCount = updatedNotifications.count { !it.isRead },
+                notifications = updatedNotifications
+            )
+        }
+    }
+
+    private fun updateAllNotificationsReadState() {
+        updateUiState {
+            copy(
+                unreadCount = 0,
+                notifications = notifications.map { notification ->
+                    notification.copy(isRead = true)
+                }.toImmutableList()
+            )
+        }
     }
 }
 
@@ -83,6 +160,9 @@ private fun HomeNotification.toUiState(): HomeNotificationItemUiState {
         body = body,
         timeAgo = timeAgo,
         category = category,
-        isRead = isRead
+        isRead = isRead,
+        type = type,
+        resourceType = resourceType,
+        resourceId = resourceId
     )
 }

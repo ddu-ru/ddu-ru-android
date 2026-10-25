@@ -2,6 +2,7 @@ package com.gildongmu.dduru.presentation.feature.home.state
 
 import androidx.compose.runtime.Immutable
 import com.gildongmu.dduru.domain.entity.home.HomeNotificationCategory
+import com.gildongmu.dduru.domain.entity.home.HomeNotificationResourceType
 import kotlinx.collections.immutable.ImmutableList
 import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
@@ -13,13 +14,18 @@ data class HomeNotificationItemUiState(
     val body: String,
     val timeAgo: String,
     val category: HomeNotificationCategory,
-    val isRead: Boolean
+    val isRead: Boolean,
+    val type: String,
+    val resourceType: HomeNotificationResourceType,
+    val resourceId: Long?
 )
 
 @Immutable
 data class HomeNotificationUiState(
     val selectedFilter: HomeNotificationFilter = HomeNotificationFilter.ALL,
     val unreadCount: Int = 0,
+    val hasNext: Boolean = false,
+    val isLoadingMore: Boolean = false,
     val notifications: ImmutableList<HomeNotificationItemUiState> = persistentListOf()
 ) {
     val filteredNotifications: ImmutableList<HomeNotificationItemUiState>
@@ -53,7 +59,10 @@ data class HomeNotificationUiState(
                     body = "제주 서쪽 일출 투어",
                     timeAgo = "5분 전",
                     category = HomeNotificationCategory.SCHEDULE,
-                    isRead = false
+                    isRead = false,
+                    type = "SCHEDULE_CHANGED",
+                    resourceType = HomeNotificationResourceType.SCHEDULE,
+                    resourceId = 91
                 ),
                 HomeNotificationItemUiState(
                     id = 2,
@@ -61,7 +70,10 @@ data class HomeNotificationUiState(
                     body = "제주 동쪽 일출 투어",
                     timeAgo = "12분 전",
                     category = HomeNotificationCategory.MATCHING,
-                    isRead = false
+                    isRead = false,
+                    type = "MATCH_APPLIED",
+                    resourceType = HomeNotificationResourceType.MATCH,
+                    resourceId = 10
                 )
             )
         )
