@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.domain.repository.home
 
-import com.gildongmu.dduru.domain.entity.home.HomeNotification
 import com.gildongmu.dduru.domain.entity.home.HomeNotificationPage
 
 interface HomeNotificationRepository {

@@ -2,7 +2,6 @@ package com.gildongmu.dduru.data.repositoryimpl.home
 
 import com.gildongmu.dduru.data.mapper.home.toDomain
 import com.gildongmu.dduru.data.remote.datasource.home.HomeNotificationRemoteDataSource
-import com.gildongmu.dduru.domain.entity.home.HomeNotification
 import com.gildongmu.dduru.domain.entity.home.HomeNotificationPage
 import com.gildongmu.dduru.domain.repository.home.HomeNotificationRepository
 import java.io.IOException
