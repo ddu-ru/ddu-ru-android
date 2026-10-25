@@ -25,6 +25,7 @@ import kotlinx.coroutines.SupervisorJob
 import kotlinx.coroutines.cancel
 import kotlinx.coroutines.launch
 import timber.log.Timber
+import java.util.UUID
 
 @AndroidEntryPoint
 class DduruFirebaseMessagingService : FirebaseMessagingService() {
@@ -76,6 +77,7 @@ class DduruFirebaseMessagingService : FirebaseMessagingService() {
 
         ensureNotificationChannel()
 
+        val notificationId = UUID.randomUUID().hashCode()
         val notification = NotificationCompat.Builder(this, DduruPushNotificationContract.CHANNEL_ID)
             .setSmallIcon(R.drawable.ic_alram)
             .setContentTitle(title)
@@ -83,16 +85,14 @@ class DduruFirebaseMessagingService : FirebaseMessagingService() {
             .setStyle(NotificationCompat.BigTextStyle().bigText(body))
             .setPriority(NotificationCompat.PRIORITY_DEFAULT)
             .setAutoCancel(true)
-            .setContentIntent(createContentIntent(resourceType, resourceId))
+            .setContentIntent(createContentIntent(notificationId, resourceType, resourceId))
             .build()
 
-        NotificationManagerCompat.from(this).notify(
-            DduruPushNotificationContract.NOTIFICATION_ID,
-            notification
-        )
+        NotificationManagerCompat.from(this).notify(notificationId, notification)
     }
 
     private fun createContentIntent(
+        notificationId: Int,
         resourceType: String?,
         resourceId: String?
     ): PendingIntent {
@@ -104,7 +104,7 @@ class DduruFirebaseMessagingService : FirebaseMessagingService() {
 
         return PendingIntent.getActivity(
             this,
-            DduruPushNotificationContract.NOTIFICATION_ID,
+            notificationId,
             intent,
             PendingIntent.FLAG_UPDATE_CURRENT or PendingIntent.FLAG_IMMUTABLE
         )
