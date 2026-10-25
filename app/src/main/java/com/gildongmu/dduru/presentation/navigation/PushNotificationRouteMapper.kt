@@ -2,28 +2,33 @@ package com.gildongmu.dduru.presentation.navigation
 
 import android.content.Intent
 import com.gildongmu.dduru.core.notification.DduruPushNotificationContract
+import com.gildongmu.dduru.domain.entity.home.HomeNotificationResourceType
 
 fun Intent.toPushNotificationRoute(): RootNavRoute? {
     val resourceType = getStringExtra(DduruPushNotificationContract.KEY_RESOURCE_TYPE)
+        ?.toHomeNotificationResourceType()
         ?: return null
     val resourceId = getStringExtra(DduruPushNotificationContract.KEY_RESOURCE_ID)?.toLongOrNull()
 
-    return when (resourceType) {
-        RESOURCE_TYPE_MATCH -> RootNavRoute.MainTab(BottomNavRoute.Matching)
-        RESOURCE_TYPE_JOURNEY,
-        RESOURCE_TYPE_JOURNEY_POST,
-        RESOURCE_TYPE_SCHEDULE -> RootNavRoute.MainTab(BottomNavRoute.MyPage)
-        RESOURCE_TYPE_POST -> resourceId?.let { RootNavRoute.MatchingDetail(it) }
+    return resourceType.toPushNotificationRoute(resourceId) ?: RootNavRoute.HomeNotification
+}
+
+fun HomeNotificationResourceType.toPushNotificationRoute(resourceId: Long?): RootNavRoute? {
+    return when (this) {
+        HomeNotificationResourceType.MATCH -> RootNavRoute.MainTab(BottomNavRoute.Matching)
+        HomeNotificationResourceType.JOURNEY,
+        HomeNotificationResourceType.JOURNEY_POST,
+        HomeNotificationResourceType.SCHEDULE -> RootNavRoute.MainTab(BottomNavRoute.MyPage)
+        HomeNotificationResourceType.POST -> resourceId?.let { RootNavRoute.MatchingDetail(it) }
             ?: RootNavRoute.MainTab(BottomNavRoute.Matching)
-        RESOURCE_TYPE_CHAT_ROOM -> resourceId?.let { RootNavRoute.ChatRoom(it) }
+        HomeNotificationResourceType.CHAT_ROOM -> resourceId?.let { RootNavRoute.ChatRoom(it) }
             ?: RootNavRoute.MainTab(BottomNavRoute.Chat)
-        else -> RootNavRoute.HomeNotification
+        HomeNotificationResourceType.UNKNOWN -> null
     }
 }
 
-private const val RESOURCE_TYPE_MATCH = "MATCH"
-private const val RESOURCE_TYPE_JOURNEY = "JOURNEY"
-private const val RESOURCE_TYPE_JOURNEY_POST = "JOURNEY_POST"
-private const val RESOURCE_TYPE_SCHEDULE = "SCHEDULE"
-private const val RESOURCE_TYPE_POST = "POST"
-private const val RESOURCE_TYPE_CHAT_ROOM = "CHAT_ROOM"
+private fun String.toHomeNotificationResourceType(): HomeNotificationResourceType {
+    return HomeNotificationResourceType.entries
+        .firstOrNull { it.name == this }
+        ?: HomeNotificationResourceType.UNKNOWN
+}

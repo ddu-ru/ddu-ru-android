@@ -164,7 +164,10 @@ fun RootNavigation(
 
                     is RootNavRoute.HomeNotification -> NavEntry(route) {
                         HomeNotificationRoute(
-                            onBackClick = { navigateBack() }
+                            onBackClick = { navigateBack() },
+                            onNavigateToResource = { destination ->
+                                rootBackStack.add(destination)
+                            }
                         )
                     }
 

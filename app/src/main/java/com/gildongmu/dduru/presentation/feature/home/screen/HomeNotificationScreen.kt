@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,18 +28,34 @@ import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationF
 import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationList
 import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationMoreMenu
 import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationTopBar
+import com.gildongmu.dduru.presentation.feature.home.effect.HomeNotificationSideEffect
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationFilter
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationItemUiState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationUiState
 import com.gildongmu.dduru.presentation.feature.home.viewmodel.HomeNotificationViewModel
+import com.gildongmu.dduru.presentation.navigation.RootNavRoute
+import com.gildongmu.dduru.presentation.navigation.toPushNotificationRoute
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeNotificationRoute(
     onBackClick: () -> Unit,
+    onNavigateToResource: (RootNavRoute) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeNotificationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) {
+        viewModel.sideEffect.collectLatest { sideEffect ->
+            when (sideEffect) {
+                is HomeNotificationSideEffect.NavigateToResource -> {
+                    sideEffect.resourceType.toPushNotificationRoute(sideEffect.resourceId)
+                        ?.let(onNavigateToResource)
+                }
+            }
+        }
+    }
 
     when (val state = uiState) {
         UiState.Loading -> DduruLoadingScreen(modifier = modifier)

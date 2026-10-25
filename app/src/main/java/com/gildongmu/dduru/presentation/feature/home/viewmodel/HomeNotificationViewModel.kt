@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.domain.entity.home.HomeNotification
 import com.gildongmu.dduru.domain.repository.home.HomeNotificationRepository
+import com.gildongmu.dduru.presentation.feature.home.effect.HomeNotificationSideEffect
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationFilter
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationItemUiState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationUiState
@@ -12,7 +13,10 @@ import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -22,6 +26,9 @@ class HomeNotificationViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<HomeNotificationUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeNotificationUiState>> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<HomeNotificationSideEffect>()
+    val sideEffect: SharedFlow<HomeNotificationSideEffect> = _sideEffect.asSharedFlow()
 
     init {
         loadNotifications()
@@ -42,14 +49,21 @@ class HomeNotificationViewModel @Inject constructor(
     fun onDeleteAllClick() = Unit
 
     fun onNotificationClick(notification: HomeNotificationItemUiState) {
-        if (notification.isRead) return
-
         viewModelScope.launch {
-            homeNotificationRepository.markAsRead(notification.id)
-                .onSuccess {
-                    updateNotificationReadState(notification.id)
-                }
-                .onFailure { _uiState.value = UiState.Failure }
+            _sideEffect.emit(
+                HomeNotificationSideEffect.NavigateToResource(
+                    resourceType = notification.resourceType,
+                    resourceId = notification.resourceId
+                )
+            )
+
+            if (!notification.isRead) {
+                homeNotificationRepository.markAsRead(notification.id)
+                    .onSuccess {
+                        updateNotificationReadState(notification.id)
+                    }
+                    .onFailure { _uiState.value = UiState.Failure }
+            }
         }
     }
 
