@@ -29,10 +29,10 @@ import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingFilterBottomSheet
-import com.gildongmu.dduru.presentation.feature.matching.component.MatchingPostListSection
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingSearchFilterSection
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingTopHeader
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingWriteButton
+import com.gildongmu.dduru.presentation.feature.matching.createPost.component.MatchingPostListSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.MatchingSortBottomSheet
 import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffect
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState

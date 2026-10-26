@@ -120,7 +120,7 @@ private fun MatchingSearchField(
 }
 
 @Composable
-private fun MatchingFilterChip(
+fun MatchingFilterChip(
     text: String,
     onClick: () -> Unit,
     modifier: Modifier = Modifier,
