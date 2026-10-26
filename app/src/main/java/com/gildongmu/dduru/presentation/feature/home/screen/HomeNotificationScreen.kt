@@ -167,7 +167,7 @@ private fun HomeNotificationScreenPreview() {
             onFilterClick = {},
             onNotificationClick = {},
             onLoadMoreNotifications = {},
-            onMarkAllAsReadClick = {},
+            onMarkAllAsReadClick = {}
         )
     }
 }
@@ -182,7 +182,7 @@ private fun HomeNotificationEmptyScreenPreview() {
             onFilterClick = {},
             onNotificationClick = {},
             onLoadMoreNotifications = {},
-            onMarkAllAsReadClick = {},
+            onMarkAllAsReadClick = {}
         )
     }
 }
