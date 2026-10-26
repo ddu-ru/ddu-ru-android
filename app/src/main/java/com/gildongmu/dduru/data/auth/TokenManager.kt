@@ -4,12 +4,15 @@ import android.util.Log
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.remote.dto.request.RefreshTokenRequest
 import com.gildongmu.dduru.data.remote.service.AuthService
+import com.gildongmu.dduru.domain.repository.FcmTokenRepository
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
+import timber.log.Timber
 
 class TokenManager @Inject constructor(
     private val authService: AuthService,
-    private val tokenLocalDataSource: TokenLocalDataSource
+    private val tokenLocalDataSource: TokenLocalDataSource,
+    private val fcmTokenRepository: FcmTokenRepository
 ) {
 
     suspend fun refreshToken(): Boolean {
@@ -34,6 +37,11 @@ class TokenManager @Inject constructor(
 
     suspend fun logout(): Boolean {
         return try {
+            fcmTokenRepository.deleteCurrentToken()
+                .onFailure { throwable ->
+                    Timber.e(throwable, "FCM 토큰 삭제 실패")
+                }
+
             val response = authService.logout()
             if (response.isSuccessful) {
                 tokenLocalDataSource.clearTokens()

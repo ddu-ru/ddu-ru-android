@@ -6,12 +6,15 @@ import com.gildongmu.dduru.data.remote.datasource.AuthDataSource
 import com.gildongmu.dduru.data.remote.datasource.GoogleAuthDataSource
 import com.gildongmu.dduru.data.remote.dto.request.LoginRequest
 import com.gildongmu.dduru.domain.repository.AuthRepository
+import com.gildongmu.dduru.domain.repository.FcmTokenRepository
 import javax.inject.Inject
+import timber.log.Timber
 
 class AuthRepositoryImpl @Inject constructor(
     private val authDataSource: AuthDataSource,
     private val tokenLocalDataSource: TokenLocalDataSource,
-    private val googleAuthDataSource: GoogleAuthDataSource
+    private val googleAuthDataSource: GoogleAuthDataSource,
+    private val fcmTokenRepository: FcmTokenRepository
 ) : AuthRepository {
 
     override suspend fun loginWithKakao(idToken: String): Result<Boolean> {
@@ -23,6 +26,7 @@ class AuthRepositoryImpl @Inject constructor(
             )
 
             tokenLocalDataSource.saveTokens(data.accessToken, data.refreshToken)
+            registerFcmToken()
             Result.success(data.isNewUser)
         } catch (e: Exception) {
             Result.failure(e)
@@ -41,6 +45,7 @@ class AuthRepositoryImpl @Inject constructor(
                     response.data.accessToken,
                     response.data.refreshToken
                 )
+                registerFcmToken()
                 Result.success(response.data.isNewUser)
             } else {
                 Result.failure(Exception("Data is null"))
@@ -48,5 +53,12 @@ class AuthRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    private suspend fun registerFcmToken() {
+        fcmTokenRepository.registerCurrentToken()
+            .onFailure { throwable ->
+                Timber.e(throwable, "Failed to register FCM token")
+            }
     }
 }

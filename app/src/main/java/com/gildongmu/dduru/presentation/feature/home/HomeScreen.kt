@@ -35,7 +35,6 @@ import com.gildongmu.dduru.presentation.feature.home.component.HomeRealtimePopul
 import com.gildongmu.dduru.presentation.feature.home.component.HomeSuperHostSection
 import com.gildongmu.dduru.presentation.feature.home.component.TravelCompanionSection
 import com.gildongmu.dduru.presentation.feature.home.component.UpcomingTripCard
-import com.gildongmu.dduru.presentation.feature.home.component.UpcomingTripEmptyState
 import com.gildongmu.dduru.presentation.feature.home.component.WritingButton
 import com.gildongmu.dduru.presentation.feature.home.component.WritingExpandedMenu
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
@@ -48,6 +47,7 @@ fun HomeRoute(
     paddingValues: PaddingValues = PaddingValues(0.dp),
     navigateToNotification: () -> Unit = {},
     navigateToMenu: () -> Unit = {},
+    navigateToMatching: () -> Unit = {},
     navigateToUpcomingTripTask: () -> Unit = {},
     navigateToDestination: (Long) -> Unit = {},
     navigateToSuperHost: (Long) -> Unit = {},
@@ -63,6 +63,7 @@ fun HomeRoute(
             when (sideEffect) {
                 HomeSideEffect.NavigateToNotification -> navigateToNotification()
                 HomeSideEffect.NavigateToMenu -> navigateToMenu()
+                HomeSideEffect.NavigateToMatching -> navigateToMatching()
                 HomeSideEffect.NavigateToUpcomingTripTask -> navigateToUpcomingTripTask()
                 is HomeSideEffect.NavigateToDestination -> navigateToDestination(sideEffect.id)
                 is HomeSideEffect.NavigateToSuperHost -> navigateToSuperHost(sideEffect.id)
@@ -150,8 +151,8 @@ private fun HomeScreen(
                 contentPadding = PaddingValues(bottom = 110.dp),
                 verticalArrangement = Arrangement.spacedBy(40.dp)
             ) {
-                item {
-                    if (uiState.upcomingTrip.hasUpcomingTrip) {
+                if (uiState.upcomingTrip.hasUpcomingTrip) {
+                    item {
                         UpcomingTripCard(
                             title = uiState.upcomingTrip.title,
                             dateText = uiState.upcomingTrip.dateText,
@@ -162,8 +163,6 @@ private fun HomeScreen(
                             onUpcomingTripTaskClick = onUpcomingTripTaskClick,
                             modifier = Modifier.fillMaxWidth()
                         )
-                    } else {
-                        UpcomingTripEmptyState(modifier = Modifier.fillMaxWidth())
                     }
                 }
 

@@ -3,14 +3,18 @@ package com.gildongmu.dduru.data.di
 import com.gildongmu.dduru.data.register.nickname.repositoryimpl.NicknameRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.AuthRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ChatRoomRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.FcmTokenRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ParticipationRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.SurveyRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.home.HomeNotificationRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.home.HomeRepositoryImpl
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
+import com.gildongmu.dduru.domain.repository.FcmTokenRepository
 import com.gildongmu.dduru.domain.repository.ParticipationRepository
 import com.gildongmu.dduru.domain.repository.SurveyRepository
+import com.gildongmu.dduru.domain.repository.home.HomeNotificationRepository
 import com.gildongmu.dduru.domain.repository.home.HomeRepository
 import dagger.Binds
 import dagger.Module
@@ -36,6 +40,12 @@ abstract class RepositoryModule {
 
     @Binds
     @Singleton
+    abstract fun bindHomeNotificationRepository(
+        homeNotificationRepositoryImpl: HomeNotificationRepositoryImpl
+    ): HomeNotificationRepository
+
+    @Binds
+    @Singleton
     abstract fun bindSurveyRepository(
         surveyRepositoryImpl: SurveyRepositoryImpl
     ): SurveyRepository
@@ -57,4 +67,10 @@ abstract class RepositoryModule {
     abstract fun bindParticipationRepository(
         impl: ParticipationRepositoryImpl
     ): ParticipationRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindFcmTokenRepository(
+        fcmTokenRepositoryImpl: FcmTokenRepositoryImpl
+    ): FcmTokenRepository
 }

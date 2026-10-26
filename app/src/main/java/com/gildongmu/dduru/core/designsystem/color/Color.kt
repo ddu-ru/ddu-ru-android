@@ -29,12 +29,19 @@ val Gray9E = Color(0xFF9E9E9E)
 val Black = Color(0xFF000000)
 val ValidationRed = Color(0xFFFF2828)
 val KakaoYellow = Color(0xFFFEE500)
+val PinnedPostBackground = Color(0xFFFFFAF4)
 val BadgeOrange = Color(0xFFFF6C28)
 val AcceptGreen = Color(0xFF2A9669)
 val AcceptGreenBg = Color(0xFFC8F2DE)
 val RejectRed = Color(0xFFEF4343)
 val RejectRedBg = Color(0xFFF6E1E1)
 val RejectConfirmBg = Color(0xFFFFE9E9)
+val JourneyTodo = Color(0xFF22A6B3)
+val JourneyTodoBg = Color(0xFFE8F8F8)
+val JourneyNews = Color(0xFFEB5757)
+val JourneyNewsBg = Color(0xFFFFEEEE)
+val JourneyKick = Color(0xFFF25353)
+val JourneyKickText = Color(0xFFFF0000)
 
 @Immutable
 data class DduruColors(
@@ -66,12 +73,19 @@ data class DduruColors(
 
     val validationRed: Color,
     val kakaoYellow: Color,
+    val pinnedPostBackground: Color,
     val badgeOrange: Color,
     val acceptGreen: Color,
     val acceptGreenBg: Color,
     val rejectRed: Color,
     val rejectRedBg: Color,
-    val rejectConfirmBg: Color
+    val rejectConfirmBg: Color,
+    val journeyTodo: Color,
+    val journeyTodoBg: Color,
+    val journeyNews: Color,
+    val journeyNewsBg: Color,
+    val journeyKick: Color,
+    val journeyKickText: Color
 )
 
 val defaultDduruColors = DduruColors(
@@ -101,13 +115,20 @@ val defaultDduruColors = DduruColors(
     black = Black,
 
     kakaoYellow = KakaoYellow,
+    pinnedPostBackground = PinnedPostBackground,
     validationRed = ValidationRed,
     badgeOrange = BadgeOrange,
     acceptGreen = AcceptGreen,
     acceptGreenBg = AcceptGreenBg,
     rejectRed = RejectRed,
     rejectRedBg = RejectRedBg,
-    rejectConfirmBg = RejectConfirmBg
+    rejectConfirmBg = RejectConfirmBg,
+    journeyTodo = JourneyTodo,
+    journeyTodoBg = JourneyTodoBg,
+    journeyNews = JourneyNews,
+    journeyNewsBg = JourneyNewsBg,
+    journeyKick = JourneyKick,
+    journeyKickText = JourneyKickText
 )
 
 val LocalDduruColors = staticCompositionLocalOf { defaultDduruColors }

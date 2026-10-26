@@ -109,7 +109,7 @@ fun MessageBubble(
 }
 
 @Composable
-private fun MessageTimeInfo(
+fun MessageTimeInfo(
     time: String,
     unreadCount: Int,
     isMine: Boolean,

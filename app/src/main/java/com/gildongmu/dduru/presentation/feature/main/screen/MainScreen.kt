@@ -34,7 +34,8 @@ fun MainScreen(
     onNavigateToHomeMenu: () -> Unit,
     onNavigateToChatRoom: (Long) -> Unit,
     onNavigateToMatchingCreatePost: () -> Unit,
-    onNavigateToMatchingDetail: (Long) -> Unit
+    onNavigateToMatchingDetail: (Long) -> Unit,
+    initialRoute: BottomNavRoute = BottomNavRoute.Home
 ) {
     val bottomNavItems = remember {
         listOf(
@@ -46,7 +47,7 @@ fun MainScreen(
         )
     }
 
-    val bottomNavBackStack = rememberNavBackStack(BottomNavRoute.Home)
+    val bottomNavBackStack = rememberNavBackStack(initialRoute)
     val currentRoute = bottomNavBackStack.lastOrNull() as? BottomNavRoute
         ?: BottomNavRoute.Home
     val hazeState = remember { HazeState() }
@@ -77,6 +78,17 @@ fun MainScreen(
                         HomeRoute(
                             navigateToNotification = onNavigateToHomeNotification,
                             navigateToMenu = onNavigateToHomeMenu,
+                            navigateToMatching = {
+                                navigateToBottomRoute(BottomNavRoute.Matching)
+                            },
+                            navigateToUpcomingTripTask = {
+                                navigateToBottomRoute(BottomNavRoute.MyPage)
+                            },
+                            navigateToDestination = {
+                                navigateToBottomRoute(BottomNavRoute.Matching)
+                            },
+                            navigateToSuperHost = onNavigateToMatchingDetail,
+                            navigateToCompanion = onNavigateToMatchingDetail,
                             navigateToCreateTravelRoom = onNavigateToMatchingCreatePost,
                             navigateToWriteCommunity = {
                                 navigateToBottomRoute(BottomNavRoute.Board)
@@ -85,6 +97,8 @@ fun MainScreen(
                     }
                     is BottomNavRoute.Matching -> NavEntry(route) {
                         MatchingRoute(
+                            navigateToNotification = onNavigateToHomeNotification,
+                            navigateToMenu = onNavigateToHomeMenu,
                             navigateToCreatePost = onNavigateToMatchingCreatePost,
                             navigateToPostDetail = onNavigateToMatchingDetail
                         )

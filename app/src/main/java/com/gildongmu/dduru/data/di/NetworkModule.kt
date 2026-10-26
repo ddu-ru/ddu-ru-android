@@ -6,8 +6,10 @@ import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
 import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
 import com.gildongmu.dduru.data.remote.service.AuthService
 import com.gildongmu.dduru.data.remote.service.ChatRoomService
+import com.gildongmu.dduru.data.remote.service.FcmTokenService
 import com.gildongmu.dduru.data.remote.service.ParticipationService
 import com.gildongmu.dduru.data.remote.service.SurveyService
+import com.gildongmu.dduru.data.remote.service.home.HomeNotificationService
 import com.gildongmu.dduru.data.remote.service.home.HomeService
 import com.gildongmu.dduru.data.remote.websocket.StompChatClient
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
@@ -134,6 +136,12 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun provideFcmTokenService(retrofit: Retrofit): FcmTokenService {
+        return retrofit.create(FcmTokenService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideHomeService(retrofit: Retrofit): HomeService {
         return retrofit.create(HomeService::class.java)
     }
@@ -149,4 +157,7 @@ object NetworkModule {
         okHttpClient = okHttpClient,
         baseUrl = baseUrl
     )
+    fun provideHomeNotificationService(retrofit: Retrofit): HomeNotificationService {
+        return retrofit.create(HomeNotificationService::class.java)
+    }
 }
