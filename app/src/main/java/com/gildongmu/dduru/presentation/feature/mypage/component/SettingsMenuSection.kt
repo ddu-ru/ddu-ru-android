@@ -26,19 +26,21 @@ data class SettingsMenuItem(
 
 @Composable
 fun SettingsMenuSection(
-    label: String,
     items: List<SettingsMenuItem>,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    label: String? = null
 ) {
     Column(
         verticalArrangement = Arrangement.spacedBy(8.dp),
         modifier = modifier.fillMaxWidth()
     ) {
-        Text(
-            text = label,
-            style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray500
-        )
+        if (label != null) {
+            Text(
+                text = label,
+                style = DduruTheme.typography.Body2,
+                color = DduruTheme.colors.gray500
+            )
+        }
 
         Column(modifier = Modifier.fillMaxWidth()) {
             items.forEach { item ->
@@ -113,5 +115,19 @@ private fun SettingsMenuSectionPreview() {
                 )
             )
         }
+    }
+}
+
+@Preview(showBackground = true, name = "소제목 없음")
+@Composable
+private fun SettingsMenuSectionWithoutLabelPreview() {
+    DduruTheme {
+        SettingsMenuSection(
+            items = listOf(
+                SettingsMenuItem(title = "로그아웃", onClick = {}),
+                SettingsMenuItem(title = "회원탈퇴", onClick = {})
+            ),
+            modifier = Modifier.padding(16.dp)
+        )
     }
 }
