@@ -113,6 +113,7 @@ class ChatRequestViewModel @Inject constructor(
                             it.status == ReceivedApplicationStatus.APPROVED ||
                                 it.status == ReceivedApplicationStatus.REJECTED
                         }
+
                         if (contacting.isNotEmpty()) add(ChatRequestSectionUiState("연락중", contacting))
                         if (waiting.isNotEmpty()) add(ChatRequestSectionUiState("대기중", waiting))
                         if (done.isNotEmpty()) add(ChatRequestSectionUiState("완료", done))
