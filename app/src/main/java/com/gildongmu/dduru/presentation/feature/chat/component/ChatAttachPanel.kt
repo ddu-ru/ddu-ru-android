@@ -28,7 +28,7 @@ enum class ChatAttachOption(
     @DrawableRes val iconRes: Int,
     val label: String
 ) {
-    PHOTO(R.drawable.ic_images, "사진"),
+    PHOTO(R.drawable.ic_chat_images, "사진"),
     CAMERA(R.drawable.ic_camera, "카메라"),
     MAP(R.drawable.ic_map_pin, "지도"),
     POLL(R.drawable.ic_check_square, "투표")
