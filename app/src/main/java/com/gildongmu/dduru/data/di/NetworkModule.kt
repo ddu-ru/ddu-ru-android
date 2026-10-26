@@ -8,6 +8,7 @@ import com.gildongmu.dduru.data.remote.service.AuthService
 import com.gildongmu.dduru.data.remote.service.ChatRoomService
 import com.gildongmu.dduru.data.remote.service.FcmTokenService
 import com.gildongmu.dduru.data.remote.service.ParticipationService
+import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.data.remote.service.SurveyService
 import com.gildongmu.dduru.data.remote.service.home.HomeNotificationService
 import com.gildongmu.dduru.data.remote.service.home.HomeService
@@ -132,6 +133,10 @@ object NetworkModule {
     fun provideParticipationService(retrofit: Retrofit): ParticipationService {
         return retrofit.create(ParticipationService::class.java)
     }
+
+    @Provides
+    @Singleton
+    fun providePostService(retrofit: Retrofit): PostService = retrofit.create(PostService::class.java)
 
     @Provides
     @Singleton

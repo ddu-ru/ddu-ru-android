@@ -3,6 +3,8 @@ package com.gildongmu.dduru.presentation.feature.matching.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.data.remote.dto.response.post.PostSummaryResponse
+import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffect
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -17,12 +19,16 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MatchingViewModel @Inject constructor() : ViewModel() {
-    private val _uiState = MutableStateFlow<UiState<MatchingUiState>>(UiState.Success(MatchingUiState.fake))
+class MatchingViewModel @Inject constructor(
+    private val postService: PostService
+) : ViewModel() {
+    private val _uiState = MutableStateFlow<UiState<MatchingUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MatchingUiState>> = _uiState.asStateFlow()
 
     private val _sideEffect = MutableSharedFlow<MatchingSideEffect>()
     val sideEffect: SharedFlow<MatchingSideEffect> = _sideEffect.asSharedFlow()
+
+    init { loadPosts() }
 
     fun onNotificationClick() {
         emitSideEffect(MatchingSideEffect.NavigateToNotification)
@@ -36,6 +42,7 @@ class MatchingViewModel @Inject constructor() : ViewModel() {
         updateMatchingUiState {
             copy(searchQuery = query)
         }
+        loadPosts()
     }
 
     fun onSortSelected(sort: String) {
@@ -44,6 +51,7 @@ class MatchingViewModel @Inject constructor() : ViewModel() {
         updateMatchingUiState {
             copy(selectedSort = sort)
         }
+        loadPosts()
     }
 
     fun onPostClick(id: Long) {
@@ -51,13 +59,7 @@ class MatchingViewModel @Inject constructor() : ViewModel() {
     }
 
     fun onPostLikeClick(id: Long) {
-        updateMatchingUiState {
-            copy(
-                posts = posts.map { post ->
-                    if (post.id == id) post.copy(isLiked = !post.isLiked) else post
-                }.toPersistentList()
-            )
-        }
+        viewModelScope.launch { postService.toggleLike(id); loadPosts() }
     }
 
     fun onWriteClick() {
@@ -77,4 +79,30 @@ class MatchingViewModel @Inject constructor() : ViewModel() {
             _uiState.value = UiState.Success(currentState.data.reducer())
         }
     }
+
+    private fun loadPosts() {
+        viewModelScope.launch {
+            val current = (_uiState.value as? UiState.Success)?.data ?: MatchingUiState()
+            _uiState.value = UiState.Loading
+            runCatching {
+                postService.getPosts(
+                    keyword = current.searchQuery.takeIf { it.isNotBlank() },
+                    sort = current.selectedSort.toSortCode()
+                )
+            }.onSuccess { response ->
+                val data = response.data ?: error("게시글 목록 응답이 비어있어요.")
+                _uiState.value = UiState.Success(current.copy(posts = data.posts.map { it.toUiModel() }.toPersistentList()))
+            }.onFailure { _uiState.value = UiState.Failure }
+        }
+    }
+
+    private fun String.toSortCode() = when (this) { "조회순" -> "VIEW"; "좋아요순" -> "LIKE"; else -> "LATEST" }
+
+    private fun PostSummaryResponse.toUiModel() = com.gildongmu.dduru.presentation.feature.matching.model.MatchingPostCardUiModel(
+        id = id, title = title, authorName = author.nickname, location = destination,
+        dateRange = "$startDate - $endDate", currentMemberCount = recruitCount, maxMemberCount = recruitCapacity,
+        gender = when (preferredGender) { "M" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.MALE; "F" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.FEMALE; else -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.ANY },
+        companionType = when (companionType) { "PARTIAL" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.PARTIAL; "MEAL" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.MEAL; else -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.FULL },
+        isSuperHost = author.isSuperHost, isLiked = hasLiked, thumbnailImageRes = com.gildongmu.dduru.R.drawable.fukuoka
+    )
 }
