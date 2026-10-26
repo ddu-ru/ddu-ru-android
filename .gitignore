@@ -221,6 +221,7 @@ hs_err_pid*
 
 # Personal local notes
 docs/presentation-screen-style.md
+docs/flow-ux-gap-audit.md
 
 # mpeltonen/sbt-idea plugin
 .idea_modules/
