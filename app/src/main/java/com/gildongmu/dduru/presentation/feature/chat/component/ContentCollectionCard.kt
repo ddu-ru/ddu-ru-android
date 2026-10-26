@@ -5,9 +5,11 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
@@ -114,17 +116,18 @@ private fun ContentTabChip(
     selected: Boolean,
     onClick: () -> Unit
 ) {
-    val bgColor = if (selected) DduruTheme.colors.black else DduruTheme.colors.gray100
+    val bgColor = if (selected) DduruTheme.colors.black else DduruTheme.colors.gray50
     val textColor = if (selected) DduruTheme.colors.gray0 else DduruTheme.colors.gray600
-    val borderColor = if (selected) DduruTheme.colors.black else DduruTheme.colors.gray50
+    val borderColor = if (selected) DduruTheme.colors.black else DduruTheme.colors.gray100
 
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
+            .height(40.dp)
             .border(1.dp, borderColor, RoundedCornerShape(99.dp))
             .background(bgColor, RoundedCornerShape(99.dp))
             .noRippleClickable(onClick = onClick)
-            .padding(horizontal = 16.dp, vertical = 8.dp)
+            .padding(horizontal = 16.dp)
     ) {
         Text(
             text = label,
@@ -134,28 +137,24 @@ private fun ContentTabChip(
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 private fun ContentPhotoGrid(photoUrls: List<String>) {
-    Column(
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+    FlowRow(
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp),
+        modifier = Modifier.fillMaxWidth()
     ) {
-        photoUrls.take(6).chunked(3).forEach { rowItems ->
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                rowItems.forEach { url ->
-                    AsyncImage(
-                        model = url,
-                        contentDescription = null,
-                        contentScale = ContentScale.Crop,
-                        modifier = Modifier
-                            .weight(1f)
-                            .aspectRatio(1f)
-                            .clip(RoundedCornerShape(8.dp))
-                            .background(DduruTheme.colors.gray200, RoundedCornerShape(8.dp))
-                    )
-                }
-            }
+        photoUrls.take(6).forEach { url ->
+            AsyncImage(
+                model = url,
+                contentDescription = null,
+                contentScale = ContentScale.Crop,
+                modifier = Modifier
+                    .size(98.dp)
+                    .clip(RoundedCornerShape(8.dp))
+                    .background(DduruTheme.colors.gray200, RoundedCornerShape(8.dp))
+            )
         }
     }
 }

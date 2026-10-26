@@ -43,7 +43,7 @@ fun ChatRoomActionCard(
         )
         ChatRoomActionItem(
             iconRes = R.drawable.ic_signout,
-            label = "채팅방 나가기",
+            label = "여행방 나가기",
             onClick = onLeaveClick
         )
     }
