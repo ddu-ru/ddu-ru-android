@@ -1,3 +1,4 @@
+// ktlint-disable max-line-length
 package com.gildongmu.dduru.presentation.feature.matching.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -6,6 +7,7 @@ import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.data.remote.dto.response.post.PostSummaryResponse
 import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffect
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -54,6 +56,17 @@ class MatchingViewModel @Inject constructor(
         loadPosts()
     }
 
+    fun onFiltersApplied(filters: MatchingFilterOptions) {
+        updateMatchingUiState { copy(filters = filters) }
+        loadPosts()
+    }
+
+    fun loadMorePosts() {
+        val state = (_uiState.value as? UiState.Success)?.data ?: return
+        if (!state.hasNext || state.isLoadingMore) return
+        loadPosts(append = true)
+    }
+
     fun onPostClick(id: Long) {
         emitSideEffect(MatchingSideEffect.NavigateToPostDetail(id))
     }
@@ -80,18 +93,41 @@ class MatchingViewModel @Inject constructor(
         }
     }
 
-    private fun loadPosts() {
+    private fun loadPosts(append: Boolean = false) {
         viewModelScope.launch {
             val current = (_uiState.value as? UiState.Success)?.data ?: MatchingUiState()
-            _uiState.value = UiState.Loading
+            if (append) {
+                _uiState.value = UiState.Success(current.copy(isLoadingMore = true))
+            } else {
+                _uiState.value = UiState.Loading
+            }
             runCatching {
                 postService.getPosts(
+                    cursor = if (append) current.nextCursor else null,
+                    cursorValue = if (append) current.nextCursorValue else null,
                     keyword = current.searchQuery.takeIf { it.isNotBlank() },
+                    startDate = current.filters.startDate,
+                    endDate = current.filters.endDate,
+                    preferredGender = current.filters.preferredGender,
+                    minAge = current.filters.minAge,
+                    maxAge = current.filters.maxAge,
+                    minRecruitCapacity = current.filters.minRecruitCapacity,
+                    maxRecruitCapacity = current.filters.maxRecruitCapacity,
+                    recruitmentStatus = current.filters.recruitmentStatus,
+                    companionType = current.filters.companionType,
                     sort = current.selectedSort.toSortCode()
                 )
             }.onSuccess { response ->
                 val data = response.data ?: error("게시글 목록 응답이 비어있어요.")
-                _uiState.value = UiState.Success(current.copy(posts = data.posts.map { it.toUiModel() }.toPersistentList()))
+                _uiState.value = UiState.Success(
+                    current.copy(
+                        posts = (if (append) current.posts + data.posts.map { it.toUiModel() } else data.posts.map { it.toUiModel() }).toPersistentList(),
+                        nextCursor = data.nextCursor,
+                        nextCursorValue = data.nextCursorValue,
+                        hasNext = data.hasNext,
+                        isLoadingMore = false
+                    )
+                )
             }.onFailure { _uiState.value = UiState.Failure }
         }
     }

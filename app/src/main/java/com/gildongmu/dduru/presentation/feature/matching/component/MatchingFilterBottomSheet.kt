@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 import java.time.LocalDate
 import kotlinx.coroutines.launch
@@ -39,7 +40,7 @@ enum class MatchingFilterTab(val label: String) {
 fun MatchingFilterBottomSheet(
     visible: Boolean,
     onDismiss: () -> Unit,
-    onDestinationClick: () -> Unit,
+    onApplyFilters: (MatchingFilterOptions) -> Unit,
     modifier: Modifier = Modifier
 ) {
     if (!visible) return
@@ -64,8 +65,11 @@ fun MatchingFilterBottomSheet(
     ) {
         MatchingFilterBottomSheetContent(
             onClose = ::dismissSheet,
-            onApply = ::dismissSheet,
-            onDestinationClick = onDestinationClick
+            onApply = { options ->
+                onApplyFilters(options)
+                dismissSheet()
+            },
+            onDestinationClick = {}
         )
     }
 }
@@ -73,7 +77,7 @@ fun MatchingFilterBottomSheet(
 @Composable
 private fun MatchingFilterBottomSheetContent(
     onClose: () -> Unit,
-    onApply: () -> Unit,
+    onApply: (MatchingFilterOptions) -> Unit,
     onDestinationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -167,11 +171,35 @@ private fun MatchingFilterBottomSheetContent(
 
         MatchingFilterFooter(
             onResetClick = ::resetFilters,
-            onApplyClick = onApply,
+            onApplyClick = {
+                onApply(
+                    MatchingFilterOptions(
+                        startDate = selectedStartDate?.toString(),
+                        endDate = selectedEndDate?.toString(),
+                        recruitmentStatus = selectedRecruitmentStatus?.toRecruitmentStatusCode(),
+                        preferredGender = selectedGender?.code,
+                        minRecruitCapacity = selectedParticipantOption?.toMinCapacity(),
+                        maxRecruitCapacity = selectedParticipantOption?.toMaxCapacity(),
+                        minAge = selectedAgeStart,
+                        maxAge = selectedAgeEnd,
+                        companionType = selectedCompanionType?.code
+                    )
+                )
+            },
             modifier = Modifier.padding(top = 16.dp)
         )
     }
 }
+
+private fun String.toRecruitmentStatusCode() = when (this) {
+    "모집중" -> "OPEN"
+    "마감임박" -> "DEADLINE_NEAR"
+    "모집 완료" -> "CLOSED"
+    else -> null
+}
+
+private fun String.toMinCapacity() = when (this) { "2명", "2-4명" -> 2; "4명" -> 4; else -> null }
+private fun String.toMaxCapacity() = when (this) { "2명" -> 2; "4명", "2-4명" -> 4; else -> null }
 
 private fun <T> T?.toggle(value: T): T? {
     return if (this == value) null else value

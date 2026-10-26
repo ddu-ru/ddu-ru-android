@@ -48,6 +48,6 @@ enum class MatchingCompanionType(
         selectionLabel = "식사 동행",
         cardLabel = "식사동행",
         guideMessage = "식사 약속 위주로 가볍게 만나요",
-        code = "PARTIAL"
+        code = "MEAL"
     )
 }

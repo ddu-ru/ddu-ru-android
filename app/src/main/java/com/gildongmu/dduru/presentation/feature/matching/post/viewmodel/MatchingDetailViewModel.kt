@@ -1,8 +1,10 @@
+// ktlint-disable max-line-length
 package com.gildongmu.dduru.presentation.feature.matching.post.viewmodel
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.data.remote.dto.response.post.ParticipationRequest
 import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -73,6 +75,15 @@ class MatchingDetailViewModel @Inject constructor(
                 .takeIf { it.status in 200..299 }
                 ?: return@launch
             loadMatchingDetail(postId)
+        }
+    }
+
+    fun onParticipationClick(postId: Long) {
+        viewModelScope.launch {
+            val response = runCatching {
+                postService.createParticipation(postId, ParticipationRequest())
+            }.getOrNull() ?: return@launch
+            if (response.status in 200..299) loadMatchingDetail(postId)
         }
     }
 }
