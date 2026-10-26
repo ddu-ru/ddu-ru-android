@@ -22,7 +22,7 @@ fun PenguinCharacter(
         contentDescription = "펭귄 캐릭터",
         contentScale = ContentScale.Fit,
         modifier = modifier
-            .size(width = 48.dp, height = 60.dp)
+            .size(width = 50.dp, height = 64.dp)
             .background(
                 color = DduruTheme.colors.gray50,
                 shape = RoundedCornerShape(99.dp)
