@@ -134,10 +134,6 @@ class HomeViewModel @Inject constructor(
         emitSideEffect(HomeSideEffect.NavigateToCreateTravelRoom)
     }
 
-    fun onWriteCommunityClick() {
-        emitSideEffect(HomeSideEffect.NavigateToWriteCommunity)
-    }
-
     private fun emitSideEffect(sideEffect: HomeSideEffect) {
         viewModelScope.launch {
             _sideEffect.emit(sideEffect)

@@ -52,7 +52,6 @@ fun HomeRoute(
     navigateToDestination: (Long) -> Unit = {},
     navigateToMatchingDetail: (Long) -> Unit = {},
     navigateToCreateTravelRoom: () -> Unit = {},
-    navigateToWriteCommunity: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -69,7 +68,6 @@ fun HomeRoute(
                     navigateToMatchingDetail(sideEffect.postId)
                 }
                 HomeSideEffect.NavigateToCreateTravelRoom -> navigateToCreateTravelRoom()
-                HomeSideEffect.NavigateToWriteCommunity -> navigateToWriteCommunity()
             }
         }
     }
@@ -97,8 +95,7 @@ fun HomeRoute(
                 onSuperHostLikeClick = viewModel::onSuperHostLikeClick,
                 onCompanionMoreClick = viewModel::onCompanionMoreClick,
                 onCompanionClick = viewModel::onCompanionClick,
-                onCreateTravelRoomClick = viewModel::onCreateTravelRoomClick,
-                onWriteCommunityClick = viewModel::onWriteCommunityClick
+                onCreateTravelRoomClick = viewModel::onCreateTravelRoomClick
             )
         }
     }
@@ -121,7 +118,6 @@ private fun HomeScreen(
     onCompanionMoreClick: () -> Unit,
     onCompanionClick: (Long) -> Unit,
     onCreateTravelRoomClick: () -> Unit,
-    onWriteCommunityClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isWritingMenuVisible by remember { mutableStateOf(false) }
@@ -227,10 +223,6 @@ private fun HomeScreen(
                     onCreateTravelRoom = {
                         isWritingMenuVisible = false
                         onCreateTravelRoomClick()
-                    },
-                    onWriteCommunity = {
-                        isWritingMenuVisible = false
-                        onWriteCommunityClick()
                     }
                 )
             } else {
@@ -261,8 +253,7 @@ private fun HomeScreenPreview() {
             onSuperHostLikeClick = {},
             onCompanionMoreClick = {},
             onCompanionClick = {},
-            onCreateTravelRoomClick = {},
-            onWriteCommunityClick = {}
+            onCreateTravelRoomClick = {}
         )
     }
 }

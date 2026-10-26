@@ -27,7 +27,6 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 fun WritingExpandedMenu(
     onDismiss: () -> Unit,
     onCreateTravelRoom: () -> Unit,
-    onWriteCommunity: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -70,26 +69,6 @@ fun WritingExpandedMenu(
                     color = DduruTheme.colors.gray700
                 )
             }
-            Row(
-                horizontalArrangement = Arrangement.spacedBy(8.dp, Alignment.Start),
-                verticalAlignment = Alignment.CenterVertically,
-                modifier = Modifier
-                    .wrapContentHeight()
-                    .noRippleClickable(onClick = onWriteCommunity)
-                    .padding(horizontal = 8.dp, vertical = 8.dp)
-            ) {
-                Icon(
-                    painter = painterResource(id = R.drawable.ic_write_pencil),
-                    contentDescription = null,
-                    tint = DduruTheme.colors.gray700
-                )
-
-                Text(
-                    text = stringResource(id = R.string.writing_write_community),
-                    style = DduruTheme.typography.Caption2,
-                    color = DduruTheme.colors.gray700
-                )
-            }
         }
 
         IconButton(
@@ -125,8 +104,7 @@ private fun WritingExpandedMenuPreview() {
     DduruTheme {
         WritingExpandedMenu(
             onDismiss = {},
-            onCreateTravelRoom = {},
-            onWriteCommunity = {}
+            onCreateTravelRoom = {}
         )
     }
 }

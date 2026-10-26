@@ -88,10 +88,7 @@ fun MainScreen(
                                 navigateToBottomRoute(BottomNavRoute.Matching)
                             },
                             navigateToMatchingDetail = onNavigateToMatchingDetail,
-                            navigateToCreateTravelRoom = onNavigateToMatchingCreatePost,
-                            navigateToWriteCommunity = {
-                                navigateToBottomRoute(BottomNavRoute.MyPage)
-                            }
+                            navigateToCreateTravelRoom = onNavigateToMatchingCreatePost
                         )
                     }
                     is BottomNavRoute.Matching -> NavEntry(route) {
