@@ -6,14 +6,18 @@ import com.gildongmu.dduru.core.common.extension.parseDateTime
 import com.gildongmu.dduru.core.common.extension.toRelativeTime
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.domain.repository.ParticipationRepository
+import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRequestSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestItemUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestSectionUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ReceivedApplicationStatus
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
@@ -25,14 +29,29 @@ class ChatRequestViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<ChatRequestUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<ChatRequestUiState>> = _uiState.asStateFlow()
 
+    private val _sideEffect = MutableSharedFlow<ChatRequestSideEffect>()
+    val sideEffect: SharedFlow<ChatRequestSideEffect> = _sideEffect.asSharedFlow()
+
     init {
         loadParticipations()
+    }
+
+    fun onContactClick(participationId: String) {
+        viewModelScope.launch {
+            participationRepository.contactParticipation(participationId.toLong())
+                .onSuccess { privateRoomId ->
+                    _sideEffect.emit(ChatRequestSideEffect.NavigateToChatRoom(privateRoomId))
+                    loadParticipations()
+                }
+        }
     }
 
     fun onAcceptConfirm(participationId: String) {
         viewModelScope.launch {
             participationRepository.approveParticipation(participationId.toLong())
-                .onSuccess { loadParticipations() }
+                .onSuccess { groupRoomId ->
+                    loadParticipations(showConfirmedDialog = true, confirmedGroupRoomId = groupRoomId)
+                }
                 .onFailure { _uiState.value = UiState.Failure }
         }
     }
@@ -45,7 +64,30 @@ class ChatRequestViewModel @Inject constructor(
         }
     }
 
-    private fun loadParticipations() {
+    fun onConfirmedMoveClick() {
+        val current = (_uiState.value as? UiState.Success)?.data ?: return
+        val groupRoomId = current.confirmedGroupRoomId
+        _uiState.value = UiState.Success(
+            current.copy(isConfirmedDialogVisible = false, confirmedGroupRoomId = null)
+        )
+        if (groupRoomId != null) {
+            viewModelScope.launch {
+                _sideEffect.emit(ChatRequestSideEffect.NavigateToChatRoom(groupRoomId))
+            }
+        }
+    }
+
+    fun onConfirmedDismiss() {
+        val current = (_uiState.value as? UiState.Success)?.data ?: return
+        _uiState.value = UiState.Success(
+            current.copy(isConfirmedDialogVisible = false, confirmedGroupRoomId = null)
+        )
+    }
+
+    private fun loadParticipations(
+        showConfirmedDialog: Boolean = false,
+        confirmedGroupRoomId: Long? = null
+    ) {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             participationRepository.getParticipations()
@@ -75,7 +117,13 @@ class ChatRequestViewModel @Inject constructor(
                         if (waiting.isNotEmpty()) add(ChatRequestSectionUiState("대기중", waiting))
                         if (done.isNotEmpty()) add(ChatRequestSectionUiState("완료", done))
                     }
-                    _uiState.value = UiState.Success(ChatRequestUiState(sections = sections))
+                    _uiState.value = UiState.Success(
+                        ChatRequestUiState(
+                            sections = sections,
+                            isConfirmedDialogVisible = showConfirmedDialog,
+                            confirmedGroupRoomId = confirmedGroupRoomId
+                        )
+                    )
                 }
                 .onFailure {
                     _uiState.value = UiState.Failure

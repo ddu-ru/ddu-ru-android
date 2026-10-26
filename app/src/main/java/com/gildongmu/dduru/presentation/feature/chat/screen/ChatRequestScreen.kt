@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -25,6 +26,7 @@ import com.gildongmu.dduru.presentation.feature.chat.component.ChatSectionHeader
 import com.gildongmu.dduru.presentation.feature.chat.component.ParticipationCard
 import com.gildongmu.dduru.presentation.feature.chat.component.ParticipationDialog
 import com.gildongmu.dduru.presentation.feature.chat.component.ParticipationDialogType
+import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRequestSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestItemUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestSectionUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestUiState
@@ -33,16 +35,28 @@ import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatRequestViewMo
 
 @Composable
 fun ChatRequestRoute(
+    onNavigateToChatRoom: (Long) -> Unit = {},
     viewModel: ChatRequestViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is ChatRequestSideEffect.NavigateToChatRoom -> onNavigateToChatRoom(effect.chatRoomId)
+            }
+        }
+    }
 
     when (val state = uiState) {
         is UiState.Loading -> DduruLoadingScreen()
         is UiState.Success -> ChatRequestScreen(
             uiState = state.data,
             onAcceptConfirm = viewModel::onAcceptConfirm,
-            onRejectConfirm = viewModel::onRejectConfirm
+            onRejectConfirm = viewModel::onRejectConfirm,
+            onContactClick = viewModel::onContactClick,
+            onConfirmedMoveClick = viewModel::onConfirmedMoveClick,
+            onConfirmedDismiss = viewModel::onConfirmedDismiss
         )
         is UiState.Failure -> DduruFailureScreen(message = "요청 목록을 불러올 수 없습니다.")
         else -> Unit
@@ -54,6 +68,9 @@ private fun ChatRequestScreen(
     uiState: ChatRequestUiState = ChatRequestUiState(),
     onRejectConfirm: (String) -> Unit = {},
     onAcceptConfirm: (String) -> Unit = {},
+    onContactClick: (String) -> Unit = {},
+    onConfirmedMoveClick: () -> Unit = {},
+    onConfirmedDismiss: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     var dialogTargetId by rememberSaveable { mutableStateOf<String?>(null) }
@@ -79,6 +96,14 @@ private fun ChatRequestScreen(
                     ParticipationDialogType.CONFIRMED -> Unit
                 }
             }
+        )
+    }
+
+    if (uiState.isConfirmedDialogVisible) {
+        ParticipationDialog(
+            type = ParticipationDialogType.CONFIRMED,
+            onDismiss = onConfirmedDismiss,
+            onConfirm = onConfirmedMoveClick
         )
     }
 

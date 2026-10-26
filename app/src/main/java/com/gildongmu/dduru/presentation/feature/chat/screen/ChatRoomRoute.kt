@@ -1,5 +1,9 @@
 package com.gildongmu.dduru.presentation.feature.chat.screen
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -29,6 +33,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -40,12 +45,18 @@ import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomType
+import com.gildongmu.dduru.presentation.feature.chat.component.ChatAttachOption
+import com.gildongmu.dduru.presentation.feature.chat.component.ChatAttachPanel
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatDateDivider
+import com.gildongmu.dduru.presentation.feature.chat.component.GroupImageMessageBubble
 import com.gildongmu.dduru.presentation.feature.chat.component.GroupMessageBubble
+import com.gildongmu.dduru.presentation.feature.chat.component.ImageMessageBubble
+import com.gildongmu.dduru.presentation.feature.chat.component.MAX_CHAT_PHOTO_COUNT
 import com.gildongmu.dduru.presentation.feature.chat.component.MessageBubble
 import com.gildongmu.dduru.presentation.feature.chat.component.MessageInput
 import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRoomSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatListItem
+import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatMessageKind
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatMessageUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.MessagePosition
@@ -55,9 +66,15 @@ import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatRoomViewModel
 fun ChatRoomRoute(
     chatRoomId: Long,
     onBackClick: () -> Unit,
+    onNavigateToMenu: (Long) -> Unit = {},
+    onNavigateToPollCreate: () -> Unit = {},
     viewModel: ChatRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(MAX_CHAT_PHOTO_COUNT)
+    ) { uris -> viewModel.onPhotosSelected(uris) }
 
     LaunchedEffect(chatRoomId) {
         viewModel.loadMessages(chatRoomId)
@@ -68,7 +85,13 @@ fun ChatRoomRoute(
             when (effect) {
                 is ChatRoomSideEffect.NavigateBack -> onBackClick()
                 is ChatRoomSideEffect.NavigateToMembers -> Unit
-                is ChatRoomSideEffect.NavigateToMenu -> Unit
+                is ChatRoomSideEffect.OpenPhotoPicker -> photoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+                is ChatRoomSideEffect.ShowMessage ->
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                is ChatRoomSideEffect.NavigateToMenu -> onNavigateToMenu(chatRoomId)
+                is ChatRoomSideEffect.NavigateToPollCreate -> onNavigateToPollCreate()
             }
         }
     }
@@ -87,6 +110,7 @@ fun ChatRoomRoute(
         onPlusClick = viewModel::onPlusClick,
         onSendClick = viewModel::onSendClick,
         onInputChange = viewModel::onInputChange,
+        onAttachOptionClick = viewModel::onAttachOptionClick,
         onLoadMore = viewModel::loadMoreMessages,
         onRetryClick = viewModel::retryLoadMessages
     )
@@ -101,6 +125,7 @@ private fun ChatRoomScreen(
     onPlusClick: () -> Unit,
     onSendClick: (String) -> Unit,
     onInputChange: (String) -> Unit,
+    onAttachOptionClick: (ChatAttachOption) -> Unit = {},
     onLoadMore: () -> Unit = {},
     onRetryClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -198,15 +223,42 @@ private fun ChatRoomScreen(
             }
         }
 
-        MessageInput(
-            value = uiState.inputText,
-            onValueChange = onInputChange,
-            onPlusClick = onPlusClick,
-            onSendClick = {
-                if (uiState.inputText.isNotBlank()) onSendClick(uiState.inputText)
-            },
-            modifier = Modifier.navigationBarsPadding()
-        )
+        if (uiState.isUploadingImage) {
+            Text(
+                text = "사진을 보내는 중이에요…",
+                style = DduruTheme.typography.Caption2,
+                color = DduruTheme.colors.gray500,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+        }
+
+        if (uiState.isInputEnabled) {
+            MessageInput(
+                value = uiState.inputText,
+                onValueChange = onInputChange,
+                onPlusClick = onPlusClick,
+                onSendClick = {
+                    if (uiState.inputText.isNotBlank()) onSendClick(uiState.inputText)
+                },
+                modifier = Modifier.navigationBarsPadding(),
+                isAttachPanelOpen = uiState.isAttachPanelOpen,
+                attachPanel = { ChatAttachPanel(onOptionClick = onAttachOptionClick) }
+            )
+        } else {
+            Text(
+                text = "메시지를 보낼 수 없는 채팅방이에요.",
+                style = DduruTheme.typography.Body2,
+                color = DduruTheme.colors.gray500,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 40.dp)
+            )
+        }
     }
 }
 
@@ -219,36 +271,67 @@ private fun ChatMessageItem(
         is ChatListItem.DateDivider -> ChatDateDivider(date = item.date)
         is ChatListItem.Message -> {
             val msg = item.message
-            val isHead = msg.position == MessagePosition.HEAD || msg.position == MessagePosition.SINGLE
-            val isTail = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
-            val showTime = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
-            val time = if (showTime) msg.time else ""
+            if (msg.kind == ChatMessageKind.SYSTEM) {
+                ChatDateDivider(date = msg.content)
+            } else {
+                val isHead = msg.position == MessagePosition.HEAD || msg.position == MessagePosition.SINGLE
+                val isTail = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
+                val showTime = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
+                val time = if (showTime) msg.time else ""
 
-            when {
-                msg.isMine -> MessageBubble(
-                    message = msg.content,
-                    time = time,
-                    unreadCount = msg.unreadCount,
-                    isMine = true,
-                    isHead = isHead,
-                    isTail = isTail
-                )
-                roomType == ChatRoomType.GROUP -> GroupMessageBubble(
-                    username = msg.senderName,
-                    message = msg.content,
-                    time = time,
-                    unreadCount = msg.unreadCount,
-                    isHead = isHead,
-                    isTail = isTail
-                )
-                else -> MessageBubble(
-                    message = msg.content,
-                    time = time,
-                    unreadCount = msg.unreadCount,
-                    isMine = false,
-                    isHead = isHead,
-                    isTail = isTail
-                )
+                if (msg.kind == ChatMessageKind.IMAGE) {
+                    when {
+                        msg.isMine -> ImageMessageBubble(
+                            imageUrls = msg.imageUrls,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isMine = true,
+                            onImageClick = {}
+                        )
+                        roomType == ChatRoomType.GROUP -> GroupImageMessageBubble(
+                            username = msg.senderName,
+                            imageUrls = msg.imageUrls,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isHead = isHead,
+                            onImageClick = {}
+                        )
+                        else -> ImageMessageBubble(
+                            imageUrls = msg.imageUrls,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isMine = false,
+                            onImageClick = {}
+                        )
+                    }
+                } else {
+                    when {
+                        msg.isMine -> MessageBubble(
+                            message = msg.content,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isMine = true,
+                            isHead = isHead,
+                            isTail = isTail
+                        )
+                        roomType == ChatRoomType.GROUP -> GroupMessageBubble(
+                            username = msg.senderName,
+                            message = msg.content,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isHead = isHead,
+                            isTail = isTail
+                        )
+                        else -> MessageBubble(
+                            message = msg.content,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isMine = false,
+                            isHead = isHead,
+                            isTail = isTail
+                        )
+                    }
+                }
             }
         }
     }

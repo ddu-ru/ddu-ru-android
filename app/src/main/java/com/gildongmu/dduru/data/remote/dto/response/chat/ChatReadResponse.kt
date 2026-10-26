@@ -5,6 +5,6 @@ import kotlinx.serialization.Serializable
 @Serializable
 data class ChatReadResponse(
     val chatRoomId: Long,
-    val lastReadMessageId: Long,
-    val updated: Boolean
+    val lastReadMessageId: Long? = null,
+    val updated: Boolean? = null
 )

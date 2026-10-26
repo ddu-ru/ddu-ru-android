@@ -22,11 +22,22 @@ class ParticipationRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun approveParticipation(participationId: Long): Result<Unit> {
+    override suspend fun contactParticipation(participationId: Long): Result<Long> {
+        return try {
+            val response = participationService.contactParticipation(participationId)
+            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
+            val data = response.data ?: return Result.failure(Exception("Empty response"))
+            Result.success(data.privateRoomId)
+        } catch (e: Exception) {
+            Result.failure(e)
+        }
+    }
+
+    override suspend fun approveParticipation(participationId: Long): Result<Long?> {
         return try {
             val response = participationService.approveParticipation(participationId)
             if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
-            Result.success(Unit)
+            Result.success(response.data?.groupRoomId)
         } catch (e: Exception) {
             Result.failure(e)
         }
@@ -35,11 +46,7 @@ class ParticipationRepositoryImpl @Inject constructor(
     override suspend fun rejectParticipation(participationId: Long): Result<Unit> {
         return try {
             val response = participationService.rejectParticipation(participationId)
-            if (response.status != 200 && response.status != 204) {
-                return Result.failure(
-                    Exception("Status ${response.status}")
-                )
-            }
+            if (!response.isSuccessful) return Result.failure(Exception("Status ${response.code()}"))
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -59,11 +66,7 @@ class ParticipationRepositoryImpl @Inject constructor(
     override suspend fun cancelParticipation(participationId: Long): Result<Unit> {
         return try {
             val response = participationService.cancelParticipation(participationId)
-            if (response.status != 200 && response.status != 204) {
-                return Result.failure(
-                    Exception("Status ${response.status}")
-                )
-            }
+            if (!response.isSuccessful) return Result.failure(Exception("Status ${response.code()}"))
             Result.success(Unit)
         } catch (e: Exception) {
             Result.failure(e)
@@ -74,7 +77,7 @@ class ParticipationRepositoryImpl @Inject constructor(
         participationId = participationId,
         userId = userId,
         userName = userName,
-        profileImage = profileImage,
+        profileImage = profileImage?.url,
         message = message,
         status = status,
         appliedAt = appliedAt,

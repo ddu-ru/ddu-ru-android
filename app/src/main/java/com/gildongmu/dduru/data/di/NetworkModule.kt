@@ -157,6 +157,9 @@ object NetworkModule {
         okHttpClient = okHttpClient,
         baseUrl = baseUrl
     )
+
+    @Provides
+    @Singleton
     fun provideHomeNotificationService(retrofit: Retrofit): HomeNotificationService {
         return retrofit.create(HomeNotificationService::class.java)
     }

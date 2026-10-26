@@ -75,9 +75,11 @@ fun ChatMainRoute(
         is UiState.Loading -> DduruLoadingScreen()
         is UiState.Success -> ChatMainScreen(
             chatRooms = state.data.chatRooms,
+            selectedSort = state.data.selectedSort,
+            onSortSelected = viewModel::onSortSelected,
             onChatRoomClick = { id -> viewModel.onChatRoomClick(id.toLong()) },
             onLoadMore = { viewModel.loadMoreChatRooms() },
-            requestContent = { ChatRequestRoute() },
+            requestContent = { ChatRequestRoute(onNavigateToChatRoom = onNavigateToChatRoom) },
             applicationContent = { ChatApplicationRoute(onNavigateToChatRoom = onNavigateToChatRoom) }
         )
         is UiState.Failure -> DduruFailureScreen(message = "채팅 목록을 불러올 수 없습니다.")
@@ -91,7 +93,8 @@ private fun ChatMainScreen(
     requestUnreadCount: Int = 0,
     applicationUnreadCount: Int = 0,
     initialTab: ChatTab = ChatTab.ALL,
-    initialSort: ChatSortOption = ChatSortOption.ALL,
+    selectedSort: ChatSortOption = ChatSortOption.ALL,
+    onSortSelected: (ChatSortOption) -> Unit = {},
     initialSortExpanded: Boolean = false,
     onChatRoomClick: (Long) -> Unit = {},
     onSearchClick: () -> Unit = {},
@@ -102,7 +105,6 @@ private fun ChatMainScreen(
     applicationContent: @Composable () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(initialTab) }
-    var selectedSort by remember { mutableStateOf(initialSort) }
     var sortExpanded by remember { mutableStateOf(initialSortExpanded) }
 
     Scaffold(
@@ -199,7 +201,10 @@ private fun ChatMainScreen(
 
                     ChatSortDropdown(
                         selectedOption = selectedSort,
-                        onOptionSelected = { selectedSort = it },
+                        onOptionSelected = {
+                            onSortSelected(it)
+                            sortExpanded = false
+                        },
                         expanded = sortExpanded,
                         onExpandedChange = { sortExpanded = it },
                         modifier = Modifier
@@ -210,7 +215,7 @@ private fun ChatMainScreen(
                         state = listState,
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(chatRooms) { room ->
+                        items(chatRooms, key = { it.id }) { room ->
                             ChatRoomCard(
                                 displayName = room.displayName,
                                 postTitle = room.postTitle,
@@ -219,6 +224,7 @@ private fun ChatMainScreen(
                                 lastMessageAt = room.lastMessageAt,
                                 unreadCount = room.unreadCount,
                                 roomType = room.roomType,
+                                thumbnailUrl = room.thumbnailUrl,
                                 onClick = { onChatRoomClick(room.id) }
                             )
                         }
@@ -293,7 +299,7 @@ private fun ChatScreenAllTabPreview() {
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
             initialTab = ChatTab.ALL,
-            initialSort = ChatSortOption.ALL,
+            selectedSort = ChatSortOption.ALL,
             requestContent = {},
             applicationContent = {}
         )
@@ -309,7 +315,7 @@ private fun ChatScreenDropdownOpenPreview() {
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
             initialTab = ChatTab.ALL,
-            initialSort = ChatSortOption.ALL,
+            selectedSort = ChatSortOption.ALL,
             initialSortExpanded = true,
             requestContent = {},
             applicationContent = {}
@@ -326,7 +332,7 @@ private fun ChatScreenPrivateSortPreview() {
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
             initialTab = ChatTab.ALL,
-            initialSort = ChatSortOption.PRIVATE,
+            selectedSort = ChatSortOption.PRIVATE,
             requestContent = {},
             applicationContent = {}
         )

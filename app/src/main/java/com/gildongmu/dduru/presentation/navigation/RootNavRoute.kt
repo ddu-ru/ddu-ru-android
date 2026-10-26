@@ -29,4 +29,8 @@ sealed interface RootNavRoute : NavKey {
     @Serializable data class MatchingDetail(val postId: Long) : RootNavRoute
 
     @Serializable data class MatchingEditPost(val postId: Long) : RootNavRoute
+
+    @Serializable data class ChatRoomMenu(val chatRoomId: Long) : RootNavRoute
+
+    @Serializable data object PollCreate : RootNavRoute
 }

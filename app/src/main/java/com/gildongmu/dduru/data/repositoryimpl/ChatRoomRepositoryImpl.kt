@@ -117,7 +117,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
     override suspend fun createPrivateChatRoom(postId: Long): Result<Long> {
         return try {
             val response = chatRoomService.createPrivateChatRoom(postId = postId)
-            if (response.status != 200) {
+            if (response.status != 200 && response.status != 201) {
                 return Result.failure(
                     when (response.status) {
                         403 -> Exception("FORBIDDEN")
@@ -139,8 +139,8 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     private fun ChatRoomResponse.toEntity(): ChatRoomEntity = ChatRoomEntity(
         chatRoomId = chatRoomId,
-        roomType = ChatRoomType.valueOf(roomType),
-        status = ChatRoomStatus.valueOf(status),
+        roomType = ChatRoomType.entries.firstOrNull { it.name == roomType } ?: ChatRoomType.PRIVATE,
+        status = ChatRoomStatus.entries.firstOrNull { it.name == status } ?: ChatRoomStatus.ACTIVE,
         displayName = displayName,
         postTitle = postTitle,
         thumbnailUrl = thumbnailUrl,
@@ -157,7 +157,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
     private fun ChatRoomLastMessageResponse.toEntity(): ChatRoomLastMessageEntity =
         ChatRoomLastMessageEntity(
             messageId = messageId,
-            messageType = MessageType.valueOf(messageType),
+            messageType = MessageType.entries.firstOrNull { it.name == messageType } ?: MessageType.TEXT,
             content = content,
             senderId = senderId,
             senderNickname = senderNickname,
@@ -166,7 +166,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     private fun ChatRoomInfoResponse.toEntity(): ChatRoomInfoEntity = ChatRoomInfoEntity(
         chatRoomId = chatRoomId,
-        roomType = ChatRoomType.valueOf(roomType),
+        roomType = ChatRoomType.entries.firstOrNull { it.name == roomType } ?: ChatRoomType.PRIVATE,
         isActive = isActive,
         postTitle = postTitle,
         opponentNickname = opponentNickname,
@@ -176,22 +176,24 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     private fun MessageItemResponse.toEntity(): MessageEntity = MessageEntity(
         messageId = messageId,
-        messageType = MessageType.valueOf(messageType),
+        messageType = MessageType.entries.firstOrNull { it.name == messageType } ?: MessageType.TEXT,
         sender = sender?.let {
             MessageSenderEntity(userId = it.userId, nickname = it.nickname, isHost = it.isHost)
         },
         isMine = isMine,
         content = content,
         images = images.map { MessageImageEntity(imageUrl = it.imageUrl) },
-        systemMessage = systemMessage?.let {
-            SystemMessageEntity(
-                type = SystemMessageType.valueOf(it.type),
-                displayText = it.displayText,
-                actorUserId = it.actorUserId,
-                inviteeUserId = it.inviteeUserId,
-                userId = it.userId,
-                targetUserId = it.targetUserId
-            )
+        systemMessage = systemMessage?.let { system ->
+            SystemMessageType.entries.firstOrNull { it.name == system.type }?.let { type ->
+                SystemMessageEntity(
+                    type = type,
+                    displayText = system.displayText,
+                    actorUserId = system.actorUserId,
+                    inviteeUserId = system.inviteeUserId,
+                    userId = system.userId,
+                    targetUserId = system.targetUserId
+                )
+            }
         },
         unreadCount = unreadCount,
         createdAt = createdAt.parseDateTime()

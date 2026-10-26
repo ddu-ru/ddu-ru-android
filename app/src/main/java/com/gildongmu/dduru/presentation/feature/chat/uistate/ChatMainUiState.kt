@@ -2,6 +2,7 @@ package com.gildongmu.dduru.presentation.feature.chat.uistate
 
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomType
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatSortOption
+import java.time.LocalDateTime
 
 enum class ChatTab(val label: String) {
     ALL("전체"),
@@ -17,9 +18,10 @@ data class ChatRoomUiModel(
     val lastMessagePreview: String?,
     val lastMessageAt: String?,
     val unreadCount: Int,
-    val roomType: ChatRoomType
+    val roomType: ChatRoomType,
+    val thumbnailUrl: String? = null,
+    val activityAt: LocalDateTime? = null
 )
-
 data class ChatMainUiState(
     val chatRooms: List<ChatRoomUiModel> = emptyList(),
     val requestUnreadCount: Int = 0,

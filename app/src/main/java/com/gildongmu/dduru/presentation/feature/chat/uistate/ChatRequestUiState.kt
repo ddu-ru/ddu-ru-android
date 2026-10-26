@@ -21,5 +21,7 @@ data class ChatRequestSectionUiState(
 )
 
 data class ChatRequestUiState(
-    val sections: List<ChatRequestSectionUiState> = emptyList()
+    val sections: List<ChatRequestSectionUiState> = emptyList(),
+    val isConfirmedDialogVisible: Boolean = false,
+    val confirmedGroupRoomId: Long? = null
 )

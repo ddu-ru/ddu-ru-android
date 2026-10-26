@@ -6,7 +6,6 @@ import com.gildongmu.dduru.data.remote.dto.websocket.ChatRoomListEvent
 import com.gildongmu.dduru.data.remote.dto.websocket.SendMessageRequest
 import javax.inject.Inject
 import javax.inject.Singleton
-import kotlinx.coroutines.CompletableDeferred
 import kotlinx.coroutines.channels.awaitClose
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.callbackFlow
@@ -31,59 +30,24 @@ class StompChatClient @Inject constructor(
         .replace("http://", "ws://")
         .trimEnd('/') + "/ws/chat"
 
+    @Volatile
     private var roomWebSocket: WebSocket? = null
 
-    fun connectAndSubscribeToRoom(roomId: Long): Flow<ChatRoomEvent> = callbackFlow {
-        val token = tokenLocalDataSource.accessToken.first() ?: run {
-            close()
-            return@callbackFlow
-        }
-        val connected = CompletableDeferred<Unit>()
-        val request = Request.Builder().url(wsUrl).build()
-        roomWebSocket = okHttpClient.newWebSocket(
-            request,
-            object : WebSocketListener() {
-                override fun onOpen(webSocket: WebSocket, response: Response) {
-                    webSocket.send("CONNECT\naccept-version:1.1,1.2\nAuthorization:Bearer $token\n\n\u0000")
-                }
+    fun connectAndSubscribeToRoom(roomId: Long): Flow<ChatRoomEvent> = subscribe(
+        destination = "/topic/chat/rooms/$roomId",
+        subscriptionId = "room-$roomId",
+        isRoomSocket = true
+    ) { body -> json.decodeFromString<ChatRoomEvent>(body) }
 
-                override fun onMessage(webSocket: WebSocket, text: String) {
-                    when {
-                        text.startsWith("CONNECTED") -> {
-                            webSocket.send(
-                                "SUBSCRIBE\nid:room-$roomId\ndestination:/topic/chat/rooms/$roomId\n\n\u0000"
-                            )
-                            connected.complete(Unit)
-                        }
-                        text.startsWith("MESSAGE") -> {
-                            val body = extractBody(text) ?: return
-                            runCatching { json.decodeFromString<ChatRoomEvent>(body) }
-                                .getOrNull()?.let { trySend(it) }
-                        }
-                    }
-                }
+    fun subscribeToRoomList(): Flow<ChatRoomListEvent> = subscribe(
+        destination = "/user/queue/chat-room-list",
+        subscriptionId = "room-list",
+        isRoomSocket = false
+    ) { body -> json.decodeFromString<ChatRoomListEvent>(body) }
 
-                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
-                    roomWebSocket = null
-                    close()
-                }
-
-                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                    roomWebSocket = null
-                    if (!connected.isCompleted) connected.completeExceptionally(t)
-                    close(t)
-                }
-            }
-        )
-        connected.await()
-        awaitClose {
-            roomWebSocket?.close(1000, null)
-            roomWebSocket = null
-        }
-    }
-
-    suspend fun sendMessage(roomId: Long, content: String) {
-        val body = json.encodeToString(SendMessageRequest(messageType = "TEXT", content = content))
+    fun sendMessage(roomId: Long, messageType: String, content: String): Boolean {
+        val socket = roomWebSocket ?: return false
+        val body = json.encodeToString(SendMessageRequest(messageType = messageType, content = content))
         val frame = buildString {
             append("SEND\n")
             append("destination:/app/chat/rooms/$roomId/messages\n")
@@ -91,79 +55,74 @@ class StompChatClient @Inject constructor(
             append("content-length:${body.toByteArray().size}\n")
             append("\n")
             append(body)
-            append("\u0000")
+            append(NULL_CHAR)
         }
-        val result = roomWebSocket?.send(frame)
+        return socket.send(frame)
     }
 
-    suspend fun ensureConnectedAndSend(roomId: Long, content: String) {
-        if (roomWebSocket == null) {
-            val token = tokenLocalDataSource.accessToken.first() ?: return
-            val connected = CompletableDeferred<Unit>()
-            val request = Request.Builder().url(wsUrl).build()
-            roomWebSocket = okHttpClient.newWebSocket(
-                request,
-                object : WebSocketListener() {
-                    override fun onOpen(webSocket: WebSocket, response: Response) {
-                        webSocket.send("CONNECT\naccept-version:1.1,1.2\nAuthorization:Bearer $token\n\n\u0000")
-                    }
-                    override fun onMessage(webSocket: WebSocket, text: String) {
-                        if (text.startsWith("CONNECTED")) {
-                            webSocket.send(
-                                "SUBSCRIBE\nid:room-$roomId\ndestination:/topic/chat/rooms/$roomId\n\n\u0000"
-                            )
-                            connected.complete(Unit)
-                        }
-                    }
-                    override fun onClosed(webSocket: WebSocket, code: Int, reason: String) { roomWebSocket = null }
-                    override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
-                        if (!connected.isCompleted) connected.completeExceptionally(t)
-                        roomWebSocket = null
-                    }
-                }
-            )
-            connected.await()
+    private fun <T> subscribe(
+        destination: String,
+        subscriptionId: String,
+        isRoomSocket: Boolean,
+        decode: (String) -> T
+    ): Flow<T> = callbackFlow {
+        val token = tokenLocalDataSource.accessToken.first()
+        if (token == null) {
+            close(IllegalStateException("NO_ACCESS_TOKEN"))
+            return@callbackFlow
         }
-        sendMessage(roomId, content)
-    }
 
-    suspend fun disconnectRoom() {
-        roomWebSocket?.send("DISCONNECT\n\n\u0000")
-        roomWebSocket?.close(1000, null)
-        roomWebSocket = null
-    }
-
-    fun subscribeToRoomList(): Flow<ChatRoomListEvent> = callbackFlow {
-        val token = tokenLocalDataSource.accessToken.first() ?: run { close(); return@callbackFlow }
-        val request = Request.Builder().url(wsUrl).build()
-        val ws = okHttpClient.newWebSocket(
-            request,
+        val socket = okHttpClient.newWebSocket(
+            Request.Builder().url(wsUrl).build(),
             object : WebSocketListener() {
                 override fun onOpen(webSocket: WebSocket, response: Response) {
-                    webSocket.send("CONNECT\naccept-version:1.1,1.2\nAuthorization:Bearer $token\n\n\u0000")
+                    webSocket.send("CONNECT\naccept-version:1.1,1.2\nAuthorization:Bearer $token\n\n$NULL_CHAR")
                 }
 
                 override fun onMessage(webSocket: WebSocket, text: String) {
-                    when {
-                        text.startsWith("CONNECTED") ->
-                            webSocket.send("SUBSCRIBE\nid:room-list\ndestination:/user/queue/chat-room-list\n\n\u0000")
-                        text.startsWith("MESSAGE") -> {
-                            val body = extractBody(text) ?: return
-                            runCatching { json.decodeFromString<ChatRoomListEvent>(body) }
-                                .getOrNull()?.let { trySend(it) }
+                    when (text.substringBefore('\n').trim()) {
+                        "CONNECTED" -> {
+                            if (isRoomSocket) roomWebSocket = webSocket
+                            webSocket.send("SUBSCRIBE\nid:$subscriptionId\ndestination:$destination\n\n$NULL_CHAR")
                         }
+                        "MESSAGE" -> extractBody(text)?.let { body ->
+                            runCatching { decode(body) }.getOrNull()?.let { trySend(it) }
+                        }
+                        "ERROR" -> close(IllegalStateException("STOMP_ERROR"))
                     }
                 }
 
-                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) { close() }
-                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) { close(t) }
+                override fun onClosed(webSocket: WebSocket, code: Int, reason: String) {
+                    clearRoomSocket(webSocket)
+                    close()
+                }
+
+                override fun onFailure(webSocket: WebSocket, t: Throwable, response: Response?) {
+                    clearRoomSocket(webSocket)
+                    close(t)
+                }
             }
         )
-        awaitClose { ws.close(1000, null) }
+
+        awaitClose {
+            clearRoomSocket(socket)
+            socket.send("UNSUBSCRIBE\nid:$subscriptionId\n\n$NULL_CHAR")
+            socket.send("DISCONNECT\n\n$NULL_CHAR")
+            socket.close(NORMAL_CLOSURE_CODE, null)
+        }
+    }
+
+    private fun clearRoomSocket(webSocket: WebSocket) {
+        if (roomWebSocket === webSocket) roomWebSocket = null
     }
 
     private fun extractBody(frame: String): String? {
         val bodyStart = frame.indexOf("\n\n").takeIf { it != -1 } ?: return null
         return frame.substring(bodyStart + 2).trimEnd('\u0000').ifBlank { null }
+    }
+
+    private companion object {
+        const val NULL_CHAR = "\u0000"
+        const val NORMAL_CLOSURE_CODE = 1000
     }
 }
