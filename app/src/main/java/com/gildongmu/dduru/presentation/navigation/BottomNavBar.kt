@@ -276,8 +276,8 @@ private fun FloatingTabBarPreview() {
         BottomNavItem(BottomNavRoute.Home, "리스트", R.drawable.ic_bottom_nav_main),
         BottomNavItem(BottomNavRoute.Matching, "리스트", R.drawable.ic_bottom_nav_main),
         BottomNavItem(BottomNavRoute.Chat, "리스트", R.drawable.ic_bottom_nav_main),
-        BottomNavItem(BottomNavRoute.MyPage, "리스트", R.drawable.ic_bottom_nav_main),
-        BottomNavItem(BottomNavRoute.Board, "리스트", R.drawable.ic_bottom_nav_main)
+        BottomNavItem(BottomNavRoute.Journey, "리스트", R.drawable.ic_bottom_nav_main),
+        BottomNavItem(BottomNavRoute.MyPage, "리스트", R.drawable.ic_bottom_nav_main)
     )
 
     val hazeState = rememberDduruHazeState()
@@ -310,8 +310,8 @@ private fun BottomNavBarPreview() {
         BottomNavItem(BottomNavRoute.Home, "홈", R.drawable.ic_bottom_nav_main),
         BottomNavItem(BottomNavRoute.Matching, "매칭", R.drawable.ic_bottom_nav_main),
         BottomNavItem(BottomNavRoute.Chat, "채팅", R.drawable.ic_bottom_nav_main),
-        BottomNavItem(BottomNavRoute.MyPage, "마이", R.drawable.ic_bottom_nav_main),
-        BottomNavItem(BottomNavRoute.Board, "게시판", R.drawable.ic_bottom_nav_main)
+        BottomNavItem(BottomNavRoute.Journey, "나의 여정", R.drawable.ic_bottom_nav_main),
+        BottomNavItem(BottomNavRoute.MyPage, "마이페이지", R.drawable.ic_bottom_nav_main)
     )
 
     val hazeState = rememberDduruHazeState()

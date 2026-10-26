@@ -17,11 +17,11 @@ import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.board.screen.BoardRoute
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatMainRoute
 import com.gildongmu.dduru.presentation.feature.home.HomeRoute
 import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyRoute
 import com.gildongmu.dduru.presentation.feature.matching.screen.MatchingRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.MyPageRoute
 import com.gildongmu.dduru.presentation.navigation.BottomNavBar
 import com.gildongmu.dduru.presentation.navigation.BottomNavItem
 import com.gildongmu.dduru.presentation.navigation.BottomNavRoute
@@ -41,9 +41,9 @@ fun MainScreen(
         listOf(
             BottomNavItem(BottomNavRoute.Home, "홈", R.drawable.ic_bottom_nav_main),
             BottomNavItem(BottomNavRoute.Matching, "매칭", R.drawable.ic_bottom_nav_matching),
-            BottomNavItem(BottomNavRoute.MyPage, "나의 여정", R.drawable.ic_bottom_nav_mypage),
+            BottomNavItem(BottomNavRoute.Journey, "나의 여정", R.drawable.ic_bottom_nav_mypage),
             BottomNavItem(BottomNavRoute.Chat, "채팅", R.drawable.ic_bottom_nav_chat),
-            BottomNavItem(BottomNavRoute.Board, "커뮤니티", R.drawable.ic_bottom_nav_board)
+            BottomNavItem(BottomNavRoute.MyPage, "마이페이지", R.drawable.ic_bottom_nav_board)
         )
     }
 
@@ -82,7 +82,7 @@ fun MainScreen(
                                 navigateToBottomRoute(BottomNavRoute.Matching)
                             },
                             navigateToUpcomingTripTask = {
-                                navigateToBottomRoute(BottomNavRoute.MyPage)
+                                navigateToBottomRoute(BottomNavRoute.Journey)
                             },
                             navigateToDestination = {
                                 navigateToBottomRoute(BottomNavRoute.Matching)
@@ -90,7 +90,7 @@ fun MainScreen(
                             navigateToMatchingDetail = onNavigateToMatchingDetail,
                             navigateToCreateTravelRoom = onNavigateToMatchingCreatePost,
                             navigateToWriteCommunity = {
-                                navigateToBottomRoute(BottomNavRoute.Board)
+                                navigateToBottomRoute(BottomNavRoute.MyPage)
                             }
                         )
                     }
@@ -102,13 +102,18 @@ fun MainScreen(
                             navigateToPostDetail = onNavigateToMatchingDetail
                         )
                     }
-                    is BottomNavRoute.Board -> NavEntry(route) { BoardRoute() }
+                    is BottomNavRoute.MyPage -> NavEntry(route) {
+                        MyPageRoute(
+                            onNotificationClick = onNavigateToHomeNotification,
+                            onMenuClick = onNavigateToHomeMenu
+                        )
+                    }
                     is BottomNavRoute.Chat -> NavEntry(route) {
                         ChatMainRoute(
                             onNavigateToChatRoom = onNavigateToChatRoom
                         )
                     }
-                    is BottomNavRoute.MyPage -> NavEntry(route) { JourneyRoute() }
+                    is BottomNavRoute.Journey -> NavEntry(route) { JourneyRoute() }
                     else -> NavEntry(route) { Text("잘못된 접근입니다.") }
                 }
             }

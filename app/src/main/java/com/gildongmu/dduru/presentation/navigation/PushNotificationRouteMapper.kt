@@ -18,7 +18,7 @@ fun HomeNotificationResourceType.toPushNotificationRoute(resourceId: Long?): Roo
         HomeNotificationResourceType.MATCH -> RootNavRoute.MainTab(BottomNavRoute.Matching)
         HomeNotificationResourceType.JOURNEY,
         HomeNotificationResourceType.JOURNEY_POST,
-        HomeNotificationResourceType.SCHEDULE -> RootNavRoute.MainTab(BottomNavRoute.MyPage)
+        HomeNotificationResourceType.SCHEDULE -> RootNavRoute.MainTab(BottomNavRoute.Journey)
         HomeNotificationResourceType.POST -> resourceId?.let { RootNavRoute.MatchingDetail(it) }
             ?: RootNavRoute.MainTab(BottomNavRoute.Matching)
         HomeNotificationResourceType.CHAT_ROOM -> resourceId?.let { RootNavRoute.ChatRoom(it) }
