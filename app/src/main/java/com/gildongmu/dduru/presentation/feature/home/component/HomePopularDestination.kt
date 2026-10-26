@@ -20,6 +20,7 @@ import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -45,6 +46,8 @@ import kotlinx.collections.immutable.persistentListOf
 fun HomeRealtimePopularDestinationSection(
     items: ImmutableList<HomePopularDestinationUiModel>,
     updatedText: String,
+    isRefreshing: Boolean,
+    refreshFailed: Boolean,
     onRefreshClick: () -> Unit,
     onItemClick: (HomePopularDestinationUiModel) -> Unit,
     modifier: Modifier = Modifier
@@ -73,7 +76,17 @@ fun HomeRealtimePopularDestinationSection(
 
             RefreshButton(
                 updatedText = updatedText,
+                isRefreshing = isRefreshing,
                 onClick = onRefreshClick
+            )
+        }
+
+        if (refreshFailed) {
+            Spacer(modifier = Modifier.height(8.dp))
+            Text(
+                text = "인기 여행지를 새로고침하지 못했어요. 다시 시도해 주세요.",
+                style = DduruTheme.typography.Caption1,
+                color = DduruTheme.colors.validationRed
             )
         }
 
@@ -289,23 +302,32 @@ private fun HomeCompanionJoinBar(
 @Composable
 private fun RefreshButton(
     updatedText: String,
+    isRefreshing: Boolean,
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
         modifier = modifier
-            .noRippleClickable(onClick = onClick),
+            .noRippleClickable(onClick = { if (!isRefreshing) onClick() }),
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Image(
-            painter = painterResource(id = R.drawable.ic_home_arrowscounterclockwise),
-            contentDescription = null
-        )
+        if (isRefreshing) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(16.dp),
+                color = DduruTheme.colors.primary,
+                strokeWidth = 2.dp
+            )
+        } else {
+            Image(
+                painter = painterResource(id = R.drawable.ic_home_arrowscounterclockwise),
+                contentDescription = "실시간 인기 새로고침"
+            )
+        }
 
         Spacer(modifier = Modifier.width(8.dp))
 
         Text(
-            text = updatedText,
+            text = if (isRefreshing) "새로고침 중" else updatedText,
             style = DduruTheme.typography.Caption1,
             color = DduruTheme.colors.gray600
         )
@@ -367,6 +389,8 @@ private fun HomeRealtimePopularDestinationSectionPreview() {
                 )
             ),
             updatedText = "방금 전",
+            isRefreshing = false,
+            refreshFailed = false,
             onRefreshClick = {},
             onItemClick = {}
         )

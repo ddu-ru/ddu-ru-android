@@ -6,8 +6,7 @@ sealed interface HomeSideEffect {
     data object NavigateToMatching : HomeSideEffect
     data object NavigateToUpcomingTripTask : HomeSideEffect
     data class NavigateToDestination(val id: Long) : HomeSideEffect
-    data class NavigateToSuperHost(val id: Long) : HomeSideEffect
-    data class NavigateToCompanion(val id: Long) : HomeSideEffect
+    data class NavigateToMatchingDetail(val postId: Long) : HomeSideEffect
     data object NavigateToCreateTravelRoom : HomeSideEffect
     data object NavigateToWriteCommunity : HomeSideEffect
 }

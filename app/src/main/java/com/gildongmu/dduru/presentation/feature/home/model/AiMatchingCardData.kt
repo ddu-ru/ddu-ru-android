@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.home.model
 
 data class AiMatchingCardData(
+    val postId: Long,
     val imageUrl: String? = null,
     val matchPercent: Int,
     val title: String,

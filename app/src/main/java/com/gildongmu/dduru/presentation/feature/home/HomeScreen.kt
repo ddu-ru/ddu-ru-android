@@ -50,8 +50,7 @@ fun HomeRoute(
     navigateToMatching: () -> Unit = {},
     navigateToUpcomingTripTask: () -> Unit = {},
     navigateToDestination: (Long) -> Unit = {},
-    navigateToSuperHost: (Long) -> Unit = {},
-    navigateToCompanion: (Long) -> Unit = {},
+    navigateToMatchingDetail: (Long) -> Unit = {},
     navigateToCreateTravelRoom: () -> Unit = {},
     navigateToWriteCommunity: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
@@ -66,8 +65,9 @@ fun HomeRoute(
                 HomeSideEffect.NavigateToMatching -> navigateToMatching()
                 HomeSideEffect.NavigateToUpcomingTripTask -> navigateToUpcomingTripTask()
                 is HomeSideEffect.NavigateToDestination -> navigateToDestination(sideEffect.id)
-                is HomeSideEffect.NavigateToSuperHost -> navigateToSuperHost(sideEffect.id)
-                is HomeSideEffect.NavigateToCompanion -> navigateToCompanion(sideEffect.id)
+                is HomeSideEffect.NavigateToMatchingDetail -> {
+                    navigateToMatchingDetail(sideEffect.postId)
+                }
                 HomeSideEffect.NavigateToCreateTravelRoom -> navigateToCreateTravelRoom()
                 HomeSideEffect.NavigateToWriteCommunity -> navigateToWriteCommunity()
             }
@@ -170,6 +170,8 @@ private fun HomeScreen(
                     HomeRealtimePopularDestinationSection(
                         items = uiState.popularDestinations,
                         updatedText = uiState.popularDestinationUpdatedText,
+                        isRefreshing = uiState.isPopularDestinationsRefreshing,
+                        refreshFailed = uiState.popularDestinationsRefreshFailed,
                         onRefreshClick = onRefreshPopularDestinationClick,
                         onItemClick = { onPopularDestinationClick(it.id) }
                     )

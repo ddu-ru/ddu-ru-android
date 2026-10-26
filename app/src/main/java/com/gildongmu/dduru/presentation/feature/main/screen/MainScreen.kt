@@ -87,8 +87,7 @@ fun MainScreen(
                             navigateToDestination = {
                                 navigateToBottomRoute(BottomNavRoute.Matching)
                             },
-                            navigateToSuperHost = onNavigateToMatchingDetail,
-                            navigateToCompanion = onNavigateToMatchingDetail,
+                            navigateToMatchingDetail = onNavigateToMatchingDetail,
                             navigateToCreateTravelRoom = onNavigateToMatchingCreatePost,
                             navigateToWriteCommunity = {
                                 navigateToBottomRoute(BottomNavRoute.Board)

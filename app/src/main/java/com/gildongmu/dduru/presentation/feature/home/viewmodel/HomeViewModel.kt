@@ -52,6 +52,16 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onRefreshPopularDestinationClick() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (currentState.isPopularDestinationsRefreshing) return
+
+        updateHomeUiState {
+            copy(
+                isPopularDestinationsRefreshing = true,
+                popularDestinationsRefreshFailed = false
+            )
+        }
+
         viewModelScope.launch {
             homeRepository.getHomePopularDestinations()
                 .onSuccess { popularDestinations ->
@@ -60,7 +70,17 @@ class HomeViewModel @Inject constructor(
                             popularDestinations = popularDestinations.items
                                 .map { it.toUiModel() }
                                 .toImmutableList(),
-                            popularDestinationUpdatedText = popularDestinations.updatedAt.toUpdatedText()
+                            popularDestinationUpdatedText = popularDestinations.updatedAt.toUpdatedText(),
+                            isPopularDestinationsRefreshing = false,
+                            popularDestinationsRefreshFailed = false
+                        )
+                    }
+                }
+                .onFailure {
+                    updateHomeUiState {
+                        copy(
+                            isPopularDestinationsRefreshing = false,
+                            popularDestinationsRefreshFailed = true
                         )
                     }
                 }
@@ -76,7 +96,12 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onAiMatchingAcceptClick() {
-        updateAiMatchingUsedCount()
+        val postId = (_uiState.value as? UiState.Success)
+            ?.data
+            ?.aiMatchingCard
+            ?.postId
+            ?: return
+        emitSideEffect(HomeSideEffect.NavigateToMatchingDetail(postId))
     }
 
     fun onSuperHostMoreClick() {
@@ -84,7 +109,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onSuperHostClick(id: Long) {
-        emitSideEffect(HomeSideEffect.NavigateToSuperHost(id))
+        emitSideEffect(HomeSideEffect.NavigateToMatchingDetail(id))
     }
 
     fun onSuperHostLikeClick(id: Long) {
@@ -102,7 +127,7 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onCompanionClick(id: Long) {
-        emitSideEffect(HomeSideEffect.NavigateToCompanion(id))
+        emitSideEffect(HomeSideEffect.NavigateToMatchingDetail(id))
     }
 
     fun onCreateTravelRoomClick() {

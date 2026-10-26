@@ -69,6 +69,7 @@ private fun AiMatchingSectionPreview() {
         AiMatchingSection(
             matchUsedCount = 1,
             data = AiMatchingCardData(
+                postId = 1L,
                 imageUrl = null,
                 matchPercent = 92,
                 title = "제주 서귀포 감성 여행",
