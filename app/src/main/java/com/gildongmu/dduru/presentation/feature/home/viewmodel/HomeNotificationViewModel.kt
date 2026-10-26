@@ -41,14 +41,29 @@ class HomeNotificationViewModel @Inject constructor(
     }
 
     fun onMarkAllAsReadClick() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (currentState.isMarkingAllAsRead || currentState.unreadCount == 0) return
+
+        updateUiState {
+            copy(
+                isMarkingAllAsRead = true,
+                markAllAsReadFailed = false
+            )
+        }
+
         viewModelScope.launch {
             homeNotificationRepository.markAllAsRead()
                 .onSuccess { updateAllNotificationsReadState() }
-                .onFailure { _uiState.value = UiState.Failure }
+                .onFailure {
+                    updateUiState {
+                        copy(
+                            isMarkingAllAsRead = false,
+                            markAllAsReadFailed = true
+                        )
+                    }
+                }
         }
     }
-
-    fun onDeleteAllClick() = Unit
 
     fun onNotificationClick(notification: HomeNotificationItemUiState) {
         viewModelScope.launch {
@@ -145,6 +160,8 @@ class HomeNotificationViewModel @Inject constructor(
         updateUiState {
             copy(
                 unreadCount = 0,
+                isMarkingAllAsRead = false,
+                markAllAsReadFailed = false,
                 notifications = notifications.map { notification ->
                     notification.copy(isRead = true)
                 }.toImmutableList()

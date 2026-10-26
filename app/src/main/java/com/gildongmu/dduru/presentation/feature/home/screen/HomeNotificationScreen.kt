@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -70,7 +71,6 @@ fun HomeNotificationRoute(
             onNotificationClick = viewModel::onNotificationClick,
             onLoadMoreNotifications = viewModel::loadMoreNotifications,
             onMarkAllAsReadClick = viewModel::onMarkAllAsReadClick,
-            onDeleteAllClick = viewModel::onDeleteAllClick,
             modifier = modifier
         )
         else -> Unit
@@ -85,7 +85,6 @@ private fun HomeNotificationScreen(
     onNotificationClick: (HomeNotificationItemUiState) -> Unit,
     onLoadMoreNotifications: () -> Unit,
     onMarkAllAsReadClick: () -> Unit,
-    onDeleteAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isMenuVisible by remember { mutableStateOf(false) }
@@ -113,6 +112,15 @@ private fun HomeNotificationScreen(
                 modifier = Modifier.padding(top = 24.dp)
             )
 
+            if (uiState.markAllAsReadFailed) {
+                Text(
+                    text = "전체 확인에 실패했어요. 다시 시도해 주세요.",
+                    style = DduruTheme.typography.Caption1,
+                    color = DduruTheme.colors.validationRed,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
             if (notifications.isEmpty()) {
                 HomeNotificationEmptyState(
                     modifier = Modifier
@@ -137,13 +145,10 @@ private fun HomeNotificationScreen(
         if (isMenuVisible) {
             HomeNotificationMoreMenu(
                 onMarkAllAsReadClick = {
-                    isMenuVisible = false
                     onMarkAllAsReadClick()
                 },
-                onDeleteAllClick = {
-                    isMenuVisible = false
-                    onDeleteAllClick()
-                },
+                isMarkingAllAsRead = uiState.isMarkingAllAsRead,
+                hasUnreadNotifications = uiState.unreadCount > 0,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 66.dp, end = 16.dp)
@@ -163,7 +168,6 @@ private fun HomeNotificationScreenPreview() {
             onNotificationClick = {},
             onLoadMoreNotifications = {},
             onMarkAllAsReadClick = {},
-            onDeleteAllClick = {}
         )
     }
 }
@@ -179,7 +183,6 @@ private fun HomeNotificationEmptyScreenPreview() {
             onNotificationClick = {},
             onLoadMoreNotifications = {},
             onMarkAllAsReadClick = {},
-            onDeleteAllClick = {}
         )
     }
 }
