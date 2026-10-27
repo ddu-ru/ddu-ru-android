@@ -163,9 +163,24 @@ class ChatRoomViewModel @Inject constructor(
 
     fun onBackClick() = emitEffect(ChatRoomSideEffect.NavigateBack)
 
-    fun onMembersClick() = emitEffect(ChatRoomSideEffect.NavigateToMembers)
+    fun onMembersClick() = emitEffect(ChatRoomSideEffect.ShowMessage("준비 중인 기능이에요."))
 
     fun onMenuClick() = emitEffect(ChatRoomSideEffect.NavigateToMenu)
+
+    fun onImageClick(messageId: String, imageIndex: Int) {
+        val imageMessages = _uiState.value.items
+            .filterIsInstance<ChatListItem.Message>()
+            .map { it.message }
+            .filter { it.kind == ChatMessageKind.IMAGE && it.imageUrls.isNotEmpty() }
+        val imageUrls = imageMessages.flatMap { it.imageUrls }
+        if (imageUrls.isEmpty()) return
+
+        val offset = imageMessages
+            .takeWhile { it.id != messageId }
+            .sumOf { it.imageUrls.size }
+        val initialIndex = (offset + imageIndex).coerceIn(0, imageUrls.lastIndex)
+        emitEffect(ChatRoomSideEffect.NavigateToImageViewer(imageUrls, initialIndex))
+    }
 
     fun onPlusClick() {
         _uiState.update { it.copy(isAttachPanelOpen = !it.isAttachPanelOpen) }

@@ -12,6 +12,7 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
+import com.gildongmu.dduru.presentation.feature.chat.screen.ChatImageViewerScreen
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomMenuRoute
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomRoute
 import com.gildongmu.dduru.presentation.feature.home.screen.HomeMenuRoute
@@ -188,6 +189,9 @@ fun RootNavigation(
                             },
                             onNavigateToPollCreate = {
                                 rootBackStack.add(RootNavRoute.PollCreate)
+                            },
+                            onNavigateToImageViewer = { imageUrls, initialIndex ->
+                                rootBackStack.add(RootNavRoute.ChatImageViewer(imageUrls, initialIndex))
                             }
                         )
                     }
@@ -196,6 +200,14 @@ fun RootNavigation(
                         ChatRoomMenuRoute(
                             chatRoomId = route.chatRoomId,
                             onBackClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.ChatImageViewer -> NavEntry(route) {
+                        ChatImageViewerScreen(
+                            imageUrls = route.imageUrls,
+                            initialIndex = route.initialIndex,
+                            onCloseClick = { navigateBack() }
                         )
                     }
 

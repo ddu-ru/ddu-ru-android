@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.chat.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,6 +26,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -55,6 +57,10 @@ fun ChatMainRoute(
     viewModel: ChatMainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val showNotReady = {
+        Toast.makeText(context, "준비 중인 기능이에요.", Toast.LENGTH_SHORT).show()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -78,6 +84,8 @@ fun ChatMainRoute(
             selectedSort = state.data.selectedSort,
             onSortSelected = viewModel::onSortSelected,
             onChatRoomClick = { id -> viewModel.onChatRoomClick(id.toLong()) },
+            onSearchClick = showNotReady,
+            onMenuClick = showNotReady,
             onLoadMore = { viewModel.loadMoreChatRooms() },
             requestContent = { ChatRequestRoute(onNavigateToChatRoom = onNavigateToChatRoom) },
             applicationContent = { ChatApplicationRoute(onNavigateToChatRoom = onNavigateToChatRoom) }

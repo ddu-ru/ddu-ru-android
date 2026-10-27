@@ -68,6 +68,7 @@ fun ChatRoomRoute(
     onBackClick: () -> Unit,
     onNavigateToMenu: (Long) -> Unit = {},
     onNavigateToPollCreate: () -> Unit = {},
+    onNavigateToImageViewer: (List<String>, Int) -> Unit = { _, _ -> },
     viewModel: ChatRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -85,13 +86,15 @@ fun ChatRoomRoute(
             when (effect) {
                 is ChatRoomSideEffect.NavigateBack -> onBackClick()
                 is ChatRoomSideEffect.NavigateToMembers -> Unit
+                is ChatRoomSideEffect.NavigateToMenu -> onNavigateToMenu(chatRoomId)
+                is ChatRoomSideEffect.NavigateToPollCreate -> onNavigateToPollCreate()
+                is ChatRoomSideEffect.NavigateToImageViewer ->
+                    onNavigateToImageViewer(effect.imageUrls, effect.initialIndex)
                 is ChatRoomSideEffect.OpenPhotoPicker -> photoPickerLauncher.launch(
                     PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
                 )
                 is ChatRoomSideEffect.ShowMessage ->
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
-                is ChatRoomSideEffect.NavigateToMenu -> onNavigateToMenu(chatRoomId)
-                is ChatRoomSideEffect.NavigateToPollCreate -> onNavigateToPollCreate()
             }
         }
     }
@@ -111,6 +114,7 @@ fun ChatRoomRoute(
         onSendClick = viewModel::onSendClick,
         onInputChange = viewModel::onInputChange,
         onAttachOptionClick = viewModel::onAttachOptionClick,
+        onImageClick = viewModel::onImageClick,
         onLoadMore = viewModel::loadMoreMessages,
         onRetryClick = viewModel::retryLoadMessages
     )
@@ -126,6 +130,7 @@ private fun ChatRoomScreen(
     onSendClick: (String) -> Unit,
     onInputChange: (String) -> Unit,
     onAttachOptionClick: (ChatAttachOption) -> Unit = {},
+    onImageClick: (String, Int) -> Unit = { _, _ -> },
     onLoadMore: () -> Unit = {},
     onRetryClick: () -> Unit = {},
     modifier: Modifier = Modifier
@@ -219,7 +224,11 @@ private fun ChatRoomScreen(
                 .padding(top = 8.dp)
         ) {
             items(uiState.items) { item ->
-                ChatMessageItem(item = item, roomType = uiState.roomType)
+                ChatMessageItem(
+                    item = item,
+                    roomType = uiState.roomType,
+                    onImageClick = onImageClick
+                )
             }
         }
 
@@ -265,7 +274,8 @@ private fun ChatRoomScreen(
 @Composable
 private fun ChatMessageItem(
     item: ChatListItem,
-    roomType: ChatRoomType
+    roomType: ChatRoomType,
+    onImageClick: (String, Int) -> Unit
 ) {
     when (item) {
         is ChatListItem.DateDivider -> ChatDateDivider(date = item.date)
@@ -286,7 +296,7 @@ private fun ChatMessageItem(
                             time = time,
                             unreadCount = msg.unreadCount,
                             isMine = true,
-                            onImageClick = {}
+                            onImageClick = { index -> onImageClick(msg.id, index) }
                         )
                         roomType == ChatRoomType.GROUP -> GroupImageMessageBubble(
                             username = msg.senderName,
@@ -294,14 +304,14 @@ private fun ChatMessageItem(
                             time = time,
                             unreadCount = msg.unreadCount,
                             isHead = isHead,
-                            onImageClick = {}
+                            onImageClick = { index -> onImageClick(msg.id, index) }
                         )
                         else -> ImageMessageBubble(
                             imageUrls = msg.imageUrls,
                             time = time,
                             unreadCount = msg.unreadCount,
                             isMine = false,
-                            onImageClick = {}
+                            onImageClick = { index -> onImageClick(msg.id, index) }
                         )
                     }
                 } else {

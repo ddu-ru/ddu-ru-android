@@ -24,13 +24,15 @@ sealed interface RootNavRoute : NavKey {
 
     @Serializable data class ChatRoom(val chatRoomId: Long) : RootNavRoute
 
+    @Serializable data class ChatRoomMenu(val chatRoomId: Long) : RootNavRoute
+
+    @Serializable data class ChatImageViewer(val imageUrls: List<String>, val initialIndex: Int) : RootNavRoute
+
+    @Serializable data object PollCreate : RootNavRoute
+
     @Serializable data object MatchingCreatePost : RootNavRoute
 
     @Serializable data class MatchingDetail(val postId: Long) : RootNavRoute
 
     @Serializable data class MatchingEditPost(val postId: Long) : RootNavRoute
-
-    @Serializable data class ChatRoomMenu(val chatRoomId: Long) : RootNavRoute
-
-    @Serializable data object PollCreate : RootNavRoute
 }
