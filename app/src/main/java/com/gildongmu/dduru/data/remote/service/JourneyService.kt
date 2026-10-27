@@ -1,11 +1,13 @@
 package com.gildongmu.dduru.data.remote.service
 
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyMemberRoleUpdateRequest
+import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyScheduleRequest
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyUpdateRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyDetailResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyMemberResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyMemberRoleUpdateResponse
+import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyScheduleListResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyUpdateResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.MyJourneyListResponse
 import retrofit2.Response
@@ -13,6 +15,7 @@ import retrofit2.http.Body
 import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
+import retrofit2.http.POST
 import retrofit2.http.PUT
 import retrofit2.http.Path
 
@@ -27,6 +30,17 @@ interface JourneyService {
         @Path("journeyId") journeyId: Long,
         @Body request: JourneyUpdateRequest
     ): ApiResponse<JourneyUpdateResponse>
+
+    @GET("api/v1/journeys/{journeyId}/schedules")
+    suspend fun getJourneySchedules(
+        @Path("journeyId") journeyId: Long
+    ): ApiResponse<JourneyScheduleListResponse>
+
+    @POST("api/v1/journeys/{journeyId}/schedules")
+    suspend fun createJourneySchedule(
+        @Path("journeyId") journeyId: Long,
+        @Body request: JourneyScheduleRequest
+    ): Response<Unit>
 
     @GET("api/v1/journeys/{journeyId}/members")
     suspend fun getJourneyMembers(

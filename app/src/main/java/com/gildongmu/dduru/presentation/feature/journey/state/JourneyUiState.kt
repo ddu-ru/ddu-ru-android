@@ -6,11 +6,13 @@ import com.gildongmu.dduru.presentation.feature.journey.component.JourneySchedul
 
 data class JourneyUiState(
     val ongoingJourneys: List<OngoingJourneyUiState> = emptyList(),
+    val selectedJourneyId: Long? = null,
     val todos: List<JourneyTodoUiState> = emptyList(),
     val scheduleDays: List<JourneyScheduleDayUiState> = emptyList(),
     val selectedScheduleDay: Int = 1,
     val scheduleDDayText: String = "",
     val schedules: List<JourneyScheduleItemUiState> = emptyList(),
+    val schedulesByDay: Map<Int, List<JourneyScheduleItemUiState>> = emptyMap(),
     val news: List<JourneyNewsItemUiState> = emptyList(),
     val pastJourneys: List<PastJourneyUiState> = emptyList()
 )

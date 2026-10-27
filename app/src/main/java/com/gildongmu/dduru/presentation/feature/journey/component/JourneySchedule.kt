@@ -125,26 +125,6 @@ private fun JourneyScheduleHeader(
             }
         }
 
-        item {
-            Box(
-                modifier = Modifier
-                    .background(
-                        color = DduruTheme.colors.gray100,
-                        shape = RoundedCornerShape(99.dp)
-                    )
-                    .padding(
-                        horizontal = 12.dp,
-                        vertical = 12.dp
-                    ),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = dDayText,
-                    style = DduruTheme.typography.Caption1,
-                    color = DduruTheme.colors.gray700
-                )
-            }
-        }
     }
 }
 
@@ -160,6 +140,7 @@ fun JourneyScheduleItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .padding(vertical = 16.dp)
             .height(IntrinsicSize.Min),
         verticalAlignment = Alignment.CenterVertically
     ) {

@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -36,11 +37,13 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun JourneyScheduleComposeRoute(
+    journeyId: Long,
     onBackClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: JourneyScheduleComposeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    LaunchedEffect(journeyId) { viewModel.loadJourneyDays(journeyId) }
     var timePickerTarget by remember { mutableStateOf<TimePickerTarget?>(null) }
     val selectedTime = when (timePickerTarget) {
         TimePickerTarget.START -> uiState.startTime
@@ -66,7 +69,7 @@ fun JourneyScheduleComposeRoute(
         onCategoryOptionClick = viewModel::onCategoryOptionClick,
         onCategoryClick = viewModel::onCategoryClick,
         onRemoveCategoryClick = viewModel::onRemoveCategoryClick,
-        onSubmitClick = viewModel::onSubmitClick,
+        onSubmitClick = { viewModel.onSubmitClick(journeyId, onBackClick) },
         modifier = modifier
     )
 

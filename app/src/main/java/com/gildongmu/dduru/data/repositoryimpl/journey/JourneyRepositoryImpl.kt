@@ -3,6 +3,7 @@ package com.gildongmu.dduru.data.repositoryimpl.journey
 import com.gildongmu.dduru.data.mapper.journey.toDomain
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyMemberRoleRequest
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyMemberRoleUpdateRequest
+import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyScheduleRequest
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyUpdateRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.MyJourneyListResponse
@@ -11,6 +12,8 @@ import com.gildongmu.dduru.domain.journey.entity.JourneyDetail
 import com.gildongmu.dduru.domain.journey.entity.JourneyMember
 import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRole
 import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRoleUpdate
+import com.gildongmu.dduru.domain.journey.entity.JourneyScheduleCommand
+import com.gildongmu.dduru.domain.journey.entity.JourneyScheduleList
 import com.gildongmu.dduru.domain.journey.entity.JourneyUpdate
 import com.gildongmu.dduru.domain.journey.entity.JourneyUpdateCommand
 import com.gildongmu.dduru.domain.journey.entity.MyJourneyList
@@ -42,6 +45,29 @@ class JourneyRepositoryImpl @Inject constructor(
             )
         )
         response.requireData().toDomain()
+    }
+
+    override suspend fun getJourneySchedules(journeyId: Long): Result<JourneyScheduleList> = request {
+        journeyService.getJourneySchedules(journeyId).requireData().toDomain()
+    }
+
+    override suspend fun createJourneySchedule(
+        journeyId: Long,
+        command: JourneyScheduleCommand
+    ): Result<Unit> = request {
+        val response = journeyService.createJourneySchedule(
+            journeyId = journeyId,
+            request = JourneyScheduleRequest(
+                title = command.title,
+                category = command.category,
+                dayOffset = command.dayOffset,
+                startTime = command.startTime,
+                endTime = command.endTime,
+                placeName = command.placeName,
+                memo = command.memo
+            )
+        )
+        if (!response.isSuccessful) throw response.toJourneyApiException(json)
     }
 
     override suspend fun getJourneyMembers(journeyId: Long): Result<List<JourneyMember>> = request {

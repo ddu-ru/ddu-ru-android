@@ -28,7 +28,10 @@ sealed interface RootNavRoute : NavKey {
 
     @Serializable data class MatchingEditPost(val postId: Long) : RootNavRoute
 
-    @Serializable data class JourneyDetail(val journeyId: Long) : RootNavRoute
+    @Serializable data class JourneyDetail(
+        val journeyId: Long,
+        val initialFilter: String? = null
+    ) : RootNavRoute
 
     @Serializable data class JourneyAdmin(val journeyId: Long) : RootNavRoute
 

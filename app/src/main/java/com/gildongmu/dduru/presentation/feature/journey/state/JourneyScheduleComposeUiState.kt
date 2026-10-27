@@ -15,7 +15,8 @@ data class JourneyScheduleComposeUiState(
     val isMemoAdded: Boolean = false,
     val memo: String = "",
     val isCategoryAdded: Boolean = false,
-    val selectedCategory: JourneyScheduleCategory? = null
+    val selectedCategory: JourneyScheduleCategory? = null,
+    val isSubmitting: Boolean = false
 ) {
     val canSubmit: Boolean
         get() = title.isNotBlank() && selectedDay != null

@@ -2,6 +2,8 @@ package com.gildongmu.dduru.presentation.feature.journey.state
 
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailFilterType
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyMemberUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleDayUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleItemUiState
 
 data class JourneyDetailUiState(
     val imageUrl: String? = null,
@@ -12,6 +14,9 @@ data class JourneyDetailUiState(
     val members: List<JourneyMemberUiState> = emptyList(),
     val posts: List<JourneyDetailPostUiState> = emptyList(),
     val filteredPosts: List<JourneyDetailPostUiState> = emptyList(),
+    val scheduleDays: List<JourneyScheduleDayUiState> = emptyList(),
+    val selectedScheduleDay: Int = 1,
+    val schedulesByDay: Map<Int, List<JourneyScheduleItemUiState>> = emptyMap(),
     val nextCursor: Long? = null,
     val hasNext: Boolean = false,
     val isLoadingMore: Boolean = false,

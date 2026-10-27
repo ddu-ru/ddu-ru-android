@@ -51,9 +51,10 @@ fun JourneyRoute(
     onExploreClick: () -> Unit = {},
     onCreateJourneyClick: () -> Unit = {},
     onJourneyClick: (Long) -> Unit = {},
+    onJourneySelected: (Long) -> Unit = {},
     onTodoAllClick: () -> Unit = {},
-    onScheduleAllClick: () -> Unit = {},
-    onNewsAllClick: () -> Unit = {},
+    onScheduleAllClick: (Long) -> Unit = {},
+    onNewsAllClick: (Long) -> Unit = {},
     onNewsClick: (Long) -> Unit = {},
     onPastJourneyAllClick: () -> Unit = {},
     onPastJourneyClick: (Long) -> Unit = {},
@@ -80,6 +81,7 @@ fun JourneyRoute(
                 onExploreClick = onExploreClick,
                 onCreateJourneyClick = onCreateJourneyClick,
                 onJourneyClick = onJourneyClick,
+                onJourneySelected = viewModel::onJourneySelected,
                 onTodoAllClick = onTodoAllClick,
                 onScheduleAllClick = onScheduleAllClick,
                 onNewsAllClick = onNewsAllClick,
@@ -102,9 +104,10 @@ private fun JourneyScreen(
     onExploreClick: () -> Unit,
     onCreateJourneyClick: () -> Unit,
     onJourneyClick: (Long) -> Unit,
+    onJourneySelected: (Long) -> Unit,
     onTodoAllClick: () -> Unit,
-    onScheduleAllClick: () -> Unit,
-    onNewsAllClick: () -> Unit,
+    onScheduleAllClick: (Long) -> Unit,
+    onNewsAllClick: (Long) -> Unit,
     onNewsClick: (Long) -> Unit,
     onPastJourneyAllClick: () -> Unit,
     onPastJourneyClick: (Long) -> Unit,
@@ -143,6 +146,11 @@ private fun JourneyScreen(
                             pageCount = { uiState.ongoingJourneys.size }
                         )
 
+                        LaunchedEffect(pagerState.currentPage, uiState.ongoingJourneys) {
+                            uiState.ongoingJourneys.getOrNull(pagerState.currentPage)
+                                ?.let { onJourneySelected(it.id) }
+                        }
+
                         HorizontalPager(
                             state = pagerState,
                             contentPadding = PaddingValues(end = 32.dp),
@@ -173,7 +181,7 @@ private fun JourneyScreen(
                 item {
                     JourneySection(
                         title = "다가오는 일정",
-                        onAllClick = onScheduleAllClick
+                        onAllClick = { uiState.selectedJourneyId?.let(onScheduleAllClick) }
                     ) {
                         JourneySchedule(
                             days = uiState.scheduleDays,
@@ -190,9 +198,8 @@ private fun JourneyScreen(
                 item {
                     JourneySection(
                         title = "새 소식",
-                        count = uiState.news.size,
-                        countColor = DduruTheme.colors.primary,
-                        onAllClick = onNewsAllClick
+                        // 기획 확정 전까지 새소식 개수는 노출하지 않습니다.
+                        onAllClick = { uiState.selectedJourneyId?.let(onNewsAllClick) }
                     ) {
                         JourneyNewsSection(
                             news = uiState.news.take(MAX_VISIBLE_NEWS_COUNT),
@@ -305,6 +312,7 @@ private fun JourneyScreenPreview() {
             onExploreClick = {},
             onCreateJourneyClick = {},
             onJourneyClick = {},
+            onJourneySelected = {},
             onTodoAllClick = {},
             onScheduleAllClick = {},
             onNewsAllClick = {},
@@ -328,6 +336,7 @@ private fun JourneyEmptyScreenPreview() {
             onExploreClick = {},
             onCreateJourneyClick = {},
             onJourneyClick = {},
+            onJourneySelected = {},
             onTodoAllClick = {},
             onScheduleAllClick = {},
             onNewsAllClick = {},

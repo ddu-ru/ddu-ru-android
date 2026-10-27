@@ -126,8 +126,8 @@ fun RootNavigation(
                             onNavigateToMatchingDetail = { postId ->
                                 rootBackStack.add(RootNavRoute.MatchingDetail(postId))
                             },
-                            onNavigateToJourneyDetail = { journeyId ->
-                                rootBackStack.add(RootNavRoute.JourneyDetail(journeyId))
+                            onNavigateToJourneyDetail = { journeyId, initialFilter ->
+                                rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             }
                         )
                     }
@@ -183,6 +183,7 @@ fun RootNavigation(
                     is RootNavRoute.JourneyDetail -> NavEntry(route) {
                         JourneyDetailRoute(
                             journeyId = route.journeyId,
+                            initialFilter = route.initialFilter,
                             onBackClick = { navigateBack() },
                             onManageMembersClick = {
                                 rootBackStack.add(RootNavRoute.JourneyAdmin(route.journeyId))
@@ -233,7 +234,10 @@ fun RootNavigation(
                     }
 
                     is RootNavRoute.JourneyScheduleCompose -> NavEntry(route) {
-                        JourneyScheduleComposeRoute(onBackClick = { navigateBack() })
+                        JourneyScheduleComposeRoute(
+                            journeyId = route.journeyId,
+                            onBackClick = { navigateBack() }
+                        )
                     }
 
                     is RootNavRoute.JourneyVoteCompose -> NavEntry(route) {

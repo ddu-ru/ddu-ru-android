@@ -43,6 +43,7 @@ import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailM
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailPostItem
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailVoteItem
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyMemberUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneySchedule
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyWritingButton
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailPostUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailUiState
@@ -53,6 +54,7 @@ import kotlinx.collections.immutable.persistentListOf
 @Composable
 fun JourneyDetailRoute(
     journeyId: Long,
+    initialFilter: String? = null,
     onBackClick: () -> Unit,
     onManageMembersClick: () -> Unit,
     onChatRoomClick: () -> Unit,
@@ -72,8 +74,11 @@ fun JourneyDetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LaunchedEffect(journeyId) {
-        viewModel.loadJourneyDetail(journeyId)
+    LaunchedEffect(journeyId, initialFilter) {
+        viewModel.loadJourneyDetail(
+            journeyId = journeyId,
+            initialFilter = initialFilter?.let(JourneyDetailFilterType::valueOf)
+        )
     }
 
     when (val state = uiState) {
@@ -89,6 +94,7 @@ fun JourneyDetailRoute(
             onShareClick = onShareClick,
             onMoreClick = onMoreClick,
             onFilterClick = viewModel::onFilterClick,
+            onScheduleDayClick = viewModel::onScheduleDayClick,
             onLoadMore = viewModel::loadMoreJourneyPosts,
             onPostCommentClick = onPostCommentClick,
             onPostClick = onPostClick,
@@ -113,6 +119,7 @@ fun JourneyDetailScreen(
     onShareClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
     onFilterClick: (JourneyDetailFilterType) -> Unit,
+    onScheduleDayClick: (Int) -> Unit = {},
     onLoadMore: () -> Unit = {},
     onPostCommentClick: (Long) -> Unit = {},
     onPostClick: (Long) -> Unit = {},
@@ -195,19 +202,29 @@ fun JourneyDetailScreen(
                             onFilterClick = onFilterClick
                         )
 
-                        JourneyDetailContentList(
-                            posts = uiState.filteredPosts,
-                            votes = if (uiState.selectedFilter == JourneyDetailFilterType.VOTE) {
-                                uiState.votes
-                            } else {
-                                emptyList()
-                            },
-                            onPostCommentClick = onPostCommentClick,
-                            onPostClick = onPostClick,
-                            onPostPinClick = onPostPinClick,
-                            onPostMoreClick = onPostMoreClick,
-                            onVoteClick = onVoteClick
-                        )
+                        if (uiState.selectedFilter == JourneyDetailFilterType.SCHEDULE) {
+                            JourneySchedule(
+                                days = uiState.scheduleDays,
+                                selectedDay = uiState.selectedScheduleDay,
+                                dDayText = "",
+                                schedules = uiState.schedulesByDay[uiState.selectedScheduleDay].orEmpty(),
+                                onDayClick = onScheduleDayClick
+                            )
+                        } else {
+                            JourneyDetailContentList(
+                                posts = uiState.filteredPosts,
+                                votes = if (uiState.selectedFilter == JourneyDetailFilterType.VOTE) {
+                                    uiState.votes
+                                } else {
+                                    emptyList()
+                                },
+                                onPostCommentClick = onPostCommentClick,
+                                onPostClick = onPostClick,
+                                onPostPinClick = onPostPinClick,
+                                onPostMoreClick = onPostMoreClick,
+                                onVoteClick = onVoteClick
+                            )
+                        }
                     }
                 }
             }

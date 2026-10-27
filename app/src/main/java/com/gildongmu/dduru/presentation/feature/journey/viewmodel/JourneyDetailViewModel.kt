@@ -12,6 +12,8 @@ import com.gildongmu.dduru.domain.journey.repository.JourneyPostRepository
 import com.gildongmu.dduru.domain.journey.repository.JourneyRepository
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailFilterType
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyMemberUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleDayUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleItemUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailPostUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -36,8 +38,14 @@ class JourneyDetailViewModel @Inject constructor(
         loadJourneyDetail(journeyId)
     }
 
-    fun loadJourneyDetail(journeyId: Long) {
-        if (loadedJourneyId == journeyId && _uiState.value is UiState.Success) return
+    fun loadJourneyDetail(
+        journeyId: Long,
+        initialFilter: JourneyDetailFilterType? = null
+    ) {
+        if (loadedJourneyId == journeyId && _uiState.value is UiState.Success) {
+            initialFilter?.let(::onFilterClick)
+            return
+        }
 
         loadedJourneyId = journeyId
         viewModelScope.launch {
@@ -49,7 +57,7 @@ class JourneyDetailViewModel @Inject constructor(
                         "여정 상세 조회 성공: journeyId=${detail.journeyId}, " +
                             "멤버 ${detail.members.size}명, 공지 ${detail.pinnedNotices.size}개"
                     )
-                    loadJourneyPosts(detail)
+                    loadJourneyPosts(detail, initialFilter)
                 },
                 onFailure = { throwable ->
                     Log.e(TAG, "여정 상세 조회 실패: journeyId=$journeyId", throwable)
@@ -59,20 +67,40 @@ class JourneyDetailViewModel @Inject constructor(
         }
     }
 
-    private suspend fun loadJourneyPosts(detail: JourneyDetail) {
+    private suspend fun loadJourneyPosts(
+        detail: JourneyDetail,
+        initialFilter: JourneyDetailFilterType?
+    ) {
         journeyPostRepository.getJourneyPosts(detail.journeyId).fold(
             onSuccess = { page ->
+                val scheduleList = journeyRepository.getJourneySchedules(detail.journeyId).getOrNull()
+                val schedulesByDay = scheduleList?.days.orEmpty().associate { day ->
+                    day.day to day.schedules.map {
+                        JourneyScheduleItemUiState(
+                            startTime = it.startTime?.take(5),
+                            endTime = it.endTime?.take(5),
+                            title = it.title,
+                            location = it.placeName,
+                            memo = it.memo
+                        )
+                    }
+                }
                 _uiState.value = UiState.Success(
                     detail.toUiState(
                         posts = page.posts.map(JourneyPost::toUiState),
                         nextCursor = page.nextCursor,
-                        hasNext = page.hasNext
+                        hasNext = page.hasNext,
+                        selectedFilter = initialFilter ?: JourneyDetailFilterType.FIXED,
+                        scheduleDays = scheduleList?.days.orEmpty().map {
+                            JourneyScheduleDayUiState(it.day, it.date.split("-").takeLast(2).joinToString("."))
+                        },
+                        schedulesByDay = schedulesByDay
                     )
                 )
             },
             onFailure = { throwable ->
                 Log.e(TAG, "여정 게시글 목록 조회 실패: journeyId=${detail.journeyId}", throwable)
-                _uiState.value = UiState.Success(detail.toUiState())
+                _uiState.value = UiState.Success(detail.toUiState(selectedFilter = initialFilter))
             }
         )
     }
@@ -129,6 +157,13 @@ class JourneyDetailViewModel @Inject constructor(
         }
     }
 
+    fun onScheduleDayClick(day: Int) {
+        _uiState.update { state ->
+            val data = (state as? UiState.Success)?.data ?: return@update state
+            UiState.Success(data.copy(selectedScheduleDay = day))
+        }
+    }
+
     fun onPostPinClick(journeyPostId: Long) {
         val journeyId = loadedJourneyId ?: return
         val currentState = (_uiState.value as? UiState.Success)?.data ?: return
@@ -177,7 +212,10 @@ class JourneyDetailViewModel @Inject constructor(
 private fun JourneyDetail.toUiState(
     posts: List<JourneyDetailPostUiState> = pinnedNotices.map(JourneyPinnedNotice::toUiState),
     nextCursor: Long? = null,
-    hasNext: Boolean = false
+    hasNext: Boolean = false,
+    selectedFilter: JourneyDetailFilterType? = null,
+    scheduleDays: List<JourneyScheduleDayUiState> = emptyList(),
+    schedulesByDay: Map<Int, List<JourneyScheduleItemUiState>> = emptyMap()
 ): JourneyDetailUiState = JourneyDetailUiState(
     imageUrl = photoUrl,
     dDay = recruitDeadlineDDay,
@@ -186,9 +224,17 @@ private fun JourneyDetail.toUiState(
     isOwner = isOwner,
     members = members.map(JourneyMember::toUiState),
     posts = posts,
-    filteredPosts = posts.filter { it.isPinned },
+    filteredPosts = when (selectedFilter ?: JourneyDetailFilterType.FIXED) {
+        JourneyDetailFilterType.FIXED -> posts.filter { it.isPinned }
+        JourneyDetailFilterType.VOTE -> emptyList()
+        else -> posts.filter { it.category == selectedFilter }
+    },
     nextCursor = nextCursor,
-    hasNext = hasNext
+    hasNext = hasNext,
+    selectedFilter = selectedFilter ?: JourneyDetailFilterType.FIXED,
+    scheduleDays = scheduleDays,
+    selectedScheduleDay = scheduleDays.firstOrNull()?.day ?: 1,
+    schedulesByDay = schedulesByDay
 )
 
 private fun JourneyMember.toUiState(): JourneyMemberUiState = JourneyMemberUiState(
