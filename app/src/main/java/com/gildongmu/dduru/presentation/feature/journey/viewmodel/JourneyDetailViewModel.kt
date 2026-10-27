@@ -220,6 +220,7 @@ private fun JourneyDetail.toUiState(
     scheduleDays: List<JourneyScheduleDayUiState> = emptyList(),
     schedulesByDay: Map<Int, List<JourneyScheduleItemUiState>> = emptyMap()
 ): JourneyDetailUiState = JourneyDetailUiState(
+    groupRoomId = groupRoomId,
     imageUrl = photoUrl,
     dDay = recruitDeadlineDDay,
     title = title,

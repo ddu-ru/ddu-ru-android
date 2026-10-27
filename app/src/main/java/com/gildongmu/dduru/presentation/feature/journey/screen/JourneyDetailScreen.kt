@@ -57,7 +57,7 @@ fun JourneyDetailRoute(
     initialFilter: String? = null,
     onBackClick: () -> Unit,
     onManageMembersClick: () -> Unit,
-    onChatRoomClick: () -> Unit,
+    onChatRoomClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     onNotificationClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
@@ -114,7 +114,7 @@ fun JourneyDetailScreen(
     uiState: JourneyDetailUiState,
     onBackClick: () -> Unit,
     onManageMembersClick: () -> Unit,
-    onChatRoomClick: () -> Unit,
+    onChatRoomClick: (Long) -> Unit,
     onNotificationClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
@@ -183,7 +183,7 @@ fun JourneyDetailScreen(
                     )
 
                     ChatRoomShortcutButton(
-                        onClick = onChatRoomClick
+                        onClick = { uiState.groupRoomId?.let(onChatRoomClick) }
                     )
 
                     Column(

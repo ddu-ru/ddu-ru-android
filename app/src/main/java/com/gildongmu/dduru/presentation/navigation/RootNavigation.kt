@@ -271,7 +271,9 @@ fun RootNavigation(
                             onManageMembersClick = {
                                 rootBackStack.add(RootNavRoute.JourneyAdmin(route.journeyId))
                             },
-                            onChatRoomClick = {},
+                            onChatRoomClick = { chatRoomId ->
+                                rootBackStack.add(RootNavRoute.ChatRoom(chatRoomId))
+                            },
                             onPostClick = { postId ->
                                 rootBackStack.add(RootNavRoute.JourneyPostDetail(route.journeyId, postId))
                             },

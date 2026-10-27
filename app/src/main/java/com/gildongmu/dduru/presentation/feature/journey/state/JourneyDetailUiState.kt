@@ -6,6 +6,7 @@ import com.gildongmu.dduru.presentation.feature.journey.component.JourneySchedul
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleItemUiState
 
 data class JourneyDetailUiState(
+    val groupRoomId: Long? = null,
     val imageUrl: String? = null,
     val dDay: String = "",
     val title: String = "",
