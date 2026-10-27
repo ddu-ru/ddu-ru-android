@@ -35,13 +35,11 @@ object NetworkModule {
     @Singleton
     fun provideAuthInterceptor(
         tokenLocalDataSource: TokenLocalDataSource,
-        tokenAuthenticator: TokenAuthenticator,
-        json: Json
+        tokenAuthenticator: TokenAuthenticator
     ): AuthInterceptor {
         return AuthInterceptor(
             tokenLocalDataSource = tokenLocalDataSource,
-            tokenAuthenticator = tokenAuthenticator,
-            json = json
+            tokenAuthenticator = tokenAuthenticator
         )
     }
 

@@ -4,6 +4,7 @@ import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.remote.dto.request.RefreshTokenRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.dto.response.LoginResponse
+import java.util.Base64
 import javax.inject.Inject
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.flow.first
@@ -14,6 +15,9 @@ import kotlinx.coroutines.withContext
 import kotlinx.serialization.decodeFromString
 import kotlinx.serialization.encodeToString
 import kotlinx.serialization.json.Json
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.longOrNull
 import okhttp3.Authenticator
 import okhttp3.HttpUrl.Companion.toHttpUrl
 import okhttp3.MediaType.Companion.toMediaType
@@ -77,17 +81,40 @@ class TokenAuthenticator @Inject constructor(
         val validRefreshToken = refreshToken.takeIf { it.isNotBlank() }
             ?: latestRefreshToken?.takeIf { it.isNotBlank() }
             ?: return@withLock null
-        val refreshedTokens = withContext(Dispatchers.IO) {
-            refreshTokens(validRefreshToken)
-        } ?: return@withLock null
-        tokenLocalDataSource.saveTokens(
-            accessToken = refreshedTokens.accessToken,
-            refreshToken = refreshedTokens.refreshToken
-        )
-        refreshedTokens
+        when (val result = withContext(Dispatchers.IO) { refreshTokens(validRefreshToken) }) {
+            is RefreshResult.Success -> {
+                tokenLocalDataSource.saveTokens(
+                    accessToken = result.tokens.accessToken,
+                    refreshToken = result.tokens.refreshToken
+                )
+                result.tokens
+            }
+
+            RefreshResult.InvalidToken -> {
+                tokenLocalDataSource.clearTokens()
+                null
+            }
+
+            RefreshResult.Failure -> null
+        }
     }
 
-    private fun refreshTokens(refreshToken: String): LoginResponse? {
+    fun shouldRefresh(accessToken: String): Boolean {
+        return runCatching {
+            val payload = accessToken.split(".").getOrNull(JWT_PAYLOAD_INDEX) ?: return true
+            val decodedPayload = String(Base64.getUrlDecoder().decode(payload), Charsets.UTF_8)
+            val expiresAt = json.parseToJsonElement(decodedPayload)
+                .jsonObject[JWT_EXPIRES_AT_KEY]
+                ?.jsonPrimitive
+                ?.longOrNull
+                ?: return true
+            val now = System.currentTimeMillis() / MILLIS_PER_SECOND
+
+            expiresAt <= now + TOKEN_REFRESH_BUFFER_SECONDS
+        }.getOrDefault(true)
+    }
+
+    private fun refreshTokens(refreshToken: String): RefreshResult {
         val requestBody = json.encodeToString(RefreshTokenRequest(refreshToken))
             .toRequestBody(JSON_MEDIA_TYPE)
         val request = Request.Builder()
@@ -102,13 +129,20 @@ class TokenAuthenticator @Inject constructor(
 
         return runCatching {
             refreshClient.newCall(request).execute().use { response ->
-                if (!response.isSuccessful) return null
+                if (response.code in INVALID_TOKEN_STATUS_RANGE) {
+                    return RefreshResult.InvalidToken
+                }
+                if (!response.isSuccessful) return RefreshResult.Failure
 
-                val body = response.body?.string() ?: return null
+                val body = response.body?.string() ?: return RefreshResult.Failure
                 val apiResponse = json.decodeFromString<ApiResponse<LoginResponse>>(body)
-                apiResponse.data
+                apiResponse.data?.takeIf { responseData ->
+                    apiResponse.status in HTTP_SUCCESS_STATUS_RANGE &&
+                        responseData.accessToken.isNotBlank() &&
+                        responseData.refreshToken.isNotBlank()
+                }?.let(RefreshResult::Success) ?: RefreshResult.Failure
             }
-        }.getOrNull()
+        }.getOrDefault(RefreshResult.Failure)
     }
 
     private fun Request.withAuthorization(accessToken: String): Request {
@@ -133,6 +167,18 @@ class TokenAuthenticator @Inject constructor(
         const val BEARER_PREFIX = "Bearer "
         const val REFRESH_TOKEN_PATH = "/api/v1/auth/refresh"
         const val MAX_AUTH_ATTEMPTS = 2
+        val HTTP_SUCCESS_STATUS_RANGE = 200..299
+        val INVALID_TOKEN_STATUS_RANGE = 400..401
+        const val JWT_PAYLOAD_INDEX = 1
+        const val JWT_EXPIRES_AT_KEY = "exp"
+        const val MILLIS_PER_SECOND = 1_000L
+        const val TOKEN_REFRESH_BUFFER_SECONDS = 60L
         val JSON_MEDIA_TYPE = "application/json".toMediaType()
     }
+}
+
+private sealed interface RefreshResult {
+    data class Success(val tokens: LoginResponse) : RefreshResult
+    data object InvalidToken : RefreshResult
+    data object Failure : RefreshResult
 }

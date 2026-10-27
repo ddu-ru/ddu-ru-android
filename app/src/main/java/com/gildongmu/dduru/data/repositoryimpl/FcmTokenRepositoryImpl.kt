@@ -1,6 +1,8 @@
 package com.gildongmu.dduru.data.repositoryimpl
 
 import com.gildongmu.dduru.data.remote.datasource.FcmTokenRemoteDataSource
+import com.gildongmu.dduru.data.local.TokenLocalDataSource
+import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
 import com.gildongmu.dduru.domain.repository.FcmTokenRepository
 import com.google.android.gms.tasks.Task
 import com.google.firebase.messaging.FirebaseMessaging
@@ -9,12 +11,17 @@ import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
 import kotlinx.coroutines.suspendCancellableCoroutine
+import kotlinx.coroutines.flow.first
 import retrofit2.HttpException
 
 class FcmTokenRepositoryImpl @Inject constructor(
-    private val fcmTokenRemoteDataSource: FcmTokenRemoteDataSource
+    private val fcmTokenRemoteDataSource: FcmTokenRemoteDataSource,
+    private val tokenLocalDataSource: TokenLocalDataSource,
+    private val tokenAuthenticator: TokenAuthenticator
 ) : FcmTokenRepository {
     override suspend fun registerToken(token: String): Result<Unit> {
+        if (!hasAccessToken()) return Result.success(Unit)
+
         return runCatchingFcmTokenApi {
             val response = fcmTokenRemoteDataSource.registerToken(token)
 
@@ -25,6 +32,8 @@ class FcmTokenRepositoryImpl @Inject constructor(
     }
 
     override suspend fun registerCurrentToken(): Result<Unit> {
+        if (!hasAccessToken()) return Result.success(Unit)
+
         return runCatchingFcmTokenApi {
             val token = FirebaseMessaging.getInstance().token.await()
             val response = fcmTokenRemoteDataSource.registerToken(token)
@@ -36,6 +45,8 @@ class FcmTokenRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteToken(token: String): Result<Unit> {
+        if (!hasAccessToken()) return Result.success(Unit)
+
         return runCatchingFcmTokenApi {
             val response = fcmTokenRemoteDataSource.deleteToken(token)
 
@@ -46,6 +57,8 @@ class FcmTokenRepositoryImpl @Inject constructor(
     }
 
     override suspend fun deleteCurrentToken(): Result<Unit> {
+        if (!hasAccessToken()) return Result.success(Unit)
+
         return runCatchingFcmTokenApi {
             val token = FirebaseMessaging.getInstance().token.await()
             val response = fcmTokenRemoteDataSource.deleteToken(token)
@@ -66,6 +79,11 @@ class FcmTokenRepositoryImpl @Inject constructor(
         } catch (e: Exception) {
             Result.failure(Exception("알 수 없는 오류: ${e.message}", e))
         }
+    }
+
+    private suspend fun hasAccessToken(): Boolean {
+        val accessToken = tokenLocalDataSource.accessToken.first()
+        return !accessToken.isNullOrBlank() && !tokenAuthenticator.shouldRefresh(accessToken)
     }
 }
 

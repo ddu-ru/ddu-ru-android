@@ -22,7 +22,13 @@ class TokenManager @Inject constructor(
 
             val apiResponse = authService.refreshAccessToken(request)
 
-            val responseData = apiResponse.data ?: run {
+            val responseData = apiResponse.data
+                ?.takeIf {
+                    apiResponse.status in HTTP_SUCCESS_STATUS_RANGE &&
+                        it.accessToken.isNotBlank() &&
+                        it.refreshToken.isNotBlank()
+                }
+                ?: run {
                 Log.e("TokenManager", "토큰 갱신 실패: 데이터 필드가 null입니다.")
                 return false
             }
@@ -54,5 +60,9 @@ class TokenManager @Inject constructor(
             Log.e("TokenManager", "로그아웃 실패 ${e.message}")
             false
         }
+    }
+
+    private companion object {
+        val HTTP_SUCCESS_STATUS_RANGE = 200..299
     }
 }
