@@ -9,6 +9,7 @@ import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
+import retrofit2.Response
 
 interface PostService {
     @GET("api/v1/posts")
@@ -33,7 +34,7 @@ interface PostService {
     suspend fun getPost(@Path("postId") postId: Long): ApiResponse<PostDetailResponse>
 
     @POST("api/v1/posts/{postId}/likes")
-    suspend fun toggleLike(@Path("postId") postId: Long): ApiResponse<Unit>
+    suspend fun toggleLike(@Path("postId") postId: Long): Response<Unit>
 
     @POST("api/v1/posts/{postId}/participations")
     suspend fun createParticipation(

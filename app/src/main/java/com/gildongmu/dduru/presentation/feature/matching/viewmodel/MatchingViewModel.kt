@@ -18,6 +18,8 @@ import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
 
 @HiltViewModel
@@ -29,6 +31,7 @@ class MatchingViewModel @Inject constructor(
 
     private val _sideEffect = MutableSharedFlow<MatchingSideEffect>()
     val sideEffect: SharedFlow<MatchingSideEffect> = _sideEffect.asSharedFlow()
+    private var searchJob: Job? = null
 
     init { loadPosts() }
 
@@ -44,7 +47,11 @@ class MatchingViewModel @Inject constructor(
         updateMatchingUiState {
             copy(searchQuery = query)
         }
-        loadPosts()
+        searchJob?.cancel()
+        searchJob = viewModelScope.launch {
+            delay(SEARCH_DEBOUNCE_MILLIS)
+            loadPosts(showLoading = false)
+        }
     }
 
     fun onSortSelected(sort: String) {
@@ -72,7 +79,12 @@ class MatchingViewModel @Inject constructor(
     }
 
     fun onPostLikeClick(id: Long) {
-        viewModelScope.launch { postService.toggleLike(id); loadPosts() }
+        viewModelScope.launch {
+            runCatching { postService.toggleLike(id) }
+                .onSuccess { response ->
+                    if (response.isSuccessful) loadPosts(showLoading = false)
+                }
+        }
     }
 
     fun onWriteClick() {
@@ -93,12 +105,12 @@ class MatchingViewModel @Inject constructor(
         }
     }
 
-    private fun loadPosts(append: Boolean = false) {
+    private fun loadPosts(append: Boolean = false, showLoading: Boolean = true) {
         viewModelScope.launch {
             val current = (_uiState.value as? UiState.Success)?.data ?: MatchingUiState()
             if (append) {
                 _uiState.value = UiState.Success(current.copy(isLoadingMore = true))
-            } else {
+            } else if (showLoading) {
                 _uiState.value = UiState.Loading
             }
             runCatching {
@@ -133,6 +145,10 @@ class MatchingViewModel @Inject constructor(
     }
 
     private fun String.toSortCode() = when (this) { "조회순" -> "VIEW"; "좋아요순" -> "LIKE"; else -> "LATEST" }
+
+    private companion object {
+        const val SEARCH_DEBOUNCE_MILLIS = 300L
+    }
 
     private fun PostSummaryResponse.toUiModel() = com.gildongmu.dduru.presentation.feature.matching.model.MatchingPostCardUiModel(
         id = id, title = title, authorName = author.nickname, location = destination,

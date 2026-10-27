@@ -71,10 +71,10 @@ class MatchingDetailViewModel @Inject constructor(
     fun onLikeClick() {
         val postId = (_uiState.value as? UiState.Success)?.data?.id ?: return
         viewModelScope.launch {
-            postService.toggleLike(postId)
-                .takeIf { it.status in 200..299 }
-                ?: return@launch
-            loadMatchingDetail(postId)
+            runCatching { postService.toggleLike(postId) }
+                .onSuccess { response ->
+                    if (response.isSuccessful) loadMatchingDetail(postId)
+                }
         }
     }
 
