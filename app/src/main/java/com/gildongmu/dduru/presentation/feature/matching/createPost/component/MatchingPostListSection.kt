@@ -34,6 +34,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -340,10 +341,13 @@ private fun MatchingPostThumbnail(
             .size(72.dp)
             .clip(RoundedCornerShape(16.dp))
     ) {
-        Image(
-            painter = painterResource(id = item.thumbnailImageRes),
+        AsyncImage(
+            model = item.thumbnailImageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
+            placeholder = painterResource(id = item.thumbnailImageRes),
+            error = painterResource(id = item.thumbnailImageRes),
+            fallback = painterResource(id = item.thumbnailImageRes),
             modifier = Modifier.matchParentSize()
         )
 
