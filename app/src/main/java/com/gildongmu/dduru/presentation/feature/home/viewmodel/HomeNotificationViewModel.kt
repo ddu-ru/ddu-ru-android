@@ -33,22 +33,57 @@ class HomeNotificationViewModel @Inject constructor(
     private var nextCursor: Long? = null
 
     init {
-        loadNotifications()
+        loadNotifications(HomeNotificationFilter.ALL)
     }
 
     fun onFilterClick(filter: HomeNotificationFilter) {
-        updateUiState { copy(selectedFilter = filter) }
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (currentState.selectedFilter == filter) return
+
+        loadNotifications(filter)
     }
 
     fun onMarkAllAsReadClick() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (currentState.isMarkingAllAsRead || currentState.unreadCount == 0) return
+
+        updateUiState {
+            copy(
+                isMarkingAllAsRead = true,
+                markAllAsReadFailed = false
+            )
+        }
+
         viewModelScope.launch {
             homeNotificationRepository.markAllAsRead()
-                .onSuccess { updateAllNotificationsReadState() }
-                .onFailure { _uiState.value = UiState.Failure }
+                .onSuccess { loadNotifications(currentState.selectedFilter) }
+                .onFailure {
+                    updateUiState {
+                        copy(
+                            isMarkingAllAsRead = false,
+                            markAllAsReadFailed = true
+                        )
+                    }
+                }
         }
     }
 
-    fun onDeleteAllClick() = Unit
+    fun onDeleteAllClick() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (currentState.isDeletingAll) return
+
+        updateUiState { copy(isDeletingAll = true, deleteAllFailed = false) }
+
+        viewModelScope.launch {
+            homeNotificationRepository.deleteAll()
+                .onSuccess { loadNotifications(currentState.selectedFilter) }
+                .onFailure {
+                    updateUiState {
+                        copy(isDeletingAll = false, deleteAllFailed = true)
+                    }
+                }
+        }
+    }
 
     fun onNotificationClick(notification: HomeNotificationItemUiState) {
         viewModelScope.launch {
@@ -62,9 +97,14 @@ class HomeNotificationViewModel @Inject constructor(
             if (!notification.isRead) {
                 homeNotificationRepository.markAsRead(notification.id)
                     .onSuccess {
-                        updateNotificationReadState(notification.id)
+                        loadNotifications(
+                            (_uiState.value as? UiState.Success)
+                                ?.data
+                                ?.selectedFilter
+                                ?: HomeNotificationFilter.ALL
+                        )
                     }
-                    .onFailure { _uiState.value = UiState.Failure }
+                    .onFailure { /* 이동은 유지하고, 다음 알림함 진입 시 서버 상태를 다시 조회한다. */ }
             }
         }
     }
@@ -76,7 +116,7 @@ class HomeNotificationViewModel @Inject constructor(
 
         updateUiState { copy(isLoadingMore = true) }
         viewModelScope.launch {
-            homeNotificationRepository.getNotifications(cursor)
+            homeNotificationRepository.getNotifications(currentState.selectedFilter.apiValue, cursor)
                 .onSuccess { page ->
                     nextCursor = page.nextCursor
                     updateUiState {
@@ -94,9 +134,9 @@ class HomeNotificationViewModel @Inject constructor(
         }
     }
 
-    private fun loadNotifications() {
+    private fun loadNotifications(filter: HomeNotificationFilter) {
         viewModelScope.launch {
-            val notificationsResult = homeNotificationRepository.getNotifications()
+            val notificationsResult = homeNotificationRepository.getNotifications(filter.apiValue)
             val unreadCountResult = homeNotificationRepository.getUnreadCount()
 
             val notificationPage = notificationsResult.getOrElse {
@@ -110,7 +150,10 @@ class HomeNotificationViewModel @Inject constructor(
 
             _uiState.value = UiState.Success(
                 HomeNotificationUiState(
-                    unreadCount = unreadCount,
+                    selectedFilter = filter,
+                    unreadCount = unreadCount.total,
+                    matchUnreadCount = unreadCount.match,
+                    journeyUnreadCount = unreadCount.journey,
                     hasNext = notificationPage.hasNext,
                     notifications = notificationPage.notifications.map { it.toUiState() }.toImmutableList()
                 )
@@ -123,34 +166,6 @@ class HomeNotificationViewModel @Inject constructor(
         val currentState = (_uiState.value as? UiState.Success)?.data ?: return
         _uiState.value = UiState.Success(currentState.reducer())
     }
-
-    private fun updateNotificationReadState(notificationId: Long) {
-        updateUiState {
-            val updatedNotifications = notifications.map { notification ->
-                if (notification.id == notificationId) {
-                    notification.copy(isRead = true)
-                } else {
-                    notification
-                }
-            }.toImmutableList()
-
-            copy(
-                unreadCount = updatedNotifications.count { !it.isRead },
-                notifications = updatedNotifications
-            )
-        }
-    }
-
-    private fun updateAllNotificationsReadState() {
-        updateUiState {
-            copy(
-                unreadCount = 0,
-                notifications = notifications.map { notification ->
-                    notification.copy(isRead = true)
-                }.toImmutableList()
-            )
-        }
-    }
 }
 
 private fun HomeNotification.toUiState(): HomeNotificationItemUiState {
@@ -159,7 +174,6 @@ private fun HomeNotification.toUiState(): HomeNotificationItemUiState {
         title = title,
         body = body,
         timeAgo = timeAgo,
-        category = category,
         isRead = isRead,
         type = type,
         resourceType = resourceType,

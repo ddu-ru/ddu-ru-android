@@ -1,3 +1,4 @@
+// ktlint-disable max-line-length
 package com.gildongmu.dduru.presentation.feature.matching.post.screen
 
 import androidx.compose.foundation.background
@@ -60,6 +61,7 @@ import com.gildongmu.dduru.presentation.feature.matching.post.component.Matching
 import com.gildongmu.dduru.presentation.feature.matching.post.component.PostStatusDropdown
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailProfileImageUiState
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
+import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostParticipationStatus
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostRecruitStatus
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostStatus
 import com.gildongmu.dduru.presentation.feature.matching.post.viewmodel.MatchingDetailViewModel
@@ -97,7 +99,12 @@ fun MatchingDetailRoute(
                 onShareClick = onShareClick,
                 onProfileClick = onProfileClick,
                 onContactClick = onContactClick,
-                onBottomActionClick = onBottomActionClick,
+                onBottomActionClick = {
+                    if (!state.data.isOwner && state.data.myParticipationStatus == MatchingPostParticipationStatus.NONE) {
+                        viewModel.onParticipationClick(postId)
+                    }
+                    onBottomActionClick()
+                },
                 modifier = modifier
             )
         }

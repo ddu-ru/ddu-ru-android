@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
@@ -89,8 +90,6 @@ private fun HomeNotificationScreen(
     modifier: Modifier = Modifier
 ) {
     var isMenuVisible by remember { mutableStateOf(false) }
-    val notifications = uiState.filteredNotifications
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -109,11 +108,31 @@ private fun HomeNotificationScreen(
             HomeNotificationFilterRow(
                 selectedFilter = uiState.selectedFilter,
                 unreadCount = uiState.unreadCount,
+                matchUnreadCount = uiState.matchUnreadCount,
+                journeyUnreadCount = uiState.journeyUnreadCount,
                 onFilterClick = onFilterClick,
                 modifier = Modifier.padding(top = 24.dp)
             )
 
-            if (notifications.isEmpty()) {
+            if (uiState.markAllAsReadFailed) {
+                Text(
+                    text = "전체 확인에 실패했어요. 다시 시도해 주세요.",
+                    style = DduruTheme.typography.Caption1,
+                    color = DduruTheme.colors.validationRed,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
+            if (uiState.deleteAllFailed) {
+                Text(
+                    text = "전체 삭제에 실패했어요. 다시 시도해 주세요.",
+                    style = DduruTheme.typography.Caption1,
+                    color = DduruTheme.colors.validationRed,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
+            if (uiState.notifications.isEmpty()) {
                 HomeNotificationEmptyState(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -121,7 +140,7 @@ private fun HomeNotificationScreen(
                 )
             } else {
                 HomeNotificationList(
-                    notifications = notifications,
+                    notifications = uiState.notifications,
                     onNotificationClick = onNotificationClick,
                     onLoadMoreNotifications = onLoadMoreNotifications,
                     hasNext = uiState.hasNext,
@@ -137,13 +156,12 @@ private fun HomeNotificationScreen(
         if (isMenuVisible) {
             HomeNotificationMoreMenu(
                 onMarkAllAsReadClick = {
-                    isMenuVisible = false
                     onMarkAllAsReadClick()
                 },
-                onDeleteAllClick = {
-                    isMenuVisible = false
-                    onDeleteAllClick()
-                },
+                onDeleteAllClick = onDeleteAllClick,
+                isMarkingAllAsRead = uiState.isMarkingAllAsRead,
+                isDeletingAll = uiState.isDeletingAll,
+                hasUnreadNotifications = uiState.unreadCount > 0,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 66.dp, end = 16.dp)

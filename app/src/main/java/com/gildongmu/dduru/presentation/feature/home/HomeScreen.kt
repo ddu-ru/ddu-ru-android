@@ -50,10 +50,8 @@ fun HomeRoute(
     navigateToMatching: () -> Unit = {},
     navigateToUpcomingTripTask: () -> Unit = {},
     navigateToDestination: (Long) -> Unit = {},
-    navigateToSuperHost: (Long) -> Unit = {},
-    navigateToCompanion: (Long) -> Unit = {},
+    navigateToMatchingDetail: (Long) -> Unit = {},
     navigateToCreateTravelRoom: () -> Unit = {},
-    navigateToWriteCommunity: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -66,10 +64,10 @@ fun HomeRoute(
                 HomeSideEffect.NavigateToMatching -> navigateToMatching()
                 HomeSideEffect.NavigateToUpcomingTripTask -> navigateToUpcomingTripTask()
                 is HomeSideEffect.NavigateToDestination -> navigateToDestination(sideEffect.id)
-                is HomeSideEffect.NavigateToSuperHost -> navigateToSuperHost(sideEffect.id)
-                is HomeSideEffect.NavigateToCompanion -> navigateToCompanion(sideEffect.id)
+                is HomeSideEffect.NavigateToMatchingDetail -> {
+                    navigateToMatchingDetail(sideEffect.postId)
+                }
                 HomeSideEffect.NavigateToCreateTravelRoom -> navigateToCreateTravelRoom()
-                HomeSideEffect.NavigateToWriteCommunity -> navigateToWriteCommunity()
             }
         }
     }
@@ -97,8 +95,7 @@ fun HomeRoute(
                 onSuperHostLikeClick = viewModel::onSuperHostLikeClick,
                 onCompanionMoreClick = viewModel::onCompanionMoreClick,
                 onCompanionClick = viewModel::onCompanionClick,
-                onCreateTravelRoomClick = viewModel::onCreateTravelRoomClick,
-                onWriteCommunityClick = viewModel::onWriteCommunityClick
+                onCreateTravelRoomClick = viewModel::onCreateTravelRoomClick
             )
         }
     }
@@ -121,7 +118,6 @@ private fun HomeScreen(
     onCompanionMoreClick: () -> Unit,
     onCompanionClick: (Long) -> Unit,
     onCreateTravelRoomClick: () -> Unit,
-    onWriteCommunityClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isWritingMenuVisible by remember { mutableStateOf(false) }
@@ -170,6 +166,8 @@ private fun HomeScreen(
                     HomeRealtimePopularDestinationSection(
                         items = uiState.popularDestinations,
                         updatedText = uiState.popularDestinationUpdatedText,
+                        isRefreshing = uiState.isPopularDestinationsRefreshing,
+                        refreshFailed = uiState.popularDestinationsRefreshFailed,
                         onRefreshClick = onRefreshPopularDestinationClick,
                         onItemClick = { onPopularDestinationClick(it.id) }
                     )
@@ -225,10 +223,6 @@ private fun HomeScreen(
                     onCreateTravelRoom = {
                         isWritingMenuVisible = false
                         onCreateTravelRoomClick()
-                    },
-                    onWriteCommunity = {
-                        isWritingMenuVisible = false
-                        onWriteCommunityClick()
                     }
                 )
             } else {
@@ -259,8 +253,7 @@ private fun HomeScreenPreview() {
             onSuperHostLikeClick = {},
             onCompanionMoreClick = {},
             onCompanionClick = {},
-            onCreateTravelRoomClick = {},
-            onWriteCommunityClick = {}
+            onCreateTravelRoomClick = {}
         )
     }
 }

@@ -18,6 +18,12 @@ data class HomeNotificationPage(
     val hasNext: Boolean
 )
 
+data class HomeNotificationUnreadCount(
+    val total: Int,
+    val match: Int,
+    val journey: Int
+)
+
 enum class HomeNotificationCategory {
     MATCHING,
     MESSAGE,

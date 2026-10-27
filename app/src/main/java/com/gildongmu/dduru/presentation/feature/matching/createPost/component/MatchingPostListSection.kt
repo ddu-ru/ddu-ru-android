@@ -15,11 +15,16 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -42,11 +47,25 @@ fun MatchingPostListSection(
     items: ImmutableList<MatchingPostCardUiModel>,
     onCardClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
+    hasNext: Boolean = false,
+    isLoadingMore: Boolean = false,
+    onLoadMore: () -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
+    val listState = rememberLazyListState()
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            val last = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+            items.isNotEmpty() && last >= items.lastIndex - 2
+        }
+    }
+    LaunchedEffect(shouldLoadMore, hasNext, isLoadingMore) {
+        if (shouldLoadMore && hasNext && !isLoadingMore) onLoadMore()
+    }
     LazyColumn(
         modifier = modifier.fillMaxSize(),
+        state = listState,
         contentPadding = contentPadding
     ) {
         itemsIndexed(
