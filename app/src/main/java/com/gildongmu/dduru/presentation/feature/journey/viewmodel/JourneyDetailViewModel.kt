@@ -33,9 +33,12 @@ class JourneyDetailViewModel @Inject constructor(
 
     private var loadedJourneyId: Long? = null
 
-    fun refreshJourneyDetail(journeyId: Long) {
+    fun refreshJourneyDetail(
+        journeyId: Long,
+        initialFilter: JourneyDetailFilterType? = null
+    ) {
         loadedJourneyId = null
-        loadJourneyDetail(journeyId)
+        loadJourneyDetail(journeyId, initialFilter)
     }
 
     fun loadJourneyDetail(
@@ -43,7 +46,7 @@ class JourneyDetailViewModel @Inject constructor(
         initialFilter: JourneyDetailFilterType? = null
     ) {
         if (loadedJourneyId == journeyId && _uiState.value is UiState.Success) {
-            initialFilter?.let(::onFilterClick)
+            refreshJourneyDetail(journeyId, initialFilter)
             return
         }
 
