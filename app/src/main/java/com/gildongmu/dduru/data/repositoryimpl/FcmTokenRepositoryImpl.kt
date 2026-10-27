@@ -1,7 +1,7 @@
 package com.gildongmu.dduru.data.repositoryimpl
 
-import com.gildongmu.dduru.data.remote.datasource.FcmTokenRemoteDataSource
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
+import com.gildongmu.dduru.data.remote.datasource.FcmTokenRemoteDataSource
 import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
 import com.gildongmu.dduru.domain.repository.FcmTokenRepository
 import com.google.android.gms.tasks.Task
@@ -10,8 +10,8 @@ import java.io.IOException
 import javax.inject.Inject
 import kotlin.coroutines.resume
 import kotlin.coroutines.resumeWithException
-import kotlinx.coroutines.suspendCancellableCoroutine
 import kotlinx.coroutines.flow.first
+import kotlinx.coroutines.suspendCancellableCoroutine
 import retrofit2.HttpException
 
 class FcmTokenRepositoryImpl @Inject constructor(

@@ -29,9 +29,9 @@ class TokenManager @Inject constructor(
                         it.refreshToken.isNotBlank()
                 }
                 ?: run {
-                Log.e("TokenManager", "토큰 갱신 실패: 데이터 필드가 null입니다.")
-                return false
-            }
+                    Log.e("TokenManager", "토큰 갱신 실패: 데이터 필드가 null입니다.")
+                    return false
+                }
 
             tokenLocalDataSource.saveTokens(responseData.accessToken, responseData.refreshToken)
             true
