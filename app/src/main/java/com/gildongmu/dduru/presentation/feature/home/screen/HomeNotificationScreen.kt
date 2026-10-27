@@ -71,6 +71,7 @@ fun HomeNotificationRoute(
             onNotificationClick = viewModel::onNotificationClick,
             onLoadMoreNotifications = viewModel::loadMoreNotifications,
             onMarkAllAsReadClick = viewModel::onMarkAllAsReadClick,
+            onDeleteAllClick = viewModel::onDeleteAllClick,
             modifier = modifier
         )
         else -> Unit
@@ -85,11 +86,10 @@ private fun HomeNotificationScreen(
     onNotificationClick: (HomeNotificationItemUiState) -> Unit,
     onLoadMoreNotifications: () -> Unit,
     onMarkAllAsReadClick: () -> Unit,
+    onDeleteAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isMenuVisible by remember { mutableStateOf(false) }
-    val notifications = uiState.filteredNotifications
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -108,6 +108,8 @@ private fun HomeNotificationScreen(
             HomeNotificationFilterRow(
                 selectedFilter = uiState.selectedFilter,
                 unreadCount = uiState.unreadCount,
+                matchUnreadCount = uiState.matchUnreadCount,
+                journeyUnreadCount = uiState.journeyUnreadCount,
                 onFilterClick = onFilterClick,
                 modifier = Modifier.padding(top = 24.dp)
             )
@@ -121,7 +123,16 @@ private fun HomeNotificationScreen(
                 )
             }
 
-            if (notifications.isEmpty()) {
+            if (uiState.deleteAllFailed) {
+                Text(
+                    text = "전체 삭제에 실패했어요. 다시 시도해 주세요.",
+                    style = DduruTheme.typography.Caption1,
+                    color = DduruTheme.colors.validationRed,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
+            if (uiState.notifications.isEmpty()) {
                 HomeNotificationEmptyState(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -129,7 +140,7 @@ private fun HomeNotificationScreen(
                 )
             } else {
                 HomeNotificationList(
-                    notifications = notifications,
+                    notifications = uiState.notifications,
                     onNotificationClick = onNotificationClick,
                     onLoadMoreNotifications = onLoadMoreNotifications,
                     hasNext = uiState.hasNext,
@@ -147,7 +158,9 @@ private fun HomeNotificationScreen(
                 onMarkAllAsReadClick = {
                     onMarkAllAsReadClick()
                 },
+                onDeleteAllClick = onDeleteAllClick,
                 isMarkingAllAsRead = uiState.isMarkingAllAsRead,
+                isDeletingAll = uiState.isDeletingAll,
                 hasUnreadNotifications = uiState.unreadCount > 0,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
@@ -167,7 +180,8 @@ private fun HomeNotificationScreenPreview() {
             onFilterClick = {},
             onNotificationClick = {},
             onLoadMoreNotifications = {},
-            onMarkAllAsReadClick = {}
+            onMarkAllAsReadClick = {},
+            onDeleteAllClick = {}
         )
     }
 }
@@ -182,7 +196,8 @@ private fun HomeNotificationEmptyScreenPreview() {
             onFilterClick = {},
             onNotificationClick = {},
             onLoadMoreNotifications = {},
-            onMarkAllAsReadClick = {}
+            onMarkAllAsReadClick = {},
+            onDeleteAllClick = {}
         )
     }
 }
