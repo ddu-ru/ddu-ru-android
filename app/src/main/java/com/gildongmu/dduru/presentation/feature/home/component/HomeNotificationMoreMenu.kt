@@ -29,7 +29,9 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 @Composable
 fun HomeNotificationMoreMenu(
     onMarkAllAsReadClick: () -> Unit,
+    onDeleteAllClick: () -> Unit,
     isMarkingAllAsRead: Boolean,
+    isDeletingAll: Boolean,
     hasUnreadNotifications: Boolean,
     modifier: Modifier = Modifier
 ) {
@@ -83,6 +85,35 @@ fun HomeNotificationMoreMenu(
                 enabled = hasUnreadNotifications
             )
         }
+
+        if (isDeletingAll) {
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .height(32.dp)
+                    .padding(8.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(16.dp),
+                    color = DduruTheme.colors.primary,
+                    strokeWidth = 2.dp
+                )
+                Text(
+                    text = "삭제 중",
+                    style = DduruTheme.typography.Caption2,
+                    color = DduruTheme.colors.gray700
+                )
+            }
+        } else {
+            HomeNotificationMenuItem(
+                iconRes = R.drawable.ic_trash,
+                text = "전체 삭제",
+                onClick = onDeleteAllClick,
+                enabled = true
+            )
+        }
     }
 }
 
@@ -95,7 +126,9 @@ private fun HomeNotificationMoreMenuPreview() {
         ) {
             HomeNotificationMoreMenu(
                 onMarkAllAsReadClick = {},
+                onDeleteAllClick = {},
                 isMarkingAllAsRead = false,
+                isDeletingAll = false,
                 hasUnreadNotifications = true
             )
         }
