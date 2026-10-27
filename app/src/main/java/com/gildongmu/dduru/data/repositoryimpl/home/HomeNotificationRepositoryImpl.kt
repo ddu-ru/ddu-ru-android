@@ -3,6 +3,7 @@ package com.gildongmu.dduru.data.repositoryimpl.home
 import com.gildongmu.dduru.data.mapper.home.toDomain
 import com.gildongmu.dduru.data.remote.datasource.home.HomeNotificationRemoteDataSource
 import com.gildongmu.dduru.domain.entity.home.HomeNotificationPage
+import com.gildongmu.dduru.domain.entity.home.HomeNotificationUnreadCount
 import com.gildongmu.dduru.domain.repository.home.HomeNotificationRepository
 import java.io.IOException
 import javax.inject.Inject
@@ -11,9 +12,10 @@ import retrofit2.HttpException
 class HomeNotificationRepositoryImpl @Inject constructor(
     private val homeNotificationRemoteDataSource: HomeNotificationRemoteDataSource
 ) : HomeNotificationRepository {
-    override suspend fun getNotifications(cursor: Long?): Result<HomeNotificationPage> {
+    override suspend fun getNotifications(filter: String, cursor: Long?): Result<HomeNotificationPage> {
         return runCatchingNotificationApi {
             val response = homeNotificationRemoteDataSource.getNotifications(
+                filter = filter,
                 cursor = cursor,
                 size = NOTIFICATION_PAGE_SIZE
             )
@@ -42,12 +44,16 @@ class HomeNotificationRepositoryImpl @Inject constructor(
         }
     }
 
-    override suspend fun getUnreadCount(): Result<Int> {
+    override suspend fun getUnreadCount(): Result<HomeNotificationUnreadCount> {
         return runCatchingNotificationApi {
             val response = homeNotificationRemoteDataSource.getUnreadCount()
 
             if (response.status.isNotificationSuccessStatus() && response.data != null) {
-                response.data.unreadCount
+                HomeNotificationUnreadCount(
+                    total = response.data.unreadCount,
+                    match = response.data.matchUnreadCount,
+                    journey = response.data.journeyUnreadCount
+                )
             } else {
                 throw IllegalStateException("안 읽은 알림 개수 조회 실패: status=${response.status}")
             }
@@ -62,6 +68,16 @@ class HomeNotificationRepositoryImpl @Inject constructor(
                 Unit
             } else {
                 throw IllegalStateException("알림 전체 읽음 처리 실패: status=${response.status}")
+            }
+        }
+    }
+
+    override suspend fun deleteAll(): Result<Unit> {
+        return runCatchingNotificationApi {
+            val response = homeNotificationRemoteDataSource.deleteAll()
+
+            if (!response.isSuccessful) {
+                throw IllegalStateException("알림 전체 삭제 실패: status=${response.code()}")
             }
         }
     }

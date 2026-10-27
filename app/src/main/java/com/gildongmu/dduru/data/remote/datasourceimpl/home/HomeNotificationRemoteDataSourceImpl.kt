@@ -14,10 +14,12 @@ class HomeNotificationRemoteDataSourceImpl @Inject constructor(
     private val homeNotificationService: HomeNotificationService
 ) : HomeNotificationRemoteDataSource {
     override suspend fun getNotifications(
+        filter: String,
         cursor: Long?,
         size: Int
     ): ApiResponse<HomeNotificationsResponse> {
         return homeNotificationService.getNotifications(
+            filter = filter,
             cursor = cursor,
             size = size
         )
@@ -29,6 +31,10 @@ class HomeNotificationRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun markAllAsRead(): ApiResponse<HomeNotificationReadResponse> {
         return homeNotificationService.markAllAsRead()
+    }
+
+    override suspend fun deleteAll(): Response<Unit> {
+        return homeNotificationService.deleteAll()
     }
 
     override suspend fun getUnreadCount(): ApiResponse<HomeNotificationUnreadCountResponse> {

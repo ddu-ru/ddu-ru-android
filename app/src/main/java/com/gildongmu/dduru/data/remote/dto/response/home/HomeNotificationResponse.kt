@@ -7,6 +7,8 @@ import kotlinx.serialization.Serializable
 data class HomeNotificationResponse(
     @SerialName("notificationId")
     val notificationId: Long,
+    @SerialName("title")
+    val title: String = "",
     @SerialName("type")
     val type: String = "",
     @SerialName("body")
@@ -42,5 +44,9 @@ data class HomeNotificationReadResponse(
 @Serializable
 data class HomeNotificationUnreadCountResponse(
     @SerialName("unreadCount")
-    val unreadCount: Int = 0
+    val unreadCount: Int = 0,
+    @SerialName("matchUnreadCount")
+    val matchUnreadCount: Int = 0,
+    @SerialName("journeyUnreadCount")
+    val journeyUnreadCount: Int = 0
 )

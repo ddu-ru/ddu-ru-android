@@ -8,6 +8,7 @@ import retrofit2.Response
 
 interface HomeNotificationRemoteDataSource {
     suspend fun getNotifications(
+        filter: String,
         cursor: Long?,
         size: Int
     ): ApiResponse<HomeNotificationsResponse>
@@ -15,6 +16,8 @@ interface HomeNotificationRemoteDataSource {
     suspend fun markAsRead(notificationId: Long): ApiResponse<HomeNotificationReadResponse>
 
     suspend fun markAllAsRead(): ApiResponse<HomeNotificationReadResponse>
+
+    suspend fun deleteAll(): Response<Unit>
 
     suspend fun getUnreadCount(): ApiResponse<HomeNotificationUnreadCountResponse>
 

@@ -7,6 +7,7 @@ import com.gildongmu.dduru.data.remote.dto.response.home.HomeNotificationUnreadC
 import com.gildongmu.dduru.data.remote.dto.response.home.HomeNotificationsResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.PATCH
 import retrofit2.http.Path
@@ -15,6 +16,7 @@ import retrofit2.http.Query
 interface HomeNotificationService {
     @GET("api/v1/notifications")
     suspend fun getNotifications(
+        @Query("filter") filter: String,
         @Query("cursor") cursor: Long? = null,
         @Query("size") size: Int = DEFAULT_PAGE_SIZE
     ): ApiResponse<HomeNotificationsResponse>
@@ -26,6 +28,9 @@ interface HomeNotificationService {
 
     @PATCH("api/v1/notifications/read-all")
     suspend fun markAllAsRead(): ApiResponse<HomeNotificationReadResponse>
+
+    @DELETE("api/v1/notifications")
+    suspend fun deleteAll(): Response<Unit>
 
     @GET("api/v1/notifications/unread-count")
     suspend fun getUnreadCount(): ApiResponse<HomeNotificationUnreadCountResponse>
