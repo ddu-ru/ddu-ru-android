@@ -37,6 +37,11 @@ fun RootNavigation(
         DduruLoadingScreen()
     } else {
         val rootBackStack = rememberNavBackStack(startDestination!!)
+        LaunchedEffect(startDestination) {
+            // 앱 재설치/프로세스 복원 시 이전 Main back stack이 로그인 시작 화면을 덮지 않게 한다.
+            rootBackStack.clear()
+            rootBackStack.add(startDestination!!)
+        }
         fun navigateBack() {
             if (rootBackStack.size > 1) {
                 rootBackStack.removeLastOrNull()
