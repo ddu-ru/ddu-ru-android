@@ -20,7 +20,16 @@ sealed class SurveyUiState {
     object Idle : SurveyUiState()
     object Loading : SurveyUiState()
     data class Success(val result: SurveyResult) : SurveyUiState()
-    data class Error(val message: String) : SurveyUiState()
+    data class Error(
+        val message: String,
+        val retryAction: SurveyRetryAction
+    ) : SurveyUiState()
+}
+
+enum class SurveyRetryAction {
+    LOAD_QUESTIONS,
+    SUBMIT_SURVEY,
+    RESUME
 }
 
 @HiltViewModel
@@ -62,7 +71,8 @@ class SurveyViewModel @Inject constructor(
                 },
                 onFailure = { error ->
                     _uiState.value = SurveyUiState.Error(
-                        error.message ?: "질문을 불러오는데 실패했습니다."
+                        message = error.message ?: "질문을 불러오는데 실패했습니다.",
+                        retryAction = SurveyRetryAction.LOAD_QUESTIONS
                     )
                     _questionsLoading.value = false
                 }
@@ -121,7 +131,10 @@ class SurveyViewModel @Inject constructor(
     fun submitSurvey() {
         val answers = _surveyState.value.toAnswers()
         if (answers == null) {
-            _uiState.value = SurveyUiState.Error("모든 질문에 답변해주세요.")
+            _uiState.value = SurveyUiState.Error(
+                message = "모든 질문에 답변해주세요.",
+                retryAction = SurveyRetryAction.RESUME
+            )
             return
         }
 
@@ -134,7 +147,8 @@ class SurveyViewModel @Inject constructor(
                 },
                 onFailure = { error ->
                     _uiState.value = SurveyUiState.Error(
-                        error.message ?: "설문 제출 중 오류가 발생했습니다."
+                        message = error.message ?: "설문 제출 중 오류가 발생했습니다.",
+                        retryAction = SurveyRetryAction.SUBMIT_SURVEY
                     )
                 }
             )
@@ -154,7 +168,8 @@ class SurveyViewModel @Inject constructor(
                         _uiState.value = SurveyUiState.Idle
                     } else {
                         _uiState.value = SurveyUiState.Error(
-                            error.message ?: "설문 결과 조회 중 오류가 발생했습니다."
+                            message = error.message ?: "설문 결과 조회 중 오류가 발생했습니다.",
+                            retryAction = SurveyRetryAction.RESUME
                         )
                     }
                 }
@@ -164,5 +179,14 @@ class SurveyViewModel @Inject constructor(
 
     fun resetUiState() {
         _uiState.value = SurveyUiState.Idle
+    }
+
+    fun retry() {
+        when ((uiState.value as? SurveyUiState.Error)?.retryAction) {
+            SurveyRetryAction.LOAD_QUESTIONS -> loadSurveyQuestions()
+            SurveyRetryAction.SUBMIT_SURVEY -> submitSurvey()
+            SurveyRetryAction.RESUME,
+            null -> resetUiState()
+        }
     }
 }
