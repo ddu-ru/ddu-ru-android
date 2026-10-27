@@ -1,5 +1,9 @@
 package com.gildongmu.dduru.presentation.feature.chat.screen
 
+import android.widget.Toast
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -15,18 +19,23 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.DisposableEffect
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -36,12 +45,18 @@ import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomType
+import com.gildongmu.dduru.presentation.feature.chat.component.ChatAttachOption
+import com.gildongmu.dduru.presentation.feature.chat.component.ChatAttachPanel
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatDateDivider
+import com.gildongmu.dduru.presentation.feature.chat.component.GroupImageMessageBubble
 import com.gildongmu.dduru.presentation.feature.chat.component.GroupMessageBubble
+import com.gildongmu.dduru.presentation.feature.chat.component.ImageMessageBubble
+import com.gildongmu.dduru.presentation.feature.chat.component.MAX_CHAT_PHOTO_COUNT
 import com.gildongmu.dduru.presentation.feature.chat.component.MessageBubble
 import com.gildongmu.dduru.presentation.feature.chat.component.MessageInput
 import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRoomSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatListItem
+import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatMessageKind
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatMessageUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRoomUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.MessagePosition
@@ -51,9 +66,16 @@ import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatRoomViewModel
 fun ChatRoomRoute(
     chatRoomId: Long,
     onBackClick: () -> Unit,
+    onNavigateToMenu: (Long) -> Unit = {},
+    onNavigateToPollCreate: () -> Unit = {},
+    onNavigateToImageViewer: (List<String>, Int) -> Unit = { _, _ -> },
     viewModel: ChatRoomViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(MAX_CHAT_PHOTO_COUNT)
+    ) { uris -> viewModel.onPhotosSelected(uris) }
 
     LaunchedEffect(chatRoomId) {
         viewModel.loadMessages(chatRoomId)
@@ -64,8 +86,22 @@ fun ChatRoomRoute(
             when (effect) {
                 is ChatRoomSideEffect.NavigateBack -> onBackClick()
                 is ChatRoomSideEffect.NavigateToMembers -> Unit
-                is ChatRoomSideEffect.NavigateToMenu -> Unit
+                is ChatRoomSideEffect.NavigateToMenu -> onNavigateToMenu(chatRoomId)
+                is ChatRoomSideEffect.NavigateToPollCreate -> onNavigateToPollCreate()
+                is ChatRoomSideEffect.NavigateToImageViewer ->
+                    onNavigateToImageViewer(effect.imageUrls, effect.initialIndex)
+                is ChatRoomSideEffect.OpenPhotoPicker -> photoPickerLauncher.launch(
+                    PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly)
+                )
+                is ChatRoomSideEffect.ShowMessage ->
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
             }
+        }
+    }
+
+    DisposableEffect(Unit) {
+        onDispose {
+            viewModel.cancelSubscription()
         }
     }
 
@@ -76,7 +112,11 @@ fun ChatRoomRoute(
         onMenuClick = viewModel::onMenuClick,
         onPlusClick = viewModel::onPlusClick,
         onSendClick = viewModel::onSendClick,
-        onInputChange = viewModel::onInputChange
+        onInputChange = viewModel::onInputChange,
+        onAttachOptionClick = viewModel::onAttachOptionClick,
+        onImageClick = viewModel::onImageClick,
+        onLoadMore = viewModel::loadMoreMessages,
+        onRetryClick = viewModel::retryLoadMessages
     )
 }
 
@@ -89,6 +129,10 @@ private fun ChatRoomScreen(
     onPlusClick: () -> Unit,
     onSendClick: (String) -> Unit,
     onInputChange: (String) -> Unit,
+    onAttachOptionClick: (ChatAttachOption) -> Unit = {},
+    onImageClick: (String, Int) -> Unit = { _, _ -> },
+    onLoadMore: () -> Unit = {},
+    onRetryClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -107,7 +151,71 @@ private fun ChatRoomScreen(
             onMenuClick = onMenuClick
         )
 
+        if (uiState.errorMessage != null) {
+            Box(
+                modifier = Modifier
+                    .weight(1f)
+                    .fillMaxWidth(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp),
+                    modifier = Modifier.padding(horizontal = 32.dp)
+                ) {
+                    Text(
+                        text = uiState.errorMessage,
+                        style = DduruTheme.typography.Body1,
+                        color = DduruTheme.colors.gray600,
+                        textAlign = TextAlign.Center
+                    )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .background(
+                                color = DduruTheme.colors.primary,
+                                shape = RoundedCornerShape(8.dp)
+                            )
+                            .noRippleClickable(
+                                onClick = if (uiState.isRetryable) onRetryClick else onBackClick
+                            )
+                            .padding(horizontal = 24.dp, vertical = 12.dp)
+                    ) {
+                        Text(
+                            text = if (uiState.isRetryable) "다시 시도" else "목록으로",
+                            style = DduruTheme.typography.Body1,
+                            color = DduruTheme.colors.gray0
+                        )
+                    }
+                }
+            }
+            return@Column
+        }
+
+        val listState = rememberLazyListState()
+        var isInitialScrollComplete by remember(uiState.roomName) { mutableStateOf(false) }
+
+        val lastItemId = remember(uiState.items) {
+            uiState.items.lastOrNull()?.let {
+                if (it is ChatListItem.Message) it.message.id else null
+            }
+        }
+        LaunchedEffect(lastItemId) {
+            if (uiState.items.isNotEmpty()) {
+                listState.animateScrollToItem(uiState.items.size - 1)
+                isInitialScrollComplete = true
+            }
+        }
+
+        val firstVisibleIndex by remember { derivedStateOf { listState.firstVisibleItemIndex } }
+        LaunchedEffect(firstVisibleIndex) {
+            if (firstVisibleIndex == 0 && uiState.items.isNotEmpty() && isInitialScrollComplete) {
+                onLoadMore()
+            }
+        }
+
         LazyColumn(
+            state = listState,
             verticalArrangement = Arrangement.spacedBy(4.dp),
             reverseLayout = false,
             modifier = Modifier
@@ -116,61 +224,124 @@ private fun ChatRoomScreen(
                 .padding(top = 8.dp)
         ) {
             items(uiState.items) { item ->
-                ChatMessageItem(item = item, roomType = uiState.roomType)
+                ChatMessageItem(
+                    item = item,
+                    roomType = uiState.roomType,
+                    onImageClick = onImageClick
+                )
             }
         }
 
-        MessageInput(
-            value = uiState.inputText,
-            onValueChange = onInputChange,
-            onPlusClick = onPlusClick,
-            onSendClick = {
-                if (uiState.inputText.isNotBlank()) onSendClick(uiState.inputText)
-            },
-            modifier = Modifier.navigationBarsPadding()
-        )
+        if (uiState.isUploadingImage) {
+            Text(
+                text = "사진을 보내는 중이에요…",
+                style = DduruTheme.typography.Caption2,
+                color = DduruTheme.colors.gray500,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 4.dp)
+            )
+        }
+
+        if (uiState.isInputEnabled) {
+            MessageInput(
+                value = uiState.inputText,
+                onValueChange = onInputChange,
+                onPlusClick = onPlusClick,
+                onSendClick = {
+                    if (uiState.inputText.isNotBlank()) onSendClick(uiState.inputText)
+                },
+                modifier = Modifier.navigationBarsPadding(),
+                isAttachPanelOpen = uiState.isAttachPanelOpen,
+                attachPanel = { ChatAttachPanel(onOptionClick = onAttachOptionClick) }
+            )
+        } else {
+            Text(
+                text = "메시지를 보낼 수 없는 채팅방이에요.",
+                style = DduruTheme.typography.Body2,
+                color = DduruTheme.colors.gray500,
+                textAlign = TextAlign.Center,
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .navigationBarsPadding()
+                    .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 40.dp)
+            )
+        }
     }
 }
 
 @Composable
 private fun ChatMessageItem(
     item: ChatListItem,
-    roomType: ChatRoomType
+    roomType: ChatRoomType,
+    onImageClick: (String, Int) -> Unit
 ) {
     when (item) {
         is ChatListItem.DateDivider -> ChatDateDivider(date = item.date)
         is ChatListItem.Message -> {
             val msg = item.message
-            val isHead = msg.position == MessagePosition.HEAD || msg.position == MessagePosition.SINGLE
-            val isTail = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
-            val showTime = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
-            val time = if (showTime) msg.time else ""
+            if (msg.kind == ChatMessageKind.SYSTEM) {
+                ChatDateDivider(date = msg.content)
+            } else {
+                val isHead = msg.position == MessagePosition.HEAD || msg.position == MessagePosition.SINGLE
+                val isTail = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
+                val showTime = msg.position == MessagePosition.TAIL || msg.position == MessagePosition.SINGLE
+                val time = if (showTime) msg.time else ""
 
-            when {
-                msg.isMine -> MessageBubble(
-                    message = msg.content,
-                    time = time,
-                    unreadCount = msg.unreadCount,
-                    isMine = true,
-                    isHead = isHead,
-                    isTail = isTail
-                )
-                roomType == ChatRoomType.GROUP -> GroupMessageBubble(
-                    username = msg.senderName,
-                    message = msg.content,
-                    time = time,
-                    unreadCount = msg.unreadCount,
-                    isHead = isHead,
-                    isTail = isTail
-                )
-                else -> MessageBubble(
-                    message = msg.content,
-                    time = time,
-                    unreadCount = msg.unreadCount,
-                    isMine = false,
-                    isHead = isHead,
-                    isTail = isTail
-                )
+                if (msg.kind == ChatMessageKind.IMAGE) {
+                    when {
+                        msg.isMine -> ImageMessageBubble(
+                            imageUrls = msg.imageUrls,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isMine = true,
+                            onImageClick = { index -> onImageClick(msg.id, index) }
+                        )
+                        roomType == ChatRoomType.GROUP -> GroupImageMessageBubble(
+                            username = msg.senderName,
+                            imageUrls = msg.imageUrls,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isHead = isHead,
+                            onImageClick = { index -> onImageClick(msg.id, index) }
+                        )
+                        else -> ImageMessageBubble(
+                            imageUrls = msg.imageUrls,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isMine = false,
+                            onImageClick = { index -> onImageClick(msg.id, index) }
+                        )
+                    }
+                } else {
+                    when {
+                        msg.isMine -> MessageBubble(
+                            message = msg.content,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isMine = true,
+                            isHead = isHead,
+                            isTail = isTail
+                        )
+                        roomType == ChatRoomType.GROUP -> GroupMessageBubble(
+                            username = msg.senderName,
+                            message = msg.content,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isHead = isHead,
+                            isTail = isTail
+                        )
+                        else -> MessageBubble(
+                            message = msg.content,
+                            time = time,
+                            unreadCount = msg.unreadCount,
+                            isMine = false,
+                            isHead = isHead,
+                            isTail = isTail
+                        )
+                    }
+                }
             }
         }
     }

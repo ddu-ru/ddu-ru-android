@@ -72,7 +72,7 @@ class ChatApplicationViewModel @Inject constructor(
                             status = when (item.status) {
                                 "CONTACTING" -> SentApplicationStatus.CONTACTING
                                 "APPROVED" -> SentApplicationStatus.APPROVED
-                                "REJECTED" -> SentApplicationStatus.REJECTED
+                                "REJECTED", "REMOVED_BY_HOST" -> SentApplicationStatus.REJECTED
                                 else -> SentApplicationStatus.WAITING
                             }
                         )

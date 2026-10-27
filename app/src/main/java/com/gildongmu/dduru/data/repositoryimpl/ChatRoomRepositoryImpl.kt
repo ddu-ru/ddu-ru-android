@@ -33,8 +33,16 @@ class ChatRoomRepositoryImpl @Inject constructor(
     override suspend fun getChatRooms(roomType: String?, cursor: String?): Result<ChatRoomListResult> {
         return try {
             val response = chatRoomService.getChatRooms(roomType = roomType, cursor = cursor)
-            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
-            val data = response.data ?: return Result.failure(Exception("Response data is null"))
+            if (response.status != 200) {
+                return Result.failure(
+                    when (response.status) {
+                        403 -> Exception("FORBIDDEN")
+                        404 -> Exception("NOT_FOUND")
+                        else -> Exception("SERVER_ERROR")
+                    }
+                )
+            }
+            val data = response.data ?: return Result.failure(Exception("OTHER"))
             Result.success(
                 ChatRoomListResult(
                     chatRooms = data.chatRooms.map { it.toEntity() },
@@ -43,18 +51,27 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 )
             )
         } catch (e: Exception) {
-            Result.failure(e)
+            if (e.message in listOf("FORBIDDEN", "NOT_FOUND", "SERVER_ERROR", "OTHER")) {
+                Result.failure(e)
+            } else {
+                Result.failure(Exception("NETWORK_ERROR"))
+            }
         }
     }
 
     override suspend fun getMessages(chatRoomId: Long, beforeMessageId: Long?): Result<ChatMessagesResultEntity> {
         return try {
-            val response = chatRoomService.getMessages(
-                chatRoomId = chatRoomId,
-                beforeMessageId = beforeMessageId
-            )
-            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
-            val data = response.data ?: return Result.failure(Exception("Response data is null"))
+            val response = chatRoomService.getMessages(chatRoomId = chatRoomId, beforeMessageId = beforeMessageId)
+            if (response.status != 200) {
+                return Result.failure(
+                    when (response.status) {
+                        403 -> Exception("FORBIDDEN")
+                        404 -> Exception("NOT_FOUND")
+                        else -> Exception("SERVER_ERROR")
+                    }
+                )
+            }
+            val data = response.data ?: return Result.failure(Exception("OTHER"))
             Result.success(
                 ChatMessagesResultEntity(
                     roomInfo = data.roomInfo.toEntity(),
@@ -64,7 +81,11 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 )
             )
         } catch (e: Exception) {
-            Result.failure(e)
+            if (e.message in listOf("FORBIDDEN", "NOT_FOUND", "SERVER_ERROR", "OTHER")) {
+                Result.failure(e)
+            } else {
+                Result.failure(Exception("NETWORK_ERROR"))
+            }
         }
     }
 
@@ -74,28 +95,52 @@ class ChatRoomRepositoryImpl @Inject constructor(
                 chatRoomId = chatRoomId,
                 request = ChatReadRequest(lastReadMessageId = lastReadMessageId)
             )
-            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
+            if (response.status != 200) {
+                return Result.failure(
+                    when (response.status) {
+                        403 -> Exception("FORBIDDEN")
+                        404 -> Exception("NOT_FOUND")
+                        else -> Exception("SERVER_ERROR")
+                    }
+                )
+            }
             Result.success(Unit)
         } catch (e: Exception) {
-            Result.failure(e)
+            if (e.message in listOf("FORBIDDEN", "NOT_FOUND", "SERVER_ERROR", "OTHER")) {
+                Result.failure(e)
+            } else {
+                Result.failure(Exception("NETWORK_ERROR"))
+            }
         }
     }
 
     override suspend fun createPrivateChatRoom(postId: Long): Result<Long> {
         return try {
             val response = chatRoomService.createPrivateChatRoom(postId = postId)
-            if (response.status != 200) return Result.failure(Exception("Status ${response.status}"))
-            val data = response.data ?: return Result.failure(Exception("Response data is null"))
+            if (response.status != 200 && response.status != 201) {
+                return Result.failure(
+                    when (response.status) {
+                        403 -> Exception("FORBIDDEN")
+                        404 -> Exception("NOT_FOUND")
+                        else -> Exception("SERVER_ERROR")
+                    }
+                )
+            }
+            val data = response.data ?: return Result.failure(Exception("OTHER"))
             Result.success(data.roomId)
         } catch (e: Exception) {
-            Result.failure(e)
+            if (e.message in listOf("FORBIDDEN", "NOT_FOUND", "SERVER_ERROR", "OTHER")) {
+                Result.failure(e)
+            } else {
+                Result.failure(Exception("NETWORK_ERROR"))
+            }
         }
     }
 
     private fun ChatRoomResponse.toEntity(): ChatRoomEntity = ChatRoomEntity(
         chatRoomId = chatRoomId,
-        roomType = ChatRoomType.valueOf(roomType),
-        status = ChatRoomStatus.valueOf(status),
+        roomType = ChatRoomType.entries.firstOrNull { it.name == roomType } ?: ChatRoomType.PRIVATE,
+        status = ChatRoomStatus.entries.firstOrNull { it.name == status } ?: ChatRoomStatus.ACTIVE,
         displayName = displayName,
         postTitle = postTitle,
         thumbnailUrl = thumbnailUrl,
@@ -112,7 +157,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
     private fun ChatRoomLastMessageResponse.toEntity(): ChatRoomLastMessageEntity =
         ChatRoomLastMessageEntity(
             messageId = messageId,
-            messageType = MessageType.valueOf(messageType),
+            messageType = MessageType.entries.firstOrNull { it.name == messageType } ?: MessageType.TEXT,
             content = content,
             senderId = senderId,
             senderNickname = senderNickname,
@@ -121,7 +166,7 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     private fun ChatRoomInfoResponse.toEntity(): ChatRoomInfoEntity = ChatRoomInfoEntity(
         chatRoomId = chatRoomId,
-        roomType = ChatRoomType.valueOf(roomType),
+        roomType = ChatRoomType.entries.firstOrNull { it.name == roomType } ?: ChatRoomType.PRIVATE,
         isActive = isActive,
         postTitle = postTitle,
         opponentNickname = opponentNickname,
@@ -131,22 +176,24 @@ class ChatRoomRepositoryImpl @Inject constructor(
 
     private fun MessageItemResponse.toEntity(): MessageEntity = MessageEntity(
         messageId = messageId,
-        messageType = MessageType.valueOf(messageType),
+        messageType = MessageType.entries.firstOrNull { it.name == messageType } ?: MessageType.TEXT,
         sender = sender?.let {
             MessageSenderEntity(userId = it.userId, nickname = it.nickname, isHost = it.isHost)
         },
         isMine = isMine,
         content = content,
         images = images.map { MessageImageEntity(imageUrl = it.imageUrl) },
-        systemMessage = systemMessage?.let {
-            SystemMessageEntity(
-                type = SystemMessageType.valueOf(it.type),
-                displayText = it.displayText,
-                actorUserId = it.actorUserId,
-                inviteeUserId = it.inviteeUserId,
-                userId = it.userId,
-                targetUserId = it.targetUserId
-            )
+        systemMessage = systemMessage?.let { system ->
+            SystemMessageType.entries.firstOrNull { it.name == system.type }?.let { type ->
+                SystemMessageEntity(
+                    type = type,
+                    displayText = system.displayText,
+                    actorUserId = system.actorUserId,
+                    inviteeUserId = system.inviteeUserId,
+                    userId = system.userId,
+                    targetUserId = system.targetUserId
+                )
+            }
         },
         unreadCount = unreadCount,
         createdAt = createdAt.parseDateTime()

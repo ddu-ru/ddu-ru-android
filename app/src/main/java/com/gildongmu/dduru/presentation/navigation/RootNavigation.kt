@@ -12,6 +12,8 @@ import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
+import com.gildongmu.dduru.presentation.feature.chat.screen.ChatImageViewerScreen
+import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomMenuRoute
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomRoute
 import com.gildongmu.dduru.presentation.feature.home.screen.HomeMenuRoute
 import com.gildongmu.dduru.presentation.feature.home.screen.HomeNotificationRoute
@@ -21,6 +23,7 @@ import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingEditPostRoute
 import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailRoute
+import com.gildongmu.dduru.presentation.feature.poll.screen.PollCreateRoute
 import com.gildongmu.dduru.presentation.feature.register.profile.screen.ProfileSettingRoute
 import com.gildongmu.dduru.presentation.feature.register.screen.SignupRoute
 import com.gildongmu.dduru.presentation.feature.register.survey.SurveyMainScreen
@@ -180,6 +183,36 @@ fun RootNavigation(
                     is RootNavRoute.ChatRoom -> NavEntry(route) {
                         ChatRoomRoute(
                             chatRoomId = route.chatRoomId,
+                            onBackClick = { navigateBack() },
+                            onNavigateToMenu = { chatRoomId ->
+                                rootBackStack.add(RootNavRoute.ChatRoomMenu(chatRoomId))
+                            },
+                            onNavigateToPollCreate = {
+                                rootBackStack.add(RootNavRoute.PollCreate)
+                            },
+                            onNavigateToImageViewer = { imageUrls, initialIndex ->
+                                rootBackStack.add(RootNavRoute.ChatImageViewer(imageUrls, initialIndex))
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.ChatRoomMenu -> NavEntry(route) {
+                        ChatRoomMenuRoute(
+                            chatRoomId = route.chatRoomId,
+                            onBackClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.ChatImageViewer -> NavEntry(route) {
+                        ChatImageViewerScreen(
+                            imageUrls = route.imageUrls,
+                            initialIndex = route.initialIndex,
+                            onCloseClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.PollCreate -> NavEntry(route) {
+                        PollCreateRoute(
                             onBackClick = { navigateBack() }
                         )
                     }

@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.chat.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -25,11 +26,15 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LocalLifecycleOwner
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.repeatOnLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
@@ -52,6 +57,10 @@ fun ChatMainRoute(
     viewModel: ChatMainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val showNotReady = {
+        Toast.makeText(context, "준비 중인 기능이에요.", Toast.LENGTH_SHORT).show()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
@@ -61,13 +70,24 @@ fun ChatMainRoute(
         }
     }
 
+    val lifecycleOwner = LocalLifecycleOwner.current
+    LaunchedEffect(lifecycleOwner) {
+        lifecycleOwner.lifecycle.repeatOnLifecycle(Lifecycle.State.RESUMED) {
+            viewModel.loadChatRooms()
+        }
+    }
+
     when (val state = uiState) {
         is UiState.Loading -> DduruLoadingScreen()
         is UiState.Success -> ChatMainScreen(
             chatRooms = state.data.chatRooms,
+            selectedSort = state.data.selectedSort,
+            onSortSelected = viewModel::onSortSelected,
             onChatRoomClick = { id -> viewModel.onChatRoomClick(id.toLong()) },
+            onSearchClick = showNotReady,
+            onMenuClick = showNotReady,
             onLoadMore = { viewModel.loadMoreChatRooms() },
-            requestContent = { ChatRequestRoute() },
+            requestContent = { ChatRequestRoute(onNavigateToChatRoom = onNavigateToChatRoom) },
             applicationContent = { ChatApplicationRoute(onNavigateToChatRoom = onNavigateToChatRoom) }
         )
         is UiState.Failure -> DduruFailureScreen(message = "채팅 목록을 불러올 수 없습니다.")
@@ -81,9 +101,10 @@ private fun ChatMainScreen(
     requestUnreadCount: Int = 0,
     applicationUnreadCount: Int = 0,
     initialTab: ChatTab = ChatTab.ALL,
-    initialSort: ChatSortOption = ChatSortOption.ALL,
+    selectedSort: ChatSortOption = ChatSortOption.ALL,
+    onSortSelected: (ChatSortOption) -> Unit = {},
     initialSortExpanded: Boolean = false,
-    onChatRoomClick: (String) -> Unit = {},
+    onChatRoomClick: (Long) -> Unit = {},
     onSearchClick: () -> Unit = {},
     onMenuClick: () -> Unit = {},
     onLoadMore: () -> Unit = {},
@@ -92,7 +113,6 @@ private fun ChatMainScreen(
     applicationContent: @Composable () -> Unit
 ) {
     var selectedTab by remember { mutableStateOf(initialTab) }
-    var selectedSort by remember { mutableStateOf(initialSort) }
     var sortExpanded by remember { mutableStateOf(initialSortExpanded) }
 
     Scaffold(
@@ -177,7 +197,8 @@ private fun ChatMainScreen(
                     val listState = rememberLazyListState()
                     val shouldLoadMore by remember {
                         derivedStateOf {
-                            val lastVisibleIndex = listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
+                            val lastVisibleIndex =
+                                listState.layoutInfo.visibleItemsInfo.lastOrNull()?.index ?: 0
                             val totalItems = listState.layoutInfo.totalItemsCount
                             totalItems > 0 && lastVisibleIndex >= totalItems - 3
                         }
@@ -188,7 +209,10 @@ private fun ChatMainScreen(
 
                     ChatSortDropdown(
                         selectedOption = selectedSort,
-                        onOptionSelected = { selectedSort = it },
+                        onOptionSelected = {
+                            onSortSelected(it)
+                            sortExpanded = false
+                        },
                         expanded = sortExpanded,
                         onExpandedChange = { sortExpanded = it },
                         modifier = Modifier
@@ -199,7 +223,7 @@ private fun ChatMainScreen(
                         state = listState,
                         modifier = Modifier.fillMaxSize()
                     ) {
-                        items(chatRooms) { room ->
+                        items(chatRooms, key = { it.id }) { room ->
                             ChatRoomCard(
                                 displayName = room.displayName,
                                 postTitle = room.postTitle,
@@ -208,6 +232,7 @@ private fun ChatMainScreen(
                                 lastMessageAt = room.lastMessageAt,
                                 unreadCount = room.unreadCount,
                                 roomType = room.roomType,
+                                thumbnailUrl = room.thumbnailUrl,
                                 onClick = { onChatRoomClick(room.id) }
                             )
                         }
@@ -222,7 +247,7 @@ private fun ChatMainScreen(
 
 private val previewRooms = listOf(
     ChatRoomUiModel(
-        id = "1",
+        id = 1L,
         displayName = "username",
         postTitle = "제주 애월 2박 3일",
         participantCount = null,
@@ -232,7 +257,7 @@ private val previewRooms = listOf(
         roomType = ChatRoomType.PRIVATE
     ),
     ChatRoomUiModel(
-        id = "2",
+        id = 2L,
         displayName = "제주 애월 2박 3일",
         postTitle = null,
         participantCount = 3,
@@ -242,7 +267,7 @@ private val previewRooms = listOf(
         roomType = ChatRoomType.GROUP
     ),
     ChatRoomUiModel(
-        id = "3",
+        id = 3L,
         displayName = "username",
         postTitle = "제주 애월 2박 3일",
         participantCount = null,
@@ -252,7 +277,7 @@ private val previewRooms = listOf(
         roomType = ChatRoomType.PRIVATE
     ),
     ChatRoomUiModel(
-        id = "4",
+        id = 4L,
         displayName = "username",
         postTitle = "제주 애월 2박 3일",
         participantCount = null,
@@ -262,7 +287,7 @@ private val previewRooms = listOf(
         roomType = ChatRoomType.PRIVATE
     ),
     ChatRoomUiModel(
-        id = "5",
+        id = 5L,
         displayName = "제주 애월 2박 3일",
         postTitle = null,
         participantCount = 3,
@@ -282,7 +307,7 @@ private fun ChatScreenAllTabPreview() {
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
             initialTab = ChatTab.ALL,
-            initialSort = ChatSortOption.ALL,
+            selectedSort = ChatSortOption.ALL,
             requestContent = {},
             applicationContent = {}
         )
@@ -298,7 +323,7 @@ private fun ChatScreenDropdownOpenPreview() {
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
             initialTab = ChatTab.ALL,
-            initialSort = ChatSortOption.ALL,
+            selectedSort = ChatSortOption.ALL,
             initialSortExpanded = true,
             requestContent = {},
             applicationContent = {}
@@ -315,7 +340,7 @@ private fun ChatScreenPrivateSortPreview() {
             requestUnreadCount = 4,
             applicationUnreadCount = 3,
             initialTab = ChatTab.ALL,
-            initialSort = ChatSortOption.PRIVATE,
+            selectedSort = ChatSortOption.PRIVATE,
             requestContent = {},
             applicationContent = {}
         )
