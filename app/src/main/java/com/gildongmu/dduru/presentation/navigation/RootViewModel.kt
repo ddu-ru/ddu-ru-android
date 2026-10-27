@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
+import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
@@ -15,7 +16,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class RootViewModel @Inject constructor(
-    private val tokenLocalDataSource: TokenLocalDataSource
+    private val tokenLocalDataSource: TokenLocalDataSource,
+    private val tokenAuthenticator: TokenAuthenticator
 ) : ViewModel() {
 
     private val _startDestination = MutableStateFlow<RootNavRoute?>(null)
@@ -29,10 +31,22 @@ class RootViewModel @Inject constructor(
             _startDestination.value = try {
                 val accessToken = tokenLocalDataSource.accessToken.first()
 
-                if (accessToken.isNullOrBlank()) {
-                    RootNavRoute.Login
-                } else {
-                    RootNavRoute.Main
+                when {
+                    accessToken.isNullOrBlank() -> RootNavRoute.Login
+                    !tokenAuthenticator.shouldRefresh(accessToken) -> RootNavRoute.Main
+                    else -> {
+                        val refreshToken = tokenLocalDataSource.refreshToken.first()
+                        val refreshedTokens = refreshToken
+                            ?.takeIf { it.isNotBlank() }
+                            ?.let {
+                                tokenAuthenticator.refreshAndSaveTokens(
+                                    refreshToken = it,
+                                    staleAccessToken = accessToken
+                                )
+                            }
+
+                        if (refreshedTokens == null) RootNavRoute.Login else RootNavRoute.Main
+                    }
                 }
             } catch (e: CancellationException) {
                 throw e

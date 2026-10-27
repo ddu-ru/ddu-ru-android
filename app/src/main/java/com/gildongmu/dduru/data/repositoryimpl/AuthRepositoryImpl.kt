@@ -21,7 +21,11 @@ class AuthRepositoryImpl @Inject constructor(
         return try {
             val response = authDataSource.loginWithKakao(LoginRequest(idToken))
 
-            val data = response.data ?: return Result.failure(
+            val data = response.data?.takeIf {
+                response.status in HTTP_SUCCESS_STATUS_RANGE &&
+                    it.accessToken.isNotBlank() &&
+                    it.refreshToken.isNotBlank()
+            } ?: return Result.failure(
                 Exception("Login response data is null")
             )
 
@@ -40,13 +44,19 @@ class AuthRepositoryImpl @Inject constructor(
 
             val response = authDataSource.loginWithGoogle(LoginRequest(idToken))
 
-            if (response.data != null) {
+            val data = response.data?.takeIf {
+                response.status in HTTP_SUCCESS_STATUS_RANGE &&
+                    it.accessToken.isNotBlank() &&
+                    it.refreshToken.isNotBlank()
+            }
+
+            if (data != null) {
                 tokenLocalDataSource.saveTokens(
-                    response.data.accessToken,
-                    response.data.refreshToken
+                    data.accessToken,
+                    data.refreshToken
                 )
                 registerFcmToken()
-                Result.success(response.data.isNewUser)
+                Result.success(data.isNewUser)
             } else {
                 Result.failure(Exception("Data is null"))
             }
@@ -60,5 +70,9 @@ class AuthRepositoryImpl @Inject constructor(
             .onFailure { throwable ->
                 Timber.e(throwable, "Failed to register FCM token")
             }
+    }
+
+    private companion object {
+        val HTTP_SUCCESS_STATUS_RANGE = 200..299
     }
 }
