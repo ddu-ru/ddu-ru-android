@@ -38,6 +38,13 @@ fun SurveyMainScreen(
 
     Box(modifier = modifier.fillMaxSize()) {
         when {
+            uiState is SurveyUiState.Error -> {
+                DduruFailureScreen(
+                    message = (uiState as SurveyUiState.Error).message,
+                    onRetryClick = viewModel::retry
+                )
+            }
+
             uiState is SurveyUiState.Success -> {
                 val data = (uiState as SurveyUiState.Success).result
                 SurveyResultScreen(
@@ -131,10 +138,6 @@ fun SurveyMainScreen(
 
         if (uiState is SurveyUiState.Loading) {
             DduruLoadingScreen()
-        }
-
-        if (uiState is SurveyUiState.Error) {
-            DduruFailureScreen(message = (uiState as SurveyUiState.Error).message)
         }
     }
 }
