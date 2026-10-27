@@ -3,6 +3,7 @@ package com.gildongmu.dduru.presentation.feature.matching.state
 import androidx.compose.runtime.Immutable
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingPostCardUiModel
 import kotlinx.collections.immutable.ImmutableList
@@ -12,6 +13,11 @@ import kotlinx.collections.immutable.persistentListOf
 data class MatchingUiState(
     val searchQuery: String = "",
     val selectedSort: String = "최신순",
+    val filters: MatchingFilterOptions = MatchingFilterOptions(),
+    val nextCursor: Long? = null,
+    val nextCursorValue: Int? = null,
+    val hasNext: Boolean = false,
+    val isLoadingMore: Boolean = false,
     val posts: ImmutableList<MatchingPostCardUiModel> = persistentListOf()
 ) {
     companion object {

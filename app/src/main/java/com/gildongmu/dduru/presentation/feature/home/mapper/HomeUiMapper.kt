@@ -16,6 +16,7 @@ import kotlinx.collections.immutable.toImmutableList
 
 fun HomeMateRecommendation.toAiMatchingCardData(): AiMatchingCardData {
     return AiMatchingCardData(
+        postId = postId,
         imageUrl = null,
         matchPercent = matchPercentage,
         title = title,

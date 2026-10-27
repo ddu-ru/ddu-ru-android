@@ -148,7 +148,7 @@ fun UpcomingTripCard(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = "해야 하는 업무 ${taskCount}건",
+                    text = "나의 여정에서 할 일 ${taskCount}건 확인",
                     style = DduruTheme.typography.Title3,
                     color = DduruTheme.colors.secondary100
                 )

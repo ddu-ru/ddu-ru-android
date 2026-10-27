@@ -3,12 +3,16 @@ package com.gildongmu.dduru.data.di
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
 import com.gildongmu.dduru.data.local.TokenLocalDataSourceImpl
 import com.gildongmu.dduru.data.remote.datasource.AuthDataSource
+import com.gildongmu.dduru.data.remote.datasource.FcmTokenRemoteDataSource
 import com.gildongmu.dduru.data.remote.datasource.GoogleAuthDataSource
 import com.gildongmu.dduru.data.remote.datasource.KakaoAuthDataSource
+import com.gildongmu.dduru.data.remote.datasource.home.HomeNotificationRemoteDataSource
 import com.gildongmu.dduru.data.remote.datasource.home.HomeRemoteDataSource
 import com.gildongmu.dduru.data.remote.datasourceimpl.AuthDataSourceImpl
+import com.gildongmu.dduru.data.remote.datasourceimpl.FcmTokenRemoteDataSourceImpl
 import com.gildongmu.dduru.data.remote.datasourceimpl.GoogleAuthDataSourceImpl
 import com.gildongmu.dduru.data.remote.datasourceimpl.KakaoAuthDataSourceImpl
+import com.gildongmu.dduru.data.remote.datasourceimpl.home.HomeNotificationRemoteDataSourceImpl
 import com.gildongmu.dduru.data.remote.datasourceimpl.home.HomeRemoteDataSourceImpl
 import dagger.Binds
 import dagger.Module
@@ -31,6 +35,18 @@ abstract class DataSourceModule {
     abstract fun bindHomeRemoteDataSource(
         homeRemoteDataSourceImpl: HomeRemoteDataSourceImpl
     ): HomeRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindHomeNotificationRemoteDataSource(
+        homeNotificationRemoteDataSourceImpl: HomeNotificationRemoteDataSourceImpl
+    ): HomeNotificationRemoteDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindFcmTokenRemoteDataSource(
+        fcmTokenRemoteDataSourceImpl: FcmTokenRemoteDataSourceImpl
+    ): FcmTokenRemoteDataSource
 
     @Binds
     @Singleton

@@ -7,7 +7,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -27,17 +29,34 @@ import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationF
 import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationList
 import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationMoreMenu
 import com.gildongmu.dduru.presentation.feature.home.component.HomeNotificationTopBar
+import com.gildongmu.dduru.presentation.feature.home.effect.HomeNotificationSideEffect
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationFilter
+import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationItemUiState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationUiState
 import com.gildongmu.dduru.presentation.feature.home.viewmodel.HomeNotificationViewModel
+import com.gildongmu.dduru.presentation.navigation.RootNavRoute
+import com.gildongmu.dduru.presentation.navigation.toPushNotificationRoute
+import kotlinx.coroutines.flow.collectLatest
 
 @Composable
 fun HomeNotificationRoute(
     onBackClick: () -> Unit,
+    onNavigateToResource: (RootNavRoute) -> Unit,
     modifier: Modifier = Modifier,
     viewModel: HomeNotificationViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel) {
+        viewModel.sideEffect.collectLatest { sideEffect ->
+            when (sideEffect) {
+                is HomeNotificationSideEffect.NavigateToResource -> {
+                    sideEffect.resourceType.toPushNotificationRoute(sideEffect.resourceId)
+                        ?.let(onNavigateToResource)
+                }
+            }
+        }
+    }
 
     when (val state = uiState) {
         UiState.Loading -> DduruLoadingScreen(modifier = modifier)
@@ -49,6 +68,8 @@ fun HomeNotificationRoute(
             uiState = state.data,
             onBackClick = onBackClick,
             onFilterClick = viewModel::onFilterClick,
+            onNotificationClick = viewModel::onNotificationClick,
+            onLoadMoreNotifications = viewModel::loadMoreNotifications,
             onMarkAllAsReadClick = viewModel::onMarkAllAsReadClick,
             onDeleteAllClick = viewModel::onDeleteAllClick,
             modifier = modifier
@@ -62,13 +83,13 @@ private fun HomeNotificationScreen(
     uiState: HomeNotificationUiState,
     onBackClick: () -> Unit,
     onFilterClick: (HomeNotificationFilter) -> Unit,
+    onNotificationClick: (HomeNotificationItemUiState) -> Unit,
+    onLoadMoreNotifications: () -> Unit,
     onMarkAllAsReadClick: () -> Unit,
     onDeleteAllClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isMenuVisible by remember { mutableStateOf(false) }
-    val notifications = uiState.filteredNotifications
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -87,11 +108,31 @@ private fun HomeNotificationScreen(
             HomeNotificationFilterRow(
                 selectedFilter = uiState.selectedFilter,
                 unreadCount = uiState.unreadCount,
+                matchUnreadCount = uiState.matchUnreadCount,
+                journeyUnreadCount = uiState.journeyUnreadCount,
                 onFilterClick = onFilterClick,
                 modifier = Modifier.padding(top = 24.dp)
             )
 
-            if (notifications.isEmpty()) {
+            if (uiState.markAllAsReadFailed) {
+                Text(
+                    text = "전체 확인에 실패했어요. 다시 시도해 주세요.",
+                    style = DduruTheme.typography.Caption1,
+                    color = DduruTheme.colors.validationRed,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
+            if (uiState.deleteAllFailed) {
+                Text(
+                    text = "전체 삭제에 실패했어요. 다시 시도해 주세요.",
+                    style = DduruTheme.typography.Caption1,
+                    color = DduruTheme.colors.validationRed,
+                    modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+                )
+            }
+
+            if (uiState.notifications.isEmpty()) {
                 HomeNotificationEmptyState(
                     modifier = Modifier
                         .fillMaxWidth()
@@ -99,7 +140,11 @@ private fun HomeNotificationScreen(
                 )
             } else {
                 HomeNotificationList(
-                    notifications = notifications,
+                    notifications = uiState.notifications,
+                    onNotificationClick = onNotificationClick,
+                    onLoadMoreNotifications = onLoadMoreNotifications,
+                    hasNext = uiState.hasNext,
+                    isLoadingMore = uiState.isLoadingMore,
                     modifier = Modifier
                         .fillMaxWidth()
                         .weight(1f)
@@ -111,13 +156,12 @@ private fun HomeNotificationScreen(
         if (isMenuVisible) {
             HomeNotificationMoreMenu(
                 onMarkAllAsReadClick = {
-                    isMenuVisible = false
                     onMarkAllAsReadClick()
                 },
-                onDeleteAllClick = {
-                    isMenuVisible = false
-                    onDeleteAllClick()
-                },
+                onDeleteAllClick = onDeleteAllClick,
+                isMarkingAllAsRead = uiState.isMarkingAllAsRead,
+                isDeletingAll = uiState.isDeletingAll,
+                hasUnreadNotifications = uiState.unreadCount > 0,
                 modifier = Modifier
                     .align(Alignment.TopEnd)
                     .padding(top = 66.dp, end = 16.dp)
@@ -134,6 +178,8 @@ private fun HomeNotificationScreenPreview() {
             uiState = HomeNotificationUiState.preview,
             onBackClick = {},
             onFilterClick = {},
+            onNotificationClick = {},
+            onLoadMoreNotifications = {},
             onMarkAllAsReadClick = {},
             onDeleteAllClick = {}
         )
@@ -148,6 +194,8 @@ private fun HomeNotificationEmptyScreenPreview() {
             uiState = HomeNotificationUiState(),
             onBackClick = {},
             onFilterClick = {},
+            onNotificationClick = {},
+            onLoadMoreNotifications = {},
             onMarkAllAsReadClick = {},
             onDeleteAllClick = {}
         )

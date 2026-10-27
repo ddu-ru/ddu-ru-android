@@ -7,7 +7,18 @@ plugins {
     alias(libs.plugins.dagger.hilt)
     alias(libs.plugins.kotlin.serialization)
     alias(libs.plugins.devtools.ksp)
+    alias(libs.plugins.google.services) apply false
     alias(libs.plugins.ktlint)
+}
+
+val hasGoogleServicesConfig = listOf(
+    "google-services.json",
+    "src/debug/google-services.json",
+    "src/release/google-services.json"
+).any { path -> file(path).exists() }
+
+if (hasGoogleServicesConfig) {
+    apply(plugin = "com.google.gms.google-services")
 }
 
 val localProperties = Properties().apply {
@@ -118,6 +129,8 @@ dependencies {
     implementation(libs.accompanist.systemuicontroller)
     implementation(libs.androidx.datastore.preferences)
     implementation(libs.androidx.foundation)
+    implementation(platform(libs.firebase.bom))
+    implementation(libs.firebase.messaging)
 
     // Google 로그인
     implementation("androidx.credentials:credentials:1.3.0")

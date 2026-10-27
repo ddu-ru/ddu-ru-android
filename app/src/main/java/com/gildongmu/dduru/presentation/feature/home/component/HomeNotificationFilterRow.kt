@@ -28,6 +28,8 @@ import com.gildongmu.dduru.presentation.feature.home.state.HomeNotificationUiSta
 fun HomeNotificationFilterRow(
     selectedFilter: HomeNotificationFilter,
     unreadCount: Int,
+    matchUnreadCount: Int,
+    journeyUnreadCount: Int,
     onFilterClick: (HomeNotificationFilter) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -42,7 +44,12 @@ fun HomeNotificationFilterRow(
         ) { filter ->
             HomeNotificationFilterChip(
                 label = filter.label,
-                count = if (filter == HomeNotificationFilter.UNREAD) unreadCount else 0,
+                count = when (filter) {
+                    HomeNotificationFilter.ALL,
+                    HomeNotificationFilter.UNREAD -> unreadCount
+                    HomeNotificationFilter.MATCH -> matchUnreadCount
+                    HomeNotificationFilter.JOURNEY -> journeyUnreadCount
+                },
                 isSelected = filter == selectedFilter,
                 onClick = { onFilterClick(filter) }
             )
@@ -97,7 +104,7 @@ private fun HomeNotificationFilterChip(
             color = textColor
         )
 
-        if (!isSelected && count > 0) {
+        if (count > 0) {
             HomeNotificationCountBadge(count = count)
         }
     }
@@ -135,6 +142,8 @@ private fun HomeNotificationFilterRowPreview() {
         HomeNotificationFilterRow(
             selectedFilter = uiState.selectedFilter,
             unreadCount = uiState.unreadCount,
+            matchUnreadCount = uiState.matchUnreadCount,
+            journeyUnreadCount = uiState.journeyUnreadCount,
             onFilterClick = {},
             modifier = Modifier.fillMaxWidth()
         )

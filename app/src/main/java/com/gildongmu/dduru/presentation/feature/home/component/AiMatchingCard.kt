@@ -388,6 +388,7 @@ private fun AiMatchingCardPreview() {
         ) {
             AiMatchingCard(
                 data = AiMatchingCardData(
+                    postId = 1L,
                     imageUrl = null,
                     matchPercent = 92,
                     title = "Title",

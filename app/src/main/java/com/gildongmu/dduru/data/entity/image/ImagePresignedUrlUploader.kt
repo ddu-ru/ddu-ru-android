@@ -4,7 +4,8 @@ import android.content.Context
 import android.net.Uri
 import android.webkit.MimeTypeMap
 import com.gildongmu.dduru.data.entity.image.api.ImagePresignedUrlApi
-import com.gildongmu.dduru.data.entity.image.model.ImagePresignedUrlRequest
+import com.gildongmu.dduru.data.entity.image.model.ImageUploadFileRequest
+import com.gildongmu.dduru.data.entity.image.model.ImageUploadRequest
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.UUID
 import javax.inject.Inject
@@ -32,7 +33,13 @@ class ImagePresignedUrlUploader @Inject constructor(
             validateExtension(extension)
 
             val fileName = "${UUID.randomUUID()}.$extension"
-            val presignedUrlRequest = ImagePresignedUrlRequest(fileNames = listOf(fileName))
+            val fileSize = context.contentResolver.openAssetFileDescriptor(uri, "r")
+                ?.use { it.length }
+                ?.takeIf { it > 0 }
+                ?: error("이미지 크기를 확인할 수 없어요.")
+            val presignedUrlRequest = ImageUploadRequest(
+                files = listOf(ImageUploadFileRequest(fileName = fileName, fileSize = fileSize))
+            )
             val presigned = when (target) {
                 ImageUploadTarget.PROFILE -> imagePresignedUrlApi.createProfilePresignedUrl(presignedUrlRequest)
                 ImageUploadTarget.JOURNEY -> imagePresignedUrlApi.createJourneyPresignedUrl(presignedUrlRequest)
@@ -43,7 +50,7 @@ class ImagePresignedUrlUploader @Inject constructor(
             val request = Request.Builder()
                 .url(presigned.presignedUrl)
                 .header("Content-Type", mimeType)
-                .put(uri.asRequestBody(mimeType))
+                .put(uri.asRequestBody(mimeType, fileSize))
                 .build()
 
             uploadClient.newCall(request).execute().use { response ->
@@ -68,31 +75,24 @@ class ImagePresignedUrlUploader @Inject constructor(
     }
 
     private fun validateExtension(extension: String) {
-        val allowedExtensions = setOf("jpg", "jpeg", "png", "gif")
-        require(extension in allowedExtensions) { "jpg, jpeg, png, gif 파일만 업로드할 수 있어요." }
+        val allowedExtensions = setOf("jpg", "jpeg", "png")
+        require(extension in allowedExtensions) { "jpg, jpeg, png 파일만 업로드할 수 있어요." }
     }
 
     private fun defaultMimeType(extension: String): String {
         return when (extension) {
             "jpg", "jpeg" -> "image/jpeg"
             "png" -> "image/png"
-            "gif" -> "image/gif"
             else -> "application/octet-stream"
         }
     }
 
-    private fun Uri.asRequestBody(mimeType: String): RequestBody {
+    private fun Uri.asRequestBody(mimeType: String, fileSize: Long): RequestBody {
         val contentResolver = context.contentResolver
         return object : RequestBody() {
             override fun contentType() = mimeType.toMediaTypeOrNull()
 
-            override fun contentLength(): Long {
-                return contentResolver.openAssetFileDescriptor(this@asRequestBody, "r")
-                    ?.use { descriptor ->
-                        descriptor.length.takeIf { it >= 0 } ?: -1L
-                    }
-                    ?: -1L
-            }
+            override fun contentLength(): Long = fileSize
 
             override fun writeTo(sink: BufferedSink) {
                 contentResolver.openInputStream(this@asRequestBody)?.use { input ->

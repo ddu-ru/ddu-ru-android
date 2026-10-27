@@ -5,15 +5,10 @@
 -->
 <data-extraction-rules>
     <cloud-backup>
-        <!-- TODO: Use <include> and <exclude> to control what is backed up.
-        <include .../>
-        <exclude .../>
-        -->
+        <!-- 로그인 토큰은 앱 재설치/기기 이전 뒤 복원되면 안 된다. -->
+        <exclude domain="file" path="datastore/auth_tokens.preferences_pb" />
     </cloud-backup>
-    <!--
     <device-transfer>
-        <include .../>
-        <exclude .../>
+        <exclude domain="file" path="datastore/auth_tokens.preferences_pb" />
     </device-transfer>
-    -->
 </data-extraction-rules>

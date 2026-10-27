@@ -29,10 +29,10 @@ import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingFilterBottomSheet
-import com.gildongmu.dduru.presentation.feature.matching.component.MatchingPostListSection
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingSearchFilterSection
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingTopHeader
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingWriteButton
+import com.gildongmu.dduru.presentation.feature.matching.createPost.component.MatchingPostListSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.MatchingSortBottomSheet
 import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffect
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
@@ -75,8 +75,10 @@ fun MatchingRoute(
                 onMenuClick = viewModel::onMenuClick,
                 onSearchQueryChange = viewModel::onSearchQueryChange,
                 onSortSelected = viewModel::onSortSelected,
+                onFiltersApplied = viewModel::onFiltersApplied,
                 onPostClick = viewModel::onPostClick,
                 onPostLikeClick = viewModel::onPostLikeClick,
+                onLoadMore = viewModel::loadMorePosts,
                 onWriteClick = viewModel::onWriteClick
             )
         }
@@ -90,8 +92,10 @@ private fun MatchingScreen(
     onMenuClick: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onSortSelected: (String) -> Unit,
+    onFiltersApplied: (com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions) -> Unit,
     onPostClick: (Long) -> Unit,
     onPostLikeClick: (Long) -> Unit,
+    onLoadMore: () -> Unit,
     onWriteClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -142,6 +146,9 @@ private fun MatchingScreen(
                 items = uiState.posts,
                 onCardClick = onPostClick,
                 onLikeClick = onPostLikeClick,
+                hasNext = uiState.hasNext,
+                isLoadingMore = uiState.isLoadingMore,
+                onLoadMore = onLoadMore,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
@@ -172,7 +179,7 @@ private fun MatchingScreen(
         MatchingFilterBottomSheet(
             visible = isFilterSheetVisible,
             onDismiss = { isFilterSheetVisible = false },
-            onDestinationClick = {}
+            onApplyFilters = onFiltersApplied
         )
     }
 }
@@ -187,8 +194,10 @@ private fun MatchingScreenPreview() {
             onMenuClick = {},
             onSearchQueryChange = {},
             onSortSelected = {},
+            onFiltersApplied = {},
             onPostClick = {},
             onPostLikeClick = {},
+            onLoadMore = {},
             onWriteClick = {}
         )
     }

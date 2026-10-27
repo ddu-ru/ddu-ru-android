@@ -1,13 +1,11 @@
-package com.gildongmu.dduru.presentation.component
+package com.gildongmu.dduru.presentation.feature.mypage.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
-import androidx.compose.foundation.horizontalScroll
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,18 +17,20 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
+val ProfileEditTabTitles = listOf("내 정보", "가고싶은 여행", "나의 여행 스타일")
+
 @Composable
-fun FilterChipRow(
-    labels: List<String>,
+fun ProfileEditTabRow(
     selectedIndex: Int,
-    onChipClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
+    onTabClick: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    tabs: List<String> = ProfileEditTabTitles
 ) {
     Row(
-        modifier = modifier.horizontalScroll(rememberScrollState()),
+        modifier = modifier,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
-        labels.forEachIndexed { index, label ->
+        tabs.forEachIndexed { index, title ->
             val isSelected = index == selectedIndex
 
             Box(
@@ -44,13 +44,13 @@ fun FilterChipRow(
                             Modifier.border(width = 1.dp, color = DduruTheme.colors.gray100, shape = CircleShape)
                         }
                     )
-                    .noRippleClickable { onChipClick(index) }
+                    .noRippleClickable { onTabClick(index) }
                     .padding(horizontal = 16.dp, vertical = 8.dp),
                 contentAlignment = Alignment.Center
             ) {
                 Text(
-                    text = label,
-                    style = DduruTheme.typography.Body4,
+                    text = title,
+                    style = DduruTheme.typography.Body2,
                     color = if (isSelected) DduruTheme.colors.gray0 else DduruTheme.colors.gray600
                 )
             }
@@ -60,13 +60,12 @@ fun FilterChipRow(
 
 @Preview(showBackground = true)
 @Composable
-private fun FilterChipRowPreview() {
+private fun ProfileEditTabRowPreview() {
     DduruTheme {
         Box(modifier = Modifier.background(DduruTheme.colors.gray50)) {
-            FilterChipRow(
-                labels = listOf("전체", "서비스", "계정", "매칭", "보안"),
-                selectedIndex = 1,
-                onChipClick = {},
+            ProfileEditTabRow(
+                selectedIndex = 2,
+                onTabClick = {},
                 modifier = Modifier.padding(16.dp)
             )
         }

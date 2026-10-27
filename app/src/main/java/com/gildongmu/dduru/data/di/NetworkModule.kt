@@ -9,9 +9,13 @@ import com.gildongmu.dduru.data.remote.service.ChatRoomService
 import com.gildongmu.dduru.data.remote.service.JourneyCommentService
 import com.gildongmu.dduru.data.remote.service.JourneyPostService
 import com.gildongmu.dduru.data.remote.service.JourneyService
+import com.gildongmu.dduru.data.remote.service.FcmTokenService
 import com.gildongmu.dduru.data.remote.service.ParticipationService
+import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.data.remote.service.SurveyService
+import com.gildongmu.dduru.data.remote.service.home.HomeNotificationService
 import com.gildongmu.dduru.data.remote.service.home.HomeService
+import com.gildongmu.dduru.data.remote.websocket.StompChatClient
 import com.jakewharton.retrofit2.converter.kotlinx.serialization.asConverterFactory
 import dagger.Module
 import dagger.Provides
@@ -36,13 +40,11 @@ object NetworkModule {
     @Singleton
     fun provideAuthInterceptor(
         tokenLocalDataSource: TokenLocalDataSource,
-        tokenAuthenticator: TokenAuthenticator,
-        json: Json
+        tokenAuthenticator: TokenAuthenticator
     ): AuthInterceptor {
         return AuthInterceptor(
             tokenLocalDataSource = tokenLocalDataSource,
-            tokenAuthenticator = tokenAuthenticator,
-            json = json
+            tokenAuthenticator = tokenAuthenticator
         )
     }
 
@@ -154,7 +156,35 @@ object NetworkModule {
 
     @Provides
     @Singleton
+    fun providePostService(retrofit: Retrofit): PostService = retrofit.create(PostService::class.java)
+
+    @Provides
+    @Singleton
+    fun provideFcmTokenService(retrofit: Retrofit): FcmTokenService {
+        return retrofit.create(FcmTokenService::class.java)
+    }
+
+    @Provides
+    @Singleton
     fun provideHomeService(retrofit: Retrofit): HomeService {
         return retrofit.create(HomeService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideStompChatClient(
+        okHttpClient: OkHttpClient,
+        tokenLocalDataSource: TokenLocalDataSource,
+        baseUrl: String
+    ): StompChatClient = StompChatClient(
+        tokenLocalDataSource = tokenLocalDataSource,
+        okHttpClient = okHttpClient,
+        baseUrl = baseUrl
+    )
+
+    @Provides
+    @Singleton
+    fun provideHomeNotificationService(retrofit: Retrofit): HomeNotificationService {
+        return retrofit.create(HomeNotificationService::class.java)
     }
 }

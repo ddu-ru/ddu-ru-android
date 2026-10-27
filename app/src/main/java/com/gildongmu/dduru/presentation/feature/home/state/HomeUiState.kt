@@ -12,6 +12,8 @@ data class HomeUiState(
     val upcomingTrip: UpcomingTripUiState = UpcomingTripUiState(),
     val popularDestinations: ImmutableList<HomePopularDestinationUiModel> = persistentListOf(),
     val popularDestinationUpdatedText: String = "방금 전",
+    val isPopularDestinationsRefreshing: Boolean = false,
+    val popularDestinationsRefreshFailed: Boolean = false,
     val aiMatchingUsedCount: Int = 0,
     val aiMatchingCard: AiMatchingCardData? = fakeAiMatchingCard,
     val superHosts: List<HomeSuperHostCardUiModel> = emptyList(),
@@ -94,6 +96,7 @@ data class UpcomingTripUiState(
 )
 
 private val fakeAiMatchingCard = AiMatchingCardData(
+    postId = 1L,
     imageUrl = null,
     matchPercent = 92,
     title = "제주 서귀포 감성 여행",

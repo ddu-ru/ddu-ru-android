@@ -6,23 +6,31 @@ import com.gildongmu.dduru.data.remote.datasource.AuthDataSource
 import com.gildongmu.dduru.data.remote.datasource.GoogleAuthDataSource
 import com.gildongmu.dduru.data.remote.dto.request.LoginRequest
 import com.gildongmu.dduru.domain.repository.AuthRepository
+import com.gildongmu.dduru.domain.repository.FcmTokenRepository
 import javax.inject.Inject
+import timber.log.Timber
 
 class AuthRepositoryImpl @Inject constructor(
     private val authDataSource: AuthDataSource,
     private val tokenLocalDataSource: TokenLocalDataSource,
-    private val googleAuthDataSource: GoogleAuthDataSource
+    private val googleAuthDataSource: GoogleAuthDataSource,
+    private val fcmTokenRepository: FcmTokenRepository
 ) : AuthRepository {
 
     override suspend fun loginWithKakao(idToken: String): Result<Boolean> {
         return try {
             val response = authDataSource.loginWithKakao(LoginRequest(idToken))
 
-            val data = response.data ?: return Result.failure(
+            val data = response.data?.takeIf {
+                response.status in HTTP_SUCCESS_STATUS_RANGE &&
+                    it.accessToken.isNotBlank() &&
+                    it.refreshToken.isNotBlank()
+            } ?: return Result.failure(
                 Exception("Login response data is null")
             )
 
             tokenLocalDataSource.saveTokens(data.accessToken, data.refreshToken)
+            registerFcmToken()
             Result.success(data.isNewUser)
         } catch (e: Exception) {
             Result.failure(e)
@@ -36,17 +44,35 @@ class AuthRepositoryImpl @Inject constructor(
 
             val response = authDataSource.loginWithGoogle(LoginRequest(idToken))
 
-            if (response.data != null) {
+            val data = response.data?.takeIf {
+                response.status in HTTP_SUCCESS_STATUS_RANGE &&
+                    it.accessToken.isNotBlank() &&
+                    it.refreshToken.isNotBlank()
+            }
+
+            if (data != null) {
                 tokenLocalDataSource.saveTokens(
-                    response.data.accessToken,
-                    response.data.refreshToken
+                    data.accessToken,
+                    data.refreshToken
                 )
-                Result.success(response.data.isNewUser)
+                registerFcmToken()
+                Result.success(data.isNewUser)
             } else {
                 Result.failure(Exception("Data is null"))
             }
         } catch (e: Exception) {
             Result.failure(e)
         }
+    }
+
+    private suspend fun registerFcmToken() {
+        fcmTokenRepository.registerCurrentToken()
+            .onFailure { throwable ->
+                Timber.e(throwable, "Failed to register FCM token")
+            }
+    }
+
+    private companion object {
+        val HTTP_SUCCESS_STATUS_RANGE = 200..299
     }
 }
