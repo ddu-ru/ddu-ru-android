@@ -28,8 +28,8 @@ import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingEditPostRoute
 import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailRoute
-import com.gildongmu.dduru.presentation.feature.poll.screen.PollCreateRoute
 import com.gildongmu.dduru.presentation.feature.poll.screen.JourneyPollRoute
+import com.gildongmu.dduru.presentation.feature.poll.screen.PollCreateRoute
 import com.gildongmu.dduru.presentation.feature.register.profile.screen.ProfileSettingRoute
 import com.gildongmu.dduru.presentation.feature.register.screen.SignupRoute
 import com.gildongmu.dduru.presentation.feature.register.survey.SurveyMainScreen

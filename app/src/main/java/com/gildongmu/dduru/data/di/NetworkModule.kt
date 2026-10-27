@@ -6,10 +6,10 @@ import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
 import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
 import com.gildongmu.dduru.data.remote.service.AuthService
 import com.gildongmu.dduru.data.remote.service.ChatRoomService
+import com.gildongmu.dduru.data.remote.service.FcmTokenService
 import com.gildongmu.dduru.data.remote.service.JourneyCommentService
 import com.gildongmu.dduru.data.remote.service.JourneyPostService
 import com.gildongmu.dduru.data.remote.service.JourneyService
-import com.gildongmu.dduru.data.remote.service.FcmTokenService
 import com.gildongmu.dduru.data.remote.service.ParticipationService
 import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.data.remote.service.SurveyService
