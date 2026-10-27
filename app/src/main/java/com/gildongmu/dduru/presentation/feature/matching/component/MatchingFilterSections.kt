@@ -28,6 +28,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.component.Ag
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.DduruCalendar
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.TripDatePickerBox
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingDestinationOption
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 import java.time.LocalDate
 import java.time.format.DateTimeFormatter
@@ -88,6 +89,9 @@ fun MatchingDateFilterContent(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MatchingDetailFilterContent(
+    destinationOptions: List<MatchingDestinationOption>,
+    selectedDestinationId: Long?,
+    onDestinationSelected: (Long?) -> Unit,
     selectedRecruitmentStatus: String?,
     onRecruitmentStatusSelected: (String) -> Unit,
     selectedGender: MatchingGender?,
@@ -99,12 +103,34 @@ fun MatchingDetailFilterContent(
     onAgeRangeChanged: (Int, Int) -> Unit,
     selectedCompanionType: MatchingCompanionType?,
     onCompanionTypeSelected: (MatchingCompanionType) -> Unit,
-    onDestinationClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(modifier = modifier.fillMaxWidth()) {
         MatchingFilterSection(title = "여행지") {
-            MatchingDestinationField(onClick = onDestinationClick)
+            MatchingDestinationField(
+                selectedDestinationName = destinationOptions
+                    .firstOrNull { it.id == selectedDestinationId }
+                    ?.name
+            )
+            FlowRow(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(top = 12.dp),
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                destinationOptions.forEach { destination ->
+                    MatchingFilterSmallChip(
+                        text = destination.name,
+                        selected = destination.id == selectedDestinationId,
+                        onClick = {
+                            onDestinationSelected(
+                                if (destination.id == selectedDestinationId) null else destination.id
+                            )
+                        }
+                    )
+                }
+            }
         }
 
         MatchingFilterSection(title = "모집 상태") {

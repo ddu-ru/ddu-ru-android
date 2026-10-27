@@ -25,6 +25,7 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingDestinationOption
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 import java.time.LocalDate
@@ -39,6 +40,8 @@ enum class MatchingFilterTab(val label: String) {
 @Composable
 fun MatchingFilterBottomSheet(
     visible: Boolean,
+    destinationOptions: List<MatchingDestinationOption>,
+    selectedDestinationId: Long?,
     onDismiss: () -> Unit,
     onApplyFilters: (MatchingFilterOptions) -> Unit,
     modifier: Modifier = Modifier
@@ -69,7 +72,8 @@ fun MatchingFilterBottomSheet(
                 onApplyFilters(options)
                 dismissSheet()
             },
-            onDestinationClick = {}
+            destinationOptions = destinationOptions,
+            initialDestinationId = selectedDestinationId
         )
     }
 }
@@ -78,7 +82,8 @@ fun MatchingFilterBottomSheet(
 private fun MatchingFilterBottomSheetContent(
     onClose: () -> Unit,
     onApply: (MatchingFilterOptions) -> Unit,
-    onDestinationClick: () -> Unit,
+    destinationOptions: List<MatchingDestinationOption>,
+    initialDestinationId: Long?,
     modifier: Modifier = Modifier
 ) {
     var selectedTab by remember { mutableStateOf(MatchingFilterTab.DETAIL) }
@@ -90,6 +95,7 @@ private fun MatchingFilterBottomSheetContent(
     var selectedAgeStart by remember { mutableStateOf<Int?>(null) }
     var selectedAgeEnd by remember { mutableStateOf<Int?>(null) }
     var selectedCompanionType by remember { mutableStateOf<MatchingCompanionType?>(null) }
+    var selectedDestinationId by remember { mutableStateOf(initialDestinationId) }
 
     fun resetFilters() {
         selectedStartDate = null
@@ -100,6 +106,7 @@ private fun MatchingFilterBottomSheetContent(
         selectedAgeStart = null
         selectedAgeEnd = null
         selectedCompanionType = null
+        selectedDestinationId = null
     }
 
     Column(
@@ -141,6 +148,9 @@ private fun MatchingFilterBottomSheetContent(
                     )
                 } else {
                     MatchingDetailFilterContent(
+                        destinationOptions = destinationOptions,
+                        selectedDestinationId = selectedDestinationId,
+                        onDestinationSelected = { selectedDestinationId = it },
                         selectedRecruitmentStatus = selectedRecruitmentStatus,
                         onRecruitmentStatusSelected = {
                             selectedRecruitmentStatus = selectedRecruitmentStatus.toggle(it)
@@ -162,8 +172,7 @@ private fun MatchingFilterBottomSheetContent(
                         selectedCompanionType = selectedCompanionType,
                         onCompanionTypeSelected = {
                             selectedCompanionType = selectedCompanionType.toggle(it)
-                        },
-                        onDestinationClick = onDestinationClick
+                        }
                     )
                 }
             }
@@ -174,6 +183,7 @@ private fun MatchingFilterBottomSheetContent(
             onApplyClick = {
                 onApply(
                     MatchingFilterOptions(
+                        destinationId = selectedDestinationId,
                         startDate = selectedStartDate?.toString(),
                         endDate = selectedEndDate?.toString(),
                         recruitmentStatus = selectedRecruitmentStatus?.toRecruitmentStatusCode(),
@@ -215,7 +225,8 @@ private fun MatchingFilterBottomSheetContentPreview() {
             MatchingFilterBottomSheetContent(
                 onClose = { visible = false },
                 onApply = { visible = false },
-                onDestinationClick = {},
+                destinationOptions = emptyList(),
+                initialDestinationId = null,
                 modifier = Modifier.background(DduruTheme.colors.gray0)
             )
         } else {

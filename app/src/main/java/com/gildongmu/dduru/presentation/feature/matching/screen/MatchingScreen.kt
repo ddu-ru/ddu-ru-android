@@ -178,6 +178,8 @@ private fun MatchingScreen(
 
         MatchingFilterBottomSheet(
             visible = isFilterSheetVisible,
+            destinationOptions = uiState.destinationOptions,
+            selectedDestinationId = uiState.filters.destinationId,
             onDismiss = { isFilterSheetVisible = false },
             onApplyFilters = onFiltersApplied
         )
