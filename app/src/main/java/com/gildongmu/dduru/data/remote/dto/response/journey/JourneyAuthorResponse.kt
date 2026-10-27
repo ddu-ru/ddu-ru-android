@@ -9,12 +9,12 @@ data class JourneyAuthorResponse(
     val profileImage: JourneyProfileImageResponse,
     val isHost: Boolean,
     val gender: String,
-    val ageGroup: String
+    val ageGroup: String?
 )
 
 @Serializable
 data class JourneyProfileImageResponse(
     val type: String,
     val url: String,
-    val bgColorId: Int
+    val bgColorId: Long? = null
 )

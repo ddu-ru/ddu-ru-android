@@ -12,6 +12,9 @@ data class JourneyDetailUiState(
     val members: List<JourneyMemberUiState> = emptyList(),
     val posts: List<JourneyDetailPostUiState> = emptyList(),
     val filteredPosts: List<JourneyDetailPostUiState> = emptyList(),
+    val nextCursor: Long? = null,
+    val hasNext: Boolean = false,
+    val isLoadingMore: Boolean = false,
     val votes: List<JourneyDetailVoteUiState> = emptyList(),
     val selectedFilter: JourneyDetailFilterType = JourneyDetailFilterType.FIXED
 )

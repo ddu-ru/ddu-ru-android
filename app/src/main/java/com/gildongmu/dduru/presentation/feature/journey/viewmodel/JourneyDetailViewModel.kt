@@ -62,9 +62,12 @@ class JourneyDetailViewModel @Inject constructor(
     private suspend fun loadJourneyPosts(detail: JourneyDetail) {
         journeyPostRepository.getJourneyPosts(detail.journeyId).fold(
             onSuccess = { page ->
-                val pinnedPostIds = detail.pinnedNotices.mapTo(mutableSetOf()) { it.journeyPostId }
                 _uiState.value = UiState.Success(
-                    detail.toUiState(page.posts.map { it.toUiState(pinnedPostIds) })
+                    detail.toUiState(
+                        posts = page.posts.map(JourneyPost::toUiState),
+                        nextCursor = page.nextCursor,
+                        hasNext = page.hasNext
+                    )
                 )
             },
             onFailure = { throwable ->
@@ -72,6 +75,46 @@ class JourneyDetailViewModel @Inject constructor(
                 _uiState.value = UiState.Success(detail.toUiState())
             }
         )
+    }
+
+    fun loadMoreJourneyPosts() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        val cursor = currentState.nextCursor ?: return
+        if (!currentState.hasNext || currentState.isLoadingMore) return
+
+        _uiState.update { state ->
+            val data = (state as? UiState.Success)?.data ?: return@update state
+            UiState.Success(data.copy(isLoadingMore = true))
+        }
+
+        val journeyId = loadedJourneyId ?: return
+        viewModelScope.launch {
+            journeyPostRepository.getJourneyPosts(journeyId, cursor).fold(
+                onSuccess = { page ->
+                    _uiState.update { state ->
+                        val data = (state as? UiState.Success)?.data ?: return@update state
+                        val posts = (data.posts + page.posts.map(JourneyPost::toUiState))
+                            .distinctBy(JourneyDetailPostUiState::id)
+                        UiState.Success(
+                            data.copy(
+                                posts = posts,
+                                filteredPosts = posts.filterBy(data.selectedFilter),
+                                nextCursor = page.nextCursor,
+                                hasNext = page.hasNext,
+                                isLoadingMore = false
+                            )
+                        )
+                    }
+                },
+                onFailure = { throwable ->
+                    Log.e(TAG, "여정 게시글 추가 조회 실패: journeyId=$journeyId", throwable)
+                    _uiState.update { state ->
+                        val data = (state as? UiState.Success)?.data ?: return@update state
+                        UiState.Success(data.copy(isLoadingMore = false))
+                    }
+                }
+            )
+        }
     }
 
     fun onFilterClick(filter: JourneyDetailFilterType) {
@@ -132,7 +175,9 @@ class JourneyDetailViewModel @Inject constructor(
 }
 
 private fun JourneyDetail.toUiState(
-    posts: List<JourneyDetailPostUiState> = pinnedNotices.map(JourneyPinnedNotice::toUiState)
+    posts: List<JourneyDetailPostUiState> = pinnedNotices.map(JourneyPinnedNotice::toUiState),
+    nextCursor: Long? = null,
+    hasNext: Boolean = false
 ): JourneyDetailUiState = JourneyDetailUiState(
     imageUrl = photoUrl,
     dDay = recruitDeadlineDDay,
@@ -141,7 +186,9 @@ private fun JourneyDetail.toUiState(
     isOwner = isOwner,
     members = members.map(JourneyMember::toUiState),
     posts = posts,
-    filteredPosts = posts.filter { it.isPinned }
+    filteredPosts = posts.filter { it.isPinned },
+    nextCursor = nextCursor,
+    hasNext = hasNext
 )
 
 private fun JourneyMember.toUiState(): JourneyMemberUiState = JourneyMemberUiState(
@@ -160,7 +207,7 @@ private fun JourneyPinnedNotice.toUiState(): JourneyDetailPostUiState = JourneyD
     isPinned = true
 )
 
-private fun JourneyPost.toUiState(pinnedPostIds: Set<Long>): JourneyDetailPostUiState = JourneyDetailPostUiState(
+private fun JourneyPost.toUiState(): JourneyDetailPostUiState = JourneyDetailPostUiState(
     id = journeyPostId,
     category = JourneyDetailFilterType.BOARD,
     profileImageUrl = author.profileImage.url,
@@ -169,5 +216,5 @@ private fun JourneyPost.toUiState(pinnedPostIds: Set<Long>): JourneyDetailPostUi
     title = content,
     imageUrls = imageUrls,
     commentCount = commentCount,
-    isPinned = journeyPostId in pinnedPostIds
+    isPinned = isNotice
 )

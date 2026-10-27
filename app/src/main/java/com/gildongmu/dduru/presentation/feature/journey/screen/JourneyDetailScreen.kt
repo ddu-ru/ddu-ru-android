@@ -11,9 +11,12 @@ import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,8 +27,6 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
-import androidx.lifecycle.Lifecycle
-import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.state.UiState
@@ -71,8 +72,8 @@ fun JourneyDetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
-        viewModel.refreshJourneyDetail(journeyId)
+    LaunchedEffect(journeyId) {
+        viewModel.loadJourneyDetail(journeyId)
     }
 
     when (val state = uiState) {
@@ -88,6 +89,7 @@ fun JourneyDetailRoute(
             onShareClick = onShareClick,
             onMoreClick = onMoreClick,
             onFilterClick = viewModel::onFilterClick,
+            onLoadMore = viewModel::loadMoreJourneyPosts,
             onPostCommentClick = onPostCommentClick,
             onPostClick = onPostClick,
             onPostPinClick = viewModel::onPostPinClick,
@@ -111,6 +113,7 @@ fun JourneyDetailScreen(
     onShareClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
     onFilterClick: (JourneyDetailFilterType) -> Unit,
+    onLoadMore: () -> Unit = {},
     onPostCommentClick: (Long) -> Unit = {},
     onPostClick: (Long) -> Unit = {},
     onPostPinClick: (Long) -> Unit = {},
@@ -121,12 +124,24 @@ fun JourneyDetailScreen(
     onWriteVoteClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            uiState.hasNext && !uiState.isLoadingMore && !listState.canScrollForward
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore, uiState.posts.size) {
+        if (shouldLoadMore) onLoadMore()
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(DduruTheme.colors.gray50)
     ) {
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .background(DduruTheme.colors.gray0)
@@ -194,6 +209,17 @@ fun JourneyDetailScreen(
                             onVoteClick = onVoteClick
                         )
                     }
+                }
+            }
+
+            if (uiState.isLoadingMore) {
+                item {
+                    Text(
+                        text = "게시글을 불러오는 중이에요.",
+                        style = DduruTheme.typography.Body2,
+                        color = DduruTheme.colors.gray500,
+                        modifier = Modifier.padding(vertical = 24.dp)
+                    )
                 }
             }
         }

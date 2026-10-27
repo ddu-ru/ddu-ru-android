@@ -3,12 +3,14 @@ package com.gildongmu.dduru.data.repositoryimpl.journey
 import com.gildongmu.dduru.data.mapper.journey.toDomain
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyPostNoticeRequest
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyPostRequest
+import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyPostUpdateRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.service.JourneyPostService
 import com.gildongmu.dduru.domain.journey.entity.JourneyPost
 import com.gildongmu.dduru.domain.journey.entity.JourneyPostCommand
 import com.gildongmu.dduru.domain.journey.entity.JourneyPostNotice
 import com.gildongmu.dduru.domain.journey.entity.JourneyPostPage
+import com.gildongmu.dduru.domain.journey.entity.JourneyPostUpdateCommand
 import com.gildongmu.dduru.domain.journey.repository.JourneyPostRepository
 import javax.inject.Inject
 import kotlinx.coroutines.CancellationException
@@ -46,12 +48,12 @@ class JourneyPostRepositoryImpl @Inject constructor(
     override suspend fun updateJourneyPost(
         journeyId: Long,
         journeyPostId: Long,
-        command: JourneyPostCommand
+        command: JourneyPostUpdateCommand
     ): Result<JourneyPost> = request {
         val response = journeyPostService.updateJourneyPost(
             journeyId = journeyId,
             journeyPostId = journeyPostId,
-            request = JourneyPostRequest(content = command.content, imageUrls = command.imageUrls)
+            request = JourneyPostUpdateRequest(content = command.content, imageUrls = command.imageUrls)
         )
         response.requireData().toDomain()
     }

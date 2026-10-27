@@ -34,7 +34,7 @@ data class JourneyMemberResponse(
     val profileImage: JourneyProfileImageResponse,
     val isHost: Boolean,
     val gender: String,
-    val ageGroup: String,
+    val ageGroup: String?,
     val roles: List<JourneyMemberRoleResponse>
 )
 

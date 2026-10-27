@@ -24,10 +24,10 @@ data class JourneyUpdate(
 )
 
 data class JourneyUpdateCommand(
-    val title: String,
-    val photoUrl: String,
-    val startDate: String,
-    val endDate: String
+    val title: String? = null,
+    val photoUrl: String? = null,
+    val startDate: String? = null,
+    val endDate: String? = null
 )
 
 data class JourneyMember(
@@ -36,7 +36,7 @@ data class JourneyMember(
     val profileImage: JourneyProfileImage,
     val isHost: Boolean,
     val gender: String,
-    val ageGroup: String,
+    val ageGroup: String?,
     val roles: List<JourneyMemberRole>
 )
 

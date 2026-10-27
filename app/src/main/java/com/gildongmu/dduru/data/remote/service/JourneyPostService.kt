@@ -2,6 +2,7 @@ package com.gildongmu.dduru.data.remote.service
 
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyPostNoticeRequest
 import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyPostRequest
+import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyPostUpdateRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyPostListResponse
 import com.gildongmu.dduru.data.remote.dto.response.journey.JourneyPostNoticeResponse
@@ -39,7 +40,7 @@ interface JourneyPostService {
     suspend fun updateJourneyPost(
         @Path("journeyId") journeyId: Long,
         @Path("journeyPostId") journeyPostId: Long,
-        @Body request: JourneyPostRequest
+        @Body request: JourneyPostUpdateRequest
     ): ApiResponse<JourneyPostResponse>
 
     @DELETE("api/v1/journeys/{journeyId}/posts/{journeyPostId}")

@@ -19,5 +19,5 @@ data class JourneyPostComposeUiState(
         get() = content.length > MAX_POST_LENGTH
 }
 
-const val MAX_POST_LENGTH = 1000
+const val MAX_POST_LENGTH = 500
 const val MAX_PHOTO_COUNT = 4

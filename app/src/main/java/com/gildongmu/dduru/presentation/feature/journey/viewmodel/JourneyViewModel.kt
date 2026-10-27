@@ -23,14 +23,18 @@ class JourneyViewModel @Inject constructor(
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<JourneyUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<JourneyUiState>> = _uiState.asStateFlow()
+    private var isLoading = false
 
     init {
-        loadMyJourneys()
+        refreshMyJourneys()
     }
 
-    private fun loadMyJourneys() {
+    fun refreshMyJourneys() {
+        if (isLoading) return
+        isLoading = true
         viewModelScope.launch {
-            _uiState.value = UiState.Loading
+            val hasCurrentData = _uiState.value is UiState.Success
+            if (!hasCurrentData) _uiState.value = UiState.Loading
             journeyRepository.getMyJourneys().fold(
                 onSuccess = { journeys ->
                     Log.d(
@@ -41,9 +45,10 @@ class JourneyViewModel @Inject constructor(
                 },
                 onFailure = { throwable ->
                     Log.e(TAG, "나의 여정 조회 실패", throwable)
-                    _uiState.value = UiState.Failure
+                    if (!hasCurrentData) _uiState.value = UiState.Failure
                 }
             )
+            isLoading = false
         }
     }
 

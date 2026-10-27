@@ -5,6 +5,11 @@ data class JourneyPostCommand(
     val imageUrls: List<String>
 )
 
+data class JourneyPostUpdateCommand(
+    val content: String? = null,
+    val imageUrls: List<String>? = null
+)
+
 data class JourneyCommentCommand(
     val content: String
 )

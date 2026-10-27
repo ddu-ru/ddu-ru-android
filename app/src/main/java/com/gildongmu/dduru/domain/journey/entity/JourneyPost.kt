@@ -6,13 +6,13 @@ data class JourneyAuthor(
     val profileImage: JourneyProfileImage,
     val isHost: Boolean,
     val gender: String,
-    val ageGroup: String
+    val ageGroup: String?
 )
 
 data class JourneyProfileImage(
     val type: String,
     val url: String,
-    val bgColorId: Int
+    val bgColorId: Long?
 )
 
 data class JourneyPost(

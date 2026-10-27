@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.domain.journey.entity.JourneyComment
+import com.gildongmu.dduru.domain.journey.entity.JourneyCommentCommand
 import com.gildongmu.dduru.domain.journey.entity.JourneyPost
 import com.gildongmu.dduru.domain.journey.repository.JourneyCommentRepository
 import com.gildongmu.dduru.domain.journey.repository.JourneyPostRepository
@@ -65,7 +66,7 @@ class JourneyCommentViewModel @Inject constructor(
             journeyCommentRepository.createJourneyComment(
                 journeyId = currentJourneyId,
                 journeyPostId = currentPostId,
-                command = com.gildongmu.dduru.domain.journey.entity.JourneyCommentCommand(content)
+                command = JourneyCommentCommand(content)
             ).onSuccess { comment ->
                 updateData { data ->
                     data.copy(

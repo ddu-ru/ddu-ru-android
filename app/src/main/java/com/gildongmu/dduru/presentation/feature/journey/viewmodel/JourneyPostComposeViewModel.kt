@@ -5,6 +5,7 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.entity.image.ImagePresignedUrlUploader
+import com.gildongmu.dduru.data.entity.image.ImageUploadTarget
 import com.gildongmu.dduru.domain.journey.entity.JourneyPostCommand
 import com.gildongmu.dduru.domain.journey.repository.JourneyPostRepository
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyPostComposeUiState
@@ -62,7 +63,7 @@ class JourneyPostComposeViewModel @Inject constructor(
             _uiState.update { it.copy(isSubmitting = true) }
             val imageUrls = mutableListOf<String>()
             for (photo in currentState.selectedPhotos) {
-                val uploadResult = imageUploader.uploadImage(photo)
+                val uploadResult = imageUploader.uploadImage(photo, ImageUploadTarget.JOURNEY)
                 if (uploadResult.isFailure) {
                     Log.e(TAG, "게시글 사진 업로드 실패", uploadResult.exceptionOrNull())
                     _uiState.update { it.copy(isSubmitting = false) }
