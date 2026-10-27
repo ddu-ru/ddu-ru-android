@@ -23,10 +23,16 @@ import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingEditPostRoute
 import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditPreferencesRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.TravelDestinationSelectRoute
 import com.gildongmu.dduru.presentation.feature.poll.screen.PollCreateRoute
 import com.gildongmu.dduru.presentation.feature.register.profile.screen.ProfileSettingRoute
 import com.gildongmu.dduru.presentation.feature.register.screen.SignupRoute
 import com.gildongmu.dduru.presentation.feature.register.survey.SurveyMainScreen
+
+private const val PROFILE_EDIT_INFO_TAB_INDEX = 0
+private const val PROFILE_EDIT_STYLE_TAB_INDEX = 2
 
 @Composable
 fun RootNavigation(
@@ -44,6 +50,10 @@ fun RootNavigation(
             if (rootBackStack.size > 1) {
                 rootBackStack.removeLastOrNull()
             }
+        }
+        fun replaceTop(route: RootNavRoute) {
+            rootBackStack.removeLastOrNull()
+            rootBackStack.add(route)
         }
         LaunchedEffect(pendingNotificationRoute) {
             val route = pendingNotificationRoute ?: return@LaunchedEffect
@@ -138,8 +148,14 @@ fun RootNavigation(
                             onNavigateToMatchingCreatePost = {
                                 rootBackStack.add(RootNavRoute.MatchingCreatePost)
                             },
+                            onNavigateToProfileEdit = {
+                                rootBackStack.add(RootNavRoute.ProfileEdit)
+                            },
                             onNavigateToMatchingDetail = { postId ->
                                 rootBackStack.add(RootNavRoute.MatchingDetail(postId))
+                            },
+                            onNavigateToTravelStyleSurvey = {
+                                rootBackStack.add(RootNavRoute.TravelStyleSurvey)
                             }
                         )
                     }
@@ -158,8 +174,14 @@ fun RootNavigation(
                             onNavigateToMatchingCreatePost = {
                                 rootBackStack.add(RootNavRoute.MatchingCreatePost)
                             },
+                            onNavigateToProfileEdit = {
+                                rootBackStack.add(RootNavRoute.ProfileEdit)
+                            },
                             onNavigateToMatchingDetail = { postId ->
                                 rootBackStack.add(RootNavRoute.MatchingDetail(postId))
+                            },
+                            onNavigateToTravelStyleSurvey = {
+                                rootBackStack.add(RootNavRoute.TravelStyleSurvey)
                             },
                             initialRoute = route.bottomNavRoute
                         )
@@ -243,6 +265,44 @@ fun RootNavigation(
                             postId = route.postId,
                             onBackClick = { navigateBack() },
                             onSaveClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.ProfileEdit -> NavEntry(route) {
+                        ProfileEditRoute(
+                            onBackClick = { navigateBack() },
+                            onNavigateToDestinationTab = {
+                                replaceTop(RootNavRoute.ProfileEditPreferences)
+                            },
+                            onNavigateToStyleTab = {
+                                rootBackStack.add(RootNavRoute.TravelStyleSurvey)
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.ProfileEditPreferences -> NavEntry(route) {
+                        ProfileEditPreferencesRoute(
+                            onBackClick = { navigateBack() },
+                            onNavigateToDestinationSelect = {
+                                rootBackStack.add(RootNavRoute.TravelDestinationSelect)
+                            },
+                            onTabClick = { index ->
+                                when (index) {
+                                    PROFILE_EDIT_INFO_TAB_INDEX -> replaceTop(RootNavRoute.ProfileEdit)
+                                    PROFILE_EDIT_STYLE_TAB_INDEX -> rootBackStack.add(RootNavRoute.TravelStyleSurvey)
+                                }
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.TravelDestinationSelect -> NavEntry(route) {
+                        TravelDestinationSelectRoute(onClose = { navigateBack() })
+                    }
+
+                    is RootNavRoute.TravelStyleSurvey -> NavEntry(route) {
+                        SurveyMainScreen(
+                            onSurveyComplete = { navigateBack() },
+                            onBackPressed = { navigateBack() }
                         )
                     }
 

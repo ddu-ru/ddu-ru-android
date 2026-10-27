@@ -1,6 +1,8 @@
 package com.gildongmu.dduru.presentation.feature.mypage.screen
 
 import android.net.Uri
+import android.widget.Toast
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +23,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -30,14 +33,23 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
+import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
 import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.LabelValueRow
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditSideEffect
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditViewModel
 import com.gildongmu.dduru.presentation.feature.register.profile.component.NicknameInput
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileCharacterCustomDialog
 import com.gildongmu.dduru.presentation.feature.register.profile.component.ProfileImageSelector
@@ -50,6 +62,82 @@ enum class ProfileEditTab(val label: String) {
     INFO("내 정보"),
     DESTINATION("가고싶은 여행"),
     STYLE("나의 여행 스타일")
+}
+
+@Composable
+fun ProfileEditRoute(
+    onBackClick: () -> Unit,
+    onNavigateToDestinationTab: () -> Unit,
+    onNavigateToStyleTab: () -> Unit = {},
+    viewModel: ProfileEditViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                ProfileEditSideEffect.NavigateBack -> onBackClick()
+                is ProfileEditSideEffect.ShowMessage ->
+                    Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    BackHandler(onBack = viewModel::onBackClick)
+
+    when (val state = uiState) {
+        UiState.Loading, UiState.Empty -> DduruLoadingScreen()
+        UiState.Failure -> DduruFailureScreen(message = "프로필 정보를 불러오지 못했어요.")
+        is UiState.Success -> {
+            val data = state.data
+            val isAvatar = data.imageType == ProfileImageType.AVATAR
+            ProfileEditScreen(
+                selectedTab = ProfileEditTab.INFO,
+                onTabClick = { tab ->
+                    when (tab) {
+                        ProfileEditTab.INFO -> Unit
+                        ProfileEditTab.DESTINATION -> onNavigateToDestinationTab()
+                        ProfileEditTab.STYLE -> onNavigateToStyleTab()
+                    }
+                },
+                imageOptions = listOf(
+                    ProfileImageCropOption(
+                        image = data.profileImageUrl.takeIf { isAvatar } ?: R.drawable.img_penguin_personallity,
+                        type = ProfileEditOption.CHARACTER,
+                        scale = 1.6f,
+                        offsetRatio = 0.16f
+                    ),
+                    ProfileImageCropOption(
+                        image = data.profileImageUrl.takeIf { data.imageType == ProfileImageType.UPLOADED }
+                            ?: R.drawable.img_blank_profile,
+                        type = ProfileEditOption.CUSTOM
+                    )
+                ),
+                selectedImageOption = if (isAvatar) ProfileEditOption.CHARACTER else ProfileEditOption.CUSTOM,
+                selectedImageUri = null,
+                characterBackgroundColor = ProfileBackgroundColorList
+                    .firstOrNull { it.id == data.bgColorId }?.color
+                    ?: ProfileBackgroundColorList.first().color,
+                onImageOptionSelected = {},
+                onPhotoActionClick = {},
+                nickname = data.nickname,
+                onNicknameChange = viewModel::onNicknameChange,
+                onRandomNicknameClick = viewModel::onRandomNicknameClick,
+                bio = data.bio,
+                onBioChange = viewModel::onBioChange,
+                birthDate = data.birthDate,
+                gender = data.gender,
+                phoneNumber = data.phoneNumber,
+                isSaveEnabled = data.isSaveEnabled,
+                onBackClick = viewModel::onBackClick,
+                onSaveClick = viewModel::onSaveClick,
+                showLeaveConfirmDialog = data.showLeaveConfirmDialog,
+                onLeaveConfirmDismiss = viewModel::onLeaveConfirmDismiss,
+                onLeaveConfirm = viewModel::onLeaveConfirm
+            )
+        }
+    }
 }
 
 @Composable
@@ -94,8 +182,9 @@ fun ProfileEditScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
+                .statusBarsPadding()
                 .verticalScroll(rememberScrollState())
-                .padding(top = 96.dp, bottom = 40.dp)
+                .padding(top = 72.dp, bottom = 40.dp)
         ) {
             ProfileEditTabRow(
                 selectedTab = selectedTab,
@@ -220,7 +309,8 @@ private fun ProfileEditHeader(
         Box(
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 12.dp)
+                .padding(horizontal = 16.dp)
+                .height(48.dp)
         ) {
             ProfileEditFloatingButton(
                 iconRes = R.drawable.ic_chevron_left,

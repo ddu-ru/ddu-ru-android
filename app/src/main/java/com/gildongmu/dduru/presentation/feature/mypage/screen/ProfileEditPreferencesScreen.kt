@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.mypage.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -19,6 +20,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -26,17 +28,26 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
+import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelDatePreferenceSection
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelDestinationPreferenceSection
 import com.gildongmu.dduru.presentation.feature.mypage.model.MAX_PREFERRED_DATE_COUNT
 import com.gildongmu.dduru.presentation.feature.mypage.model.PreferredDateRange
 import com.gildongmu.dduru.presentation.feature.mypage.model.PreferredDestination
+import com.gildongmu.dduru.presentation.feature.mypage.model.toPreferredDestination
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditPreferencesSideEffect
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditPreferencesViewModel
 import java.time.LocalDate
 
 private val PreferencesTabs = listOf("내 정보", "가고싶은 여행", "나의 여행 스타일")
@@ -54,6 +65,7 @@ fun ProfileEditPreferencesScreen(
     onDateRemoveClick: (Int) -> Unit,
     onDateSelected: (index: Int, date: LocalDate) -> Unit,
     modifier: Modifier = Modifier,
+    isSaveEnabled: Boolean = true,
     initialEditingDateIndex: Int? = null
 ) {
     Column(
@@ -62,6 +74,7 @@ fun ProfileEditPreferencesScreen(
             .background(DduruTheme.colors.gray50)
     ) {
         PreferencesHeader(
+            isSaveEnabled = isSaveEnabled,
             onBackClick = onBackClick,
             onConfirmClick = onConfirmClick
         )
@@ -104,7 +117,47 @@ fun ProfileEditPreferencesScreen(
 }
 
 @Composable
+fun ProfileEditPreferencesRoute(
+    onBackClick: () -> Unit,
+    onNavigateToDestinationSelect: () -> Unit,
+    onTabClick: (Int) -> Unit = {},
+    viewModel: ProfileEditPreferencesViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                ProfileEditPreferencesSideEffect.NavigateBack -> onBackClick()
+                ProfileEditPreferencesSideEffect.NavigateToDestinationSelect -> onNavigateToDestinationSelect()
+                is ProfileEditPreferencesSideEffect.ShowMessage ->
+                    Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    when (val state = uiState) {
+        UiState.Loading, UiState.Empty -> DduruLoadingScreen()
+        UiState.Failure -> DduruFailureScreen(message = "여행 선호 정보를 불러오지 못했어요.")
+        is UiState.Success -> ProfileEditPreferencesScreen(
+            destinations = state.data.destinations.map { it.toPreferredDestination() },
+            dateRanges = state.data.dateRanges,
+            onBackClick = viewModel::onBackClick,
+            onConfirmClick = viewModel::onConfirmClick,
+            onTabClick = onTabClick,
+            onDestinationAddClick = viewModel::onDestinationAddClick,
+            onDateAddClick = viewModel::onDateAddClick,
+            onDateRemoveClick = viewModel::onDateRemoveClick,
+            onDateSelected = viewModel::onDateSelected,
+            isSaveEnabled = state.data.isSaveEnabled
+        )
+    }
+}
+
+@Composable
 private fun PreferencesHeader(
+    isSaveEnabled: Boolean,
     onBackClick: () -> Unit,
     onConfirmClick: () -> Unit,
     modifier: Modifier = Modifier
@@ -127,9 +180,9 @@ private fun PreferencesHeader(
             contentAlignment = Alignment.Center
         ) {
             Icon(
-                painter = painterResource(id = R.drawable.ic_arrow_back),
+                painter = painterResource(id = R.drawable.ic_chevron_left),
                 contentDescription = "뒤로가기",
-                tint = DduruTheme.colors.black,
+                tint = DduruTheme.colors.gray900,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -146,15 +199,15 @@ private fun PreferencesHeader(
                 .align(Alignment.CenterEnd)
                 .size(48.dp)
                 .clip(CircleShape)
-                .background(DduruTheme.colors.primary)
+                .background(if (isSaveEnabled) DduruTheme.colors.primary else DduruTheme.colors.gray200)
                 .border(width = 1.dp, color = DduruTheme.colors.gray0.copy(alpha = 0.3f), shape = CircleShape)
-                .noRippleClickable(onClick = onConfirmClick),
+                .then(if (isSaveEnabled) Modifier.noRippleClickable(onClick = onConfirmClick) else Modifier),
             contentAlignment = Alignment.Center
         ) {
             Icon(
                 painter = painterResource(id = R.drawable.ic_check),
                 contentDescription = "저장",
-                tint = DduruTheme.colors.gray0,
+                tint = if (isSaveEnabled) DduruTheme.colors.gray0 else DduruTheme.colors.gray400,
                 modifier = Modifier.size(24.dp)
             )
         }

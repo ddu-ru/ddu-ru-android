@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.mypage.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -21,6 +22,7 @@ import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -29,9 +31,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
@@ -42,6 +47,8 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.Match
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.LocationSearchItemUiState
 import com.gildongmu.dduru.presentation.feature.mypage.uistate.MAX_PREFERRED_DESTINATION_COUNT
 import com.gildongmu.dduru.presentation.feature.mypage.uistate.TravelDestinationSelectUiState
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.TravelDestinationSelectSideEffect
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.TravelDestinationSelectViewModel
 
 @Composable
 fun TravelDestinationSelectScreen(
@@ -377,6 +384,34 @@ private fun SelectPreviewHost(initial: TravelDestinationSelectUiState) {
         onResetClick = { uiState = uiState.reset() },
         onCloseClick = {},
         onConfirmClick = {}
+    )
+}
+
+@Composable
+fun TravelDestinationSelectRoute(
+    onClose: () -> Unit,
+    viewModel: TravelDestinationSelectViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { sideEffect ->
+            when (sideEffect) {
+                TravelDestinationSelectSideEffect.Close -> onClose()
+                is TravelDestinationSelectSideEffect.ShowMessage ->
+                    Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
+    TravelDestinationSelectScreen(
+        uiState = uiState,
+        onSearchQueryChange = viewModel::onSearchQueryChange,
+        onLocationClick = viewModel::onLocationClick,
+        onResetClick = viewModel::onResetClick,
+        onCloseClick = viewModel::onCloseClick,
+        onConfirmClick = viewModel::onConfirmClick
     )
 }
 

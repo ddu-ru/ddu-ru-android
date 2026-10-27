@@ -4,6 +4,7 @@ import com.gildongmu.dduru.data.register.nickname.repositoryimpl.NicknameReposit
 import com.gildongmu.dduru.data.repositoryimpl.AuthRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ChatRoomRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.FcmTokenRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.MyPageRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ParticipationRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.SurveyRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.home.HomeNotificationRepositoryImpl
@@ -12,6 +13,7 @@ import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepositor
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
 import com.gildongmu.dduru.domain.repository.FcmTokenRepository
+import com.gildongmu.dduru.domain.repository.MyPageRepository
 import com.gildongmu.dduru.domain.repository.ParticipationRepository
 import com.gildongmu.dduru.domain.repository.SurveyRepository
 import com.gildongmu.dduru.domain.repository.home.HomeNotificationRepository
@@ -73,4 +75,10 @@ abstract class RepositoryModule {
     abstract fun bindFcmTokenRepository(
         fcmTokenRepositoryImpl: FcmTokenRepositoryImpl
     ): FcmTokenRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindMyPageRepository(
+        myPageRepositoryImpl: MyPageRepositoryImpl
+    ): MyPageRepository
 }
