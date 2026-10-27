@@ -16,5 +16,6 @@ data class MatchingPostCardUiModel(
     val companionType: MatchingCompanionType,
     val isSuperHost: Boolean = false,
     val isLiked: Boolean = false,
+    val thumbnailImageUrl: String? = null,
     @DrawableRes val thumbnailImageRes: Int
 )
