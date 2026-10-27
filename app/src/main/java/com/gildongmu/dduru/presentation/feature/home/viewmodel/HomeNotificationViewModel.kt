@@ -166,7 +166,6 @@ class HomeNotificationViewModel @Inject constructor(
         val currentState = (_uiState.value as? UiState.Success)?.data ?: return
         _uiState.value = UiState.Success(currentState.reducer())
     }
-
 }
 
 private fun HomeNotification.toUiState(): HomeNotificationItemUiState {

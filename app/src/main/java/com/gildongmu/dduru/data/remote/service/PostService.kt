@@ -4,12 +4,12 @@ import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.dto.response.post.ParticipationRequest
 import com.gildongmu.dduru.data.remote.dto.response.post.PostDetailResponse
 import com.gildongmu.dduru.data.remote.dto.response.post.PostListResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
 import retrofit2.http.Query
-import retrofit2.Response
 
 interface PostService {
     @GET("api/v1/posts")
