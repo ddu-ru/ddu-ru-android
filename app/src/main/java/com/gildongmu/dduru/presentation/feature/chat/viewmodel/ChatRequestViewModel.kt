@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.extension.parseDateTime
 import com.gildongmu.dduru.core.common.extension.toRelativeTime
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.domain.entity.ParticipationException
 import com.gildongmu.dduru.domain.repository.ParticipationRepository
 import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRequestSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestItemUiState
@@ -43,6 +44,7 @@ class ChatRequestViewModel @Inject constructor(
                     _sideEffect.emit(ChatRequestSideEffect.NavigateToChatRoom(privateRoomId))
                     loadParticipations()
                 }
+                .onFailure { showError(it, "연락을 시작하지 못했어요. 다시 시도해 주세요.") }
         }
     }
 
@@ -52,7 +54,10 @@ class ChatRequestViewModel @Inject constructor(
                 .onSuccess { groupRoomId ->
                     loadParticipations(showConfirmedDialog = true, confirmedGroupRoomId = groupRoomId)
                 }
-                .onFailure { _uiState.value = UiState.Failure }
+                .onFailure {
+                    showError(it, "수락하지 못했어요. 다시 시도해 주세요.")
+                    loadParticipations()
+                }
         }
     }
 
@@ -60,8 +65,16 @@ class ChatRequestViewModel @Inject constructor(
         viewModelScope.launch {
             participationRepository.rejectParticipation(participationId.toLong())
                 .onSuccess { loadParticipations() }
-                .onFailure { _uiState.value = UiState.Failure }
+                .onFailure {
+                    showError(it, "거절하지 못했어요. 다시 시도해 주세요.")
+                    loadParticipations()
+                }
         }
+    }
+
+    private suspend fun showError(throwable: Throwable, defaultMessage: String) {
+        val message = (throwable as? ParticipationException)?.message?.takeIf { it.isNotBlank() } ?: defaultMessage
+        _sideEffect.emit(ChatRequestSideEffect.ShowMessage(message))
     }
 
     fun onConfirmedMoveClick() {
