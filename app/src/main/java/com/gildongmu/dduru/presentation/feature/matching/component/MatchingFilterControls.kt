@@ -28,7 +28,7 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
 fun MatchingDestinationField(
-    onClick: () -> Unit,
+    selectedDestinationName: String?,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -41,13 +41,12 @@ fun MatchingDestinationField(
                 color = DduruTheme.colors.gray200,
                 shape = RoundedCornerShape(99.dp)
             )
-            .noRippleClickable(onClick = onClick)
             .padding(horizontal = 16.dp, vertical = 12.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
         Text(
-            text = "여행지 선택..",
+            text = selectedDestinationName ?: "여행지 선택..",
             style = DduruTheme.typography.Body1,
             color = DduruTheme.colors.gray500
         )

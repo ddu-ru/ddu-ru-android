@@ -6,7 +6,10 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.data.remote.dto.response.post.PostSummaryResponse
 import com.gildongmu.dduru.data.remote.service.PostService
+import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
+import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
 import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffect
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingDestinationOption
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
@@ -25,7 +28,8 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MatchingViewModel @Inject constructor(
-    private val postService: PostService
+    private val postService: PostService,
+    private val destinationRepository: DestinationRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MatchingUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MatchingUiState>> = _uiState.asStateFlow()
@@ -35,7 +39,10 @@ class MatchingViewModel @Inject constructor(
     private var searchJob: Job? = null
     private var postLoadJob: Job? = null
 
-    init { loadPosts() }
+    init {
+        loadPosts()
+        loadDestinationOptions()
+    }
 
     fun onNotificationClick() {
         emitSideEffect(MatchingSideEffect.NavigateToNotification)
@@ -127,6 +134,7 @@ class MatchingViewModel @Inject constructor(
                     preferredGender = current.filters.preferredGender,
                     minAge = current.filters.minAge,
                     maxAge = current.filters.maxAge,
+                    destinationId = current.filters.destinationId,
                     minRecruitCapacity = current.filters.minRecruitCapacity,
                     maxRecruitCapacity = current.filters.maxRecruitCapacity,
                     recruitmentStatus = current.filters.recruitmentStatus,
@@ -153,9 +161,25 @@ class MatchingViewModel @Inject constructor(
 
     private fun String.toSortCode() = when (this) { "조회순" -> "VIEW"; "좋아요순" -> "LIKE"; else -> "LATEST" }
 
+    private fun loadDestinationOptions() {
+        viewModelScope.launch {
+            destinationRepository.getPopularDestinations()
+                .onSuccess { destinations ->
+                    updateMatchingUiState {
+                        copy(destinationOptions = destinations.map { it.toFilterOption() })
+                    }
+                }
+        }
+    }
+
     private companion object {
         const val SEARCH_DEBOUNCE_MILLIS = 300L
     }
+
+    private fun PopularDestination.toFilterOption() = MatchingDestinationOption(
+        id = id,
+        name = "$countryName $city"
+    )
 
     private fun PostSummaryResponse.toUiModel() = com.gildongmu.dduru.presentation.feature.matching.model.MatchingPostCardUiModel(
         id = id, title = title, authorName = author.nickname, location = destination,
