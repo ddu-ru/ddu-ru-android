@@ -10,6 +10,7 @@ import com.gildongmu.dduru.data.remote.service.FcmTokenService
 import com.gildongmu.dduru.data.remote.service.JourneyCommentService
 import com.gildongmu.dduru.data.remote.service.JourneyPostService
 import com.gildongmu.dduru.data.remote.service.JourneyService
+import com.gildongmu.dduru.data.remote.service.MyPageService
 import com.gildongmu.dduru.data.remote.service.ParticipationService
 import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.data.remote.service.SurveyService
@@ -186,5 +187,11 @@ object NetworkModule {
     @Singleton
     fun provideHomeNotificationService(retrofit: Retrofit): HomeNotificationService {
         return retrofit.create(HomeNotificationService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideMyPageService(retrofit: Retrofit): MyPageService {
+        return retrofit.create(MyPageService::class.java)
     }
 }

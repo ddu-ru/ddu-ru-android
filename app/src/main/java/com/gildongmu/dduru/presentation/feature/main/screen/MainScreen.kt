@@ -36,6 +36,8 @@ fun MainScreen(
     onNavigateToChatRoom: (Long) -> Unit,
     onNavigateToMatchingCreatePost: () -> Unit,
     onNavigateToMatchingDetail: (Long) -> Unit,
+    onNavigateToProfileEdit: () -> Unit,
+    onNavigateToTravelStyleSurvey: () -> Unit,
     onNavigateToJourneyDetail: (Long, String?) -> Unit,
     initialRoute: BottomNavRoute = BottomNavRoute.Home
 ) {
@@ -104,7 +106,10 @@ fun MainScreen(
                     is BottomNavRoute.MyPage -> NavEntry(route) {
                         MyPageRoute(
                             onNotificationClick = onNavigateToHomeNotification,
-                            onMenuClick = onNavigateToHomeMenu
+                            onMenuClick = onNavigateToHomeMenu,
+                            onEditProfileClick = onNavigateToProfileEdit,
+                            onTravelStyleClick = onNavigateToTravelStyleSurvey,
+                            onStartTravelStyleTestClick = onNavigateToTravelStyleSurvey
                         )
                     }
                     is BottomNavRoute.Chat -> NavEntry(route) {
@@ -152,7 +157,9 @@ private fun MainScreenPreview() {
             onNavigateToHomeMenu = {},
             onNavigateToChatRoom = {},
             onNavigateToMatchingCreatePost = {},
+            onNavigateToProfileEdit = {},
             onNavigateToMatchingDetail = {},
+            onNavigateToTravelStyleSurvey = {},
             onNavigateToJourneyDetail = { _, _ -> }
         )
     }
