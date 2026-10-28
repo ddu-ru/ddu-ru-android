@@ -17,12 +17,18 @@ import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomMenuRoute
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomRoute
 import com.gildongmu.dduru.presentation.feature.home.screen.HomeMenuRoute
 import com.gildongmu.dduru.presentation.feature.home.screen.HomeNotificationRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyAdminRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyCommentRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyDetailRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyPostComposeRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyScheduleComposeRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.LoginRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.WelcomeScreen
 import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingEditPostRoute
 import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailRoute
+import com.gildongmu.dduru.presentation.feature.poll.screen.JourneyPollRoute
 import com.gildongmu.dduru.presentation.feature.poll.screen.PollCreateRoute
 import com.gildongmu.dduru.presentation.feature.register.profile.screen.ProfileSettingRoute
 import com.gildongmu.dduru.presentation.feature.register.screen.SignupRoute
@@ -145,6 +151,9 @@ fun RootNavigation(
                             },
                             onNavigateToMatchingDetail = { postId ->
                                 rootBackStack.add(RootNavRoute.MatchingDetail(postId))
+                            },
+                            onNavigateToJourneyDetail = { journeyId, initialFilter ->
+                                rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             }
                         )
                     }
@@ -165,6 +174,9 @@ fun RootNavigation(
                             },
                             onNavigateToMatchingDetail = { postId ->
                                 rootBackStack.add(RootNavRoute.MatchingDetail(postId))
+                            },
+                            onNavigateToJourneyDetail = { journeyId, initialFilter ->
+                                rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             },
                             initialRoute = route.bottomNavRoute
                         )
@@ -249,6 +261,72 @@ fun RootNavigation(
                             onBackClick = { navigateBack() },
                             onSaveClick = { navigateBack() }
                         )
+                    }
+
+                    is RootNavRoute.JourneyDetail -> NavEntry(route) {
+                        JourneyDetailRoute(
+                            journeyId = route.journeyId,
+                            initialFilter = route.initialFilter,
+                            onBackClick = { navigateBack() },
+                            onManageMembersClick = {
+                                rootBackStack.add(RootNavRoute.JourneyAdmin(route.journeyId))
+                            },
+                            onChatRoomClick = { chatRoomId ->
+                                rootBackStack.add(RootNavRoute.ChatRoom(chatRoomId))
+                            },
+                            onPostClick = { postId ->
+                                rootBackStack.add(RootNavRoute.JourneyPostDetail(route.journeyId, postId))
+                            },
+                            onPostCommentClick = { postId ->
+                                rootBackStack.add(RootNavRoute.JourneyPostDetail(route.journeyId, postId))
+                            },
+                            onWritePostClick = {
+                                rootBackStack.add(RootNavRoute.JourneyPostCompose(route.journeyId))
+                            },
+                            onWriteScheduleClick = {
+                                rootBackStack.add(RootNavRoute.JourneyScheduleCompose(route.journeyId))
+                            },
+                            onWriteVoteClick = {
+                                rootBackStack.add(RootNavRoute.JourneyVoteCompose(route.journeyId))
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyAdmin -> NavEntry(route) {
+                        JourneyAdminRoute(
+                            journeyId = route.journeyId,
+                            onBackClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyPostDetail -> NavEntry(route) {
+                        JourneyCommentRoute(
+                            journeyId = route.journeyId,
+                            postId = route.postId,
+                            onBackClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyPostCompose -> NavEntry(route) {
+                        JourneyPostComposeRoute(
+                            journeyId = route.journeyId,
+                            onBackClick = { navigateBack() },
+                            onPostCreated = { postId ->
+                                navigateBack()
+                                rootBackStack.add(RootNavRoute.JourneyPostDetail(route.journeyId, postId))
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyScheduleCompose -> NavEntry(route) {
+                        JourneyScheduleComposeRoute(
+                            journeyId = route.journeyId,
+                            onBackClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyVoteCompose -> NavEntry(route) {
+                        JourneyPollRoute(onCloseClick = { navigateBack() })
                     }
 
                     else -> NavEntry(route) {}

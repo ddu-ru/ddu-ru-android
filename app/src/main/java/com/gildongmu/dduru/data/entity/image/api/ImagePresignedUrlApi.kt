@@ -8,12 +8,17 @@ import retrofit2.http.POST
 
 interface ImagePresignedUrlApi {
     @POST("api/v1/images/profiles/presigned-url")
-    suspend fun createPresignedUrl(
+    suspend fun createProfilePresignedUrl(
         @Body request: ImageUploadRequest
     ): ApiResponse<List<ImagePresignedUrlResponse>>
 
     @POST("api/v1/images/chats/presigned-url")
     suspend fun createChatPresignedUrls(
+        @Body request: ImageUploadRequest
+    ): ApiResponse<List<ImagePresignedUrlResponse>>
+
+    @POST("api/v1/images/journeys/presigned-url")
+    suspend fun createJourneyPresignedUrl(
         @Body request: ImageUploadRequest
     ): ApiResponse<List<ImagePresignedUrlResponse>>
 }

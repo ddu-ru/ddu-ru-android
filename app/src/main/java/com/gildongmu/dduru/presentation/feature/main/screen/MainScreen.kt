@@ -19,6 +19,7 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatMainRoute
 import com.gildongmu.dduru.presentation.feature.home.HomeRoute
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailFilterType
 import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyRoute
 import com.gildongmu.dduru.presentation.feature.matching.screen.MatchingRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.MyPageRoute
@@ -35,6 +36,7 @@ fun MainScreen(
     onNavigateToChatRoom: (Long) -> Unit,
     onNavigateToMatchingCreatePost: () -> Unit,
     onNavigateToMatchingDetail: (Long) -> Unit,
+    onNavigateToJourneyDetail: (Long, String?) -> Unit,
     initialRoute: BottomNavRoute = BottomNavRoute.Home
 ) {
     val bottomNavItems = remember {
@@ -110,7 +112,18 @@ fun MainScreen(
                             onNavigateToChatRoom = onNavigateToChatRoom
                         )
                     }
-                    is BottomNavRoute.Journey -> NavEntry(route) { JourneyRoute() }
+                    is BottomNavRoute.Journey -> NavEntry(route) {
+                        JourneyRoute(
+                            onCreateJourneyClick = onNavigateToMatchingCreatePost,
+                            onJourneyClick = { journeyId -> onNavigateToJourneyDetail(journeyId, null) },
+                            onScheduleAllClick = { journeyId ->
+                                onNavigateToJourneyDetail(journeyId, JourneyDetailFilterType.SCHEDULE.name)
+                            },
+                            onNewsAllClick = { journeyId ->
+                                onNavigateToJourneyDetail(journeyId, JourneyDetailFilterType.BOARD.name)
+                            }
+                        )
+                    }
                     else -> NavEntry(route) { Text("잘못된 접근입니다.") }
                 }
             }
@@ -139,7 +152,8 @@ private fun MainScreenPreview() {
             onNavigateToHomeMenu = {},
             onNavigateToChatRoom = {},
             onNavigateToMatchingCreatePost = {},
-            onNavigateToMatchingDetail = {}
+            onNavigateToMatchingDetail = {},
+            onNavigateToJourneyDetail = { _, _ -> }
         )
     }
 }

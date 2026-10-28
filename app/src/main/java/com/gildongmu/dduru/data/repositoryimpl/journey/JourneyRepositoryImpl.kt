@@ -1,0 +1,128 @@
+package com.gildongmu.dduru.data.repositoryimpl.journey
+
+import com.gildongmu.dduru.data.mapper.journey.toDomain
+import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyMemberRoleRequest
+import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyMemberRoleUpdateRequest
+import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyScheduleRequest
+import com.gildongmu.dduru.data.remote.dto.request.journey.JourneyUpdateRequest
+import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
+import com.gildongmu.dduru.data.remote.dto.response.journey.MyJourneyListResponse
+import com.gildongmu.dduru.data.remote.service.JourneyService
+import com.gildongmu.dduru.domain.journey.entity.JourneyDetail
+import com.gildongmu.dduru.domain.journey.entity.JourneyMember
+import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRole
+import com.gildongmu.dduru.domain.journey.entity.JourneyMemberRoleUpdate
+import com.gildongmu.dduru.domain.journey.entity.JourneyScheduleCommand
+import com.gildongmu.dduru.domain.journey.entity.JourneyScheduleList
+import com.gildongmu.dduru.domain.journey.entity.JourneyUpdate
+import com.gildongmu.dduru.domain.journey.entity.JourneyUpdateCommand
+import com.gildongmu.dduru.domain.journey.entity.MyJourneyList
+import com.gildongmu.dduru.domain.journey.repository.JourneyRepository
+import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
+import kotlinx.serialization.json.Json
+import retrofit2.HttpException
+
+class JourneyRepositoryImpl @Inject constructor(
+    private val journeyService: JourneyService,
+    private val json: Json
+) : JourneyRepository {
+    override suspend fun getJourneyDetail(journeyId: Long): Result<JourneyDetail> = request {
+        journeyService.getJourneyDetail(journeyId).requireData().toDomain()
+    }
+
+    override suspend fun updateJourney(
+        journeyId: Long,
+        command: JourneyUpdateCommand
+    ): Result<JourneyUpdate> = request {
+        val response = journeyService.updateJourney(
+            journeyId = journeyId,
+            request = JourneyUpdateRequest(
+                title = command.title,
+                photoUrl = command.photoUrl,
+                startDate = command.startDate,
+                endDate = command.endDate
+            )
+        )
+        response.requireData().toDomain()
+    }
+
+    override suspend fun getJourneySchedules(journeyId: Long): Result<JourneyScheduleList> = request {
+        journeyService.getJourneySchedules(journeyId).requireData().toDomain()
+    }
+
+    override suspend fun createJourneySchedule(
+        journeyId: Long,
+        command: JourneyScheduleCommand
+    ): Result<Unit> = request {
+        val response = journeyService.createJourneySchedule(
+            journeyId = journeyId,
+            request = JourneyScheduleRequest(
+                title = command.title,
+                category = command.category,
+                dayOffset = command.dayOffset,
+                startTime = command.startTime,
+                endTime = command.endTime,
+                placeName = command.placeName,
+                memo = command.memo
+            )
+        )
+        if (!response.isSuccessful) throw response.toJourneyApiException(json)
+    }
+
+    override suspend fun getJourneyMembers(journeyId: Long): Result<List<JourneyMember>> = request {
+        journeyService.getJourneyMembers(journeyId).requireData().map { it.toDomain() }
+    }
+
+    override suspend fun removeJourneyMember(journeyId: Long, memberUserId: Long): Result<Unit> = request {
+        val response = journeyService.removeJourneyMember(journeyId, memberUserId)
+        if (response.code() != 204) throw response.toJourneyApiException(json)
+    }
+
+    override suspend fun replaceJourneyMemberRoles(
+        journeyId: Long,
+        memberUserId: Long,
+        roles: List<JourneyMemberRole>
+    ): Result<JourneyMemberRoleUpdate> = request {
+        val response = journeyService.replaceJourneyMemberRoles(
+            journeyId = journeyId,
+            memberUserId = memberUserId,
+            request = JourneyMemberRoleUpdateRequest(
+                roles = roles.map {
+                    JourneyMemberRoleRequest(
+                        roleType = it.roleType,
+                        customRoleLabel = it.customRoleLabel
+                    )
+                }
+            )
+        )
+        response.requireData().toDomain()
+    }
+
+    override suspend fun getMyJourneys(): Result<MyJourneyList> = request {
+        journeyService.getMyJourneys().toMyJourneyList()
+    }
+
+    private suspend fun <T> request(block: suspend () -> T): Result<T> = try {
+        Result.success(block())
+    } catch (exception: CancellationException) {
+        throw exception
+    } catch (exception: HttpException) {
+        Result.failure(exception.toJourneyApiException(json))
+    } catch (exception: Exception) {
+        Result.failure(exception)
+    }
+
+    private fun <T> ApiResponse<T>.requireData(): T {
+        if (status != 0 && status !in 200..299) throw toJourneyApiException()
+        return data ?: throw IllegalStateException("Response data is null")
+    }
+
+    private fun ApiResponse<MyJourneyListResponse>.toMyJourneyList(): MyJourneyList {
+        if (status != 0 && status !in 200..299) throw toJourneyApiException()
+        return data?.toDomain() ?: MyJourneyList(
+            activeJourneys = emptyList(),
+            completedJourneys = emptyList()
+        )
+    }
+}

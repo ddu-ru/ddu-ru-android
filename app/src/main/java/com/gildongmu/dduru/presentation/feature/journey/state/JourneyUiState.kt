@@ -1,16 +1,18 @@
 package com.gildongmu.dduru.presentation.feature.journey.state
 
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyNewsItemUiState
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyScheduleDayUiState
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyScheduleItemUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyNewsItemUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleDayUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyScheduleItemUiState
 
 data class JourneyUiState(
     val ongoingJourneys: List<OngoingJourneyUiState> = emptyList(),
+    val selectedJourneyId: Long? = null,
     val todos: List<JourneyTodoUiState> = emptyList(),
     val scheduleDays: List<JourneyScheduleDayUiState> = emptyList(),
     val selectedScheduleDay: Int = 1,
     val scheduleDDayText: String = "",
     val schedules: List<JourneyScheduleItemUiState> = emptyList(),
+    val schedulesByDay: Map<Int, List<JourneyScheduleItemUiState>> = emptyMap(),
     val news: List<JourneyNewsItemUiState> = emptyList(),
     val pastJourneys: List<PastJourneyUiState> = emptyList()
 )
@@ -23,7 +25,10 @@ data class OngoingJourneyUiState(
     val period: String,
     val memberCount: Int,
     val remainingTodoCount: Int,
-    val newNewsCount: Int
+    val newNewsCount: Int,
+    val tripDurationText: String = "",
+    val recruitCapacity: Int = 0,
+    val isOwner: Boolean = false
 )
 
 data class JourneyTodoUiState(
@@ -35,10 +40,14 @@ data class JourneyTodoUiState(
 )
 
 data class PastJourneyUiState(
-    val id: Int,
+    val id: Long,
     val title: String,
     val location: String,
     val date: String,
     val imageUrl: String?,
-    val memberImageUrls: List<String>
+    val memberImageUrls: List<String>,
+    val tripDurationText: String = "",
+    val memberCount: Int = 0,
+    val recruitCapacity: Int = 0,
+    val isOwner: Boolean = false
 )

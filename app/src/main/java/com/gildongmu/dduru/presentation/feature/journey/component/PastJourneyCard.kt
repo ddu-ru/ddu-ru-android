@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.journey.compoenet
+package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
@@ -37,13 +37,13 @@ private val PastJourneyImageShape = RoundedCornerShape(topStart = 16.dp, topEnd 
 
 @Composable
 fun PastJourneyCard(
-    id: Int,
+    id: Long,
     title: String,
     location: String,
     date: String,
     imageUrl: String?,
     memberImageUrls: List<String>,
-    onClick: (Int) -> Unit,
+    onClick: (Long) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -60,6 +60,7 @@ fun PastJourneyCard(
                 .fillMaxWidth()
                 .aspectRatio(200f / 130f)
                 .clip(PastJourneyImageShape)
+                .background(DduruTheme.colors.gray300)
         )
 
         Box(

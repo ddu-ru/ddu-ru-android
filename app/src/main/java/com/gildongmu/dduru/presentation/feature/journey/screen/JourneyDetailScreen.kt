@@ -7,12 +7,16 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -25,17 +29,22 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
+import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruIconButton
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailActionBar
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailFilterSection
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailFilterType
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailHeader
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailMemberSection
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailPostItem
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyDetailVoteItem
-import com.gildongmu.dduru.presentation.feature.journey.compoenet.JourneyMemberUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailActionBar
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailFilterSection
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailFilterType
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailHeader
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailMemberSection
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailPostItem
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailVoteItem
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyMemberUiState
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneySchedule
+import com.gildongmu.dduru.presentation.feature.journey.component.JourneyWritingButton
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailPostUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailUiState
 import com.gildongmu.dduru.presentation.feature.journey.state.JourneyDetailVoteUiState
@@ -44,36 +53,60 @@ import kotlinx.collections.immutable.persistentListOf
 
 @Composable
 fun JourneyDetailRoute(
+    journeyId: Long,
+    initialFilter: String? = null,
     onBackClick: () -> Unit,
     onManageMembersClick: () -> Unit,
-    onChatRoomClick: () -> Unit,
+    onChatRoomClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
     onNotificationClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
     onPostCommentClick: (Long) -> Unit = {},
+    onPostClick: (Long) -> Unit = {},
     onPostPinClick: (Long) -> Unit = {},
     onPostMoreClick: (Long) -> Unit = {},
     onVoteClick: (Long) -> Unit = {},
+    onWritePostClick: () -> Unit = {},
+    onWriteScheduleClick: () -> Unit = {},
+    onWriteVoteClick: () -> Unit = {},
     viewModel: JourneyDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
 
-    JourneyDetailScreen(
-        uiState = uiState,
-        onBackClick = onBackClick,
-        onManageMembersClick = onManageMembersClick,
-        onChatRoomClick = onChatRoomClick,
-        onNotificationClick = onNotificationClick,
-        onShareClick = onShareClick,
-        onMoreClick = onMoreClick,
-        onFilterClick = viewModel::onFilterClick,
-        onPostCommentClick = onPostCommentClick,
-        onPostPinClick = onPostPinClick,
-        onPostMoreClick = onPostMoreClick,
-        onVoteClick = onVoteClick,
-        modifier = modifier
-    )
+    LaunchedEffect(journeyId, initialFilter) {
+        viewModel.loadJourneyDetail(
+            journeyId = journeyId,
+            initialFilter = initialFilter?.let(JourneyDetailFilterType::valueOf)
+        )
+    }
+
+    when (val state = uiState) {
+        UiState.Empty -> Unit
+        UiState.Loading -> DduruLoadingScreen()
+        UiState.Failure -> DduruFailureScreen(message = "여정 정보를 불러오지 못했어요.")
+        is UiState.Success -> JourneyDetailScreen(
+            uiState = state.data,
+            onBackClick = onBackClick,
+            onManageMembersClick = onManageMembersClick,
+            onChatRoomClick = onChatRoomClick,
+            onNotificationClick = onNotificationClick,
+            onShareClick = onShareClick,
+            onMoreClick = onMoreClick,
+            onFilterClick = viewModel::onFilterClick,
+            onScheduleDayClick = viewModel::onScheduleDayClick,
+            onLoadMore = viewModel::loadMoreJourneyPosts,
+            onPostCommentClick = onPostCommentClick,
+            onPostClick = onPostClick,
+            onPostPinClick = viewModel::onPostPinClick,
+            onPostMoreClick = onPostMoreClick,
+            onVoteClick = onVoteClick,
+            onWritePostClick = onWritePostClick,
+            onWriteScheduleClick = onWriteScheduleClick,
+            onWriteVoteClick = onWriteVoteClick,
+            modifier = modifier
+        )
+    }
 }
 
 @Composable
@@ -81,23 +114,41 @@ fun JourneyDetailScreen(
     uiState: JourneyDetailUiState,
     onBackClick: () -> Unit,
     onManageMembersClick: () -> Unit,
-    onChatRoomClick: () -> Unit,
+    onChatRoomClick: (Long) -> Unit,
     onNotificationClick: () -> Unit = {},
     onShareClick: () -> Unit = {},
     onMoreClick: () -> Unit = {},
     onFilterClick: (JourneyDetailFilterType) -> Unit,
+    onScheduleDayClick: (Int) -> Unit = {},
+    onLoadMore: () -> Unit = {},
     onPostCommentClick: (Long) -> Unit = {},
+    onPostClick: (Long) -> Unit = {},
     onPostPinClick: (Long) -> Unit = {},
     onPostMoreClick: (Long) -> Unit = {},
     onVoteClick: (Long) -> Unit = {},
+    onWritePostClick: () -> Unit = {},
+    onWriteScheduleClick: () -> Unit = {},
+    onWriteVoteClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
+    val listState = rememberLazyListState()
+    val shouldLoadMore by remember {
+        derivedStateOf {
+            uiState.hasNext && !uiState.isLoadingMore && !listState.canScrollForward
+        }
+    }
+
+    LaunchedEffect(shouldLoadMore, uiState.posts.size) {
+        if (shouldLoadMore) onLoadMore()
+    }
+
     Box(
         modifier = modifier
             .fillMaxSize()
             .background(DduruTheme.colors.gray50)
     ) {
         LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .background(DduruTheme.colors.gray0)
@@ -127,11 +178,12 @@ fun JourneyDetailScreen(
                 ) {
                     JourneyDetailMemberSection(
                         members = uiState.members,
+                        canManageMembers = uiState.isOwner,
                         onManageClick = onManageMembersClick
                     )
 
                     ChatRoomShortcutButton(
-                        onClick = onChatRoomClick
+                        onClick = { uiState.groupRoomId?.let(onChatRoomClick) }
                     )
 
                     Column(
@@ -150,19 +202,41 @@ fun JourneyDetailScreen(
                             onFilterClick = onFilterClick
                         )
 
-                        JourneyDetailContentList(
-                            posts = uiState.filteredPosts,
-                            votes = if (uiState.selectedFilter == JourneyDetailFilterType.VOTE) {
-                                uiState.votes
-                            } else {
-                                emptyList()
-                            },
-                            onPostCommentClick = onPostCommentClick,
-                            onPostPinClick = onPostPinClick,
-                            onPostMoreClick = onPostMoreClick,
-                            onVoteClick = onVoteClick
-                        )
+                        if (uiState.selectedFilter == JourneyDetailFilterType.SCHEDULE) {
+                            JourneySchedule(
+                                days = uiState.scheduleDays,
+                                selectedDay = uiState.selectedScheduleDay,
+                                dDayText = "",
+                                schedules = uiState.schedulesByDay[uiState.selectedScheduleDay].orEmpty(),
+                                onDayClick = onScheduleDayClick
+                            )
+                        } else {
+                            JourneyDetailContentList(
+                                posts = uiState.filteredPosts,
+                                votes = if (uiState.selectedFilter == JourneyDetailFilterType.VOTE) {
+                                    uiState.votes
+                                } else {
+                                    emptyList()
+                                },
+                                onPostCommentClick = onPostCommentClick,
+                                onPostClick = onPostClick,
+                                onPostPinClick = onPostPinClick,
+                                onPostMoreClick = onPostMoreClick,
+                                onVoteClick = onVoteClick
+                            )
+                        }
                     }
+                }
+            }
+
+            if (uiState.isLoadingMore) {
+                item {
+                    Text(
+                        text = "게시글을 불러오는 중이에요.",
+                        style = DduruTheme.typography.Body2,
+                        color = DduruTheme.colors.gray500,
+                        modifier = Modifier.padding(vertical = 24.dp)
+                    )
                 }
             }
         }
@@ -186,6 +260,19 @@ fun JourneyDetailScreen(
                 .align(Alignment.TopEnd)
                 .padding(top = 16.dp, end = 16.dp)
         )
+
+        Box(
+            modifier = Modifier
+                .align(Alignment.BottomEnd)
+                .navigationBarsPadding()
+                .padding(end = 16.dp, bottom = 16.dp)
+        ) {
+            JourneyWritingButton(
+                onWritePostClick = onWritePostClick,
+                onWriteScheduleClick = onWriteScheduleClick,
+                onWriteVoteClick = onWriteVoteClick
+            )
+        }
     }
 }
 
@@ -208,6 +295,7 @@ private fun JourneyDetailContentList(
     posts: List<JourneyDetailPostUiState>,
     votes: List<JourneyDetailVoteUiState>,
     onPostCommentClick: (Long) -> Unit,
+    onPostClick: (Long) -> Unit,
     onPostPinClick: (Long) -> Unit,
     onPostMoreClick: (Long) -> Unit,
     onVoteClick: (Long) -> Unit
@@ -231,6 +319,7 @@ private fun JourneyDetailContentList(
             imageUrls = post.imageUrls,
             commentCount = post.commentCount,
             isPinned = post.isPinned,
+            onPostClick = { onPostClick(post.id) },
             onCommentClick = { onPostCommentClick(post.id) },
             onPinClick = { onPostPinClick(post.id) },
             onMoreClick = { onPostMoreClick(post.id) }
@@ -251,7 +340,6 @@ private fun JourneyDetailContentList(
 
 private val DETAIL_FILTERS = persistentListOf(
     JourneyDetailFilterType.FIXED,
-    JourneyDetailFilterType.NOTICE,
     JourneyDetailFilterType.BOARD,
     JourneyDetailFilterType.SCHEDULE,
     JourneyDetailFilterType.PHOTO,
@@ -279,7 +367,7 @@ private fun JourneyDetailScreenPreview() {
                 posts = listOf(
                     JourneyDetailPostUiState(
                         id = 1,
-                        category = JourneyDetailFilterType.NOTICE,
+                        category = JourneyDetailFilterType.BOARD,
                         username = "둘루",
                         createdAt = "10분 전",
                         title = "여행 일정 공유합니다! 맛집 추천도 편하게 남겨주세요.",
@@ -298,7 +386,7 @@ private fun JourneyDetailScreenPreview() {
                 filteredPosts = listOf(
                     JourneyDetailPostUiState(
                         id = 1,
-                        category = JourneyDetailFilterType.NOTICE,
+                        category = JourneyDetailFilterType.BOARD,
                         username = "둘루",
                         createdAt = "10분 전",
                         title = "여행 일정 공유합니다! 맛집 추천도 편하게 남겨주세요.",
