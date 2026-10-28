@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.journey.compoenet
+package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
@@ -33,6 +33,7 @@ fun JourneyDetailHeader(
     Box(
         modifier = modifier
             .fillMaxWidth()
+            .background(DduruTheme.colors.gray300)
     ) {
         AsyncImage(
             model = imageUrl,

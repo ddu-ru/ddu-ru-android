@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.journey.compoenet
+package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.background
@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
@@ -93,12 +94,13 @@ private fun JourneyImageContent(
     Box(
         modifier = modifier
             .clip(JourneyImageShape)
+            .background(DduruTheme.colors.gray300)
     ) {
         AsyncImage(
             model = imageUrl,
             contentDescription = null,
             contentScale = ContentScale.Crop,
-            modifier = Modifier.fillMaxWidth()
+            modifier = Modifier.fillMaxSize()
         )
 
         Box(

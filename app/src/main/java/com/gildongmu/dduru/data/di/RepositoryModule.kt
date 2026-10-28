@@ -9,6 +9,12 @@ import com.gildongmu.dduru.data.repositoryimpl.ParticipationRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.SurveyRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.home.HomeNotificationRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.home.HomeRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.journey.JourneyCommentRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.journey.JourneyPostRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.journey.JourneyRepositoryImpl
+import com.gildongmu.dduru.domain.journey.repository.JourneyCommentRepository
+import com.gildongmu.dduru.domain.journey.repository.JourneyPostRepository
+import com.gildongmu.dduru.domain.journey.repository.JourneyRepository
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
@@ -63,6 +69,24 @@ abstract class RepositoryModule {
     abstract fun bindChatRoomRepository(
         impl: ChatRoomRepositoryImpl
     ): ChatRoomRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindJourneyPostRepository(
+        impl: JourneyPostRepositoryImpl
+    ): JourneyPostRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindJourneyCommentRepository(
+        impl: JourneyCommentRepositoryImpl
+    ): JourneyCommentRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindJourneyRepository(
+        impl: JourneyRepositoryImpl
+    ): JourneyRepository
 
     @Binds
     @Singleton

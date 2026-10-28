@@ -17,6 +17,11 @@ import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomMenuRoute
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomRoute
 import com.gildongmu.dduru.presentation.feature.home.screen.HomeMenuRoute
 import com.gildongmu.dduru.presentation.feature.home.screen.HomeNotificationRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyAdminRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyCommentRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyDetailRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyPostComposeRoute
+import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyScheduleComposeRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.LoginRoute
 import com.gildongmu.dduru.presentation.feature.login.screen.WelcomeScreen
 import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
@@ -26,6 +31,7 @@ import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDet
 import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditPreferencesRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.TravelDestinationSelectRoute
+import com.gildongmu.dduru.presentation.feature.poll.screen.JourneyPollRoute
 import com.gildongmu.dduru.presentation.feature.poll.screen.PollCreateRoute
 import com.gildongmu.dduru.presentation.feature.register.profile.screen.ProfileSettingRoute
 import com.gildongmu.dduru.presentation.feature.register.screen.SignupRoute
@@ -46,6 +52,11 @@ fun RootNavigation(
         DduruLoadingScreen()
     } else {
         val rootBackStack = rememberNavBackStack(startDestination!!)
+        LaunchedEffect(startDestination) {
+            // 앱 재설치/프로세스 복원 시 이전 Main back stack이 로그인 시작 화면을 덮지 않게 한다.
+            rootBackStack.clear()
+            rootBackStack.add(startDestination!!)
+        }
         fun navigateBack() {
             if (rootBackStack.size > 1) {
                 rootBackStack.removeLastOrNull()
@@ -156,6 +167,8 @@ fun RootNavigation(
                             },
                             onNavigateToTravelStyleSurvey = {
                                 rootBackStack.add(RootNavRoute.TravelStyleSurvey)
+                            onNavigateToJourneyDetail = { journeyId, initialFilter ->
+                                rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             }
                         )
                     }
@@ -182,6 +195,8 @@ fun RootNavigation(
                             },
                             onNavigateToTravelStyleSurvey = {
                                 rootBackStack.add(RootNavRoute.TravelStyleSurvey)
+                            onNavigateToJourneyDetail = { journeyId, initialFilter ->
+                                rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             },
                             initialRoute = route.bottomNavRoute
                         )
@@ -304,6 +319,70 @@ fun RootNavigation(
                             onSurveyComplete = { navigateBack() },
                             onBackPressed = { navigateBack() }
                         )
+                    is RootNavRoute.JourneyDetail -> NavEntry(route) {
+                        JourneyDetailRoute(
+                            journeyId = route.journeyId,
+                            initialFilter = route.initialFilter,
+                            onBackClick = { navigateBack() },
+                            onManageMembersClick = {
+                                rootBackStack.add(RootNavRoute.JourneyAdmin(route.journeyId))
+                            },
+                            onChatRoomClick = { chatRoomId ->
+                                rootBackStack.add(RootNavRoute.ChatRoom(chatRoomId))
+                            },
+                            onPostClick = { postId ->
+                                rootBackStack.add(RootNavRoute.JourneyPostDetail(route.journeyId, postId))
+                            },
+                            onPostCommentClick = { postId ->
+                                rootBackStack.add(RootNavRoute.JourneyPostDetail(route.journeyId, postId))
+                            },
+                            onWritePostClick = {
+                                rootBackStack.add(RootNavRoute.JourneyPostCompose(route.journeyId))
+                            },
+                            onWriteScheduleClick = {
+                                rootBackStack.add(RootNavRoute.JourneyScheduleCompose(route.journeyId))
+                            },
+                            onWriteVoteClick = {
+                                rootBackStack.add(RootNavRoute.JourneyVoteCompose(route.journeyId))
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyAdmin -> NavEntry(route) {
+                        JourneyAdminRoute(
+                            journeyId = route.journeyId,
+                            onBackClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyPostDetail -> NavEntry(route) {
+                        JourneyCommentRoute(
+                            journeyId = route.journeyId,
+                            postId = route.postId,
+                            onBackClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyPostCompose -> NavEntry(route) {
+                        JourneyPostComposeRoute(
+                            journeyId = route.journeyId,
+                            onBackClick = { navigateBack() },
+                            onPostCreated = { postId ->
+                                navigateBack()
+                                rootBackStack.add(RootNavRoute.JourneyPostDetail(route.journeyId, postId))
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyScheduleCompose -> NavEntry(route) {
+                        JourneyScheduleComposeRoute(
+                            journeyId = route.journeyId,
+                            onBackClick = { navigateBack() }
+                        )
+                    }
+
+                    is RootNavRoute.JourneyVoteCompose -> NavEntry(route) {
+                        JourneyPollRoute(onCloseClick = { navigateBack() })
                     }
 
                     else -> NavEntry(route) {}

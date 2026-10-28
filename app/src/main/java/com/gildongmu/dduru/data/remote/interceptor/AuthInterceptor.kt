@@ -1,30 +1,29 @@
 package com.gildongmu.dduru.data.remote.interceptor
 
 import com.gildongmu.dduru.data.local.TokenLocalDataSource
-import java.util.Base64
 import javax.inject.Inject
 import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.runBlocking
-import kotlinx.serialization.json.Json
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
-import kotlinx.serialization.json.longOrNull
 import okhttp3.Interceptor
 import okhttp3.Response
 
 class AuthInterceptor @Inject constructor(
     private val tokenLocalDataSource: TokenLocalDataSource,
-    private val tokenAuthenticator: TokenAuthenticator,
-    private val json: Json
+    private val tokenAuthenticator: TokenAuthenticator
 ) : Interceptor {
 
     override fun intercept(chain: Interceptor.Chain): Response {
         val original = chain.request()
 
+        // 갱신 요청 자체에는 만료된 access token을 붙이거나 재귀적으로 갱신을 시도하지 않는다.
+        if (original.url.encodedPath == REFRESH_TOKEN_PATH) {
+            return chain.proceed(original)
+        }
+
         val token = runBlocking {
             val accessToken = tokenLocalDataSource.accessToken.first()
 
-            if (!accessToken.isNullOrBlank() && accessToken.isExpiredJwt()) {
+            if (!accessToken.isNullOrBlank() && tokenAuthenticator.shouldRefresh(accessToken)) {
                 val refreshToken = tokenLocalDataSource.refreshToken.first()
                 if (refreshToken.isNullOrBlank()) {
                     accessToken
@@ -51,28 +50,7 @@ class AuthInterceptor @Inject constructor(
         return chain.proceed(requestBuilder.build())
     }
 
-    private fun String.isExpiredJwt(): Boolean {
-        return runCatching {
-            val payload = split(".").getOrNull(JWT_PAYLOAD_INDEX) ?: return false
-            val decodedPayload = String(
-                Base64.getUrlDecoder().decode(payload),
-                Charsets.UTF_8
-            )
-            val expiresAt = json.parseToJsonElement(decodedPayload)
-                .jsonObject[JWT_EXPIRES_AT_KEY]
-                ?.jsonPrimitive
-                ?.longOrNull
-                ?: return false
-            val now = System.currentTimeMillis() / MILLIS_PER_SECOND
-
-            expiresAt <= now + TOKEN_REFRESH_BUFFER_SECONDS
-        }.getOrDefault(false)
-    }
-
     private companion object {
-        const val JWT_PAYLOAD_INDEX = 1
-        const val JWT_EXPIRES_AT_KEY = "exp"
-        const val MILLIS_PER_SECOND = 1_000L
-        const val TOKEN_REFRESH_BUFFER_SECONDS = 60L
+        const val REFRESH_TOKEN_PATH = "/api/v1/auth/refresh"
     }
 }

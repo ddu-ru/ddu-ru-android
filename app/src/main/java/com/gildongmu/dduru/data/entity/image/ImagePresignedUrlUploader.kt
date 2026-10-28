@@ -24,7 +24,10 @@ class ImagePresignedUrlUploader @Inject constructor(
     private val imagePresignedUrlApi: ImagePresignedUrlApi,
     @Named("presignedUploadClient") private val uploadClient: OkHttpClient
 ) {
-    suspend fun uploadImage(uri: Uri): Result<String> = withContext(Dispatchers.IO) {
+    suspend fun uploadImage(
+        uri: Uri,
+        target: ImageUploadTarget = ImageUploadTarget.PROFILE
+    ): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
             val extension = resolveExtension(uri)
             validateExtension(extension)
@@ -34,11 +37,14 @@ class ImagePresignedUrlUploader @Inject constructor(
                 ?.use { it.length }
                 ?.takeIf { it > 0 }
                 ?: error("이미지 크기를 확인할 수 없어요.")
-            val presigned = imagePresignedUrlApi.createPresignedUrl(
-                ImageUploadRequest(
-                    files = listOf(ImageUploadFileRequest(fileName = fileName, fileSize = fileSize))
-                )
-            ).data?.firstOrNull() ?: error("업로드 URL을 받아오지 못했어요.")
+            val presignedUrlRequest = ImageUploadRequest(
+                files = listOf(ImageUploadFileRequest(fileName = fileName, fileSize = fileSize))
+            )
+            val presigned = when (target) {
+                ImageUploadTarget.PROFILE -> imagePresignedUrlApi.createProfilePresignedUrl(presignedUrlRequest)
+                ImageUploadTarget.JOURNEY -> imagePresignedUrlApi.createJourneyPresignedUrl(presignedUrlRequest)
+            }.data?.firstOrNull() ?: error("업로드 URL을 받아오지 못했어요.")
+
             val mimeType = context.contentResolver.getType(uri) ?: defaultMimeType(extension)
 
             val request = Request.Builder()
@@ -95,4 +101,9 @@ class ImagePresignedUrlUploader @Inject constructor(
             }
         }
     }
+}
+
+enum class ImageUploadTarget {
+    PROFILE,
+    JOURNEY
 }

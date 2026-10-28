@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.journey.compoenet
+package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
@@ -35,6 +35,7 @@ fun JourneyDetailPostItem(
     imageUrls: List<String>,
     commentCount: Int,
     isPinned: Boolean,
+    onPostClick: () -> Unit,
     onCommentClick: () -> Unit,
     onPinClick: () -> Unit,
     onMoreClick: () -> Unit,
@@ -43,6 +44,7 @@ fun JourneyDetailPostItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
+            .clickable(onClick = onPostClick)
             .background(
                 if (isPinned) {
                     DduruTheme.colors.pinnedPostBackground
@@ -173,6 +175,7 @@ private fun JourneyDetailPostItemPreview() {
             imageUrls = emptyList(),
             commentCount = 12,
             isPinned = true,
+            onPostClick = {},
             onCommentClick = {},
             onPinClick = {},
             onMoreClick = {}
@@ -192,6 +195,7 @@ private fun JourneyDetailUnpinnedPostItemPreview() {
             imageUrls = emptyList(),
             commentCount = 12,
             isPinned = false,
+            onPostClick = {},
             onCommentClick = {},
             onPinClick = {},
             onMoreClick = {}

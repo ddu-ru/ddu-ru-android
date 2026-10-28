@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.journey.compoenet
+package com.gildongmu.dduru.presentation.feature.journey.component
 
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.BoxWithConstraints
@@ -37,6 +37,7 @@ data class JourneyMemberUiState(
 @Composable
 fun JourneyDetailMemberSection(
     members: List<JourneyMemberUiState>,
+    canManageMembers: Boolean = false,
     onManageClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -54,24 +55,26 @@ fun JourneyDetailMemberSection(
                 color = DduruTheme.colors.gray800
             )
 
-            Row(
-                modifier = Modifier.noRippleClickable(onClick = onManageClick),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = "멤버 관리",
-                    style = DduruTheme.typography.Caption1,
-                    color = DduruTheme.colors.gray600
-                )
+            if (canManageMembers) {
+                Row(
+                    modifier = Modifier.noRippleClickable(onClick = onManageClick),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = "멤버 관리",
+                        style = DduruTheme.typography.Caption1,
+                        color = DduruTheme.colors.gray600
+                    )
 
-                Spacer(modifier = Modifier.width(8.dp))
+                    Spacer(modifier = Modifier.width(8.dp))
 
-                Icon(
-                    painter = painterResource(R.drawable.ic_chevron_right),
-                    contentDescription = null,
-                    tint = DduruTheme.colors.gray600,
-                    modifier = Modifier.size(12.dp)
-                )
+                    Icon(
+                        painter = painterResource(R.drawable.ic_chevron_right),
+                        contentDescription = null,
+                        tint = DduruTheme.colors.gray600,
+                        modifier = Modifier.size(12.dp)
+                    )
+                }
             }
         }
 

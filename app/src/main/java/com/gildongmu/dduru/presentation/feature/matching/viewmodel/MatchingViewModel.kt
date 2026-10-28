@@ -12,6 +12,7 @@ import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.toPersistentList
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -32,6 +33,7 @@ class MatchingViewModel @Inject constructor(
     private val _sideEffect = MutableSharedFlow<MatchingSideEffect>()
     val sideEffect: SharedFlow<MatchingSideEffect> = _sideEffect.asSharedFlow()
     private var searchJob: Job? = null
+    private var postLoadJob: Job? = null
 
     init { loadPosts() }
 
@@ -48,6 +50,7 @@ class MatchingViewModel @Inject constructor(
             copy(searchQuery = query)
         }
         searchJob?.cancel()
+        postLoadJob?.cancel()
         searchJob = viewModelScope.launch {
             delay(SEARCH_DEBOUNCE_MILLIS)
             loadPosts(showLoading = false)
@@ -106,15 +109,16 @@ class MatchingViewModel @Inject constructor(
     }
 
     private fun loadPosts(append: Boolean = false, showLoading: Boolean = true) {
-        viewModelScope.launch {
+        postLoadJob?.cancel()
+        postLoadJob = viewModelScope.launch {
             val current = (_uiState.value as? UiState.Success)?.data ?: MatchingUiState()
             if (append) {
                 _uiState.value = UiState.Success(current.copy(isLoadingMore = true))
             } else if (showLoading) {
                 _uiState.value = UiState.Loading
             }
-            runCatching {
-                postService.getPosts(
+            try {
+                val response = postService.getPosts(
                     cursor = if (append) current.nextCursor else null,
                     cursorValue = if (append) current.nextCursorValue else null,
                     keyword = current.searchQuery.takeIf { it.isNotBlank() },
@@ -129,7 +133,6 @@ class MatchingViewModel @Inject constructor(
                     companionType = current.filters.companionType,
                     sort = current.selectedSort.toSortCode()
                 )
-            }.onSuccess { response ->
                 val data = response.data ?: error("게시글 목록 응답이 비어있어요.")
                 _uiState.value = UiState.Success(
                     current.copy(
@@ -140,7 +143,11 @@ class MatchingViewModel @Inject constructor(
                         isLoadingMore = false
                     )
                 )
-            }.onFailure { _uiState.value = UiState.Failure }
+            } catch (exception: CancellationException) {
+                throw exception
+            } catch (exception: Exception) {
+                if (showLoading || append) _uiState.value = UiState.Failure
+            }
         }
     }
 
@@ -155,6 +162,9 @@ class MatchingViewModel @Inject constructor(
         dateRange = "$startDate - $endDate", currentMemberCount = recruitCount, maxMemberCount = recruitCapacity,
         gender = when (preferredGender) { "M" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.MALE; "F" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.FEMALE; else -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.ANY },
         companionType = when (companionType) { "PARTIAL" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.PARTIAL; "MEAL" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.MEAL; else -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.FULL },
-        isSuperHost = author.isSuperHost, isLiked = hasLiked, thumbnailImageRes = com.gildongmu.dduru.R.drawable.fukuoka
+        isSuperHost = author.isSuperHost,
+        isLiked = hasLiked,
+        thumbnailImageUrl = photoUrl,
+        thumbnailImageRes = com.gildongmu.dduru.R.drawable.fukuoka
     )
 }
