@@ -159,8 +159,7 @@ private fun MainScreenPreview() {
             onNavigateToMatchingCreatePost = {},
             onNavigateToProfileEdit = {},
             onNavigateToMatchingDetail = {},
-            onNavigateToTravelStyleSurvey = {}
-            onNavigateToMatchingDetail = {},
+            onNavigateToTravelStyleSurvey = {},
             onNavigateToJourneyDetail = { _, _ -> }
         )
     }

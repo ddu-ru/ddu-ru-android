@@ -43,6 +43,7 @@ sealed interface RootNavRoute : NavKey {
     @Serializable data object ProfileEdit : RootNavRoute
 
     @Serializable data object TravelStyleSurvey : RootNavRoute
+
     @Serializable data class JourneyDetail(
         val journeyId: Long,
         val initialFilter: String? = null
