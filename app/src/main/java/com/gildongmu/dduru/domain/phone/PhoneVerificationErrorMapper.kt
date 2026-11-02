@@ -11,11 +11,12 @@ object PhoneVerificationErrorMapper {
         }
     }
 
-    fun confirmErrorMessage(status: Int? = null): String {
-        return when (status) {
-            400 -> "인증번호가 일치하지 않습니다."
-            404 -> "인증 정보를 찾을 수 없습니다."
-            409 -> "이미 완료된 인증입니다."
+    fun confirmErrorMessage(status: Int? = null, errorCode: String? = null): String {
+        return when {
+            errorCode == "INVALID_AUTH_CODE" -> "인증번호가 일치하지 않아요. 다시 확인해 주세요."
+            errorCode == "VERIFICATION_NOT_FOUND" || status == 404 ->
+                "인증 시간이 만료되었어요. 인증 번호를 다시 받아주세요."
+            status == 409 -> "이미 완료된 인증입니다."
             else -> "인증번호 확인에 실패했어요."
         }
     }

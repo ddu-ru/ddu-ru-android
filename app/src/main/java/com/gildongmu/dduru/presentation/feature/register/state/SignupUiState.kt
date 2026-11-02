@@ -62,6 +62,7 @@ data class SignupUiState(
     val authCodeValidation: AuthCodeValidationResult = AuthCodeValidationResult.EMPTY,
     val authCodeErrorMessage: String = "",
     val authTimerSeconds: Int = 0,
+    val isAuthAttemptExceeded: Boolean = false,
 
     val errorMessage: String? = null,
 

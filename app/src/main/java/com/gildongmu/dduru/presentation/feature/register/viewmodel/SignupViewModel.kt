@@ -209,11 +209,11 @@ class SignupViewModel @Inject constructor(
                     startAuthTimer()
                 }
                 .onFailure { e ->
-                    val status = (e as? ExceptionResponse)?.status
+                    val error = e as? ExceptionResponse
                     updateState {
                         copy(
                             phoneErrorMessage = PhoneVerificationErrorMapper.sendErrorMessage(
-                                status = status
+                                status = error?.status
                             )
                         )
                     }
@@ -255,16 +255,41 @@ class SignupViewModel @Inject constructor(
                     }
                 }
                 .onFailure { e ->
-                    val status = (e as? ExceptionResponse)?.status
+                    val error = e as? ExceptionResponse
+                    if (error?.errorCode == AUTH_ATTEMPTS_EXCEEDED_CODE) {
+                        stopAuthTimer()
+                        updateState { copy(isAuthAttemptExceeded = true) }
+                        return@launch
+                    }
                     updateState {
                         copy(
                             authCodeErrorMessage = PhoneVerificationErrorMapper.confirmErrorMessage(
-                                status = status
+                                status = error?.status,
+                                errorCode = error?.errorCode
                             )
                         )
                     }
                 }
         }
+    }
+
+    fun onAuthAttemptExceededDismiss() {
+        updateState {
+            copy(
+                isAuthAttemptExceeded = false,
+                step = SignupStep.PHONE,
+                isPhoneRequested = false,
+                authCode = "",
+                authCodeErrorMessage = "",
+                authTimerSeconds = 0,
+                completedItems = completedItems.filterNot { it.label == "전화번호" }
+            )
+        }
+    }
+
+    fun onAuthAttemptExceededResend() {
+        onAuthAttemptExceededDismiss()
+        onPhoneComplete()
     }
 
     private fun startAuthTimer() {
@@ -276,7 +301,7 @@ class SignupViewModel @Inject constructor(
                 delay(1000L)
                 seconds--
             }
-            uiState = uiState.copy(authTimerSeconds = 0)
+            updateState { copy(authTimerSeconds = 0) }
         }
     }
 
@@ -346,3 +371,5 @@ class SignupViewModel @Inject constructor(
         }
     }
 }
+
+private const val AUTH_ATTEMPTS_EXCEEDED_CODE = "VERIFICATION_ATTEMPTS_EXCEEDED"

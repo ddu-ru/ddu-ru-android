@@ -12,7 +12,7 @@ enum class NicknameValidationResult {
 object NicknameValidator {
 
     private const val MIN_LENGTH = 2
-    private const val MAX_LENGTH = 12
+    private const val MAX_LENGTH = 14
 
     private val NICKNAME_REGEX = "^[가-힣a-zA-Z0-9]+$".toRegex()
 
@@ -37,10 +37,10 @@ object NicknameValidator {
 fun NicknameValidationResult.toMessage(): String {
     return when (this) {
         NicknameValidationResult.VALID -> ""
-        NicknameValidationResult.EMPTY -> "닉네임을 입력해주세요."
-        NicknameValidationResult.TOO_SHORT -> "닉네임은 2자 이상 입력해주세요."
-        NicknameValidationResult.TOO_LONG -> "닉네임은 최대 12자까지 입력할 수 있어요."
-        NicknameValidationResult.INVALID_CHARACTERS -> "한글, 영어, 숫자만 사용 가능해요."
-        NicknameValidationResult.CONTAINS_EMPTY -> "닉네임은 공백을 포함할 수 없어요."
+        NicknameValidationResult.EMPTY -> "닉네임을 입력해 주세요."
+        NicknameValidationResult.TOO_SHORT,
+        NicknameValidationResult.TOO_LONG -> "2~14자로 입력해 주세요."
+        NicknameValidationResult.INVALID_CHARACTERS,
+        NicknameValidationResult.CONTAINS_EMPTY -> "사용할 수 없는 문자가 포함되어 있어요."
     }
 }

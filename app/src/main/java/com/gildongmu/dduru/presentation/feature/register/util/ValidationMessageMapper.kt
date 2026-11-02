@@ -16,7 +16,7 @@ object ValidationMessageMapper {
     fun AuthCodeValidationResult.toMessage(): String =
         when (this) {
             AuthCodeValidationResult.EMPTY -> "인증번호를 입력해주세요."
-            AuthCodeValidationResult.EXPIRED_TIME -> "인증 시간이 만료되었어요."
+            AuthCodeValidationResult.EXPIRED_TIME -> "인증 시간이 만료되었어요. 인증 번호를 다시 받아주세요."
             AuthCodeValidationResult.VALID -> ""
         }
 }
