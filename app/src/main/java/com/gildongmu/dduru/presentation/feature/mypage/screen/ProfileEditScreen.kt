@@ -132,6 +132,8 @@ fun ProfileEditRoute(
                 isSaveEnabled = data.isSaveEnabled,
                 onBackClick = viewModel::onBackClick,
                 onSaveClick = viewModel::onSaveClick,
+                isCharacterLocked = data.isCharacterLocked,
+                nicknameErrorMessage = data.nicknameErrorMessage.orEmpty(),
                 showLeaveConfirmDialog = data.showLeaveConfirmDialog,
                 onLeaveConfirmDismiss = viewModel::onLeaveConfirmDismiss,
                 onLeaveConfirm = viewModel::onLeaveConfirm
@@ -170,6 +172,7 @@ fun ProfileEditScreen(
     onAvatarBackgroundColorSelected: (Color) -> Unit = {},
     onAvatarEditConfirm: () -> Unit = {},
     onAvatarEditDismiss: () -> Unit = {},
+    nicknameErrorMessage: String = "",
     showLeaveConfirmDialog: Boolean = false,
     onLeaveConfirmDismiss: () -> Unit = {},
     onLeaveConfirm: () -> Unit = {}
@@ -220,7 +223,7 @@ fun ProfileEditScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(32.dp)) {
                     NicknameInput(
                         text = nickname,
-                        validationMessage = "",
+                        validationMessage = nicknameErrorMessage,
                         onValueChange = onNicknameChange,
                         onRandomClick = onRandomNicknameClick
                     )

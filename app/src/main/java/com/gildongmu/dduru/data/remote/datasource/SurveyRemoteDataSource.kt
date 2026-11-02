@@ -10,6 +10,6 @@ interface SurveyRemoteDataSource {
     suspend fun submitSurvey(request: SurveyRequest): ApiResponse<SurveyResponse>
     suspend fun getMySurveyResult(): ApiResponse<SurveyResponse>
     suspend fun getSurveyQuestions(): ApiResponse<SurveyQuestionsResponse>
-
     suspend fun skipSurvey(): Response<Unit>
+    suspend fun updateSurvey(request: SurveyRequest): ApiResponse<SurveyResponse>
 }

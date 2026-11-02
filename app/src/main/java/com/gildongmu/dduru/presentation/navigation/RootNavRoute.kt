@@ -42,7 +42,7 @@ sealed interface RootNavRoute : NavKey {
 
     @Serializable data object ProfileEdit : RootNavRoute
 
-    @Serializable data object TravelStyleSurvey : RootNavRoute
+    @Serializable data class TravelStyleSurvey(val isRetake: Boolean) : RootNavRoute
 
     @Serializable data class JourneyDetail(
         val journeyId: Long,
@@ -58,4 +58,6 @@ sealed interface RootNavRoute : NavKey {
     @Serializable data class JourneyScheduleCompose(val journeyId: Long) : RootNavRoute
 
     @Serializable data class JourneyVoteCompose(val journeyId: Long) : RootNavRoute
+
+    @Serializable data object ProfileEditTravelStyle : RootNavRoute
 }

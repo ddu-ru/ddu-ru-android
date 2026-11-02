@@ -5,6 +5,7 @@ import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -22,6 +23,7 @@ fun SurveyMainScreen(
     viewModel: SurveyViewModel = hiltViewModel(),
     modifier: Modifier = Modifier,
     isFromMyPage: Boolean = false,
+    isRetake: Boolean = false,
     onSurveySkipped: () -> Unit = {}
 ) {
     val currentQuestion by viewModel.currentQuestion.collectAsState()
@@ -30,9 +32,13 @@ fun SurveyMainScreen(
     val questions by viewModel.questions.collectAsState()
     val questionsLoading by viewModel.questionsLoading.collectAsState()
 
+    LaunchedEffect(isRetake) {
+        viewModel.setRetakeMode(isRetake)
+    }
+
     BackHandler(enabled = true) {
         when {
-            uiState is SurveyUiState.Success -> { /* 결과 화면에서는 뒤로 막기 */ }
+            uiState is SurveyUiState.Success -> { }
             currentQuestion > 0 -> viewModel.previousQuestion()
             else -> onBackPressed()
         }

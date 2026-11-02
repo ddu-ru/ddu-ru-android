@@ -4,13 +4,20 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.domain.entity.mypage.MyProfile
+import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
 import com.gildongmu.dduru.domain.register.profile.model.ProfileUpdateModel
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
+import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
 import com.gildongmu.dduru.domain.repository.MyPageRepository
+import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
+import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
+import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -21,6 +28,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
 private const val MAX_BIO_LENGTH = 60
+private const val NICKNAME_CHECK_DEBOUNCE_MILLIS = 500L
 
 data class ProfileEditUiState(
     val nickname: String = "",
@@ -34,13 +42,16 @@ data class ProfileEditUiState(
     val initialNickname: String = "",
     val initialBio: String = "",
     val isSaving: Boolean = false,
-    val showLeaveConfirmDialog: Boolean = false
+    val showLeaveConfirmDialog: Boolean = false,
+    val nicknameErrorMessage: String? = null,
+    val isNicknameVerified: Boolean = true,
+    val isCharacterLocked: Boolean = true
 ) {
     val isChanged: Boolean
         get() = nickname != initialNickname || bio != initialBio
 
     val isSaveEnabled: Boolean
-        get() = nickname.isNotBlank() && isChanged && !isSaving
+        get() = nickname.isNotBlank() && isNicknameVerified && nicknameErrorMessage == null && isChanged && !isSaving
 }
 
 sealed interface ProfileEditSideEffect {
@@ -52,7 +63,8 @@ sealed interface ProfileEditSideEffect {
 class ProfileEditViewModel @Inject constructor(
     private val myPageRepository: MyPageRepository,
     private val profileRepository: ProfileRepository,
-    private val nicknameRepository: NicknameRepository
+    private val nicknameRepository: NicknameRepository,
+    private val onboardingStatusRepository: OnboardingStatusRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<ProfileEditUiState>>(UiState.Loading)
@@ -60,6 +72,8 @@ class ProfileEditViewModel @Inject constructor(
 
     private val _sideEffect = MutableSharedFlow<ProfileEditSideEffect>()
     val sideEffect: SharedFlow<ProfileEditSideEffect> = _sideEffect.asSharedFlow()
+
+    private var nicknameCheckJob: Job? = null
 
     init {
         loadProfile()
@@ -69,13 +83,60 @@ class ProfileEditViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             myPageRepository.getMyProfile()
-                .onSuccess { _uiState.value = UiState.Success(it.toUiState()) }
+                .onSuccess { profile ->
+                    val isSurveyCompleted = onboardingStatusRepository.getSurveyStatus()
+                        .getOrNull() == SurveyStatus.COMPLETED
+                    _uiState.value = UiState.Success(
+                        profile.toUiState().copy(isCharacterLocked = !isSurveyCompleted)
+                    )
+                }
                 .onFailure { _uiState.value = UiState.Failure }
         }
     }
 
     fun onNicknameChange(nickname: String) {
-        updateData { it.copy(nickname = nickname) }
+        nicknameCheckJob?.cancel()
+        val initialNickname = (_uiState.value as? UiState.Success)?.data?.initialNickname
+        if (nickname == initialNickname) {
+            updateData { it.copy(nickname = nickname, nicknameErrorMessage = null, isNicknameVerified = true) }
+            return
+        }
+
+        val validation = NicknameValidator.validate(nickname)
+        val isValid = validation == NicknameValidationResult.VALID
+        updateData {
+            it.copy(
+                nickname = nickname,
+                nicknameErrorMessage = if (isValid) null else validation.toMessage(),
+                isNicknameVerified = false
+            )
+        }
+        if (isValid) {
+            nicknameCheckJob = viewModelScope.launch {
+                delay(NICKNAME_CHECK_DEBOUNCE_MILLIS)
+                checkNicknameAvailability(nickname)
+            }
+        }
+    }
+
+    private suspend fun checkNicknameAvailability(nickname: String) {
+        nicknameRepository.checkNicknameAvailability(nickname)
+            .onSuccess { isAvailable ->
+                updateData {
+                    it.copy(
+                        isNicknameVerified = isAvailable,
+                        nicknameErrorMessage = if (isAvailable) null else "이미 사용 중인 닉네임이에요."
+                    )
+                }
+            }
+            .onFailure { error ->
+                updateData {
+                    it.copy(
+                        isNicknameVerified = false,
+                        nicknameErrorMessage = error.message ?: "네트워크 문제가 발생했어요."
+                    )
+                }
+            }
     }
 
     fun onBioChange(bio: String) {
@@ -85,7 +146,7 @@ class ProfileEditViewModel @Inject constructor(
     fun onRandomNicknameClick() {
         viewModelScope.launch {
             nicknameRepository.getRandomNickname()
-                .onSuccess { nickname -> updateData { it.copy(nickname = nickname) } }
+                .onSuccess { nickname -> onNicknameChange(nickname) }
                 .onFailure { _sideEffect.emit(ProfileEditSideEffect.ShowMessage("랜덤 닉네임을 불러오지 못했어요.")) }
         }
     }

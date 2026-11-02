@@ -38,6 +38,7 @@ fun MainScreen(
     onNavigateToMatchingDetail: (Long) -> Unit,
     onNavigateToProfileEdit: () -> Unit,
     onNavigateToTravelStyleSurvey: () -> Unit,
+    onNavigateToTravelStyleResult: () -> Unit,
     onNavigateToJourneyDetail: (Long, String?) -> Unit,
     initialRoute: BottomNavRoute = BottomNavRoute.Home
 ) {
@@ -108,7 +109,7 @@ fun MainScreen(
                             onNotificationClick = onNavigateToHomeNotification,
                             onMenuClick = onNavigateToHomeMenu,
                             onEditProfileClick = onNavigateToProfileEdit,
-                            onTravelStyleClick = onNavigateToTravelStyleSurvey,
+                            onTravelStyleClick = onNavigateToTravelStyleResult,
                             onStartTravelStyleTestClick = onNavigateToTravelStyleSurvey
                         )
                     }
@@ -159,6 +160,7 @@ private fun MainScreenPreview() {
             onNavigateToMatchingCreatePost = {},
             onNavigateToProfileEdit = {},
             onNavigateToMatchingDetail = {},
+            onNavigateToTravelStyleResult = {},
             onNavigateToTravelStyleSurvey = {},
             onNavigateToJourneyDetail = { _, _ -> }
         )

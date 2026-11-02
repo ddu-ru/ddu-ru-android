@@ -27,4 +27,8 @@ class SurveyRemoteDataSourceImpl @Inject constructor(
     override suspend fun skipSurvey(): Response<Unit> {
         return surveyService.skipSurvey()
     }
+
+    override suspend fun updateSurvey(request: SurveyRequest): ApiResponse<SurveyResponse> {
+        return surveyService.updateSurvey(request)
+    }
 }

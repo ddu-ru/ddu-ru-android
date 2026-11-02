@@ -129,6 +129,11 @@ class SurveyViewModel @Inject constructor(
     }
 
     private var isSkipping = false
+    private var isRetake = false
+
+    fun setRetakeMode(isRetake: Boolean) {
+        this.isRetake = isRetake
+    }
 
     fun skipSurvey(onSkipped: () -> Unit) {
         if (isSkipping) return
@@ -160,7 +165,13 @@ class SurveyViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = SurveyUiState.Loading
 
-            surveyRepository.submitSurvey(answers).fold(
+            val result = if (isRetake) {
+                surveyRepository.updateSurvey(answers)
+            } else {
+                surveyRepository.submitSurvey(answers)
+            }
+
+            result.fold(
                 onSuccess = { surveyResult ->
                     _uiState.value = SurveyUiState.Success(surveyResult)
                 },
