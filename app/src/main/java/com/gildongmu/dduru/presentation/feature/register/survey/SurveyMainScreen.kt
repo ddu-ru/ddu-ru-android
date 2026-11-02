@@ -20,7 +20,9 @@ fun SurveyMainScreen(
     onSurveyComplete: () -> Unit,
     onBackPressed: () -> Unit,
     viewModel: SurveyViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isFromMyPage: Boolean = false,
+    onSurveySkipped: () -> Unit = {}
 ) {
     val currentQuestion by viewModel.currentQuestion.collectAsState()
     val surveyState by viewModel.surveyState.collectAsState()
@@ -67,7 +69,13 @@ fun SurveyMainScreen(
             currentQuestion == 0 -> {
                 QuestionStart(
                     onNextClick = { viewModel.nextQuestion() },
-                    onGuestClick = onBackPressed
+                    onGuestClick = {
+                        if (isFromMyPage) {
+                            onBackPressed()
+                        } else {
+                            viewModel.skipSurvey(onSurveySkipped)
+                        }
+                    }
                 )
             }
 

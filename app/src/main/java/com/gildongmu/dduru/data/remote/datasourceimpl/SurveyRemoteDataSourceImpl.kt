@@ -7,6 +7,7 @@ import com.gildongmu.dduru.data.remote.dto.response.SurveyQuestionsResponse
 import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
 import com.gildongmu.dduru.data.remote.service.SurveyService
 import javax.inject.Inject
+import retrofit2.Response
 
 class SurveyRemoteDataSourceImpl @Inject constructor(
     private val surveyService: SurveyService
@@ -21,5 +22,9 @@ class SurveyRemoteDataSourceImpl @Inject constructor(
 
     override suspend fun getSurveyQuestions(): ApiResponse<SurveyQuestionsResponse> {
         return surveyService.getSurveyQuestions()
+    }
+
+    override suspend fun skipSurvey(): Response<Unit> {
+        return surveyService.skipSurvey()
     }
 }

@@ -48,7 +48,7 @@ fun SurveyQuestionScreen(
         questionNumber = question.displayOrder,
         totalQuestions = totalQuestions,
         questionTitle = question.questionText,
-        imageUrl = question.imageUrl,
+        imageUrl = if (isMultiSelect) null else question.imageUrl,
         questionNote = if (isMultiSelect) "(최대 ${question.maxSelect}개)" else null,
         onBackClick = onBackClick,
         content = {

@@ -86,4 +86,21 @@ class SurveyRepositoryImpl @Inject constructor(
             Result.failure(Exception("알 수 없는 오류: ${e.message}"))
         }
     }
+
+    override suspend fun skipSurvey(): Result<Unit> {
+        return try {
+            val response = surveyRemoteDataSource.skipSurvey()
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("설문을 건너뛰지 못했어요."))
+            }
+        } catch (e: java.io.IOException) {
+            Result.failure(Exception("네트워크 오류: 인터넷 연결을 확인해주세요."))
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(Exception("설문을 건너뛰지 못했어요."))
+        }
+    }
 }

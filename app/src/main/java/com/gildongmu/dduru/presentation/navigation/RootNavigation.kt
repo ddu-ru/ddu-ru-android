@@ -131,7 +131,10 @@ fun RootNavigation(
                             onSurveyComplete = {
                                 rootBackStack.add(RootNavRoute.RegisterProfile)
                             },
-                            onBackPressed = { navigateBack() }
+                            onBackPressed = { navigateBack() },
+                            onSurveySkipped = {
+                                rootBackStack.add(RootNavRoute.RegisterProfile)
+                            }
                         )
                     }
 
