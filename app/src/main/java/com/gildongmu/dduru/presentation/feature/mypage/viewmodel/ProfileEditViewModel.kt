@@ -1,8 +1,10 @@
 package com.gildongmu.dduru.presentation.feature.mypage.viewmodel
 
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.data.entity.image.ImagePresignedUrlUploader
 import com.gildongmu.dduru.domain.entity.mypage.MyProfile
 import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
@@ -11,8 +13,11 @@ import com.gildongmu.dduru.domain.register.profile.model.ProfileUpdateModel
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
 import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
 import com.gildongmu.dduru.domain.repository.MyPageRepository
+import com.gildongmu.dduru.domain.repository.SurveyRepository
+import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
+import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
 import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
@@ -45,10 +50,24 @@ data class ProfileEditUiState(
     val showLeaveConfirmDialog: Boolean = false,
     val nicknameErrorMessage: String? = null,
     val isNicknameVerified: Boolean = true,
-    val isCharacterLocked: Boolean = true
+    val isCharacterLocked: Boolean = true,
+    val selectedOption: ProfileEditOption = ProfileEditOption.CUSTOM,
+    val selectedImageUri: Uri? = null,
+    val selectedBgColorId: Int? = null,
+    val editingBgColorId: Int? = null,
+    val avatarImageUrl: String? = null,
+    val avatarName: String = "",
+    val showAvatarEditDialog: Boolean = false
 ) {
+    private val initialOption: ProfileEditOption
+        get() = if (imageType == ProfileImageType.AVATAR) ProfileEditOption.CHARACTER else ProfileEditOption.CUSTOM
+
     val isChanged: Boolean
-        get() = nickname != initialNickname || bio != initialBio
+        get() = nickname != initialNickname ||
+            bio != initialBio ||
+            selectedOption != initialOption ||
+            selectedImageUri != null ||
+            (selectedOption == ProfileEditOption.CHARACTER && selectedBgColorId != bgColorId)
 
     val isSaveEnabled: Boolean
         get() = nickname.isNotBlank() && isNicknameVerified && nicknameErrorMessage == null && isChanged && !isSaving
@@ -64,7 +83,9 @@ class ProfileEditViewModel @Inject constructor(
     private val myPageRepository: MyPageRepository,
     private val profileRepository: ProfileRepository,
     private val nicknameRepository: NicknameRepository,
-    private val onboardingStatusRepository: OnboardingStatusRepository
+    private val onboardingStatusRepository: OnboardingStatusRepository,
+    private val surveyRepository: SurveyRepository,
+    private val imageUploader: ImagePresignedUrlUploader
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<ProfileEditUiState>>(UiState.Loading)
@@ -75,10 +96,6 @@ class ProfileEditViewModel @Inject constructor(
 
     private var nicknameCheckJob: Job? = null
 
-    init {
-        loadProfile()
-    }
-
     fun loadProfile() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
@@ -86,24 +103,68 @@ class ProfileEditViewModel @Inject constructor(
                 .onSuccess { profile ->
                     val isSurveyCompleted = onboardingStatusRepository.getSurveyStatus()
                         .getOrNull() == SurveyStatus.COMPLETED
+                    val surveyResult = if (isSurveyCompleted) {
+                        surveyRepository.getMySurveyResult().getOrNull()
+                    } else {
+                        null
+                    }
                     _uiState.value = UiState.Success(
-                        profile.toUiState().copy(isCharacterLocked = !isSurveyCompleted)
+                        profile.toUiState().copy(
+                            isCharacterLocked = !isSurveyCompleted,
+                            avatarImageUrl = surveyResult?.imageUrl,
+                            avatarName = surveyResult?.characterName.orEmpty()
+                        )
                     )
                 }
                 .onFailure { _uiState.value = UiState.Failure }
         }
     }
 
+    fun onImageOptionSelected(option: ProfileEditOption) {
+        updateData { state ->
+            if (option == ProfileEditOption.CHARACTER && state.isCharacterLocked) {
+                state
+            } else {
+                state.copy(selectedOption = option)
+            }
+        }
+    }
+
+    fun onImageSelected(uri: Uri) {
+        updateData { it.copy(selectedImageUri = uri, selectedOption = ProfileEditOption.CUSTOM) }
+    }
+
+    fun onAvatarEditClick() {
+        updateData {
+            it.copy(
+                showAvatarEditDialog = true,
+                editingBgColorId = it.selectedBgColorId ?: ProfileBackgroundColorList.first().id
+            )
+        }
+    }
+
+    fun onAvatarBackgroundColorSelected(colorId: Int) {
+        updateData { it.copy(editingBgColorId = colorId) }
+    }
+
+    fun onAvatarEditConfirm() {
+        updateData { it.copy(selectedBgColorId = it.editingBgColorId, showAvatarEditDialog = false) }
+    }
+
+    fun onAvatarEditDismiss() {
+        updateData { it.copy(showAvatarEditDialog = false) }
+    }
+
     fun onNicknameChange(nickname: String) {
         nicknameCheckJob?.cancel()
         val initialNickname = (_uiState.value as? UiState.Success)?.data?.initialNickname
-        if (nickname == initialNickname) {
+        val validation = NicknameValidator.validate(nickname)
+        val isValid = validation == NicknameValidationResult.VALID
+        if (nickname == initialNickname && isValid) {
             updateData { it.copy(nickname = nickname, nicknameErrorMessage = null, isNicknameVerified = true) }
             return
         }
 
-        val validation = NicknameValidator.validate(nickname)
-        val isValid = validation == NicknameValidationResult.VALID
         updateData {
             it.copy(
                 nickname = nickname,
@@ -175,13 +236,38 @@ class ProfileEditViewModel @Inject constructor(
 
         viewModelScope.launch {
             updateData { it.copy(isSaving = true) }
+
+            val isAvatar = state.selectedOption == ProfileEditOption.CHARACTER
+            val uploadedImageUrl = when {
+                isAvatar -> null
+                state.selectedImageUri != null -> {
+                    imageUploader.uploadImage(state.selectedImageUri).getOrElse { error ->
+                        updateData { it.copy(isSaving = false) }
+                        _sideEffect.emit(
+                            ProfileEditSideEffect.ShowMessage(error.message ?: "사진 업로드에 실패했어요.")
+                        )
+                        return@launch
+                    }
+                }
+                state.imageType == ProfileImageType.UPLOADED -> state.profileImageUrl
+                else -> null
+            }
+
             profileRepository.updateProfile(
                 ProfileUpdateModel(
                     nickname = state.nickname.trim(),
-                    profileImageType = state.imageType,
-                    uploadedImageUrl = state.profileImageUrl.takeIf { state.imageType == ProfileImageType.UPLOADED },
-                    bgColorId = state.bgColorId.takeIf { state.imageType == ProfileImageType.AVATAR },
-                    bio = state.bio.trim().ifBlank { null }
+                    profileImageType = when {
+                        isAvatar -> ProfileImageType.AVATAR
+                        uploadedImageUrl != null -> ProfileImageType.UPLOADED
+                        else -> ProfileImageType.DEFAULT
+                    },
+                    uploadedImageUrl = uploadedImageUrl,
+                    bgColorId = if (isAvatar) {
+                        state.selectedBgColorId ?: ProfileBackgroundColorList.first().id
+                    } else {
+                        null
+                    },
+                    bio = state.bio.trim()
                 )
             ).onSuccess {
                 updateData {
@@ -204,22 +290,36 @@ class ProfileEditViewModel @Inject constructor(
     }
 }
 
-private fun MyProfile.toUiState() = ProfileEditUiState(
-    nickname = nickname,
-    bio = bio.orEmpty(),
-    birthDate = birthday?.replace("-", ".").orEmpty(),
-    gender = when (gender) {
-        "M" -> "남성"
-        "F" -> "여성"
-        else -> ""
-    },
-    phoneNumber = phoneNumber?.toPhoneNumberText().orEmpty(),
-    imageType = ProfileImageType.entries.firstOrNull { it.apiValue == profileImageType } ?: ProfileImageType.DEFAULT,
-    profileImageUrl = profileImageUrl,
-    bgColorId = bgColorId,
-    initialNickname = nickname,
-    initialBio = bio.orEmpty()
-)
+private fun MyProfile.toUiState(): ProfileEditUiState {
+    val imageType = ProfileImageType.entries.firstOrNull { it.apiValue == profileImageType }
+        ?: ProfileImageType.DEFAULT
+    val nicknameValidation = NicknameValidator.validate(nickname)
+    val isNicknameValid = nicknameValidation == NicknameValidationResult.VALID
+    return ProfileEditUiState(
+        nickname = nickname,
+        nicknameErrorMessage = if (isNicknameValid) null else nicknameValidation.toMessage(),
+        isNicknameVerified = isNicknameValid,
+        bio = bio.orEmpty(),
+        birthDate = birthday?.replace("-", ".").orEmpty(),
+        gender = when (gender) {
+            "M" -> "남성"
+            "F" -> "여성"
+            else -> ""
+        },
+        phoneNumber = phoneNumber?.toPhoneNumberText().orEmpty(),
+        imageType = imageType,
+        profileImageUrl = profileImageUrl,
+        bgColorId = bgColorId,
+        initialNickname = nickname,
+        initialBio = bio.orEmpty(),
+        selectedOption = if (imageType == ProfileImageType.AVATAR) {
+            ProfileEditOption.CHARACTER
+        } else {
+            ProfileEditOption.CUSTOM
+        },
+        selectedBgColorId = bgColorId
+    )
+}
 
 private fun String.toPhoneNumberText(): String =
     if (length == 11) "${substring(0, 3)}-${substring(3, 7)}-${substring(7)}" else this

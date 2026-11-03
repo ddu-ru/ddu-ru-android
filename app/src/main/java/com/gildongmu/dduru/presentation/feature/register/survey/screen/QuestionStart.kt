@@ -5,18 +5,24 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.requiredSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.blur
-import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
@@ -33,17 +39,23 @@ fun QuestionStart(
     onNextClick: () -> Unit,
     onGuestClick: () -> Unit
 ) {
+    val buttonShape = RoundedCornerShape(12.dp)
+    val buttonShadowColor = DduruTheme.colors.black.copy(alpha = 0.14f)
+
     Column(
         modifier = modifier
             .fillMaxSize()
             .background(color = DduruTheme.colors.gray50)
-            .padding(top = 100.dp, bottom = 40.dp),
+            .statusBarsPadding()
+            .padding(top = 107.dp),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
         SpeechBubble(
             modifier = Modifier.width(325.dp),
             direction = BubbleArrowDirection.Bottom,
             cornerRadius = 24.dp,
+            arrowWidth = 12.dp,
+            shadowElevation = 8.dp,
             containerColor = DduruTheme.colors.gray0
         ) {
             Text(
@@ -55,48 +67,52 @@ fun QuestionStart(
             )
         }
 
-        Spacer(modifier = Modifier.height(20.dp))
-
         Box(
-            contentAlignment = Alignment.BottomCenter,
-            modifier = Modifier.width(267.dp).height(267.dp)
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.size(267.dp)
         ) {
             Image(
                 painter = painterResource(id = R.drawable.ic_shadow),
                 contentDescription = null,
-                contentScale = ContentScale.None,
                 modifier = Modifier
-                    .alpha(0.3f)
-                    .blur(radius = 15.dp)
-                    .padding(1.dp)
-                    .width(70.dp)
-                    .height(8.dp)
+                    .offset(x = 5.dp, y = 115.dp)
+                    .size(width = 100.dp, height = 38.dp)
+                    .blur(radius = 5.dp)
             )
 
             Image(
                 painter = painterResource(id = R.drawable.img_survey_start),
                 contentDescription = "뚜비 캐릭터",
-                modifier = Modifier
-                    .width(278.dp)
-                    .height(278.dp),
-                contentScale = ContentScale.Crop
+                modifier = Modifier.requiredSize(317.dp)
             )
         }
 
-        Spacer(modifier = Modifier.height(83.dp))
+        Spacer(modifier = Modifier.height(80.dp))
 
         DduruButton(
             text = "네, 좋아요!",
             onClick = onNextClick,
-            modifier = Modifier.width(343.dp)
+            modifier = Modifier
+                .padding(horizontal = 16.dp)
+                .fillMaxWidth()
+                .height(48.dp)
+                .shadow(
+                    elevation = 6.dp,
+                    shape = buttonShape,
+                    ambientColor = buttonShadowColor,
+                    spotColor = buttonShadowColor
+                ),
+            textStyle = DduruTheme.typography.H1,
+            contentPadding = PaddingValues(horizontal = 18.dp, vertical = 3.dp),
+            shape = buttonShape
         )
 
-        Spacer(modifier = Modifier.height(25.dp))
+        Spacer(modifier = Modifier.height(27.dp))
 
         Text(
             text = "다음에 할게요",
             modifier = Modifier.clickable { onGuestClick() },
-            style = DduruTheme.typography.Body3,
+            style = DduruTheme.typography.Caption2,
             color = DduruTheme.colors.gray500,
             textAlign = TextAlign.Center
         )

@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.register.survey
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -8,6 +7,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
@@ -15,7 +15,6 @@ import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.presentation.feature.register.survey.screen.QuestionStart
 import com.gildongmu.dduru.presentation.feature.register.survey.screen.SurveyQuestionScreen
 import com.gildongmu.dduru.presentation.feature.register.survey.screen.SurveyResultScreen
-
 @Composable
 fun SurveyMainScreen(
     onSurveyComplete: () -> Unit,
@@ -114,38 +113,39 @@ fun SurveyMainScreen(
                         emptySet()
                     }
 
-                    SurveyQuestionScreen(
-                        question = question,
-                        totalQuestions = questions.size,
-                        selectedOption = selectedOption,
-                        selectedOptions = selectedOptions,
-                        onOptionSelected = { answer ->
-                            viewModel.updateAnswer(question.id, answer)
-                            if (isLastQuestion) {
-                                viewModel.submitSurvey()
-                            } else {
-                                viewModel.nextQuestion()
+                    key(question.id) {
+                        SurveyQuestionScreen(
+                            question = question,
+                            totalQuestions = questions.size,
+                            selectedOption = selectedOption,
+                            selectedOptions = selectedOptions,
+                            onOptionSelected = { answer ->
+                                viewModel.updateAnswer(question.id, answer)
+                                if (isLastQuestion) {
+                                    viewModel.submitSurvey()
+                                } else {
+                                    viewModel.nextQuestion()
+                                }
+                            },
+                            onOptionToggled = { answer ->
+                                if (question.id == "activity_tags") {
+                                    viewModel.toggleActivityTag(answer)
+                                }
+                            },
+                            onNextClick = {
+                                if (isLastQuestion) {
+                                    viewModel.submitSurvey()
+                                } else {
+                                    viewModel.nextQuestion()
+                                }
+                            },
+                            onBackClick = {
+                                if (currentQuestion > 0) {
+                                    viewModel.previousQuestion()
+                                }
                             }
-                        },
-                        onOptionToggled = { answer ->
-                            if (question.id == "activity_tags") {
-                                viewModel.toggleActivityTag(answer)
-                            }
-                        },
-                        onNextClick = {
-                            if (isLastQuestion) {
-                                viewModel.submitSurvey()
-                            } else {
-                                viewModel.nextQuestion()
-                            }
-                        },
-                        onBackClick = {
-                            Log.d("SurveyBack", "화면 뒤로 버튼 클릭 - Question: $currentQuestion")
-                            if (currentQuestion > 0) {
-                                viewModel.previousQuestion()
-                            }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

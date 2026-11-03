@@ -42,6 +42,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -73,6 +74,11 @@ fun ProfileEditRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val galleryLauncher = rememberGalleryLauncher(onImageSelected = viewModel::onImageSelected)
+
+    LaunchedEffect(Unit) {
+        viewModel.loadProfile()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
@@ -91,7 +97,11 @@ fun ProfileEditRoute(
         UiState.Failure -> DduruFailureScreen(message = "프로필 정보를 불러오지 못했어요.")
         is UiState.Success -> {
             val data = state.data
-            val isAvatar = data.imageType == ProfileImageType.AVATAR
+            val backgroundColors = ProfileBackgroundColorList
+            val avatarImage: Any = data.avatarImageUrl
+                ?: data.profileImageUrl.takeIf { data.imageType == ProfileImageType.AVATAR }
+                ?: R.drawable.img_penguin_personallity
+
             ProfileEditScreen(
                 selectedTab = ProfileEditTab.INFO,
                 onTabClick = { tab ->
@@ -103,7 +113,7 @@ fun ProfileEditRoute(
                 },
                 imageOptions = listOf(
                     ProfileImageCropOption(
-                        image = data.profileImageUrl.takeIf { isAvatar } ?: R.drawable.img_penguin_personallity,
+                        image = avatarImage,
                         type = ProfileEditOption.CHARACTER,
                         scale = 1.6f,
                         offsetRatio = 0.16f
@@ -114,13 +124,19 @@ fun ProfileEditRoute(
                         type = ProfileEditOption.CUSTOM
                     )
                 ),
-                selectedImageOption = if (isAvatar) ProfileEditOption.CHARACTER else ProfileEditOption.CUSTOM,
-                selectedImageUri = null,
-                characterBackgroundColor = ProfileBackgroundColorList
-                    .firstOrNull { it.id == data.bgColorId }?.color
-                    ?: ProfileBackgroundColorList.first().color,
-                onImageOptionSelected = {},
-                onPhotoActionClick = {},
+                selectedImageOption = data.selectedOption,
+                selectedImageUri = data.selectedImageUri,
+                characterBackgroundColor = backgroundColors
+                    .firstOrNull { it.id == data.selectedBgColorId }?.color
+                    ?: backgroundColors.first().color,
+                onImageOptionSelected = { option -> viewModel.onImageOptionSelected(option.type) },
+                onPhotoActionClick = {
+                    if (data.selectedOption == ProfileEditOption.CHARACTER) {
+                        viewModel.onAvatarEditClick()
+                    } else {
+                        galleryLauncher.launch("image/*")
+                    }
+                },
                 nickname = data.nickname,
                 onNicknameChange = viewModel::onNicknameChange,
                 onRandomNicknameClick = viewModel::onRandomNicknameClick,
@@ -133,6 +149,19 @@ fun ProfileEditRoute(
                 onBackClick = viewModel::onBackClick,
                 onSaveClick = viewModel::onSaveClick,
                 isCharacterLocked = data.isCharacterLocked,
+                showAvatarEditDialog = data.showAvatarEditDialog,
+                avatarEditBackgroundColor = backgroundColors
+                    .firstOrNull { it.id == data.editingBgColorId }?.color
+                    ?: backgroundColors.first().color,
+                avatarImage = avatarImage,
+                avatarName = data.avatarName,
+                onAvatarBackgroundColorSelected = { color ->
+                    backgroundColors.firstOrNull { it.color == color }?.let {
+                        viewModel.onAvatarBackgroundColorSelected(it.id)
+                    }
+                },
+                onAvatarEditConfirm = viewModel::onAvatarEditConfirm,
+                onAvatarEditDismiss = viewModel::onAvatarEditDismiss,
                 nicknameErrorMessage = data.nicknameErrorMessage.orEmpty(),
                 showLeaveConfirmDialog = data.showLeaveConfirmDialog,
                 onLeaveConfirmDismiss = viewModel::onLeaveConfirmDismiss,
@@ -167,7 +196,7 @@ fun ProfileEditScreen(
     isCharacterLocked: Boolean = false,
     showAvatarEditDialog: Boolean = false,
     avatarEditBackgroundColor: Color = DduruTheme.colors.gray100,
-    avatarImageRes: Int = R.drawable.img_penguin_personallity,
+    avatarImage: Any = R.drawable.img_penguin_personallity,
     avatarName: String = "",
     onAvatarBackgroundColorSelected: (Color) -> Unit = {},
     onAvatarEditConfirm: () -> Unit = {},
@@ -261,7 +290,7 @@ fun ProfileEditScreen(
         if (showAvatarEditDialog) {
             ProfileCharacterCustomDialog(
                 selectedBg = avatarEditBackgroundColor,
-                characterImage = avatarImageRes,
+                characterImage = avatarImage,
                 avatarName = avatarName,
                 onBgColorSelected = onAvatarBackgroundColorSelected,
                 onConfirm = onAvatarEditConfirm,
