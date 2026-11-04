@@ -124,7 +124,6 @@ fun RecruitmentAgeSection(
                     )
                 )
             },
-            enabled = !uiState.isAgeIrrelevant,
             isAgeIrrelevant = uiState.isAgeIrrelevant,
             modifier = Modifier.fillMaxWidth()
         )
