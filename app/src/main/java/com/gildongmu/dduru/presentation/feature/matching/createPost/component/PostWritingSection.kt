@@ -46,8 +46,7 @@ fun PostWritingSection(
             value = uiState.title,
             onValueChange = { onUiStateChange(uiState.copy(title = it)) },
             maxLength = 40,
-            placeholder = "제목은 최소 5자 이상입니다.",
-            counterEndPadding = 4.dp
+            placeholder = "제목은 최소 5자 이상입니다."
         )
 
         Spacer(modifier = Modifier.weight(24f))
