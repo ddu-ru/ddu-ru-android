@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -108,13 +109,15 @@ fun MatchingDetailTopActionButton(
             horizontalArrangement = Arrangement.Center
         ) {
             Row(
-                modifier = Modifier.noRippleClickable(onClick = onLikeClick),
+                modifier = Modifier
+                    .sizeIn(minWidth = 48.dp, minHeight = 48.dp)
+                    .noRippleClickable(onClick = onLikeClick),
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Icon(
                     painter = painterResource(id = likeIconRes),
                     contentDescription = null,
-                    tint = DduruTheme.colors.black,
+                    tint = if (hasLiked) DduruTheme.colors.validationRed else DduruTheme.colors.black,
                     modifier = Modifier.size(20.dp)
                 )
 

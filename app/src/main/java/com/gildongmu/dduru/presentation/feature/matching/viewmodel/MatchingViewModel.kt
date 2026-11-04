@@ -25,6 +25,8 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 
 @HiltViewModel
 class MatchingViewModel @Inject constructor(
@@ -89,10 +91,30 @@ class MatchingViewModel @Inject constructor(
     }
 
     fun onPostLikeClick(id: Long) {
+        val previousItem = (_uiState.value as? UiState.Success)?.data?.posts
+            ?.firstOrNull { it.id == id } ?: return
+        updateMatchingUiState {
+            copy(posts = posts.map { post ->
+                if (post.id == id) post.copy(isLiked = !post.isLiked) else post
+            }.toPersistentList())
+        }
         viewModelScope.launch {
             runCatching { postService.toggleLike(id) }
+                .onFailure {
+                    updateMatchingUiState {
+                        copy(posts = posts.map { post ->
+                            if (post.id == id) previousItem else post
+                        }.toPersistentList())
+                    }
+                }
                 .onSuccess { response ->
-                    if (response.isSuccessful) loadPosts(showLoading = false)
+                    if (!response.isSuccessful) {
+                        updateMatchingUiState {
+                            copy(posts = posts.map { post ->
+                                if (post.id == id) previousItem else post
+                            }.toPersistentList())
+                        }
+                    }
                 }
         }
     }
@@ -183,7 +205,7 @@ class MatchingViewModel @Inject constructor(
 
     private fun PostSummaryResponse.toUiModel() = com.gildongmu.dduru.presentation.feature.matching.model.MatchingPostCardUiModel(
         id = id, title = title, authorName = author.nickname, location = destination,
-        dateRange = "$startDate - $endDate", currentMemberCount = recruitCount, maxMemberCount = recruitCapacity,
+        dateRange = compactDateRange(startDate, endDate), currentMemberCount = recruitCount, maxMemberCount = recruitCapacity,
         gender = when (preferredGender) { "M" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.MALE; "F" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.FEMALE; else -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.ANY },
         companionType = when (companionType) { "PARTIAL" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.PARTIAL; "MEAL" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.MEAL; else -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.FULL },
         isSuperHost = author.isSuperHost,
@@ -191,4 +213,17 @@ class MatchingViewModel @Inject constructor(
         thumbnailImageUrl = photoUrl,
         thumbnailImageRes = com.gildongmu.dduru.R.drawable.fukuoka
     )
+
+    private fun compactDateRange(startDate: String, endDate: String): String {
+        val formatter = DateTimeFormatter.ofPattern("MM.dd")
+        val start = startDate.toLocalDateOrNull()
+        val end = endDate.toLocalDateOrNull()
+        return when {
+            start == null || end == null -> "$startDate - $endDate"
+            start == end -> start.format(formatter)
+            else -> "${start.format(formatter)} - ${end.format(formatter)}"
+        }
+    }
+
+    private fun String.toLocalDateOrNull(): LocalDate? = runCatching { LocalDate.parse(this) }.getOrNull()
 }
