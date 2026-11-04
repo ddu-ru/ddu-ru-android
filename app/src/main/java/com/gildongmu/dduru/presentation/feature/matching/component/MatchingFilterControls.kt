@@ -25,10 +25,13 @@ import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingDestinationOption
 
 @Composable
 fun MatchingDestinationField(
-    selectedDestinationName: String?,
+    selectedDestination: MatchingDestinationOption?,
+    onClick: () -> Unit,
+    onClearClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -41,21 +44,39 @@ fun MatchingDestinationField(
                 color = DduruTheme.colors.gray200,
                 shape = RoundedCornerShape(99.dp)
             )
-            .padding(horizontal = 16.dp, vertical = 12.dp),
+            .noRippleClickable(onClick = onClick)
+            .padding(horizontal = 16.dp, vertical = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.SpaceBetween
     ) {
-        Text(
-            text = selectedDestinationName ?: "여행지 선택..",
-            style = DduruTheme.typography.Body1,
-            color = DduruTheme.colors.gray500
-        )
-        Icon(
-            painter = painterResource(id = R.drawable.ic_matching_searching),
-            contentDescription = null,
-            tint = DduruTheme.colors.gray500,
-            modifier = Modifier.size(24.dp)
-        )
+        if (selectedDestination == null) {
+            Text(
+                text = "여행지를 선택해 주세요",
+                style = DduruTheme.typography.Body1,
+                color = DduruTheme.colors.gray500
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.ic_matching_searching),
+                contentDescription = null,
+                tint = DduruTheme.colors.gray500,
+                modifier = Modifier.size(24.dp)
+            )
+        } else {
+            Text(
+                text = selectedDestination.name,
+                style = DduruTheme.typography.Title3,
+                color = DduruTheme.colors.gray900
+            )
+            Icon(
+                painter = painterResource(id = R.drawable.ic_close),
+                contentDescription = "여행지 선택 해제",
+                tint = DduruTheme.colors.gray400,
+                modifier = Modifier
+                    .size(32.dp)
+                    .padding(8.dp)
+                    .noRippleClickable(onClick = onClearClick)
+            )
+        }
     }
 }
 
@@ -160,19 +181,34 @@ private fun MatchingFilterSelectableChip(
 }
 
 @Composable
-fun MatchingUnderlineInput(
-    text: String,
+fun MatchingParticipantCountField(
+    selectedCount: Int?,
+    placeholder: String,
+    expanded: Boolean,
+    onExpandedChange: (Boolean) -> Unit,
+    onSelected: (Int?) -> Unit,
     modifier: Modifier = Modifier
 ) {
     Box(
-        modifier = modifier.height(48.dp),
+        modifier = modifier
+            .height(48.dp)
+            .noRippleClickable { onExpandedChange(!expanded) },
         contentAlignment = Alignment.CenterStart
     ) {
         Text(
-            text = text,
+            text = selectedCount?.let { "${it}명" } ?: placeholder,
             style = DduruTheme.typography.Body1,
-            color = DduruTheme.colors.gray400,
+            color = if (selectedCount == null) DduruTheme.colors.gray400 else DduruTheme.colors.gray900,
             modifier = Modifier.padding(horizontal = 16.dp)
+        )
+        Icon(
+            painter = painterResource(id = R.drawable.ic_chevron_down),
+            contentDescription = null,
+            tint = DduruTheme.colors.gray500,
+            modifier = Modifier
+                .align(Alignment.CenterEnd)
+                .padding(end = 12.dp)
+                .size(16.dp)
         )
         Spacer(
             modifier = Modifier
@@ -180,6 +216,16 @@ fun MatchingUnderlineInput(
                 .fillMaxWidth()
                 .height(2.dp)
                 .background(DduruTheme.colors.gray100)
+        )
+        MatchingDropdownMenu(
+            expanded = expanded,
+            items = listOf<Int?>(null) + (1..10).toList(),
+            itemLabel = { count -> count?.let { "${it}명" } ?: "선택 안 함" },
+            onItemSelected = { count ->
+                onSelected(count)
+                onExpandedChange(false)
+            },
+            onDismissRequest = { onExpandedChange(false) }
         )
     }
 }
