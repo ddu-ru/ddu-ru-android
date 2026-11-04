@@ -55,7 +55,7 @@ fun ThumbnailAndTagSection(
             uiModel = MatchingCreatePostStep.THUMBNAIL_AND_TAG.headerUiModel
         )
 
-        Spacer(modifier = Modifier.weight(24f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "대표사진",
@@ -63,7 +63,7 @@ fun ThumbnailAndTagSection(
             color = DduruTheme.colors.gray868
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         ThumbnailImageCard(
             regionName = uiState.regionName,
@@ -73,7 +73,7 @@ fun ThumbnailAndTagSection(
             onChangeClick = onThumbnailImageChange
         )
 
-        Spacer(modifier = Modifier.weight(40f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "해시태그",
@@ -81,7 +81,7 @@ fun ThumbnailAndTagSection(
             color = DduruTheme.colors.gray868
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         RoundedMatchingTextField(
             value = uiState.tagInput,
@@ -112,7 +112,7 @@ fun ThumbnailAndTagSection(
             )
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = uiState.tagValidationMessage
@@ -125,7 +125,7 @@ fun ThumbnailAndTagSection(
             }
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "추가된 태그",
@@ -133,7 +133,7 @@ fun ThumbnailAndTagSection(
             color = DduruTheme.colors.gray800
         )
 
-        Spacer(modifier = Modifier.weight(16f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -168,7 +168,7 @@ fun ThumbnailAndTagSection(
             }
         }
 
-        Spacer(modifier = Modifier.weight(16f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "인기 태그",
@@ -176,7 +176,7 @@ fun ThumbnailAndTagSection(
             color = DduruTheme.colors.gray800
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -189,12 +189,15 @@ fun ThumbnailAndTagSection(
                     textColor = DduruTheme.colors.gray700,
                     textStyle = DduruTheme.typography.Caption1,
                     backgroundColor = DduruTheme.colors.gray200,
-                    contentPadding = PaddingValues(12.dp)
+                    contentPadding = PaddingValues(12.dp),
+                    modifier = Modifier.clickable {
+                        onTagInputChange(popularTag)
+                    }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.weight(33f))
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
