@@ -124,6 +124,10 @@ fun RootNavigation(
                         SignupRoute(
                             onSignupComplete = {
                                 rootBackStack.add(RootNavRoute.RegisterSurvey)
+                            },
+                            onLoginExpired = {
+                                rootBackStack.clear()
+                                rootBackStack.add(RootNavRoute.Login)
                             }
                         )
                     }

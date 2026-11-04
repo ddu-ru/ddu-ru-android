@@ -43,10 +43,11 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
-import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
+import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
 import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.LabelValueRow
 import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditSideEffect
@@ -74,6 +75,7 @@ fun ProfileEditRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val errorToast = LocalDduruErrorToast.current
     val galleryLauncher = rememberGalleryLauncher(onImageSelected = viewModel::onImageSelected)
 
     LaunchedEffect(Unit) {
@@ -86,6 +88,7 @@ fun ProfileEditRoute(
                 ProfileEditSideEffect.NavigateBack -> onBackClick()
                 is ProfileEditSideEffect.ShowMessage ->
                     Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+                is ProfileEditSideEffect.ShowError -> errorToast.show(sideEffect.toast)
             }
         }
     }
@@ -94,7 +97,10 @@ fun ProfileEditRoute(
 
     when (val state = uiState) {
         UiState.Loading, UiState.Empty -> DduruLoadingScreen()
-        UiState.Failure -> DduruFailureScreen(message = "프로필 정보를 불러오지 못했어요.")
+        UiState.Failure -> DduruServiceFailureScreen(
+            onRetryClick = viewModel::loadProfile,
+            onBackClick = onBackClick
+        )
         is UiState.Success -> {
             val data = state.data
             val backgroundColors = ProfileBackgroundColorList
@@ -167,6 +173,19 @@ fun ProfileEditRoute(
                 onLeaveConfirmDismiss = viewModel::onLeaveConfirmDismiss,
                 onLeaveConfirm = viewModel::onLeaveConfirm
             )
+
+            if (data.showSaveFailedDialog) {
+                ConfirmDialog(
+                    title = "저장하지 못했어요",
+                    description = "연결이 원활하지 않아요.\n다시 시도해 주세요.",
+                    onDismiss = viewModel::onSaveFailedDismiss,
+                    onConfirm = viewModel::onSaveFailedRetry,
+                    dismissText = "뒤로가기",
+                    confirmText = "다시 시도",
+                    confirmBackgroundColor = DduruTheme.colors.gray900,
+                    confirmTextColor = DduruTheme.colors.gray0
+                )
+            }
         }
     }
 }

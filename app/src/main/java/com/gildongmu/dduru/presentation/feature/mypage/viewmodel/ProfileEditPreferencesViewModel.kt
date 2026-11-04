@@ -7,10 +7,13 @@ import com.gildongmu.dduru.domain.entity.mypage.AvailableDate
 import com.gildongmu.dduru.domain.entity.mypage.DestinationPreference
 import com.gildongmu.dduru.domain.entity.mypage.TravelPreference
 import com.gildongmu.dduru.domain.repository.MyPageRepository
+import com.gildongmu.dduru.presentation.component.DduruToastMessage
+import com.gildongmu.dduru.presentation.component.toErrorToast
 import com.gildongmu.dduru.presentation.feature.mypage.model.MAX_PREFERRED_DATE_COUNT
 import com.gildongmu.dduru.presentation.feature.mypage.model.PreferredDateRange
 import com.gildongmu.dduru.presentation.feature.mypage.model.TravelPreferenceDraft
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.IOException
 import java.time.LocalDate
 import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableSharedFlow
@@ -27,7 +30,8 @@ data class ProfileEditPreferencesUiState(
     val dateRanges: List<PreferredDateRange> = emptyList(),
     val initialDestinations: List<DestinationPreference> = emptyList(),
     val initialDateRanges: List<PreferredDateRange> = emptyList(),
-    val isSaving: Boolean = false
+    val isSaving: Boolean = false,
+    val showSaveFailedDialog: Boolean = false
 ) {
     val isChanged: Boolean
         get() = destinations != initialDestinations || dateRanges != initialDateRanges
@@ -40,6 +44,7 @@ sealed interface ProfileEditPreferencesSideEffect {
     data object NavigateBack : ProfileEditPreferencesSideEffect
     data object NavigateToDestinationSelect : ProfileEditPreferencesSideEffect
     data class ShowMessage(val message: String) : ProfileEditPreferencesSideEffect
+    data class ShowError(val toast: DduruToastMessage) : ProfileEditPreferencesSideEffect
 }
 
 @HiltViewModel
@@ -148,11 +153,22 @@ class ProfileEditPreferencesViewModel @Inject constructor(
                 }
                 _sideEffect.emit(ProfileEditPreferencesSideEffect.ShowMessage("저장했어요."))
                 _sideEffect.emit(ProfileEditPreferencesSideEffect.NavigateBack)
-            }.onFailure {
-                updateData { it.copy(isSaving = false) }
-                _sideEffect.emit(ProfileEditPreferencesSideEffect.ShowMessage("저장에 실패했어요. 다시 시도해 주세요."))
+            }.onFailure { error ->
+                updateData { it.copy(isSaving = false, showSaveFailedDialog = error is IOException) }
+                if (error !is IOException) {
+                    _sideEffect.emit(ProfileEditPreferencesSideEffect.ShowError(error.toErrorToast()))
+                }
             }
         }
+    }
+
+    fun onSaveFailedDismiss() {
+        updateData { it.copy(showSaveFailedDialog = false) }
+    }
+
+    fun onSaveFailedRetry() {
+        updateData { it.copy(showSaveFailedDialog = false) }
+        onConfirmClick()
     }
 
     private fun updateData(transform: (ProfileEditPreferencesUiState) -> ProfileEditPreferencesUiState) {

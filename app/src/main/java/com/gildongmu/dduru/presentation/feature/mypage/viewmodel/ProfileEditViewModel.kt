@@ -14,12 +14,16 @@ import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
 import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
 import com.gildongmu.dduru.domain.repository.MyPageRepository
 import com.gildongmu.dduru.domain.repository.SurveyRepository
+import com.gildongmu.dduru.presentation.component.DduruErrorToasts
+import com.gildongmu.dduru.presentation.component.DduruToastMessage
+import com.gildongmu.dduru.presentation.component.toErrorToast
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
 import com.gildongmu.dduru.presentation.feature.register.profile.util.toMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.io.IOException
 import javax.inject.Inject
 import kotlinx.coroutines.Job
 import kotlinx.coroutines.delay
@@ -48,6 +52,7 @@ data class ProfileEditUiState(
     val initialBio: String = "",
     val isSaving: Boolean = false,
     val showLeaveConfirmDialog: Boolean = false,
+    val showSaveFailedDialog: Boolean = false,
     val nicknameErrorMessage: String? = null,
     val isNicknameVerified: Boolean = true,
     val isCharacterLocked: Boolean = true,
@@ -76,6 +81,7 @@ data class ProfileEditUiState(
 sealed interface ProfileEditSideEffect {
     data object NavigateBack : ProfileEditSideEffect
     data class ShowMessage(val message: String) : ProfileEditSideEffect
+    data class ShowError(val toast: DduruToastMessage) : ProfileEditSideEffect
 }
 
 @HiltViewModel
@@ -208,7 +214,7 @@ class ProfileEditViewModel @Inject constructor(
         viewModelScope.launch {
             nicknameRepository.getRandomNickname()
                 .onSuccess { nickname -> onNicknameChange(nickname) }
-                .onFailure { _sideEffect.emit(ProfileEditSideEffect.ShowMessage("랜덤 닉네임을 불러오지 못했어요.")) }
+                .onFailure { _sideEffect.emit(ProfileEditSideEffect.ShowError(DduruErrorToasts.ServiceFailed)) }
         }
     }
 
@@ -242,10 +248,7 @@ class ProfileEditViewModel @Inject constructor(
                 isAvatar -> null
                 state.selectedImageUri != null -> {
                     imageUploader.uploadImage(state.selectedImageUri).getOrElse { error ->
-                        updateData { it.copy(isSaving = false) }
-                        _sideEffect.emit(
-                            ProfileEditSideEffect.ShowMessage(error.message ?: "사진 업로드에 실패했어요.")
-                        )
+                        showSaveFailure(error)
                         return@launch
                     }
                 }
@@ -275,11 +278,26 @@ class ProfileEditViewModel @Inject constructor(
                 }
                 _sideEffect.emit(ProfileEditSideEffect.ShowMessage("프로필을 저장했어요."))
                 _sideEffect.emit(ProfileEditSideEffect.NavigateBack)
-            }.onFailure {
-                updateData { it.copy(isSaving = false) }
-                _sideEffect.emit(ProfileEditSideEffect.ShowMessage("저장에 실패했어요. 다시 시도해 주세요."))
+            }.onFailure { error ->
+                showSaveFailure(error)
             }
         }
+    }
+
+    private suspend fun showSaveFailure(error: Throwable) {
+        updateData { it.copy(isSaving = false, showSaveFailedDialog = error is IOException) }
+        if (error !is IOException) {
+            _sideEffect.emit(ProfileEditSideEffect.ShowError(error.toErrorToast()))
+        }
+    }
+
+    fun onSaveFailedDismiss() {
+        updateData { it.copy(showSaveFailedDialog = false) }
+    }
+
+    fun onSaveFailedRetry() {
+        updateData { it.copy(showSaveFailedDialog = false) }
+        onSaveClick()
     }
 
     private fun updateData(transform: (ProfileEditUiState) -> ProfileEditUiState) {

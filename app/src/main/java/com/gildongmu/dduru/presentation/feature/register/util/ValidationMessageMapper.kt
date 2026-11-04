@@ -1,22 +1,26 @@
 package com.gildongmu.dduru.presentation.feature.register.util
 
+import androidx.annotation.StringRes
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.presentation.feature.register.state.AuthCodeValidationResult
 import com.gildongmu.dduru.presentation.feature.register.state.PhoneValidationResult
 
 object ValidationMessageMapper {
-    fun PhoneValidationResult.toMessage(): String =
+    @StringRes
+    fun PhoneValidationResult.toMessageRes(): Int? =
         when (this) {
-            PhoneValidationResult.EMPTY -> "전화번호를 입력해주세요."
-            PhoneValidationResult.NOT_DIGITS -> "숫자만 입력 가능해요."
-            PhoneValidationResult.INVALID_LENGTH -> "전화번호를 정확히 입력해주세요."
-            PhoneValidationResult.INVALID_FORMAT -> "전화번호를 정확히 입력해주세요."
-            PhoneValidationResult.VALID -> ""
+            PhoneValidationResult.EMPTY -> R.string.phone_error_empty
+            PhoneValidationResult.NOT_DIGITS,
+            PhoneValidationResult.INVALID_LENGTH,
+            PhoneValidationResult.INVALID_FORMAT -> R.string.phone_error_invalid_format
+            PhoneValidationResult.VALID -> null
         }
 
-    fun AuthCodeValidationResult.toMessage(): String =
+    @StringRes
+    fun AuthCodeValidationResult.toMessageRes(): Int? =
         when (this) {
-            AuthCodeValidationResult.EMPTY -> "인증번호를 입력해주세요."
-            AuthCodeValidationResult.EXPIRED_TIME -> "인증 시간이 만료되었어요. 인증 번호를 다시 받아주세요."
-            AuthCodeValidationResult.VALID -> ""
+            AuthCodeValidationResult.EMPTY -> R.string.auth_code_error_empty
+            AuthCodeValidationResult.INVALID_LENGTH -> R.string.auth_code_error_invalid_length
+            AuthCodeValidationResult.VALID -> null
         }
 }

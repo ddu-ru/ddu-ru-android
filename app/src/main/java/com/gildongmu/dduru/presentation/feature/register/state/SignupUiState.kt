@@ -1,5 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.register.state
 
+import androidx.annotation.StringRes
+
 enum class Gender {
     MALE,
     FEMALE
@@ -25,7 +27,7 @@ enum class PhoneValidationResult {
 enum class AuthCodeValidationResult {
     VALID,
     EMPTY,
-    EXPIRED_TIME
+    INVALID_LENGTH
 }
 
 data class CompletedItem(
@@ -37,6 +39,11 @@ data class SignupBottomButtonState(
     val visible: Boolean = false,
     val text: String = "",
     val enabled: Boolean = false
+)
+
+data class SignupToast(
+    @StringRes val titleRes: Int,
+    @StringRes val messageRes: Int
 )
 
 data class SignupUiState(
@@ -54,17 +61,24 @@ data class SignupUiState(
 
     val phoneNumber: String = "",
     val isPhoneRequested: Boolean = false,
+    val isSendingCode: Boolean = false,
     val phoneValidation: PhoneValidationResult = PhoneValidationResult.EMPTY,
-    val phoneErrorMessage: String = "",
+    @StringRes val phoneErrorRes: Int? = null,
 
     val authCode: String = "",
     val isAuthVerified: Boolean = false,
+    val isConfirmingCode: Boolean = false,
     val authCodeValidation: AuthCodeValidationResult = AuthCodeValidationResult.EMPTY,
-    val authCodeErrorMessage: String = "",
+    @StringRes val authCodeErrorRes: Int? = null,
+    @StringRes val authCodeInfoRes: Int? = null,
     val authTimerSeconds: Int = 0,
-    val isAuthAttemptExceeded: Boolean = false,
+    val resendRemainingSeconds: Int = 0,
 
-    val errorMessage: String? = null,
+    @StringRes val birthErrorRes: Int? = null,
+    @StringRes val genderErrorRes: Int? = null,
+
+    val toast: SignupToast? = null,
+    val isLoginExpired: Boolean = false,
 
     val visibleSteps: List<SignupStep> = listOf(SignupStep.BIRTH),
     val bottomButton: SignupBottomButtonState = SignupBottomButtonState(),

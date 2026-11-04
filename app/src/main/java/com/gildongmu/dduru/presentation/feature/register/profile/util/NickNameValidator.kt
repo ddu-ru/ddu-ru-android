@@ -39,7 +39,7 @@ fun NicknameValidationResult.toMessage(): String {
         NicknameValidationResult.VALID -> ""
         NicknameValidationResult.EMPTY -> "닉네임을 입력해 주세요."
         NicknameValidationResult.TOO_SHORT,
-        NicknameValidationResult.TOO_LONG -> "2~14자로 입력해 주세요."
+        NicknameValidationResult.TOO_LONG -> "2-14자 사이로 입력해 주세요"
         NicknameValidationResult.INVALID_CHARACTERS,
         NicknameValidationResult.CONTAINS_EMPTY -> "사용할 수 없는 문자가 포함되어 있어요."
     }

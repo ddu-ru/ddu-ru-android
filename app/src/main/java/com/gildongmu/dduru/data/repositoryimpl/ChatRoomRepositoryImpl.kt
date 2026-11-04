@@ -25,6 +25,7 @@ import java.time.ZoneId
 import java.time.ZonedDateTime
 import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
+import retrofit2.HttpException
 
 class ChatRoomRepositoryImpl @Inject constructor(
     private val chatRoomService: ChatRoomService
@@ -79,6 +80,14 @@ class ChatRoomRepositoryImpl @Inject constructor(
                     hasNext = data.page.hasNext,
                     nextCursor = data.page.nextCursor
                 )
+            )
+        } catch (e: HttpException) {
+            Result.failure(
+                when (e.code()) {
+                    403 -> Exception("FORBIDDEN")
+                    404 -> Exception("NOT_FOUND")
+                    else -> Exception("SERVER_ERROR")
+                }
             )
         } catch (e: Exception) {
             if (e.message in listOf("FORBIDDEN", "NOT_FOUND", "SERVER_ERROR", "OTHER")) {

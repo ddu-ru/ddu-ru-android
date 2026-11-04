@@ -12,6 +12,7 @@ import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
 import com.gildongmu.dduru.domain.register.profile.model.ProfileUpdateModel
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
 import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
+import com.gildongmu.dduru.presentation.component.toErrorToast
 import com.gildongmu.dduru.presentation.feature.register.profile.effect.ProfileSideEffect
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
@@ -148,12 +149,9 @@ class ProfileViewModel @Inject constructor(
             } else {
                 uploadSelectedImageIfNeeded(latestFormState.selectedImageUri).getOrElse { e ->
                     _uiState.update {
-                        it.copy(
-                            isImageUploading = false,
-                            isSubmitting = false,
-                            imageErrorMessage = e.message ?: "이미지 업로드에 실패했어요."
-                        )
+                        it.copy(isImageUploading = false, isSubmitting = false)
                     }
+                    _sideEffect.send(ProfileSideEffect.ShowError(e.toErrorToast()))
                     checkCanStart()
                     return@launch
                 }
@@ -183,12 +181,9 @@ class ProfileViewModel @Inject constructor(
                 _sideEffect.send(ProfileSideEffect.NavigateToMain)
             }.onFailure { e ->
                 _uiState.update {
-                    it.copy(
-                        isSubmitting = false,
-                        isImageUploading = false,
-                        submitErrorMessage = e.message ?: "프로필 저장에 실패했어요."
-                    )
+                    it.copy(isSubmitting = false, isImageUploading = false)
                 }
+                _sideEffect.send(ProfileSideEffect.ShowError(e.toErrorToast()))
             }
 
             checkCanStart()

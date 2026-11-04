@@ -35,9 +35,9 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
-import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditHeader
 import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditTabRow
@@ -68,7 +68,10 @@ fun ProfileEditTravelStyleRoute(
 
     when (val state = uiState) {
         UiState.Loading, UiState.Empty -> DduruLoadingScreen()
-        UiState.Failure -> DduruFailureScreen(message = "여행 스타일을 불러오지 못했어요.")
+        UiState.Failure -> DduruServiceFailureScreen(
+            onRetryClick = viewModel::loadTravelStyle,
+            onBackClick = onBackClick
+        )
         is UiState.Success -> ProfileEditTravelStyleScreen(
             styleName = state.data.styleName,
             bubbleMessage = state.data.bubbleMessage,

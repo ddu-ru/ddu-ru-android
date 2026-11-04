@@ -45,6 +45,9 @@ import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomType
+import com.gildongmu.dduru.presentation.component.DduruChatRoomAccessDeniedScreen
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
+import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatAttachOption
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatAttachPanel
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatDateDivider
@@ -73,6 +76,7 @@ fun ChatRoomRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val errorToast = LocalDduruErrorToast.current
     val photoPickerLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.PickMultipleVisualMedia(MAX_CHAT_PHOTO_COUNT)
     ) { uris -> viewModel.onPhotosSelected(uris) }
@@ -95,6 +99,7 @@ fun ChatRoomRoute(
                 )
                 is ChatRoomSideEffect.ShowMessage ->
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                is ChatRoomSideEffect.ShowError -> errorToast.show(effect.toast)
             }
         }
     }
@@ -105,19 +110,25 @@ fun ChatRoomRoute(
         }
     }
 
-    ChatRoomScreen(
-        uiState = uiState,
-        onBackClick = viewModel::onBackClick,
-        onMembersClick = viewModel::onMembersClick,
-        onMenuClick = viewModel::onMenuClick,
-        onPlusClick = viewModel::onPlusClick,
-        onSendClick = viewModel::onSendClick,
-        onInputChange = viewModel::onInputChange,
-        onAttachOptionClick = viewModel::onAttachOptionClick,
-        onImageClick = viewModel::onImageClick,
-        onLoadMore = viewModel::loadMoreMessages,
-        onRetryClick = viewModel::retryLoadMessages
-    )
+    when {
+        uiState.isAccessDenied -> DduruChatRoomAccessDeniedScreen(onBackClick = viewModel::onBackClick)
+        uiState.isLoadFailed -> DduruServiceFailureScreen(
+            onRetryClick = viewModel::retryLoadMessages,
+            onBackClick = viewModel::onBackClick
+        )
+        else -> ChatRoomScreen(
+            uiState = uiState,
+            onBackClick = viewModel::onBackClick,
+            onMembersClick = viewModel::onMembersClick,
+            onMenuClick = viewModel::onMenuClick,
+            onPlusClick = viewModel::onPlusClick,
+            onSendClick = viewModel::onSendClick,
+            onInputChange = viewModel::onInputChange,
+            onAttachOptionClick = viewModel::onAttachOptionClick,
+            onImageClick = viewModel::onImageClick,
+            onLoadMore = viewModel::loadMoreMessages
+        )
+    }
 }
 
 @Composable
@@ -132,7 +143,6 @@ private fun ChatRoomScreen(
     onAttachOptionClick: (ChatAttachOption) -> Unit = {},
     onImageClick: (String, Int) -> Unit = { _, _ -> },
     onLoadMore: () -> Unit = {},
-    onRetryClick: () -> Unit = {},
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -150,47 +160,6 @@ private fun ChatRoomScreen(
             onMembersClick = onMembersClick,
             onMenuClick = onMenuClick
         )
-
-        if (uiState.errorMessage != null) {
-            Box(
-                modifier = Modifier
-                    .weight(1f)
-                    .fillMaxWidth(),
-                contentAlignment = Alignment.Center
-            ) {
-                Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.spacedBy(16.dp),
-                    modifier = Modifier.padding(horizontal = 32.dp)
-                ) {
-                    Text(
-                        text = uiState.errorMessage,
-                        style = DduruTheme.typography.Body1,
-                        color = DduruTheme.colors.gray600,
-                        textAlign = TextAlign.Center
-                    )
-                    Box(
-                        contentAlignment = Alignment.Center,
-                        modifier = Modifier
-                            .background(
-                                color = DduruTheme.colors.primary,
-                                shape = RoundedCornerShape(8.dp)
-                            )
-                            .noRippleClickable(
-                                onClick = if (uiState.isRetryable) onRetryClick else onBackClick
-                            )
-                            .padding(horizontal = 24.dp, vertical = 12.dp)
-                    ) {
-                        Text(
-                            text = if (uiState.isRetryable) "다시 시도" else "목록으로",
-                            style = DduruTheme.typography.Body1,
-                            color = DduruTheme.colors.gray0
-                        )
-                    }
-                }
-            }
-            return@Column
-        }
 
         val listState = rememberLazyListState()
         var isInitialScrollComplete by remember(uiState.roomName) { mutableStateOf(false) }
