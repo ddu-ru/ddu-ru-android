@@ -351,22 +351,29 @@ private fun MatchingPostThumbnail(
             modifier = Modifier.matchParentSize()
         )
 
-        Image(
-            painter = painterResource(
-                id = if (item.isLiked) {
-                    R.drawable.ic_heart_rounded_filled
-                } else {
-                    R.drawable.ic_heart_rounded
-                }
-            ),
-            contentDescription = null,
-            colorFilter = if (item.isLiked) null else ColorFilter.tint(DduruTheme.colors.gray0),
+        Box(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
+                .size(48.dp)
                 .padding(end = 8.dp, bottom = 8.dp)
-                .size(16.dp)
-                .noRippleClickable(onClick = onLikeClick)
-        )
+                .noRippleClickable(onClick = onLikeClick),
+            contentAlignment = Alignment.BottomEnd
+        ) {
+            Image(
+                painter = painterResource(
+                    id = if (item.isLiked) {
+                        R.drawable.ic_heart_rounded_filled
+                    } else {
+                        R.drawable.ic_heart_rounded
+                    }
+                ),
+                contentDescription = "찜하기",
+                colorFilter = ColorFilter.tint(
+                    if (item.isLiked) DduruTheme.colors.validationRed else DduruTheme.colors.gray0
+                ),
+                modifier = Modifier.size(16.dp)
+            )
+        }
     }
 }
 

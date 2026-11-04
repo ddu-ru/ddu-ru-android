@@ -155,7 +155,7 @@ private fun MatchingScreen(
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    bottom = 16.dp
+                    bottom = 140.dp
                 )
             )
         }
@@ -166,7 +166,7 @@ private fun MatchingScreen(
                 .align(Alignment.BottomEnd)
                 .zIndex(1f)
                 .navigationBarsPadding()
-                .padding(end = 16.dp)
+                .padding(end = 16.dp, bottom = 116.dp)
         )
 
         MatchingSortBottomSheet(
