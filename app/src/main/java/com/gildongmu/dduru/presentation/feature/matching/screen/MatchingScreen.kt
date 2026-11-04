@@ -79,7 +79,8 @@ fun MatchingRoute(
                 onPostClick = viewModel::onPostClick,
                 onPostLikeClick = viewModel::onPostLikeClick,
                 onLoadMore = viewModel::loadMorePosts,
-                onWriteClick = viewModel::onWriteClick
+                onWriteClick = viewModel::onWriteClick,
+                onClearFilters = { viewModel.onFiltersApplied(com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions()) }
             )
         }
     }
@@ -97,6 +98,7 @@ private fun MatchingScreen(
     onPostLikeClick: (Long) -> Unit,
     onLoadMore: () -> Unit,
     onWriteClick: () -> Unit,
+    onClearFilters: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isFilterSheetVisible by remember { mutableStateOf(false) }
@@ -149,6 +151,8 @@ private fun MatchingScreen(
                 hasNext = uiState.hasNext,
                 isLoadingMore = uiState.isLoadingMore,
                 onLoadMore = onLoadMore,
+                showEmptyFilterState = uiState.filters.hasAppliedFilter,
+                onClearFilters = onClearFilters,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
@@ -200,7 +204,8 @@ private fun MatchingScreenPreview() {
             onPostClick = {},
             onPostLikeClick = {},
             onLoadMore = {},
-            onWriteClick = {}
+            onWriteClick = {},
+            onClearFilters = {}
         )
     }
 }

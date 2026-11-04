@@ -37,6 +37,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
+import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingPostCardUiModel
@@ -51,6 +52,8 @@ fun MatchingPostListSection(
     hasNext: Boolean = false,
     isLoadingMore: Boolean = false,
     onLoadMore: () -> Unit = {},
+    showEmptyFilterState: Boolean = false,
+    onClearFilters: () -> Unit = {},
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
@@ -63,6 +66,13 @@ fun MatchingPostListSection(
     }
     LaunchedEffect(shouldLoadMore, hasNext, isLoadingMore) {
         if (shouldLoadMore && hasNext && !isLoadingMore) onLoadMore()
+    }
+    if (items.isEmpty() && showEmptyFilterState) {
+        MatchingFilterEmptyState(
+            onClearFilters = onClearFilters,
+            modifier = modifier
+        )
+        return
     }
     LazyColumn(
         modifier = modifier.fillMaxSize(),
@@ -98,6 +108,40 @@ fun MatchingPostListSection(
                 )
             }
         }
+    }
+}
+
+@Composable
+private fun MatchingFilterEmptyState(
+    onClearFilters: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    Column(
+        modifier = modifier
+            .fillMaxSize()
+            .padding(horizontal = 16.dp),
+        horizontalAlignment = Alignment.CenterHorizontally,
+        verticalArrangement = Arrangement.Center
+    ) {
+        Image(
+            painter = painterResource(R.drawable.img_home_empty_penguin),
+            contentDescription = null,
+            modifier = Modifier.size(96.dp)
+        )
+        Spacer(modifier = Modifier.size(16.dp))
+        Text(
+            text = "조건에 맞는 동행 글이 없어요",
+            style = DduruTheme.typography.Title2,
+            color = DduruTheme.colors.gray800
+        )
+        Spacer(modifier = Modifier.size(6.dp))
+        Text(
+            text = "필터를 변경해 다른 동행을 찾아보세요",
+            style = DduruTheme.typography.Body2,
+            color = DduruTheme.colors.gray500
+        )
+        Spacer(modifier = Modifier.size(20.dp))
+        DduruButton(text = "필터 초기화", onClick = onClearFilters)
     }
 }
 
