@@ -39,8 +39,8 @@ import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.semantics.stateDescription
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.Dp
+import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruFrostedBackground
 import com.gildongmu.dduru.core.common.extension.dduruFrostedBorder
@@ -56,7 +56,7 @@ fun BottomNavBar(
     onItemClick: (BottomNavRoute) -> Unit,
     hazeState: HazeState,
     floatingBottomPadding: Dp = 32.dp,
-    modifier: Modifier = Modifier,
+    modifier: Modifier = Modifier
 ) {
     Box(
         modifier = modifier

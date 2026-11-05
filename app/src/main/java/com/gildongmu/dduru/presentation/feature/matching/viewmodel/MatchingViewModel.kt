@@ -13,6 +13,8 @@ import com.gildongmu.dduru.presentation.feature.matching.model.MatchingDestinati
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
+import java.time.format.DateTimeFormatter
 import javax.inject.Inject
 import kotlinx.collections.immutable.toPersistentList
 import kotlinx.coroutines.CancellationException
@@ -25,8 +27,6 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
-import java.time.LocalDate
-import java.time.format.DateTimeFormatter
 
 @HiltViewModel
 class MatchingViewModel @Inject constructor(
@@ -94,25 +94,31 @@ class MatchingViewModel @Inject constructor(
         val previousItem = (_uiState.value as? UiState.Success)?.data?.posts
             ?.firstOrNull { it.id == id } ?: return
         updateMatchingUiState {
-            copy(posts = posts.map { post ->
-                if (post.id == id) post.copy(isLiked = !post.isLiked) else post
-            }.toPersistentList())
+            copy(
+                posts = posts.map { post ->
+                    if (post.id == id) post.copy(isLiked = !post.isLiked) else post
+                }.toPersistentList()
+            )
         }
         viewModelScope.launch {
             runCatching { postService.toggleLike(id) }
                 .onFailure {
                     updateMatchingUiState {
-                        copy(posts = posts.map { post ->
-                            if (post.id == id) previousItem else post
-                        }.toPersistentList())
+                        copy(
+                            posts = posts.map { post ->
+                                if (post.id == id) previousItem else post
+                            }.toPersistentList()
+                        )
                     }
                 }
                 .onSuccess { response ->
                     if (!response.isSuccessful) {
                         updateMatchingUiState {
-                            copy(posts = posts.map { post ->
-                                if (post.id == id) previousItem else post
-                            }.toPersistentList())
+                            copy(
+                                posts = posts.map { post ->
+                                    if (post.id == id) previousItem else post
+                                }.toPersistentList()
+                            )
                         }
                     }
                 }

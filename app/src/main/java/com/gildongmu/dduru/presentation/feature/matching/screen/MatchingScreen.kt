@@ -80,7 +80,11 @@ fun MatchingRoute(
                 onPostLikeClick = viewModel::onPostLikeClick,
                 onLoadMore = viewModel::loadMorePosts,
                 onWriteClick = viewModel::onWriteClick,
-                onClearFilters = { viewModel.onFiltersApplied(com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions()) }
+                onClearFilters = {
+                    viewModel.onFiltersApplied(
+                        com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions()
+                    )
+                }
             )
         }
     }
