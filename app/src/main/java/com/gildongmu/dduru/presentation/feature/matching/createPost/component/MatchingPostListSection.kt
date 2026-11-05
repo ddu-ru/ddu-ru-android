@@ -399,7 +399,6 @@ private fun MatchingPostThumbnail(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .size(48.dp)
-                .padding(end = 8.dp, bottom = 8.dp)
                 .noRippleClickable(onClick = onLikeClick),
             contentAlignment = Alignment.BottomEnd
         ) {
@@ -415,7 +414,9 @@ private fun MatchingPostThumbnail(
                 colorFilter = ColorFilter.tint(
                     if (item.isLiked) DduruTheme.colors.validationRed else DduruTheme.colors.gray0
                 ),
-                modifier = Modifier.size(16.dp)
+                modifier = Modifier
+                    .padding(end = 8.dp, bottom = 8.dp)
+                    .size(16.dp)
             )
         }
     }

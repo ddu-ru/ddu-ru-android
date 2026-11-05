@@ -112,22 +112,24 @@ fun MatchingDetailFilterContent(
 
     Column(modifier = modifier.fillMaxWidth()) {
         MatchingFilterSection(title = "여행지") {
-            MatchingDestinationField(
-                selectedDestination = destinationOptions.firstOrNull { it.id == selectedDestinationId },
-                onClick = { isDestinationPickerVisible = true },
-                onClearClick = { onDestinationSelected(null) }
-            )
-            MatchingDropdownMenu(
-                expanded = isDestinationPickerVisible,
-                items = destinationOptions,
-                itemLabel = MatchingDestinationOption::name,
-                onItemSelected = { destination ->
-                    onDestinationSelected(destination.id)
-                    isDestinationPickerVisible = false
-                },
-                onDismissRequest = { isDestinationPickerVisible = false },
-                horizontalInset = 3.dp
-            )
+            Column {
+                MatchingDestinationField(
+                    selectedDestination = destinationOptions.firstOrNull { it.id == selectedDestinationId },
+                    onClick = { isDestinationPickerVisible = true },
+                    onClearClick = { onDestinationSelected(null) }
+                )
+                MatchingDropdownMenu(
+                    expanded = isDestinationPickerVisible,
+                    items = destinationOptions,
+                    itemLabel = MatchingDestinationOption::name,
+                    onItemSelected = { destination ->
+                        onDestinationSelected(destination.id)
+                        isDestinationPickerVisible = false
+                    },
+                    onDismissRequest = { isDestinationPickerVisible = false },
+                    horizontalInset = 3.dp
+                )
+            }
         }
 
         MatchingFilterSection(title = "모집 상태") {
@@ -161,7 +163,8 @@ fun MatchingDetailFilterContent(
                     expanded = isMinCountPickerVisible,
                     onExpandedChange = { isMinCountPickerVisible = it },
                     onSelected = { minimum ->
-                        onRecruitCapacityChanged(minimum, selectedMaxRecruitCapacity)
+                        val adjustedMaximum = selectedMaxRecruitCapacity?.let { maxOf(it, minimum ?: it) }
+                        onRecruitCapacityChanged(minimum, adjustedMaximum)
                     },
                     modifier = Modifier.weight(1f)
                 )
@@ -176,7 +179,8 @@ fun MatchingDetailFilterContent(
                     expanded = isMaxCountPickerVisible,
                     onExpandedChange = { isMaxCountPickerVisible = it },
                     onSelected = { maximum ->
-                        onRecruitCapacityChanged(selectedMinRecruitCapacity, maximum)
+                        val adjustedMinimum = selectedMinRecruitCapacity?.let { minOf(it, maximum ?: it) }
+                        onRecruitCapacityChanged(adjustedMinimum, maximum)
                     },
                     modifier = Modifier.weight(1f)
                 )

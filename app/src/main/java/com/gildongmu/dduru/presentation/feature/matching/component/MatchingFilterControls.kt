@@ -72,9 +72,9 @@ fun MatchingDestinationField(
                 contentDescription = "여행지 선택 해제",
                 tint = DduruTheme.colors.gray400,
                 modifier = Modifier
-                    .size(32.dp)
-                    .padding(8.dp)
+                    .size(48.dp)
                     .noRippleClickable(onClick = onClearClick)
+                    .padding(16.dp)
             )
         }
     }
