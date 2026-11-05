@@ -7,7 +7,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
@@ -79,7 +78,12 @@ fun MatchingRoute(
                 onPostClick = viewModel::onPostClick,
                 onPostLikeClick = viewModel::onPostLikeClick,
                 onLoadMore = viewModel::loadMorePosts,
-                onWriteClick = viewModel::onWriteClick
+                onWriteClick = viewModel::onWriteClick,
+                onClearFilters = {
+                    viewModel.onFiltersApplied(
+                        com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions()
+                    )
+                }
             )
         }
     }
@@ -97,6 +101,7 @@ private fun MatchingScreen(
     onPostLikeClick: (Long) -> Unit,
     onLoadMore: () -> Unit,
     onWriteClick: () -> Unit,
+    onClearFilters: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isFilterSheetVisible by remember { mutableStateOf(false) }
@@ -149,13 +154,15 @@ private fun MatchingScreen(
                 hasNext = uiState.hasNext,
                 isLoadingMore = uiState.isLoadingMore,
                 onLoadMore = onLoadMore,
+                showEmptyFilterState = uiState.filters.hasAppliedFilter,
+                onClearFilters = onClearFilters,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    bottom = 16.dp
+                    bottom = 32.dp
                 )
             )
         }
@@ -165,8 +172,7 @@ private fun MatchingScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .zIndex(1f)
-                .navigationBarsPadding()
-                .padding(end = 16.dp)
+                .padding(end = 16.dp, bottom = 8.dp)
         )
 
         MatchingSortBottomSheet(
@@ -200,7 +206,8 @@ private fun MatchingScreenPreview() {
             onPostClick = {},
             onPostLikeClick = {},
             onLoadMore = {},
-            onWriteClick = {}
+            onWriteClick = {},
+            onClearFilters = {}
         )
     }
 }
