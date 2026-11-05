@@ -1,4 +1,3 @@
-// ktlint-disable max-line-length
 package com.gildongmu.dduru.presentation.feature.matching.viewmodel
 
 import androidx.lifecycle.ViewModel
@@ -40,6 +39,7 @@ class MatchingViewModel @Inject constructor(
     val sideEffect: SharedFlow<MatchingSideEffect> = _sideEffect.asSharedFlow()
     private var searchJob: Job? = null
     private var postLoadJob: Job? = null
+    private val likeRequestsInFlight = mutableSetOf<Long>()
 
     init {
         loadPosts()
@@ -91,8 +91,12 @@ class MatchingViewModel @Inject constructor(
     }
 
     fun onPostLikeClick(id: Long) {
+        if (!likeRequestsInFlight.add(id)) return
         val previousItem = (_uiState.value as? UiState.Success)?.data?.posts
-            ?.firstOrNull { it.id == id } ?: return
+            ?.firstOrNull { it.id == id } ?: run {
+                likeRequestsInFlight.remove(id)
+                return
+            }
         updateMatchingUiState {
             copy(
                 posts = posts.map { post ->
@@ -106,7 +110,7 @@ class MatchingViewModel @Inject constructor(
                     updateMatchingUiState {
                         copy(
                             posts = posts.map { post ->
-                                if (post.id == id) previousItem else post
+                                if (post.id == id) post.copy(isLiked = previousItem.isLiked) else post
                             }.toPersistentList()
                         )
                     }
@@ -116,12 +120,13 @@ class MatchingViewModel @Inject constructor(
                         updateMatchingUiState {
                             copy(
                                 posts = posts.map { post ->
-                                    if (post.id == id) previousItem else post
+                                    if (post.id == id) post.copy(isLiked = previousItem.isLiked) else post
                                 }.toPersistentList()
                             )
                         }
                     }
                 }
+                .also { likeRequestsInFlight.remove(id) }
         }
     }
 
@@ -170,9 +175,17 @@ class MatchingViewModel @Inject constructor(
                     sort = current.selectedSort.toSortCode()
                 )
                 val data = response.data ?: error("게시글 목록 응답이 비어있어요.")
+                val latest = (_uiState.value as? UiState.Success)?.data ?: current
+                val latestPostsById = latest.posts.associateBy { it.id }
+                val responsePosts = data.posts.map { postResponse ->
+                    val post = postResponse.toUiModel()
+                    latestPostsById[post.id]
+                        ?.let { post.copy(isLiked = it.isLiked) }
+                        ?: post
+                }
                 _uiState.value = UiState.Success(
-                    current.copy(
-                        posts = (if (append) current.posts + data.posts.map { it.toUiModel() } else data.posts.map { it.toUiModel() }).toPersistentList(),
+                    latest.copy(
+                        posts = (if (append) latest.posts + responsePosts else responsePosts).toPersistentList(),
                         nextCursor = data.nextCursor,
                         nextCursorValue = data.nextCursorValue,
                         hasNext = data.hasNext,
