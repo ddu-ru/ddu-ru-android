@@ -55,8 +55,8 @@ fun BottomNavBar(
     currentRoute: BottomNavRoute?,
     onItemClick: (BottomNavRoute) -> Unit,
     hazeState: HazeState,
-    floatingBottomPadding: Dp = 32.dp,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    floatingBottomPadding: Dp = 24.dp
 ) {
     Box(
         modifier = modifier
