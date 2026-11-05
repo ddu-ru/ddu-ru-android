@@ -8,8 +8,11 @@ import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
 import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
 import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffect
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingDestinationOption
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingPostCardUiModel
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import java.time.LocalDate
@@ -94,9 +97,9 @@ class MatchingViewModel @Inject constructor(
         if (!likeRequestsInFlight.add(id)) return
         val previousItem = (_uiState.value as? UiState.Success)?.data?.posts
             ?.firstOrNull { it.id == id } ?: run {
-                likeRequestsInFlight.remove(id)
-                return
-            }
+            likeRequestsInFlight.remove(id)
+            return
+        }
         updateMatchingUiState {
             copy(
                 posts = posts.map { post ->
@@ -222,16 +225,30 @@ class MatchingViewModel @Inject constructor(
         name = "$countryName $city"
     )
 
-    private fun PostSummaryResponse.toUiModel() = com.gildongmu.dduru.presentation.feature.matching.model.MatchingPostCardUiModel(
-        id = id, title = title, authorName = author.nickname, location = destination,
-        dateRange = compactDateRange(startDate, endDate), currentMemberCount = recruitCount, maxMemberCount = recruitCapacity,
-        gender = when (preferredGender) { "M" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.MALE; "F" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.FEMALE; else -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender.ANY },
-        companionType = when (companionType) { "PARTIAL" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.PARTIAL; "MEAL" -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.MEAL; else -> com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType.FULL },
-        isSuperHost = author.isSuperHost,
-        isLiked = hasLiked,
-        thumbnailImageUrl = photoUrl,
-        thumbnailImageRes = com.gildongmu.dduru.R.drawable.fukuoka
-    )
+    private fun PostSummaryResponse.toUiModel() =
+        MatchingPostCardUiModel(
+            id = id,
+            title = title,
+            authorName = author.nickname,
+            location = destination,
+            dateRange = compactDateRange(startDate, endDate),
+            currentMemberCount = recruitCount,
+            maxMemberCount = recruitCapacity,
+            gender = when (preferredGender) {
+                "M" -> MatchingGender.MALE
+                "F" -> MatchingGender.FEMALE
+                else -> MatchingGender.ANY
+            },
+            companionType = when (companionType) {
+                "PARTIAL" -> MatchingCompanionType.PARTIAL
+                "MEAL" -> MatchingCompanionType.MEAL
+                else -> MatchingCompanionType.FULL
+            },
+            isSuperHost = author.isSuperHost,
+            isLiked = hasLiked,
+            thumbnailImageUrl = photoUrl,
+            thumbnailImageRes = com.gildongmu.dduru.R.drawable.fukuoka
+        )
 
     private fun compactDateRange(startDate: String, endDate: String): String {
         val formatter = DateTimeFormatter.ofPattern("MM.dd")

@@ -5,11 +5,8 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
-import androidx.compose.foundation.layout.WindowInsets
-import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
@@ -39,7 +36,6 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.component.Ma
 import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffect
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import com.gildongmu.dduru.presentation.feature.matching.viewmodel.MatchingViewModel
-import com.gildongmu.dduru.presentation.navigation.BottomNavBarHeight
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -111,7 +107,6 @@ private fun MatchingScreen(
     var isFilterSheetVisible by remember { mutableStateOf(false) }
     var isSortSheetVisible by remember { mutableStateOf(false) }
 
-
     Box(
         modifier = modifier
             .fillMaxSize()
@@ -177,7 +172,7 @@ private fun MatchingScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .zIndex(1f)
-                .padding(end = 16.dp, bottom =  8.dp)
+                .padding(end = 16.dp, bottom = 8.dp)
         )
 
         MatchingSortBottomSheet(
