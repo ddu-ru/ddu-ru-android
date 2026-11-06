@@ -97,13 +97,23 @@ private fun MyPostInfo(
 
             Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
                 if (showAuthor) {
-                    Text(
-                        text = item.authorName,
-                        style = myPostCaptionStyle(),
-                        color = DduruTheme.colors.gray500,
-                        maxLines = 1,
-                        overflow = TextOverflow.Ellipsis
-                    )
+                    Row(
+                        verticalAlignment = Alignment.CenterVertically,
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Text(
+                            text = item.authorName,
+                            style = myPostCaptionStyle(),
+                            color = DduruTheme.colors.gray500,
+                            maxLines = 1,
+                            overflow = TextOverflow.Ellipsis,
+                            modifier = Modifier.weight(1f, fill = false)
+                        )
+
+                        if (item.isSuperHost) {
+                            MyPostSuperHostLabel()
+                        }
+                    }
                 }
 
                 MyPostMetaLine(item = item)
@@ -111,26 +121,39 @@ private fun MyPostInfo(
         }
 
         Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
-            MyPostStatusTag(
-                text = item.gender.cardLabel,
-                iconResList = when (item.gender) {
-                    MatchingGender.MALE -> listOf(R.drawable.ic_men)
-                    MatchingGender.FEMALE -> listOf(R.drawable.ic_woman)
-                    MatchingGender.ANY -> listOf(R.drawable.ic_woman, R.drawable.ic_men)
-                }
-            )
+            MyPostGenderTag(gender = item.gender)
+            MyPostCompanionTag(companionType = item.companionType)
+        }
+    }
+}
 
-            MyPostStatusTag(
-                text = item.companionType.cardLabel,
-                iconResList = listOf(
-                    when (item.companionType) {
-                        MatchingCompanionType.FULL -> R.drawable.ic_home_users
-                        MatchingCompanionType.PARTIAL -> R.drawable.ic_home_calendar
-                        MatchingCompanionType.MEAL -> R.drawable.ic_eat
-                    }
-                )
+@Composable
+private fun MyPostSuperHostLabel() {
+    Row(
+        verticalAlignment = Alignment.CenterVertically,
+        horizontalArrangement = Arrangement.spacedBy(4.dp)
+    ) {
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier
+                .size(10.dp)
+                .clip(CircleShape)
+                .background(DduruTheme.colors.primary)
+        ) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_superhost),
+                contentDescription = null,
+                tint = DduruTheme.colors.gray0,
+                modifier = Modifier.size(6.dp)
             )
         }
+
+        Text(
+            text = "슈퍼호스트",
+            style = myPostCaptionStyle(),
+            color = DduruTheme.colors.primary,
+            maxLines = 1
+        )
     }
 }
 
@@ -194,6 +217,40 @@ private fun MyPostMetaLine(
 }
 
 @Composable
+internal fun MyPostGenderTag(
+    gender: MatchingGender,
+    modifier: Modifier = Modifier
+) {
+    MyPostStatusTag(
+        text = gender.cardLabel,
+        iconResList = when (gender) {
+            MatchingGender.MALE -> listOf(R.drawable.ic_men)
+            MatchingGender.FEMALE -> listOf(R.drawable.ic_woman)
+            MatchingGender.ANY -> listOf(R.drawable.ic_woman, R.drawable.ic_men)
+        },
+        modifier = modifier
+    )
+}
+
+@Composable
+internal fun MyPostCompanionTag(
+    companionType: MatchingCompanionType,
+    modifier: Modifier = Modifier
+) {
+    MyPostStatusTag(
+        text = companionType.cardLabel,
+        iconResList = listOf(
+            when (companionType) {
+                MatchingCompanionType.FULL -> R.drawable.ic_home_users
+                MatchingCompanionType.PARTIAL -> R.drawable.ic_home_calendar
+                MatchingCompanionType.MEAL -> R.drawable.ic_eat
+            }
+        ),
+        modifier = modifier
+    )
+}
+
+@Composable
 private fun MyPostStatusTag(
     text: String,
     iconResList: List<Int>,
@@ -207,7 +264,7 @@ private fun MyPostStatusTag(
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(4.dp)
     ) {
-        Row(horizontalArrangement = Arrangement.spacedBy(1.dp)) {
+        Row {
             iconResList.forEach { iconRes ->
                 Icon(
                     painter = painterResource(id = iconRes),

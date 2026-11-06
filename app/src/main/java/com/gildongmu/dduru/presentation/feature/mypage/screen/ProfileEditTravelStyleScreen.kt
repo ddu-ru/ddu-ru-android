@@ -19,6 +19,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
+import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditHeader
@@ -48,7 +50,8 @@ fun ProfileEditTravelStyleScreen(
     onTabClick: (Int) -> Unit,
     onTagToggle: (Int) -> Unit,
     onRetestClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    canRetake: Boolean = true
 ) {
     Column(
         modifier = modifier
@@ -127,22 +130,52 @@ fun ProfileEditTravelStyleScreen(
             DduruButton(
                 text = "테스트 다시하기",
                 onClick = onRetestClick,
+                enabled = canRetake,
+                disabledColors = DduruButtonDisabledColors(
+                    backgroundColor = DduruTheme.colors.gray200,
+                    textColor = DduruTheme.colors.gray400,
+                    borderColor = DduruTheme.colors.gray300
+                ),
                 textStyle = DduruTheme.typography.H1,
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 18.dp, vertical = 3.dp),
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
+                    .then(
+                        if (canRetake) {
+                            Modifier
+                        } else {
+                            Modifier.shadow(
+                                elevation = 12.dp,
+                                shape = RoundedCornerShape(12.dp),
+                                ambientColor = DduruTheme.colors.black.copy(alpha = 0.14f),
+                                spotColor = DduruTheme.colors.black.copy(alpha = 0.14f)
+                            )
+                        }
+                    )
             )
 
-            Spacer(modifier = Modifier.height(93.dp))
+            if (canRetake) {
+                Spacer(modifier = Modifier.height(93.dp))
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Text(
+                    text = "여행 스타일은 마지막 변경일로부터\n30일이 지나야 다시 수정할 수 있어요",
+                    style = DduruTheme.typography.Caption2,
+                    color = DduruTheme.colors.gray400,
+                    textAlign = TextAlign.Center
+                )
+
+                Spacer(modifier = Modifier.height(43.dp))
+            }
         }
     }
 }
 
-@Preview(showBackground = true, heightDp = 882, name = "36400 나의 여행 스타일")
 @Composable
-private fun ProfileEditTravelStyleScreenPreview() {
+private fun ProfileEditTravelStyleScreenPreviewHost(canRetake: Boolean) {
     DduruTheme {
         ProfileEditTravelStyleScreen(
             styleName = "스윗",
@@ -157,7 +190,20 @@ private fun ProfileEditTravelStyleScreenPreview() {
             onBackClick = {},
             onTabClick = {},
             onTagToggle = {},
-            onRetestClick = {}
+            onRetestClick = {},
+            canRetake = canRetake
         )
     }
+}
+
+@Preview(showBackground = true, heightDp = 882, name = "나의 여행 스타일")
+@Composable
+private fun ProfileEditTravelStyleScreenPreview() {
+    ProfileEditTravelStyleScreenPreviewHost(canRetake = true)
+}
+
+@Preview(showBackground = true, heightDp = 882, name = "나의 여행 스타일 Blocked")
+@Composable
+private fun ProfileEditTravelStyleBlockedPreview() {
+    ProfileEditTravelStyleScreenPreviewHost(canRetake = false)
 }

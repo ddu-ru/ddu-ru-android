@@ -15,10 +15,7 @@ import com.gildongmu.dduru.presentation.feature.mypage.component.PostManagementL
 @Composable
 fun WishlistScreen(
     items: List<MatchingPostCardUiModel>,
-    selectedSort: String,
     onBackClick: () -> Unit,
-    onFilterClick: () -> Unit,
-    onSortClick: () -> Unit,
     onCardClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
     modifier: Modifier = Modifier
@@ -35,10 +32,7 @@ fun WishlistScreen(
 
         PostManagementList(
             items = items,
-            selectedSort = selectedSort,
             showAuthor = true,
-            onFilterClick = onFilterClick,
-            onSortClick = onSortClick,
             onCardClick = onCardClick,
             onLikeClick = onLikeClick,
             modifier = Modifier.weight(1f)
@@ -52,10 +46,7 @@ private fun WishlistScreenPreview() {
     DduruTheme {
         WishlistScreen(
             items = MatchingUiState.fake.posts.map { it.copy(isLiked = true) },
-            selectedSort = "최신순",
             onBackClick = {},
-            onFilterClick = {},
-            onSortClick = {},
             onCardClick = {},
             onLikeClick = {}
         )

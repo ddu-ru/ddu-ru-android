@@ -50,7 +50,7 @@ fun ProfileEditTabRow(
             ) {
                 Text(
                     text = title,
-                    style = DduruTheme.typography.Body2,
+                    style = DduruTheme.typography.Body4,
                     color = if (isSelected) DduruTheme.colors.gray0 else DduruTheme.colors.gray600
                 )
             }

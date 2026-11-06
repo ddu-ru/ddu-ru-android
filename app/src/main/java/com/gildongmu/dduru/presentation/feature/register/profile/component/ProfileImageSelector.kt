@@ -1,14 +1,20 @@
 package com.gildongmu.dduru.presentation.feature.register.profile.component
 
 import android.net.Uri
+import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.selection.selectableGroup
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
+import androidx.compose.material3.Icon
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -18,7 +24,9 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.semantics.Role
 import androidx.compose.ui.semantics.contentDescription
 import androidx.compose.ui.semantics.semantics
@@ -26,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
@@ -38,7 +47,8 @@ fun ProfileImageSelector(
     characterBackgroundColor: Color,
     isLocked: Boolean,
     onOptionSelected: (ProfileImageCropOption) -> Unit,
-    onActionClick: () -> Unit
+    onActionClick: () -> Unit,
+    useProfileEditStyle: Boolean = false
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -93,27 +103,82 @@ fun ProfileImageSelector(
                         scale = option.scale,
                         backgroundColor = characterBackgroundColor,
                         offsetRatio = option.offsetRatio,
-                        isLocked = optionLocked
+                        isLocked = optionLocked,
+                        useProfileEditStyle = useProfileEditStyle
                     )
 
-                    RadioButton(
-                        selected = option.type == selectedOption,
-                        onClick = null,
-                        enabled = !optionLocked
-                    )
+                    if (useProfileEditStyle) {
+                        ProfileEditSelectionIndicator(
+                            selected = option.type == selectedOption,
+                            enabled = !optionLocked
+                        )
+                    } else {
+                        RadioButton(
+                            selected = option.type == selectedOption,
+                            onClick = null,
+                            enabled = !optionLocked
+                        )
+                    }
                 }
             }
         }
 
-        Button(
-            onActionClick,
-            colors = ButtonDefaults.buttonColors(DduruTheme.colors.gray200),
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
+        if (useProfileEditStyle) {
             Text(
-                text = if (selectedOption == ProfileEditOption.CHARACTER) "배경 색상 선택" else "사진 변경",
-                style = DduruTheme.typography.Body2,
-                color = DduruTheme.colors.gray700
+                text = if (selectedOption == ProfileEditOption.CHARACTER) "배경색 편집" else "사진 변경",
+                style = DduruTheme.typography.Body4,
+                color = DduruTheme.colors.gray700,
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .clip(CircleShape)
+                    .background(DduruTheme.colors.gray200)
+                    .noRippleClickable(onClick = onActionClick)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        } else {
+            Button(
+                onActionClick,
+                colors = ButtonDefaults.buttonColors(DduruTheme.colors.gray200),
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text(
+                    text = if (selectedOption == ProfileEditOption.CHARACTER) "배경 색상 선택" else "사진 변경",
+                    style = DduruTheme.typography.Body2,
+                    color = DduruTheme.colors.gray700
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProfileEditSelectionIndicator(
+    selected: Boolean,
+    enabled: Boolean
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(16.dp)
+            .then(
+                if (selected) {
+                    Modifier.background(DduruTheme.colors.primary, CircleShape)
+                } else {
+                    Modifier
+                        .background(
+                            color = if (enabled) DduruTheme.colors.gray0 else DduruTheme.colors.gray200,
+                            shape = CircleShape
+                        )
+                        .border(1.dp, DduruTheme.colors.gray300, CircleShape)
+                }
+            )
+    ) {
+        if (selected) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_check),
+                contentDescription = null,
+                tint = DduruTheme.colors.gray0,
+                modifier = Modifier.size(10.dp)
             )
         }
     }

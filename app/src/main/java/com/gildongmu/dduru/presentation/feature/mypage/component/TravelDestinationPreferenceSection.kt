@@ -25,6 +25,7 @@ import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
@@ -52,7 +53,7 @@ fun TravelDestinationPreferenceSection(
             if (destinations.isNotEmpty()) {
                 Row(
                     verticalAlignment = Alignment.CenterVertically,
-                    horizontalArrangement = Arrangement.spacedBy(4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
                     modifier = Modifier.noRippleClickable(onClick = onAddClick)
                 ) {
                     Icon(
@@ -78,8 +79,9 @@ fun TravelDestinationPreferenceSection(
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
+                    .background(color = DduruTheme.colors.gray0, shape = RoundedCornerShape(16.dp))
                     .border(width = 1.dp, color = DduruTheme.colors.gray200, shape = RoundedCornerShape(16.dp))
-                    .padding(horizontal = 17.dp)
+                    .padding(horizontal = 17.dp, vertical = 5.dp)
             ) {
                 destinations.forEachIndexed { index, destination ->
                     DestinationRankRow(rank = index + 1, destination = destination)
@@ -125,7 +127,7 @@ private fun EmptyDestinationCard(
 
         Text(
             text = "선호하는 여행지를 추가해보세요.",
-            style = DduruTheme.typography.Caption2,
+            style = DduruTheme.typography.Caption1.copy(lineHeight = 14.4.sp),
             color = DduruTheme.colors.gray500
         )
     }
@@ -157,34 +159,39 @@ private fun DestinationRankRow(
             modifier = Modifier.width(36.dp)
         )
 
-        Box(
-            modifier = Modifier
-                .size(40.dp)
-                .background(color = DduruTheme.colors.gray100, shape = CircleShape)
+        Row(
+            verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(12.dp)
         ) {
-            if (destination.imageUrl != null) {
-                AsyncImage(
-                    model = destination.imageUrl,
-                    contentDescription = null,
-                    contentScale = ContentScale.Crop,
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .clip(CircleShape)
+            Box(
+                modifier = Modifier
+                    .size(40.dp)
+                    .background(color = DduruTheme.colors.gray100, shape = CircleShape)
+            ) {
+                if (destination.imageUrl != null) {
+                    AsyncImage(
+                        model = destination.imageUrl,
+                        contentDescription = null,
+                        contentScale = ContentScale.Crop,
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .clip(CircleShape)
+                    )
+                }
+            }
+
+            Column {
+                Text(
+                    text = destination.name,
+                    style = DduruTheme.typography.Title2,
+                    color = DduruTheme.colors.gray958
+                )
+                Text(
+                    text = destination.region,
+                    style = DduruTheme.typography.Caption2,
+                    color = DduruTheme.colors.gray600
                 )
             }
-        }
-
-        Column {
-            Text(
-                text = destination.name,
-                style = DduruTheme.typography.Title2,
-                color = DduruTheme.colors.gray958
-            )
-            Text(
-                text = destination.region,
-                style = DduruTheme.typography.Caption2,
-                color = DduruTheme.colors.gray600
-            )
         }
     }
 }

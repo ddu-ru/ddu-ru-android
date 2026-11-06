@@ -13,6 +13,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
@@ -28,7 +29,7 @@ fun TravelDatesSection(
         Text(
             text = label,
             color = DduruTheme.colors.gray400,
-            style = DduruTheme.typography.Caption2
+            style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
         )
 
         Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
@@ -43,7 +44,7 @@ fun TravelDatesSection(
                     Text(
                         text = dateRange,
                         color = DduruTheme.colors.gray868,
-                        style = DduruTheme.typography.Caption2
+                        style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
                     )
                 }
             }

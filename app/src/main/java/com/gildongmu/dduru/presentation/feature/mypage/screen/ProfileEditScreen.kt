@@ -4,23 +4,17 @@ import android.net.Uri
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -30,17 +24,14 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
-import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
-import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
@@ -48,6 +39,8 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
 import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.LabelValueRow
+import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditHeader
+import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditTabRow
 import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditSideEffect
 import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditViewModel
 import com.gildongmu.dduru.presentation.feature.register.profile.component.NicknameInput
@@ -187,12 +180,12 @@ fun ProfileEditScreen(
                 .padding(top = 72.dp, bottom = 40.dp)
         ) {
             ProfileEditTabRow(
-                selectedTab = selectedTab,
-                onTabClick = onTabClick,
+                selectedIndex = selectedTab.ordinal,
+                onTabClick = { onTabClick(ProfileEditTab.entries[it]) },
                 modifier = Modifier.padding(horizontal = 16.dp)
             )
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(16.dp))
 
             Box(
                 modifier = Modifier.fillMaxWidth(),
@@ -205,7 +198,8 @@ fun ProfileEditScreen(
                     characterBackgroundColor = characterBackgroundColor,
                     isLocked = isCharacterLocked,
                     onOptionSelected = onImageOptionSelected,
-                    onActionClick = onPhotoActionClick
+                    onActionClick = onPhotoActionClick,
+                    useProfileEditStyle = true
                 )
             }
 
@@ -221,12 +215,14 @@ fun ProfileEditScreen(
                     NicknameInput(
                         text = nickname,
                         validationMessage = "",
+                        useProfileEditStyle = true,
                         onValueChange = onNicknameChange,
                         onRandomClick = onRandomNicknameClick
                     )
 
                     ProfileIntroduction(
                         text = bio,
+                        useProfileEditStyle = true,
                         onValueChange = onBioChange
                     )
                 }
@@ -234,7 +230,7 @@ fun ProfileEditScreen(
                 Column(verticalArrangement = Arrangement.spacedBy(24.dp)) {
                     Text(
                         text = "아래 정보는 회원가입 시 인증된 정보로, 수정할 수 없습니다.",
-                        style = DduruTheme.typography.Caption2,
+                        style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
                         color = DduruTheme.colors.gray500
                     )
 
@@ -248,10 +244,9 @@ fun ProfileEditScreen(
         }
 
         ProfileEditHeader(
-            title = "프로필 수정",
-            isSaveEnabled = isSaveEnabled,
             onBackClick = onBackClick,
-            onSaveClick = onSaveClick,
+            onConfirmClick = onSaveClick,
+            isConfirmEnabled = isSaveEnabled,
             modifier = Modifier.align(Alignment.TopCenter)
         )
 
@@ -262,141 +257,22 @@ fun ProfileEditScreen(
                 avatarName = avatarName,
                 onBgColorSelected = onAvatarBackgroundColorSelected,
                 onConfirm = onAvatarEditConfirm,
-                onDismiss = onAvatarEditDismiss
+                onDismiss = onAvatarEditDismiss,
+                useProfileEditStyle = true
             )
         }
 
         if (showLeaveConfirmDialog) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .background(Color.Black.copy(alpha = 0.5f)),
-                contentAlignment = Alignment.Center
-            ) {
-                ConfirmDialog(
-                    title = "저장하지 않고 나갈까요?",
-                    description = "변경한 내용이 저장되지 않습니다.\n저장하지 않고 나가시겠어요?",
-                    onDismiss = onLeaveConfirmDismiss,
-                    onConfirm = onLeaveConfirm,
-                    dismissText = "계속 수정",
-                    confirmText = "나가기",
-                    confirmBackgroundColor = DduruTheme.colors.gray900,
-                    confirmTextColor = DduruTheme.colors.gray0
-                )
-            }
-        }
-    }
-}
-
-@Composable
-private fun ProfileEditHeader(
-    title: String,
-    isSaveEnabled: Boolean,
-    onBackClick: () -> Unit,
-    onSaveClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Column(
-        modifier = modifier
-            .fillMaxWidth()
-            .background(
-                Brush.verticalGradient(
-                    colors = listOf(DduruTheme.colors.gray0, DduruTheme.colors.gray0.copy(alpha = 0f))
-                )
+            ConfirmDialog(
+                title = "저장하지 않고 나갈까요?",
+                description = "변경한 내용이 저장되지 않습니다.\n저장하지 않고 나가시겠어요?",
+                onDismiss = onLeaveConfirmDismiss,
+                onConfirm = onLeaveConfirm,
+                dismissText = "계속 수정",
+                confirmText = "나가기",
+                confirmBackgroundColor = DduruTheme.colors.gray900,
+                confirmTextColor = DduruTheme.colors.gray0
             )
-            .statusBarsPadding()
-    ) {
-        Box(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(horizontal = 16.dp)
-                .height(48.dp)
-        ) {
-            ProfileEditFloatingButton(
-                iconRes = R.drawable.ic_chevron_left,
-                onClick = onBackClick,
-                backgroundColor = DduruTheme.colors.gray0.copy(alpha = 0.5f),
-                iconTint = DduruTheme.colors.gray900,
-                modifier = Modifier.align(Alignment.CenterStart)
-            )
-
-            Text(
-                text = title,
-                style = DduruTheme.typography.H1,
-                color = DduruTheme.colors.black,
-                modifier = Modifier.align(Alignment.Center)
-            )
-
-            ProfileEditFloatingButton(
-                iconRes = R.drawable.ic_check,
-                onClick = onSaveClick,
-                enabled = isSaveEnabled,
-                backgroundColor = if (isSaveEnabled) DduruTheme.colors.primary else DduruTheme.colors.gray200,
-                iconTint = if (isSaveEnabled) DduruTheme.colors.gray0 else DduruTheme.colors.gray400,
-                modifier = Modifier.align(Alignment.CenterEnd)
-            )
-        }
-    }
-}
-
-@Composable
-private fun ProfileEditFloatingButton(
-    iconRes: Int,
-    onClick: () -> Unit,
-    backgroundColor: Color,
-    iconTint: Color,
-    modifier: Modifier = Modifier,
-    enabled: Boolean = true
-) {
-    Box(
-        modifier = modifier
-            .size(48.dp)
-            .clip(CircleShape)
-            .background(backgroundColor)
-            .border(width = 1.dp, color = DduruTheme.colors.gray0.copy(alpha = 0.3f), shape = CircleShape)
-            .then(if (enabled) Modifier.noRippleClickable(onClick) else Modifier),
-        contentAlignment = Alignment.Center
-    ) {
-        Icon(
-            painter = painterResource(id = iconRes),
-            contentDescription = null,
-            tint = iconTint,
-            modifier = Modifier.size(24.dp)
-        )
-    }
-}
-
-@Composable
-private fun ProfileEditTabRow(
-    selectedTab: ProfileEditTab,
-    onTabClick: (ProfileEditTab) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        ProfileEditTab.entries.forEach { tab ->
-            val isSelected = tab == selectedTab
-
-            Box(
-                modifier = Modifier
-                    .clip(RoundedCornerShape(99.dp))
-                    .background(if (isSelected) DduruTheme.colors.black else DduruTheme.colors.gray50)
-                    .border(
-                        width = 1.dp,
-                        color = if (isSelected) Color.Transparent else DduruTheme.colors.gray100,
-                        shape = RoundedCornerShape(99.dp)
-                    )
-                    .noRippleClickable { onTabClick(tab) }
-                    .padding(horizontal = 16.dp, vertical = 8.dp)
-            ) {
-                Text(
-                    text = tab.label,
-                    style = DduruTheme.typography.Body4,
-                    color = if (isSelected) DduruTheme.colors.gray0 else DduruTheme.colors.gray600
-                )
-            }
         }
     }
 }
