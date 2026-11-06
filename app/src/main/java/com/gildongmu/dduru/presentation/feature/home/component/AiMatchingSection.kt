@@ -22,6 +22,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.model.AiMatchingCardData
+import com.gildongmu.dduru.presentation.feature.home.state.HomeSurveyState
 
 private const val DAILY_AI_MATCHING_LIMIT = 3
 private const val AI_MATCHING_CARD_RATIO = 343f / 456f
@@ -30,10 +31,11 @@ private const val AI_MATCHING_CARD_RATIO = 343f / 456f
 fun AiMatchingSection(
     matchUsedCount: Int,
     data: AiMatchingCardData?,
-    surveyCompleted: Boolean,
+    surveyState: HomeSurveyState,
     onPass: () -> Unit,
     onAccept: () -> Unit,
     onSurveyClick: () -> Unit,
+    onRetryClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -55,7 +57,9 @@ fun AiMatchingSection(
 
         Spacer(modifier = Modifier.height(32.dp))
 
-        if (!surveyCompleted) {
+        if (surveyState != HomeSurveyState.COMPLETED) {
+            val isSurveyUnavailable = surveyState == HomeSurveyState.UNAVAILABLE ||
+                surveyState == HomeSurveyState.UNKNOWN
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
@@ -70,20 +74,24 @@ fun AiMatchingSection(
                     verticalArrangement = Arrangement.Center
                 ) {
                     Text(
-                        text = "취향 설문을 완료하면\n나와 잘 맞는 여행 메이트를 만날 수 있어요!",
+                        text = if (isSurveyUnavailable) {
+                            "설문 상태를 불러오지 못했어요.\n다시 확인해 주세요."
+                        } else {
+                            "취향 설문을 완료하면\n나와 잘 맞는 여행 메이트를 만날 수 있어요!"
+                        },
                         style = DduruTheme.typography.Body1,
                         color = DduruTheme.colors.gray700,
                         textAlign = TextAlign.Center
                     )
                     Spacer(modifier = Modifier.height(24.dp))
                     Button(
-                        onClick = onSurveyClick,
+                        onClick = if (isSurveyUnavailable) onRetryClick else onSurveyClick,
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = DduruTheme.colors.primary
                         )
                     ) {
-                        Text("취향 설문 시작하기")
+                        Text(if (isSurveyUnavailable) "다시 시도" else "취향 설문 시작하기")
                     }
                 }
             }
@@ -112,7 +120,7 @@ private fun AiMatchingSectionPreview() {
     DduruTheme {
         AiMatchingSection(
             matchUsedCount = 1,
-            surveyCompleted = true,
+            surveyState = HomeSurveyState.COMPLETED,
             data = AiMatchingCardData(
                 postId = 1L,
                 imageUrl = null,
@@ -131,7 +139,8 @@ private fun AiMatchingSectionPreview() {
             ),
             onPass = {},
             onAccept = {},
-            onSurveyClick = {}
+            onSurveyClick = {},
+            onRetryClick = {}
         )
     }
 }

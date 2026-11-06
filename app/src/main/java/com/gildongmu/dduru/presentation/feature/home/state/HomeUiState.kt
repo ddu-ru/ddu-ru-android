@@ -1,7 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.home.state
 
 import com.gildongmu.dduru.R
-import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.presentation.feature.home.model.AiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.model.HomePopularDestinationUiModel
 import com.gildongmu.dduru.presentation.feature.home.model.HomeSuperHostCardUiModel
@@ -18,8 +17,8 @@ data class HomeUiState(
     val popularDestinationsRefreshFailed: Boolean = false,
     val aiMatchingUsedCount: Int = 0,
     val aiMatchingCard: AiMatchingCardData? = null,
-    val surveyStatus: SurveyStatus = SurveyStatus.COMPLETED,
-    val hasPreferredDestinations: Boolean = true,
+    val surveyState: HomeSurveyState = HomeSurveyState.UNKNOWN,
+    val destinationPreferenceState: HomeDestinationPreferenceState = HomeDestinationPreferenceState.UNKNOWN,
     val superHosts: List<HomeSuperHostCardUiModel> = emptyList(),
     val pendingSuperHostLikeIds: Set<Long> = emptySet(),
     val sameDestinationCompanions: List<TravelCompanionUiModel> = emptyList(),
@@ -56,6 +55,8 @@ data class HomeUiState(
             ),
             aiMatchingUsedCount = 0,
             aiMatchingCard = fakeAiMatchingCard,
+            surveyState = HomeSurveyState.COMPLETED,
+            destinationPreferenceState = HomeDestinationPreferenceState.AVAILABLE,
             superHosts = listOf(
                 HomeSuperHostCardUiModel(
                     id = 1L,
@@ -88,6 +89,20 @@ data class HomeUiState(
             sameAgeCompanions = travelCompanionFakeItems
         )
     }
+}
+
+enum class HomeSurveyState {
+    UNKNOWN,
+    NOT_COMPLETED,
+    COMPLETED,
+    UNAVAILABLE
+}
+
+enum class HomeDestinationPreferenceState {
+    UNKNOWN,
+    EMPTY,
+    AVAILABLE,
+    UNAVAILABLE
 }
 
 data class UpcomingTripUiState(

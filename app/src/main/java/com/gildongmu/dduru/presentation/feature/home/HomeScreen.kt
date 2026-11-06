@@ -29,7 +29,6 @@ import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.presentation.feature.home.component.AiMatchingSection
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHeader
 import com.gildongmu.dduru.presentation.feature.home.component.HomeRealtimePopularDestinationSection
@@ -39,6 +38,8 @@ import com.gildongmu.dduru.presentation.feature.home.component.UpcomingTripCard
 import com.gildongmu.dduru.presentation.feature.home.component.WritingButton
 import com.gildongmu.dduru.presentation.feature.home.component.WritingExpandedMenu
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
+import com.gildongmu.dduru.presentation.feature.home.state.HomeDestinationPreferenceState
+import com.gildongmu.dduru.presentation.feature.home.state.HomeSurveyState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
 import com.gildongmu.dduru.presentation.feature.home.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -100,6 +101,7 @@ fun HomeRoute(
                 onSuperHostLikeClick = viewModel::onSuperHostLikeClick,
                 onTravelStyleSurveyClick = viewModel::onTravelStyleSurveyClick,
                 onTravelPreferencesClick = viewModel::onTravelPreferencesClick,
+                onRetryHomeDataClick = viewModel::onRetryHomeDataClick,
                 onCompanionMoreClick = viewModel::onCompanionMoreClick,
                 onCompanionClick = viewModel::onCompanionClick,
                 onCreateTravelRoomClick = viewModel::onCreateTravelRoomClick
@@ -124,6 +126,7 @@ private fun HomeScreen(
     onSuperHostLikeClick: (Long) -> Unit,
     onTravelStyleSurveyClick: () -> Unit,
     onTravelPreferencesClick: () -> Unit,
+    onRetryHomeDataClick: () -> Unit,
     onCompanionMoreClick: () -> Unit,
     onCompanionClick: (Long) -> Unit,
     onCreateTravelRoomClick: () -> Unit,
@@ -186,10 +189,11 @@ private fun HomeScreen(
                     AiMatchingSection(
                         matchUsedCount = uiState.aiMatchingUsedCount,
                         data = uiState.aiMatchingCard,
-                        surveyCompleted = uiState.surveyStatus == SurveyStatus.COMPLETED,
+                        surveyState = uiState.surveyState,
                         onPass = onAiMatchingPassClick,
                         onAccept = onAiMatchingAcceptClick,
-                        onSurveyClick = onTravelStyleSurveyClick
+                        onSurveyClick = onTravelStyleSurveyClick,
+                        onRetryClick = onRetryHomeDataClick
                     )
                 }
 
@@ -209,9 +213,23 @@ private fun HomeScreen(
                         title = "선호하는 여행지가 같은 동행",
                         onMoreClick = onCompanionMoreClick,
                         onCardClick = { onCompanionClick(it.id) },
-                        emptyDescription = if (uiState.hasPreferredDestinations) null else "선호 여행지를 등록하면 비슷한 취향의 동행을 추천해 드려요.",
-                        emptyActionLabel = if (uiState.hasPreferredDestinations) null else "선호 여행지 등록하기",
-                        onEmptyAction = onTravelPreferencesClick
+                        emptyDescription = when (uiState.destinationPreferenceState) {
+                            HomeDestinationPreferenceState.EMPTY -> "선호 여행지를 등록하면 비슷한 취향의 동행을 추천해 드려요."
+                            HomeDestinationPreferenceState.AVAILABLE -> "아직 추천할 동행이 없어요."
+                            HomeDestinationPreferenceState.UNAVAILABLE -> "선호 여행지 정보를 불러오지 못했어요."
+                            HomeDestinationPreferenceState.UNKNOWN -> null
+                        },
+                        emptyActionLabel = when (uiState.destinationPreferenceState) {
+                            HomeDestinationPreferenceState.EMPTY -> "선호 여행지 등록하기"
+                            HomeDestinationPreferenceState.UNAVAILABLE -> "다시 시도"
+                            HomeDestinationPreferenceState.UNKNOWN,
+                            HomeDestinationPreferenceState.AVAILABLE -> null
+                        },
+                        onEmptyAction = if (uiState.destinationPreferenceState == HomeDestinationPreferenceState.EMPTY) {
+                            onTravelPreferencesClick
+                        } else {
+                            onRetryHomeDataClick
+                        }
                     )
                 }
 
@@ -268,6 +286,7 @@ private fun HomeScreenPreview() {
             onSuperHostLikeClick = {},
             onTravelStyleSurveyClick = {},
             onTravelPreferencesClick = {},
+            onRetryHomeDataClick = {},
             onCompanionMoreClick = {},
             onCompanionClick = {},
             onCreateTravelRoomClick = {}
