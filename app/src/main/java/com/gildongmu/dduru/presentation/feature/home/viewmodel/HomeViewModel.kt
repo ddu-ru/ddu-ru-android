@@ -3,20 +3,18 @@ package com.gildongmu.dduru.presentation.feature.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.domain.entity.home.HomeInitialConfig
-import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendations
+import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.domain.repository.home.HomeRepository
+import com.gildongmu.dduru.presentation.feature.home.DAILY_AI_MATCHING_LIMIT
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
-import com.gildongmu.dduru.presentation.feature.home.mapper.toAiMatchingCardData
-import com.gildongmu.dduru.presentation.feature.home.mapper.toTravelCompanionUiModel
+import com.gildongmu.dduru.presentation.feature.home.loader.HomeDataLoader
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUiModel
-import com.gildongmu.dduru.presentation.feature.home.mapper.toUiState
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUpdatedText
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.collections.immutable.persistentListOf
 import kotlinx.collections.immutable.toImmutableList
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -27,7 +25,9 @@ import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    private val postService: PostService,
+    private val homeDataLoader: HomeDataLoader
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
@@ -37,6 +37,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadHome()
+        startPopularDestinationTimestampUpdates()
     }
 
     fun onNotificationClick() {
@@ -70,6 +71,7 @@ class HomeViewModel @Inject constructor(
                             popularDestinations = popularDestinations.items
                                 .map { it.toUiModel() }
                                 .toImmutableList(),
+                            popularDestinationUpdatedAt = popularDestinations.updatedAt,
                             popularDestinationUpdatedText = popularDestinations.updatedAt.toUpdatedText(),
                             isPopularDestinationsRefreshing = false,
                             popularDestinationsRefreshFailed = false
@@ -113,12 +115,34 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onSuperHostLikeClick(id: Long) {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (id in currentState.pendingSuperHostLikeIds) return
+        val item = currentState.superHosts.firstOrNull { it.id == id } ?: return
+
         updateHomeUiState {
             copy(
                 superHosts = superHosts.map { item ->
                     if (item.id == id) item.copy(isLiked = !item.isLiked) else item
-                }
+                },
+                pendingSuperHostLikeIds = pendingSuperHostLikeIds + id
             )
+        }
+
+        viewModelScope.launch {
+            val succeeded = runCatching { postService.toggleLike(id).isSuccessful }
+                .getOrDefault(false)
+            updateHomeUiState {
+                copy(
+                    superHosts = if (succeeded) {
+                        superHosts
+                    } else {
+                        superHosts.map { current ->
+                            if (current.id == id) current.copy(isLiked = item.isLiked) else current
+                        }
+                    },
+                    pendingSuperHostLikeIds = pendingSuperHostLikeIds - id
+                )
+            }
         }
     }
 
@@ -134,6 +158,46 @@ class HomeViewModel @Inject constructor(
         emitSideEffect(HomeSideEffect.NavigateToCreateTravelRoom)
     }
 
+    fun onTravelStyleSurveyClick() {
+        emitSideEffect(HomeSideEffect.NavigateToTravelStyleSurvey)
+    }
+
+    fun onTravelPreferencesClick() {
+        emitSideEffect(HomeSideEffect.NavigateToTravelPreferences)
+    }
+
+    fun onRetrySurveyStateClick() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (currentState.isSurveyStateRefreshing) return
+
+        updateHomeUiState { copy(isSurveyStateRefreshing = true) }
+        viewModelScope.launch {
+            val surveyState = homeDataLoader.loadSurveyState()
+            updateHomeUiState {
+                copy(
+                    surveyState = surveyState,
+                    isSurveyStateRefreshing = false
+                )
+            }
+        }
+    }
+
+    fun onRetryDestinationPreferenceClick() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (currentState.isDestinationPreferenceRefreshing) return
+
+        updateHomeUiState { copy(isDestinationPreferenceRefreshing = true) }
+        viewModelScope.launch {
+            val preferenceState = homeDataLoader.loadDestinationPreferenceState()
+            updateHomeUiState {
+                copy(
+                    destinationPreferenceState = preferenceState,
+                    isDestinationPreferenceRefreshing = false
+                )
+            }
+        }
+    }
+
     private fun emitSideEffect(sideEffect: HomeSideEffect) {
         viewModelScope.launch {
             _sideEffect.emit(sideEffect)
@@ -142,88 +206,10 @@ class HomeViewModel @Inject constructor(
 
     private fun loadHome() {
         viewModelScope.launch {
-            val initialConfig = homeRepository.getHomeInitialConfig()
-                .getOrElse {
-                    _uiState.value = UiState.Failure
-                    return@launch
-                }
-
-            var nextState = HomeUiState.fake
-
-            if (initialConfig.isSectionEnabled(SECTION_UPCOMING_TRIP)) {
-                homeRepository.getHomeUpcomingTrip()
-                    .onSuccess { upcomingTrip ->
-                        nextState = nextState.copy(upcomingTrip = upcomingTrip.toUiState())
-                    }
-                    .onFailure {
-                        nextState = nextState.copy(upcomingTrip = HomeUiState().upcomingTrip)
-                    }
-            } else {
-                nextState = nextState.copy(upcomingTrip = HomeUiState().upcomingTrip)
-            }
-
-            if (initialConfig.isSectionEnabled(SECTION_MATE_RECOMMENDATIONS)) {
-                homeRepository.getHomeMateRecommendations()
-                    .onSuccess { mateRecommendations ->
-                        nextState = nextState.applyMateRecommendations(mateRecommendations)
-                    }
-            } else {
-                nextState = nextState.copy(aiMatchingCard = null)
-            }
-
-            if (initialConfig.isSectionEnabled(SECTION_POPULAR_DESTINATIONS)) {
-                homeRepository.getHomePopularDestinations()
-                    .onSuccess { popularDestinations ->
-                        nextState = nextState.copy(
-                            popularDestinations = popularDestinations.items
-                                .map { it.toUiModel() }
-                                .toImmutableList(),
-                            popularDestinationUpdatedText = popularDestinations.updatedAt.toUpdatedText()
-                        )
-                    }
-            } else {
-                nextState = nextState.copy(popularDestinations = persistentListOf())
-            }
-
-            if (initialConfig.isSectionEnabled(SECTION_SUPER_HOSTS)) {
-                homeRepository.getHomeSuperHosts()
-                    .onSuccess { superHosts ->
-                        nextState = nextState.copy(
-                            superHosts = superHosts.map { it.toUiModel() }
-                        )
-                    }
-                    .onFailure {
-                        nextState = nextState.copy(superHosts = emptyList())
-                    }
-            } else {
-                nextState = nextState.copy(superHosts = emptyList())
-            }
-
-            if (initialConfig.isSectionEnabled(SECTION_SAME_DESTINATION_TRIPS)) {
-                homeRepository.getHomeSameDestinationTrips()
-                    .onSuccess { sameDestinationTrips ->
-                        nextState = nextState.copy(
-                            sameDestinationCompanions = sameDestinationTrips
-                                .map { it.toTravelCompanionUiModel() }
-                        )
-                    }
-            } else {
-                nextState = nextState.copy(sameDestinationCompanions = emptyList())
-            }
-
-            if (initialConfig.isSectionEnabled(SECTION_SAME_AGE_TRIPS)) {
-                homeRepository.getHomeSameAgeTrips()
-                    .onSuccess { sameAgeTrips ->
-                        nextState = nextState.copy(
-                            sameAgeCompanions = sameAgeTrips
-                                .map { it.toTravelCompanionUiModel() }
-                        )
-                    }
-            } else {
-                nextState = nextState.copy(sameAgeCompanions = emptyList())
-            }
-
-            _uiState.value = UiState.Success(nextState)
+            _uiState.value = UiState.Loading
+            homeDataLoader()
+                .onSuccess { _uiState.value = UiState.Success(it) }
+                .onFailure { _uiState.value = UiState.Failure }
         }
     }
 
@@ -240,6 +226,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun startPopularDestinationTimestampUpdates() {
+        viewModelScope.launch {
+            while (true) {
+                delay(POPULAR_DESTINATION_TIMESTAMP_REFRESH_MILLIS)
+                updateHomeUiState {
+                    val updatedAt = popularDestinationUpdatedAt ?: return@updateHomeUiState this
+                    copy(popularDestinationUpdatedText = updatedAt.toUpdatedText())
+                }
+            }
+        }
+    }
+
     private fun updateHomeUiState(reducer: HomeUiState.() -> HomeUiState) {
         val currentState = _uiState.value
 
@@ -248,36 +246,7 @@ class HomeViewModel @Inject constructor(
         }
     }
 
-    private fun HomeInitialConfig.isSectionEnabled(key: String): Boolean {
-        return sections.firstOrNull { it.key == key }?.enabled ?: true
-    }
-
-    private fun HomeUiState.applyMateRecommendations(
-        mateRecommendations: HomeMateRecommendations
-    ): HomeUiState {
-        val usedCount = if (mateRecommendations.isAvailable) {
-            DAILY_AI_MATCHING_LIMIT - mateRecommendations.remainingFreeCount
-        } else {
-            DAILY_AI_MATCHING_LIMIT
-        }
-
-        return copy(
-            aiMatchingCard = mateRecommendations
-                .recommendations
-                .firstOrNull()
-                ?.toAiMatchingCardData()
-                .takeIf { mateRecommendations.isAvailable },
-            aiMatchingUsedCount = usedCount.coerceIn(0, DAILY_AI_MATCHING_LIMIT)
-        )
-    }
-
     private companion object {
-        const val DAILY_AI_MATCHING_LIMIT = 3
-        const val SECTION_UPCOMING_TRIP = "UPCOMING_TRIP"
-        const val SECTION_MATE_RECOMMENDATIONS = "MATE_RECOMMENDATIONS"
-        const val SECTION_POPULAR_DESTINATIONS = "POPULAR_DESTINATIONS"
-        const val SECTION_SUPER_HOSTS = "SUPER_HOSTS"
-        const val SECTION_SAME_DESTINATION_TRIPS = "SAME_DESTINATION_TRIPS"
-        const val SECTION_SAME_AGE_TRIPS = "SAME_AGE_TRIPS"
+        const val POPULAR_DESTINATION_TIMESTAMP_REFRESH_MILLIS = 60_000L
     }
 }

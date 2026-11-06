@@ -8,4 +8,6 @@ sealed interface HomeSideEffect {
     data class NavigateToDestination(val id: Long) : HomeSideEffect
     data class NavigateToMatchingDetail(val postId: Long) : HomeSideEffect
     data object NavigateToCreateTravelRoom : HomeSideEffect
+    data object NavigateToTravelStyleSurvey : HomeSideEffect
+    data object NavigateToTravelPreferences : HomeSideEffect
 }

@@ -12,11 +12,17 @@ data class HomeUiState(
     val upcomingTrip: UpcomingTripUiState = UpcomingTripUiState(),
     val popularDestinations: ImmutableList<HomePopularDestinationUiModel> = persistentListOf(),
     val popularDestinationUpdatedText: String = "방금 전",
+    val popularDestinationUpdatedAt: String? = null,
     val isPopularDestinationsRefreshing: Boolean = false,
     val popularDestinationsRefreshFailed: Boolean = false,
     val aiMatchingUsedCount: Int = 0,
-    val aiMatchingCard: AiMatchingCardData? = fakeAiMatchingCard,
+    val aiMatchingCard: AiMatchingCardData? = null,
+    val surveyState: HomeSurveyState = HomeSurveyState.UNKNOWN,
+    val isSurveyStateRefreshing: Boolean = false,
+    val destinationPreferenceState: HomeDestinationPreferenceState = HomeDestinationPreferenceState.UNKNOWN,
+    val isDestinationPreferenceRefreshing: Boolean = false,
     val superHosts: List<HomeSuperHostCardUiModel> = emptyList(),
+    val pendingSuperHostLikeIds: Set<Long> = emptySet(),
     val sameDestinationCompanions: List<TravelCompanionUiModel> = emptyList(),
     val sameAgeCompanions: List<TravelCompanionUiModel> = emptyList()
 ) {
@@ -50,6 +56,9 @@ data class HomeUiState(
                 )
             ),
             aiMatchingUsedCount = 0,
+            aiMatchingCard = fakeAiMatchingCard,
+            surveyState = HomeSurveyState.COMPLETED,
+            destinationPreferenceState = HomeDestinationPreferenceState.AVAILABLE,
             superHosts = listOf(
                 HomeSuperHostCardUiModel(
                     id = 1L,
@@ -82,6 +91,20 @@ data class HomeUiState(
             sameAgeCompanions = travelCompanionFakeItems
         )
     }
+}
+
+enum class HomeSurveyState {
+    UNKNOWN,
+    NOT_COMPLETED,
+    COMPLETED,
+    UNAVAILABLE
+}
+
+enum class HomeDestinationPreferenceState {
+    UNKNOWN,
+    EMPTY,
+    AVAILABLE,
+    UNAVAILABLE
 }
 
 data class UpcomingTripUiState(

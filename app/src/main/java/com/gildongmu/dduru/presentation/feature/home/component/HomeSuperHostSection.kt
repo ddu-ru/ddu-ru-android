@@ -24,7 +24,6 @@ import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.LocationOn
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -33,9 +32,12 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.semantics.contentDescription
+import androidx.compose.ui.semantics.semantics
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
@@ -50,6 +52,7 @@ fun HomeSuperHostSection(
     onMoreClick: () -> Unit,
     onCardClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
+    pendingLikeIds: Set<Long> = emptySet(),
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -83,9 +86,10 @@ fun HomeSuperHostSection(
             ) { item ->
                 HomeSuperHostCard(
                     item = item,
-                    modifier = Modifier.fillParentMaxWidth(0.82f),
+                    modifier = Modifier.width(220.dp),
                     onClick = { onCardClick(item.id) },
-                    onLikeClick = { onLikeClick(item.id) }
+                    onLikeClick = { onLikeClick(item.id) },
+                    isLikePending = item.id in pendingLikeIds
                 )
             }
         }
@@ -97,6 +101,7 @@ fun HomeSuperHostCard(
     item: HomeSuperHostCardUiModel,
     onClick: () -> Unit,
     onLikeClick: () -> Unit,
+    isLikePending: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     val thumbnailPainter = item.thumbnailImageRes?.let { painterResource(id = it) }
@@ -125,7 +130,7 @@ fun HomeSuperHostCard(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .aspectRatio(300f / 280f)
+                    .aspectRatio(220f / 200f)
             ) {
                 AsyncImage(
                     model = item.thumbnailImageUrl?.takeIf { it.isNotBlank() }
@@ -165,25 +170,28 @@ fun HomeSuperHostCard(
                 )
 
                 Icon(
-                    painter = painterResource(id = R.drawable.ic_heart_rounded),
-                    contentDescription = null,
-                    tint = DduruTheme.colors.gray0,
+                    painter = painterResource(
+                        id = if (item.isLiked) R.drawable.ic_heart_rounded_filled else R.drawable.ic_heart_rounded
+                    ),
+                    contentDescription = if (item.isLiked) "찜 해제" else "찜하기",
+                    tint = if (item.isLiked) Color.Red else DduruTheme.colors.gray0,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(end = 16.dp, bottom = 44.dp)
-                        .noRippleClickable(onClick = onLikeClick)
+                        .semantics { contentDescription = if (item.isLiked) "찜 해제" else "찜하기" }
+                        .noRippleClickable(onClick = { if (!isLikePending) onLikeClick() })
                 )
             }
 
             Column(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .offset(y = (-16.dp))
+                    .offset(y = (-30.dp))
                     .background(
                         color = DduruTheme.colors.gray0,
                         shape = RoundedCornerShape(topStart = 16.dp, topEnd = 16.dp)
                     )
-                    .padding(horizontal = 20.dp, vertical = 20.dp)
+                    .padding(start = 16.dp, end = 16.dp, top = 16.dp, bottom = 14.dp)
             ) {
                 Text(
                     text = item.title,
@@ -228,17 +236,13 @@ fun HomeSuperHostCard(
                             backgroundColor = DduruTheme.colors.gray100,
                             contentPadding = PaddingValues(
                                 horizontal = 12.dp,
-                                vertical = 8.dp
+                                vertical = 3.dp
                             )
                         )
                     }
                 }
 
                 Spacer(modifier = Modifier.height(16.dp))
-
-                HorizontalDivider(color = DduruTheme.colors.gray300)
-
-                Spacer(modifier = Modifier.height(8.dp))
 
                 Row(
                     modifier = Modifier.fillMaxWidth(),
