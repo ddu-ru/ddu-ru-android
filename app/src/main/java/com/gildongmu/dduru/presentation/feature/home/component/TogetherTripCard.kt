@@ -13,6 +13,8 @@ import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.Text
@@ -38,7 +40,10 @@ fun TravelCompanionSection(
     title: String,
     modifier: Modifier = Modifier,
     onMoreClick: () -> Unit = {},
-    onCardClick: (TravelCompanionUiModel) -> Unit = {}
+    onCardClick: (TravelCompanionUiModel) -> Unit = {},
+    emptyDescription: String? = null,
+    emptyActionLabel: String? = null,
+    onEmptyAction: () -> Unit = {}
 ) {
     Column(
         modifier = modifier.fillMaxWidth()
@@ -69,15 +74,41 @@ fun TravelCompanionSection(
 
         Spacer(modifier = Modifier.height(18.dp))
 
-        Column(
-            modifier = Modifier.fillMaxWidth(),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            items.forEach { item ->
-                TravelCompanionCard(
-                    item = item,
-                    onClick = { onCardClick(item) }
+        if (items.isEmpty() && emptyDescription != null) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .background(DduruTheme.colors.gray0, RoundedCornerShape(16.dp))
+                    .padding(horizontal = 20.dp, vertical = 18.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                Text(
+                    text = emptyDescription,
+                    style = DduruTheme.typography.Body2,
+                    color = DduruTheme.colors.gray600
                 )
+                if (emptyActionLabel != null) {
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Button(
+                        onClick = onEmptyAction,
+                        shape = RoundedCornerShape(10.dp),
+                        colors = ButtonDefaults.buttonColors(containerColor = DduruTheme.colors.primary)
+                    ) {
+                        Text(emptyActionLabel)
+                    }
+                }
+            }
+        } else {
+            Column(
+                modifier = Modifier.fillMaxWidth(),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                items.forEach { item ->
+                    TravelCompanionCard(
+                        item = item,
+                        onClick = { onCardClick(item) }
+                    )
+                }
             }
         }
     }

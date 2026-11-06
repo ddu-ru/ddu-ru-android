@@ -45,9 +45,16 @@ fun MatchingRoute(
     navigateToMenu: () -> Unit = {},
     navigateToCreatePost: () -> Unit = {},
     navigateToPostDetail: (Long) -> Unit = {},
+    initialDestinationId: Long? = null,
+    onDestinationFilterApplied: (Long) -> Unit = {},
     viewModel: MatchingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LaunchedEffect(viewModel, initialDestinationId) {
+        viewModel.initialize(initialDestinationId)
+        initialDestinationId?.let(onDestinationFilterApplied)
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collectLatest { sideEffect ->

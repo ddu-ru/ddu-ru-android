@@ -80,7 +80,7 @@ fun HomeNotificationMoreMenu(
         } else {
             HomeNotificationMenuItem(
                 iconRes = R.drawable.ic_check,
-                text = if (hasUnreadNotifications) "전체 확인" else "모든 알림을 확인했어요",
+                text = if (hasUnreadNotifications) "모든 알림 읽기" else "모든 알림을 확인했어요",
                 onClick = onMarkAllAsReadClick,
                 enabled = hasUnreadNotifications
             )

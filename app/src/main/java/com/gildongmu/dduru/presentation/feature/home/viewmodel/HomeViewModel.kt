@@ -3,8 +3,11 @@ package com.gildongmu.dduru.presentation.feature.home.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.domain.entity.home.HomeInitialConfig
 import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendations
+import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
+import com.gildongmu.dduru.domain.repository.MyPageRepository
 import com.gildongmu.dduru.domain.repository.home.HomeRepository
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
 import com.gildongmu.dduru.presentation.feature.home.mapper.toAiMatchingCardData
@@ -22,12 +25,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asSharedFlow
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class HomeViewModel @Inject constructor(
-    private val homeRepository: HomeRepository
+    private val homeRepository: HomeRepository,
+    private val postService: PostService,
+    private val myPageRepository: MyPageRepository,
+    private val onboardingStatusRepository: OnboardingStatusRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
@@ -37,6 +44,7 @@ class HomeViewModel @Inject constructor(
 
     init {
         loadHome()
+        startPopularDestinationTimestampUpdates()
     }
 
     fun onNotificationClick() {
@@ -70,6 +78,7 @@ class HomeViewModel @Inject constructor(
                             popularDestinations = popularDestinations.items
                                 .map { it.toUiModel() }
                                 .toImmutableList(),
+                            popularDestinationUpdatedAt = popularDestinations.updatedAt,
                             popularDestinationUpdatedText = popularDestinations.updatedAt.toUpdatedText(),
                             isPopularDestinationsRefreshing = false,
                             popularDestinationsRefreshFailed = false
@@ -113,12 +122,30 @@ class HomeViewModel @Inject constructor(
     }
 
     fun onSuperHostLikeClick(id: Long) {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (id in currentState.pendingSuperHostLikeIds) return
+        val item = currentState.superHosts.firstOrNull { it.id == id } ?: return
+
         updateHomeUiState {
             copy(
                 superHosts = superHosts.map { item ->
                     if (item.id == id) item.copy(isLiked = !item.isLiked) else item
-                }
+                },
+                pendingSuperHostLikeIds = pendingSuperHostLikeIds + id
             )
+        }
+
+        viewModelScope.launch {
+            val succeeded = runCatching { postService.toggleLike(id).isSuccessful }
+                .getOrDefault(false)
+            updateHomeUiState {
+                copy(
+                    superHosts = if (succeeded) superHosts else superHosts.map { current ->
+                        if (current.id == id) current.copy(isLiked = item.isLiked) else current
+                    },
+                    pendingSuperHostLikeIds = pendingSuperHostLikeIds - id
+                )
+            }
         }
     }
 
@@ -132,6 +159,14 @@ class HomeViewModel @Inject constructor(
 
     fun onCreateTravelRoomClick() {
         emitSideEffect(HomeSideEffect.NavigateToCreateTravelRoom)
+    }
+
+    fun onTravelStyleSurveyClick() {
+        emitSideEffect(HomeSideEffect.NavigateToTravelStyleSurvey)
+    }
+
+    fun onTravelPreferencesClick() {
+        emitSideEffect(HomeSideEffect.NavigateToTravelPreferences)
     }
 
     private fun emitSideEffect(sideEffect: HomeSideEffect) {
@@ -148,7 +183,19 @@ class HomeViewModel @Inject constructor(
                     return@launch
                 }
 
-            var nextState = HomeUiState.fake
+            var nextState = HomeUiState()
+
+            onboardingStatusRepository.getSurveyStatus()
+                .onSuccess { surveyStatus ->
+                    nextState = nextState.copy(surveyStatus = surveyStatus)
+                }
+
+            myPageRepository.getTravelPreference()
+                .onSuccess { preference ->
+                    nextState = nextState.copy(
+                        hasPreferredDestinations = preference.destinations.isNotEmpty()
+                    )
+                }
 
             if (initialConfig.isSectionEnabled(SECTION_UPCOMING_TRIP)) {
                 homeRepository.getHomeUpcomingTrip()
@@ -178,6 +225,7 @@ class HomeViewModel @Inject constructor(
                             popularDestinations = popularDestinations.items
                                 .map { it.toUiModel() }
                                 .toImmutableList(),
+                            popularDestinationUpdatedAt = popularDestinations.updatedAt,
                             popularDestinationUpdatedText = popularDestinations.updatedAt.toUpdatedText()
                         )
                     }
@@ -240,6 +288,18 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    private fun startPopularDestinationTimestampUpdates() {
+        viewModelScope.launch {
+            while (true) {
+                delay(POPULAR_DESTINATION_TIMESTAMP_REFRESH_MILLIS)
+                updateHomeUiState {
+                    val updatedAt = popularDestinationUpdatedAt ?: return@updateHomeUiState this
+                    copy(popularDestinationUpdatedText = updatedAt.toUpdatedText())
+                }
+            }
+        }
+    }
+
     private fun updateHomeUiState(reducer: HomeUiState.() -> HomeUiState) {
         val currentState = _uiState.value
 
@@ -273,6 +333,7 @@ class HomeViewModel @Inject constructor(
 
     private companion object {
         const val DAILY_AI_MATCHING_LIMIT = 3
+        const val POPULAR_DESTINATION_TIMESTAMP_REFRESH_MILLIS = 60_000L
         const val SECTION_UPCOMING_TRIP = "UPCOMING_TRIP"
         const val SECTION_MATE_RECOMMENDATIONS = "MATE_RECOMMENDATIONS"
         const val SECTION_POPULAR_DESTINATIONS = "POPULAR_DESTINATIONS"

@@ -38,10 +38,25 @@ class MatchingViewModel @Inject constructor(
     val sideEffect: SharedFlow<MatchingSideEffect> = _sideEffect.asSharedFlow()
     private var searchJob: Job? = null
     private var postLoadJob: Job? = null
+    private var isInitialized = false
 
-    init {
-        loadPosts()
+    fun initialize(initialDestinationId: Long? = null) {
+        val current = (_uiState.value as? UiState.Success)?.data ?: MatchingUiState()
+        if (initialDestinationId != null) {
+            if (current.filters.destinationId == initialDestinationId && isInitialized) return
+            _uiState.value = UiState.Success(
+                current.copy(filters = current.filters.copy(destinationId = initialDestinationId))
+            )
+            isInitialized = true
+            loadDestinationOptions()
+            loadPosts()
+            return
+        }
+        if (isInitialized) return
+        isInitialized = true
+        _uiState.value = UiState.Success(current)
         loadDestinationOptions()
+        loadPosts()
     }
 
     fun onNotificationClick() {

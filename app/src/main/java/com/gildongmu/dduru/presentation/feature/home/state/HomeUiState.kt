@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.home.state
 
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.presentation.feature.home.model.AiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.model.HomePopularDestinationUiModel
 import com.gildongmu.dduru.presentation.feature.home.model.HomeSuperHostCardUiModel
@@ -12,11 +13,15 @@ data class HomeUiState(
     val upcomingTrip: UpcomingTripUiState = UpcomingTripUiState(),
     val popularDestinations: ImmutableList<HomePopularDestinationUiModel> = persistentListOf(),
     val popularDestinationUpdatedText: String = "방금 전",
+    val popularDestinationUpdatedAt: String? = null,
     val isPopularDestinationsRefreshing: Boolean = false,
     val popularDestinationsRefreshFailed: Boolean = false,
     val aiMatchingUsedCount: Int = 0,
-    val aiMatchingCard: AiMatchingCardData? = fakeAiMatchingCard,
+    val aiMatchingCard: AiMatchingCardData? = null,
+    val surveyStatus: SurveyStatus = SurveyStatus.COMPLETED,
+    val hasPreferredDestinations: Boolean = true,
     val superHosts: List<HomeSuperHostCardUiModel> = emptyList(),
+    val pendingSuperHostLikeIds: Set<Long> = emptySet(),
     val sameDestinationCompanions: List<TravelCompanionUiModel> = emptyList(),
     val sameAgeCompanions: List<TravelCompanionUiModel> = emptyList()
 ) {
@@ -50,6 +55,7 @@ data class HomeUiState(
                 )
             ),
             aiMatchingUsedCount = 0,
+            aiMatchingCard = fakeAiMatchingCard,
             superHosts = listOf(
                 HomeSuperHostCardUiModel(
                     id = 1L,

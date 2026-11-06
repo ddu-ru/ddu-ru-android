@@ -167,6 +167,9 @@ fun RootNavigation(
                             onNavigateToTravelStyleSurvey = {
                                 rootBackStack.add(RootNavRoute.TravelStyleSurvey)
                             },
+                            onNavigateToTravelPreferences = {
+                                rootBackStack.add(RootNavRoute.ProfileEditPreferences)
+                            },
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             }
@@ -195,6 +198,9 @@ fun RootNavigation(
                             },
                             onNavigateToTravelStyleSurvey = {
                                 rootBackStack.add(RootNavRoute.TravelStyleSurvey)
+                            },
+                            onNavigateToTravelPreferences = {
+                                rootBackStack.add(RootNavRoute.ProfileEditPreferences)
                             },
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))

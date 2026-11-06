@@ -29,6 +29,7 @@ import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.presentation.feature.home.component.AiMatchingSection
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHeader
 import com.gildongmu.dduru.presentation.feature.home.component.HomeRealtimePopularDestinationSection
@@ -52,6 +53,8 @@ fun HomeRoute(
     navigateToDestination: (Long) -> Unit = {},
     navigateToMatchingDetail: (Long) -> Unit = {},
     navigateToCreateTravelRoom: () -> Unit = {},
+    navigateToTravelStyleSurvey: () -> Unit = {},
+    navigateToTravelPreferences: () -> Unit = {},
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -68,6 +71,8 @@ fun HomeRoute(
                     navigateToMatchingDetail(sideEffect.postId)
                 }
                 HomeSideEffect.NavigateToCreateTravelRoom -> navigateToCreateTravelRoom()
+                HomeSideEffect.NavigateToTravelStyleSurvey -> navigateToTravelStyleSurvey()
+                HomeSideEffect.NavigateToTravelPreferences -> navigateToTravelPreferences()
             }
         }
     }
@@ -93,6 +98,8 @@ fun HomeRoute(
                 onSuperHostMoreClick = viewModel::onSuperHostMoreClick,
                 onSuperHostClick = viewModel::onSuperHostClick,
                 onSuperHostLikeClick = viewModel::onSuperHostLikeClick,
+                onTravelStyleSurveyClick = viewModel::onTravelStyleSurveyClick,
+                onTravelPreferencesClick = viewModel::onTravelPreferencesClick,
                 onCompanionMoreClick = viewModel::onCompanionMoreClick,
                 onCompanionClick = viewModel::onCompanionClick,
                 onCreateTravelRoomClick = viewModel::onCreateTravelRoomClick
@@ -115,6 +122,8 @@ private fun HomeScreen(
     onSuperHostMoreClick: () -> Unit,
     onSuperHostClick: (Long) -> Unit,
     onSuperHostLikeClick: (Long) -> Unit,
+    onTravelStyleSurveyClick: () -> Unit,
+    onTravelPreferencesClick: () -> Unit,
     onCompanionMoreClick: () -> Unit,
     onCompanionClick: (Long) -> Unit,
     onCreateTravelRoomClick: () -> Unit,
@@ -144,7 +153,7 @@ private fun HomeScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
-                contentPadding = PaddingValues(bottom = 110.dp),
+                contentPadding = PaddingValues(bottom = 160.dp),
                 verticalArrangement = Arrangement.spacedBy(40.dp)
             ) {
                 if (uiState.upcomingTrip.hasUpcomingTrip) {
@@ -177,8 +186,10 @@ private fun HomeScreen(
                     AiMatchingSection(
                         matchUsedCount = uiState.aiMatchingUsedCount,
                         data = uiState.aiMatchingCard,
+                        surveyCompleted = uiState.surveyStatus == SurveyStatus.COMPLETED,
                         onPass = onAiMatchingPassClick,
-                        onAccept = onAiMatchingAcceptClick
+                        onAccept = onAiMatchingAcceptClick,
+                        onSurveyClick = onTravelStyleSurveyClick
                     )
                 }
 
@@ -187,7 +198,8 @@ private fun HomeScreen(
                         items = uiState.superHosts,
                         onMoreClick = onSuperHostMoreClick,
                         onCardClick = onSuperHostClick,
-                        onLikeClick = onSuperHostLikeClick
+                        onLikeClick = onSuperHostLikeClick,
+                        pendingLikeIds = uiState.pendingSuperHostLikeIds
                     )
                 }
 
@@ -196,7 +208,10 @@ private fun HomeScreen(
                         items = uiState.sameDestinationCompanions,
                         title = "선호하는 여행지가 같은 동행",
                         onMoreClick = onCompanionMoreClick,
-                        onCardClick = { onCompanionClick(it.id) }
+                        onCardClick = { onCompanionClick(it.id) },
+                        emptyDescription = if (uiState.hasPreferredDestinations) null else "선호 여행지를 등록하면 비슷한 취향의 동행을 추천해 드려요.",
+                        emptyActionLabel = if (uiState.hasPreferredDestinations) null else "선호 여행지 등록하기",
+                        onEmptyAction = onTravelPreferencesClick
                     )
                 }
 
@@ -251,6 +266,8 @@ private fun HomeScreenPreview() {
             onSuperHostMoreClick = {},
             onSuperHostClick = {},
             onSuperHostLikeClick = {},
+            onTravelStyleSurveyClick = {},
+            onTravelPreferencesClick = {},
             onCompanionMoreClick = {},
             onCompanionClick = {},
             onCreateTravelRoomClick = {}
