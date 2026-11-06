@@ -37,7 +37,6 @@ import com.gildongmu.dduru.presentation.feature.mypage.component.InquiryEmptyCar
 import com.gildongmu.dduru.presentation.feature.mypage.model.InquiryDetailUiModel
 import com.gildongmu.dduru.presentation.feature.mypage.model.InquiryStatus
 
-
 @Composable
 fun InquiryDetailScreen(
     inquiry: InquiryDetailUiModel,
@@ -260,7 +259,6 @@ private fun InquiryResolvedSection(onNewInquiryClick: () -> Unit) {
         )
     }
 }
-
 
 private val PreviewWaitingInquiry = InquiryDetailUiModel(
     category = "오류·버그",
