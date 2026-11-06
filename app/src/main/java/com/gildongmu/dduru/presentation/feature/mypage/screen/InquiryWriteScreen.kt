@@ -4,7 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
@@ -100,12 +99,7 @@ fun InquiryWriteScreen(
                             onValueChange = onContentChange,
                             maxLength = INQUIRY_CONTENT_MAX_LENGTH,
                             placeholder = "문의 내용을 입력해주세요",
-                            modifier = Modifier.height(220.dp),
-                            borderColor = DduruTheme.colors.gray958.copy(alpha = 0.1f),
-                            textStyle = DduruTheme.typography.Body1,
-                            counterStyle = DduruTheme.typography.Body1,
-                            emptyCounterColor = DduruTheme.colors.gray300,
-                            contentPadding = PaddingValues(start = 16.dp, top = 16.dp, end = 18.dp, bottom = 18.dp)
+                            modifier = Modifier.height(220.dp)
                         )
                     }
 

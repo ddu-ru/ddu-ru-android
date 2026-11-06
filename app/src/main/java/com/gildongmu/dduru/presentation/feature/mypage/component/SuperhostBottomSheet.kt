@@ -49,10 +49,7 @@ import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostSheetMode
 import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostSheetStep
 import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostSheetUiState
 
-private val SheetShape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp)
-private val SheetButtonShape = RoundedCornerShape(16.dp)
 private const val SPINNER_DURATION_MILLIS = 1000
-private const val SHEET_SCRIM_ALPHA = 0.5f
 
 private val InfoBulletItems = listOf(
     "티켓 1장으로 게시글 1개에 적용할 수 있어요",
@@ -71,9 +68,9 @@ fun SuperhostApplyBottomSheet(
     ModalBottomSheet(
         onDismissRequest = { if (uiState.step == SuperhostSheetStep.CONFIRM) onDismiss() },
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        shape = SheetShape,
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         containerColor = DduruTheme.colors.gray0,
-        scrimColor = DduruTheme.colors.black.copy(alpha = SHEET_SCRIM_ALPHA),
+        scrimColor = DduruTheme.colors.black.copy(alpha = 0.5f),
         dragHandle = null
     ) {
         SuperhostApplySheetContent(
@@ -90,9 +87,9 @@ fun SuperhostInfoBottomSheet(onDismiss: () -> Unit) {
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = rememberModalBottomSheetState(skipPartiallyExpanded = true),
-        shape = SheetShape,
+        shape = RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp),
         containerColor = DduruTheme.colors.gray0,
-        scrimColor = DduruTheme.colors.black.copy(alpha = SHEET_SCRIM_ALPHA),
+        scrimColor = DduruTheme.colors.black.copy(alpha = 0.5f),
         dragHandle = null
     ) {
         SuperhostInfoSheetContent(onDismiss = onDismiss)
@@ -108,7 +105,7 @@ internal fun SuperhostApplySheetSurface(
         uiState = uiState,
         onDismiss = {},
         onConfirm = {},
-        modifier = modifier.background(DduruTheme.colors.gray0, SheetShape)
+        modifier = modifier.background(DduruTheme.colors.gray0, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
     )
 }
 
@@ -116,7 +113,7 @@ internal fun SuperhostApplySheetSurface(
 internal fun SuperhostInfoSheetSurface(modifier: Modifier = Modifier) {
     SuperhostInfoSheetContent(
         onDismiss = {},
-        modifier = modifier.background(DduruTheme.colors.gray0, SheetShape)
+        modifier = modifier.background(DduruTheme.colors.gray0, RoundedCornerShape(topStart = 24.dp, topEnd = 24.dp))
     )
 }
 
@@ -339,9 +336,9 @@ private fun SheetConfirmButtons(
             modifier = Modifier
                 .weight(1f)
                 .height(48.dp)
-                .clip(SheetButtonShape)
+                .clip(RoundedCornerShape(16.dp))
                 .background(DduruTheme.colors.primary)
-                .border(1.dp, DduruTheme.colors.gray0.copy(alpha = 0.3f), SheetButtonShape)
+                .border(1.dp, DduruTheme.colors.gray0.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
                 .noRippleClickable(onClick = onConfirm)
         ) {
             Row(
@@ -379,9 +376,9 @@ private fun SheetOutlinedButton(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .height(48.dp)
-            .clip(SheetButtonShape)
+            .clip(RoundedCornerShape(16.dp))
             .background(DduruTheme.colors.gray0)
-            .border(1.dp, DduruTheme.colors.gray200, SheetButtonShape)
+            .border(1.dp, DduruTheme.colors.gray200, RoundedCornerShape(16.dp))
             .noRippleClickable(onClick = onClick)
     ) {
         Text(
@@ -409,9 +406,9 @@ private fun SheetLoadingButton() {
         modifier = Modifier
             .fillMaxWidth()
             .height(48.dp)
-            .clip(SheetButtonShape)
+            .clip(RoundedCornerShape(16.dp))
             .background(DduruTheme.colors.gray0.copy(alpha = 0.4f).compositeOver(DduruTheme.colors.primary))
-            .border(1.dp, DduruTheme.colors.gray0.copy(alpha = 0.3f), SheetButtonShape)
+            .border(1.dp, DduruTheme.colors.gray0.copy(alpha = 0.3f), RoundedCornerShape(16.dp))
     ) {
         Icon(
             painter = painterResource(id = R.drawable.ic_circle_notch),
@@ -450,8 +447,6 @@ private fun SuperhostInfoSheetContent(
     onDismiss: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val bodyStyle = DduruTheme.typography.Body2
-
     Column(
         verticalArrangement = Arrangement.spacedBy(40.dp),
         modifier = modifier
@@ -484,7 +479,7 @@ private fun SuperhostInfoSheetContent(
 
                 Text(
                     text = "내 모집글을 더 많은 동행에게 보여줄 수 있는 권한이에요",
-                    style = bodyStyle,
+                    style = DduruTheme.typography.Body2,
                     color = DduruTheme.colors.gray600
                 )
 
@@ -496,7 +491,7 @@ private fun SuperhostInfoSheetContent(
                         }
                         append("돼요. 동행을 찾는 사용자에게 게시글이 노출될 기회가 늘어나 더 빠르게 동행을 모집할 수 있어요")
                     },
-                    style = bodyStyle,
+                    style = DduruTheme.typography.Body2,
                     color = DduruTheme.colors.gray600
                 )
 
@@ -505,14 +500,14 @@ private fun SuperhostInfoSheetContent(
                         Row {
                             Text(
                                 text = "•",
-                                style = bodyStyle.copy(lineHeight = 25.2.sp),
+                                style = DduruTheme.typography.Body2.copy(lineHeight = 25.2.sp),
                                 color = DduruTheme.colors.gray600,
                                 textAlign = TextAlign.Center,
                                 modifier = Modifier.padding(horizontal = 7.dp)
                             )
                             Text(
                                 text = item,
-                                style = bodyStyle.copy(lineHeight = 25.2.sp),
+                                style = DduruTheme.typography.Body2.copy(lineHeight = 25.2.sp),
                                 color = DduruTheme.colors.gray600
                             )
                         }

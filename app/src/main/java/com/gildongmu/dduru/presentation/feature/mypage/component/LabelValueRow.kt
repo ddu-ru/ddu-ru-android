@@ -19,8 +19,6 @@ fun LabelValueRow(
     value: String,
     modifier: Modifier = Modifier
 ) {
-    val textStyle = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
-
     Row(
         modifier = modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -28,13 +26,13 @@ fun LabelValueRow(
     ) {
         Text(
             text = label,
-            style = textStyle,
+            style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
             color = DduruTheme.colors.gray500,
             modifier = Modifier.width(48.dp)
         )
         Text(
             text = value,
-            style = textStyle,
+            style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
             color = DduruTheme.colors.gray700
         )
     }

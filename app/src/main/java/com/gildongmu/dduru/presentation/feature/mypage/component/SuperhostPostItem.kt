@@ -136,7 +136,7 @@ private fun AppliedPostFooter(
             }
             Text(
                 text = remainingTime,
-                style = postCaptionStyle(),
+                style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
                 color = DduruTheme.colors.primary
             )
         }
@@ -152,37 +152,38 @@ private fun SuperhostActionButton(
     enabled: Boolean,
     onClick: () -> Unit
 ) {
-    val shape = RoundedCornerShape(16.dp)
-    val backgroundColor = when {
-        !enabled -> DduruTheme.colors.gray200
-        isApplied -> DduruTheme.colors.secondary100
-        else -> DduruTheme.colors.primary
-    }
-    val textColor = when {
-        !enabled -> DduruTheme.colors.gray400
-        isApplied -> DduruTheme.colors.primary
-        else -> DduruTheme.colors.gray0
-    }
-    val borderColor = when {
-        !enabled -> DduruTheme.colors.gray300
-        isApplied -> DduruTheme.colors.secondary100
-        else -> DduruTheme.colors.gray0.copy(alpha = 0.3f)
-    }
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = Modifier
             .height(44.dp)
-            .clip(shape)
-            .background(backgroundColor)
-            .border(1.dp, borderColor, shape)
+            .clip(RoundedCornerShape(16.dp))
+            .background(
+                when {
+                    !enabled -> DduruTheme.colors.gray200
+                    isApplied -> DduruTheme.colors.secondary100
+                    else -> DduruTheme.colors.primary
+                }
+            )
+            .border(
+                width = 1.dp,
+                color = when {
+                    !enabled -> DduruTheme.colors.gray300
+                    isApplied -> DduruTheme.colors.secondary100
+                    else -> DduruTheme.colors.gray0.copy(alpha = 0.3f)
+                },
+                shape = RoundedCornerShape(16.dp)
+            )
             .then(if (enabled) Modifier.noRippleClickable(onClick = onClick) else Modifier)
             .padding(horizontal = 16.dp)
     ) {
         Text(
             text = text,
             style = DduruTheme.typography.Title2,
-            color = textColor
+            color = when {
+                !enabled -> DduruTheme.colors.gray400
+                isApplied -> DduruTheme.colors.primary
+                else -> DduruTheme.colors.gray0
+            }
         )
     }
 }
@@ -262,7 +263,7 @@ internal fun PostTitleAndMeta(
 private fun PostMetaText(text: String) {
     Text(
         text = text,
-        style = postCaptionStyle(),
+        style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
         color = DduruTheme.colors.gray500,
         maxLines = 1
     )
@@ -287,14 +288,11 @@ internal fun PostCount(
         )
         Text(
             text = count,
-            style = postCaptionStyle(),
+            style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
             color = DduruTheme.colors.gray500
         )
     }
 }
-
-@Composable
-private fun postCaptionStyle() = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
 
 private val PreviewPost = SuperhostPostUiModel(
     id = 1,

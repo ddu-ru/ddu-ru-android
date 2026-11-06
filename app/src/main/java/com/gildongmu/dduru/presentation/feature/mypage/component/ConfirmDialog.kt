@@ -25,8 +25,6 @@ import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
-private const val DIALOG_DIM_AMOUNT = 0.5f
-
 @Composable
 fun ConfirmDialog(
     title: String,
@@ -43,7 +41,7 @@ fun ConfirmDialog(
         val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
 
         SideEffect {
-            dialogWindow?.setDimAmount(DIALOG_DIM_AMOUNT)
+            dialogWindow?.setDimAmount(0.5f)
         }
 
         ConfirmDialogContent(

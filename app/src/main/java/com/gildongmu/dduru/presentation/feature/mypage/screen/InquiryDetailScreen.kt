@@ -37,7 +37,6 @@ import com.gildongmu.dduru.presentation.feature.mypage.component.InquiryEmptyCar
 import com.gildongmu.dduru.presentation.feature.mypage.model.InquiryDetailUiModel
 import com.gildongmu.dduru.presentation.feature.mypage.model.InquiryStatus
 
-private val InquiryCardShape = RoundedCornerShape(16.dp)
 
 @Composable
 fun InquiryDetailScreen(
@@ -94,8 +93,6 @@ private fun InquiryEditButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
-    val shape = RoundedCornerShape(99.dp)
-
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
@@ -103,16 +100,16 @@ private fun InquiryEditButton(
             .dduruDualShadow(
                 firstAlpha = 0.10f,
                 secondAlpha = 0.08f,
-                shape = shape
+                shape = CircleShape
             )
             .background(
                 color = if (enabled) DduruTheme.colors.gray0.copy(alpha = 0.92f) else DduruTheme.colors.gray200,
-                shape = shape
+                shape = CircleShape
             )
             .border(
                 width = 1.dp,
                 color = if (enabled) DduruTheme.colors.gray0.copy(alpha = 0.3f) else DduruTheme.colors.gray300,
-                shape = shape
+                shape = CircleShape
             )
             .then(if (enabled) Modifier.noRippleClickable(onClick = onClick) else Modifier)
             .padding(horizontal = 16.dp, vertical = 8.dp)
@@ -132,7 +129,8 @@ private fun InquiryQuestionCard(inquiry: InquiryDetailUiModel) {
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .inquiryCard()
+            .background(DduruTheme.colors.gray0, RoundedCornerShape(16.dp))
+            .border(1.dp, DduruTheme.colors.gray200, RoundedCornerShape(16.dp))
             .padding(17.dp)
     ) {
         Column(verticalArrangement = Arrangement.spacedBy(4.dp)) {
@@ -142,14 +140,14 @@ private fun InquiryQuestionCard(inquiry: InquiryDetailUiModel) {
             ) {
                 Text(
                     text = inquiry.category,
-                    style = inquiryCaptionStyle(),
+                    style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
                     color = DduruTheme.colors.gray600
                 )
                 InquiryStatusTag(status = inquiry.status)
             }
             Text(
                 text = inquiry.date,
-                style = inquiryCaptionStyle(),
+                style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
                 color = DduruTheme.colors.gray600
             )
         }
@@ -196,7 +194,8 @@ private fun InquiryAnswerCard(
         verticalArrangement = Arrangement.spacedBy(10.dp),
         modifier = Modifier
             .fillMaxWidth()
-            .inquiryCard()
+            .background(DduruTheme.colors.gray0, RoundedCornerShape(16.dp))
+            .border(1.dp, DduruTheme.colors.gray200, RoundedCornerShape(16.dp))
             .padding(17.dp)
     ) {
         Row(
@@ -216,7 +215,7 @@ private fun InquiryAnswerCard(
                 )
                 Text(
                     text = answerDate,
-                    style = inquiryCaptionStyle(),
+                    style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
                     color = DduruTheme.colors.gray600
                 )
             }
@@ -262,13 +261,6 @@ private fun InquiryResolvedSection(onNewInquiryClick: () -> Unit) {
     }
 }
 
-@Composable
-private fun Modifier.inquiryCard(): Modifier = this
-    .background(DduruTheme.colors.gray0, InquiryCardShape)
-    .border(1.dp, DduruTheme.colors.gray200, InquiryCardShape)
-
-@Composable
-private fun inquiryCaptionStyle() = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
 
 private val PreviewWaitingInquiry = InquiryDetailUiModel(
     category = "오류·버그",

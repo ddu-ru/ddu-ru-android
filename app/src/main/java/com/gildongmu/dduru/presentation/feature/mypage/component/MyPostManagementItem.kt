@@ -73,8 +73,6 @@ fun MyPostManagementItem(
 
 @Composable
 private fun RecruitStatus(isRecruiting: Boolean) {
-    val color = if (isRecruiting) DduruTheme.colors.primary else DduruTheme.colors.gray500
-
     Row(
         horizontalArrangement = Arrangement.spacedBy(4.dp),
         verticalAlignment = Alignment.CenterVertically
@@ -82,12 +80,15 @@ private fun RecruitStatus(isRecruiting: Boolean) {
         Box(
             modifier = Modifier
                 .size(6.dp)
-                .background(color, CircleShape)
+                .background(
+                    color = if (isRecruiting) DduruTheme.colors.primary else DduruTheme.colors.gray500,
+                    shape = CircleShape
+                )
         )
         Text(
             text = if (isRecruiting) "모집중" else "모집마감",
             style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
-            color = color
+            color = if (isRecruiting) DduruTheme.colors.primary else DduruTheme.colors.gray500
         )
     }
 }

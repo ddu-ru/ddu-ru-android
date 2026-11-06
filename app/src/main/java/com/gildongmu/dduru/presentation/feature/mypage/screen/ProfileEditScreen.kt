@@ -222,7 +222,6 @@ fun ProfileEditScreen(
 
                     ProfileIntroduction(
                         text = bio,
-                        useProfileEditStyle = true,
                         onValueChange = onBioChange
                     )
                 }

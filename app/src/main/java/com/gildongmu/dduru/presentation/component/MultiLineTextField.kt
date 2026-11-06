@@ -4,7 +4,6 @@ import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -19,8 +18,6 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -32,19 +29,14 @@ fun MultiLineTextField(
     onValueChange: (String) -> Unit,
     maxLength: Int,
     placeholder: String,
-    modifier: Modifier = Modifier,
-    borderColor: Color = DduruTheme.colors.gray200,
-    textStyle: TextStyle = DduruTheme.typography.Body2,
-    counterStyle: TextStyle = DduruTheme.typography.Caption2,
-    emptyCounterColor: Color = DduruTheme.colors.gray500,
-    contentPadding: PaddingValues = PaddingValues(horizontal = 16.dp, vertical = 17.dp)
+    modifier: Modifier = Modifier
 ) {
     Surface(
         modifier = modifier.fillMaxWidth(),
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(
             width = 1.dp,
-            color = borderColor
+            color = DduruTheme.colors.gray958.copy(alpha = 0.1f)
         ),
         color = DduruTheme.colors.gray0
     ) {
@@ -55,8 +47,8 @@ fun MultiLineTextField(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(contentPadding),
-            textStyle = textStyle.copy(
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 18.dp),
+            textStyle = DduruTheme.typography.Body1.copy(
                 color = DduruTheme.colors.gray958
             ),
             decorationBox = { innerTextField ->
@@ -71,7 +63,7 @@ fun MultiLineTextField(
                         if (value.isEmpty()) {
                             Text(
                                 text = placeholder,
-                                style = textStyle,
+                                style = DduruTheme.typography.Body1,
                                 color = DduruTheme.colors.gray400
                             )
                         }
@@ -82,10 +74,10 @@ fun MultiLineTextField(
                     Text(
                         text = "${value.length}/$maxLength",
                         modifier = Modifier.fillMaxWidth(),
-                        style = counterStyle,
+                        style = DduruTheme.typography.Body1,
                         textAlign = TextAlign.End,
                         color = if (value.isEmpty()) {
-                            emptyCounterColor
+                            DduruTheme.colors.gray300
                         } else {
                             DduruTheme.colors.gray700
                         }
