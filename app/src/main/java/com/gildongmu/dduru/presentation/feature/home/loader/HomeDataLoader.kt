@@ -42,82 +42,84 @@ class HomeDataLoader @Inject constructor(
         }
 
         return try {
-            Result.success(coroutineScope {
-                val upcomingTrip = async {
-                    if (config.isSectionEnabled(SECTION_UPCOMING_TRIP)) {
-                        safeRequest { homeRepository.getHomeUpcomingTrip() }
-                            .getOrNull()
-                            ?.toUiState()
-                    } else {
-                        null
+            Result.success(
+                coroutineScope {
+                    val upcomingTrip = async {
+                        if (config.isSectionEnabled(SECTION_UPCOMING_TRIP)) {
+                            safeRequest { homeRepository.getHomeUpcomingTrip() }
+                                .getOrNull()
+                                ?.toUiState()
+                        } else {
+                            null
+                        }
                     }
-                }
-                val mateRecommendations = async {
-                    if (config.isSectionEnabled(SECTION_MATE_RECOMMENDATIONS)) {
-                        safeRequest { homeRepository.getHomeMateRecommendations() }.getOrNull()
-                    } else {
-                        null
+                    val mateRecommendations = async {
+                        if (config.isSectionEnabled(SECTION_MATE_RECOMMENDATIONS)) {
+                            safeRequest { homeRepository.getHomeMateRecommendations() }.getOrNull()
+                        } else {
+                            null
+                        }
                     }
-                }
-                val popularDestinations = async {
-                    if (config.isSectionEnabled(SECTION_POPULAR_DESTINATIONS)) {
-                        safeRequest { homeRepository.getHomePopularDestinations() }.getOrNull()
-                    } else {
-                        null
+                    val popularDestinations = async {
+                        if (config.isSectionEnabled(SECTION_POPULAR_DESTINATIONS)) {
+                            safeRequest { homeRepository.getHomePopularDestinations() }.getOrNull()
+                        } else {
+                            null
+                        }
                     }
-                }
-                val superHosts = async {
-                    if (config.isSectionEnabled(SECTION_SUPER_HOSTS)) {
-                        safeRequest { homeRepository.getHomeSuperHosts() }
-                            .getOrNull()
-                            .orEmpty()
-                            .map { it.toUiModel() }
-                    } else {
-                        emptyList()
+                    val superHosts = async {
+                        if (config.isSectionEnabled(SECTION_SUPER_HOSTS)) {
+                            safeRequest { homeRepository.getHomeSuperHosts() }
+                                .getOrNull()
+                                .orEmpty()
+                                .map { it.toUiModel() }
+                        } else {
+                            emptyList()
+                        }
                     }
-                }
-                val sameDestinationTrips = async {
-                    if (config.isSectionEnabled(SECTION_SAME_DESTINATION_TRIPS)) {
-                        safeRequest { homeRepository.getHomeSameDestinationTrips() }
-                            .getOrNull()
-                            ?.map { it.toTravelCompanionUiModel() }
-                            .orEmpty()
-                    } else {
-                        emptyList()
+                    val sameDestinationTrips = async {
+                        if (config.isSectionEnabled(SECTION_SAME_DESTINATION_TRIPS)) {
+                            safeRequest { homeRepository.getHomeSameDestinationTrips() }
+                                .getOrNull()
+                                ?.map { it.toTravelCompanionUiModel() }
+                                .orEmpty()
+                        } else {
+                            emptyList()
+                        }
                     }
-                }
-                val sameAgeTrips = async {
-                    if (config.isSectionEnabled(SECTION_SAME_AGE_TRIPS)) {
-                        safeRequest { homeRepository.getHomeSameAgeTrips() }
-                            .getOrNull()
-                            ?.map { it.toTravelCompanionUiModel() }
-                            .orEmpty()
-                    } else {
-                        emptyList()
+                    val sameAgeTrips = async {
+                        if (config.isSectionEnabled(SECTION_SAME_AGE_TRIPS)) {
+                            safeRequest { homeRepository.getHomeSameAgeTrips() }
+                                .getOrNull()
+                                ?.map { it.toTravelCompanionUiModel() }
+                                .orEmpty()
+                        } else {
+                            emptyList()
+                        }
                     }
-                }
-                val surveyState = async { loadSurveyState() }
-                val destinationPreferenceState = async { loadDestinationPreferenceState() }
+                    val surveyState = async { loadSurveyState() }
+                    val destinationPreferenceState = async { loadDestinationPreferenceState() }
 
-                val recommendations = mateRecommendations.await()
-                val popular = popularDestinations.await()
-                HomeUiState(
-                    upcomingTrip = upcomingTrip.await() ?: HomeUiState().upcomingTrip,
-                    popularDestinations = popular?.items
-                        ?.map { it.toUiModel() }
-                        ?.toImmutableList()
-                        ?: persistentListOf(),
-                    popularDestinationUpdatedAt = popular?.updatedAt,
-                    popularDestinationUpdatedText = popular?.updatedAt?.toUpdatedText() ?: "방금 전",
-                    aiMatchingUsedCount = recommendations?.usedCount() ?: 0,
-                    aiMatchingCard = recommendations?.toCardOrNull(),
-                    surveyState = surveyState.await(),
-                    destinationPreferenceState = destinationPreferenceState.await(),
-                    superHosts = superHosts.await(),
-                    sameDestinationCompanions = sameDestinationTrips.await(),
-                    sameAgeCompanions = sameAgeTrips.await()
-                )
-            })
+                    val recommendations = mateRecommendations.await()
+                    val popular = popularDestinations.await()
+                    HomeUiState(
+                        upcomingTrip = upcomingTrip.await() ?: HomeUiState().upcomingTrip,
+                        popularDestinations = popular?.items
+                            ?.map { it.toUiModel() }
+                            ?.toImmutableList()
+                            ?: persistentListOf(),
+                        popularDestinationUpdatedAt = popular?.updatedAt,
+                        popularDestinationUpdatedText = popular?.updatedAt?.toUpdatedText() ?: "방금 전",
+                        aiMatchingUsedCount = recommendations?.usedCount() ?: 0,
+                        aiMatchingCard = recommendations?.toCardOrNull(),
+                        surveyState = surveyState.await(),
+                        destinationPreferenceState = destinationPreferenceState.await(),
+                        superHosts = superHosts.await(),
+                        sameDestinationCompanions = sameDestinationTrips.await(),
+                        sameAgeCompanions = sameAgeTrips.await()
+                    )
+                }
+            )
         } catch (exception: CancellationException) {
             throw exception
         } catch (exception: Exception) {

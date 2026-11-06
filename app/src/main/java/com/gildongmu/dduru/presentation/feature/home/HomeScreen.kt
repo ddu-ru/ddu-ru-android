@@ -39,7 +39,6 @@ import com.gildongmu.dduru.presentation.feature.home.component.WritingButton
 import com.gildongmu.dduru.presentation.feature.home.component.WritingExpandedMenu
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
 import com.gildongmu.dduru.presentation.feature.home.state.HomeDestinationPreferenceState
-import com.gildongmu.dduru.presentation.feature.home.state.HomeSurveyState
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
 import com.gildongmu.dduru.presentation.feature.home.viewmodel.HomeViewModel
 import kotlinx.coroutines.flow.collectLatest
@@ -229,7 +228,9 @@ private fun HomeScreen(
                             HomeDestinationPreferenceState.AVAILABLE -> null
                         },
                         emptyActionIsLoading = uiState.isDestinationPreferenceRefreshing,
-                        onEmptyAction = if (uiState.destinationPreferenceState == HomeDestinationPreferenceState.EMPTY) {
+                        onEmptyAction = if (
+                            uiState.destinationPreferenceState == HomeDestinationPreferenceState.EMPTY
+                        ) {
                             onTravelPreferencesClick
                         } else {
                             onRetryDestinationPreferenceClick

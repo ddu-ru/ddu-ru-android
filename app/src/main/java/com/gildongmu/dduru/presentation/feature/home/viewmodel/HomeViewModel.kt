@@ -133,8 +133,12 @@ class HomeViewModel @Inject constructor(
                 .getOrDefault(false)
             updateHomeUiState {
                 copy(
-                    superHosts = if (succeeded) superHosts else superHosts.map { current ->
-                        if (current.id == id) current.copy(isLiked = item.isLiked) else current
+                    superHosts = if (succeeded) {
+                        superHosts
+                    } else {
+                        superHosts.map { current ->
+                            if (current.id == id) current.copy(isLiked = item.isLiked) else current
+                        }
                     },
                     pendingSuperHostLikeIds = pendingSuperHostLikeIds - id
                 )
