@@ -41,20 +41,12 @@ class MatchingViewModel @Inject constructor(
     private var isInitialized = false
 
     fun initialize(initialDestinationId: Long? = null) {
-        val current = (_uiState.value as? UiState.Success)?.data ?: MatchingUiState()
-        if (initialDestinationId != null) {
-            if (current.filters.destinationId == initialDestinationId && isInitialized) return
-            _uiState.value = UiState.Success(
-                current.copy(filters = current.filters.copy(destinationId = initialDestinationId))
-            )
-            isInitialized = true
-            loadDestinationOptions()
-            loadPosts()
-            return
-        }
         if (isInitialized) return
         isInitialized = true
-        _uiState.value = UiState.Success(current)
+        val initialState = MatchingUiState(
+            filters = MatchingFilterOptions(destinationId = initialDestinationId)
+        )
+        _uiState.value = UiState.Success(initialState)
         loadDestinationOptions()
         loadPosts()
     }

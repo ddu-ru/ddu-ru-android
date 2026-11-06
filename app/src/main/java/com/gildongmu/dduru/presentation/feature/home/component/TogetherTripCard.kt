@@ -43,6 +43,7 @@ fun TravelCompanionSection(
     onCardClick: (TravelCompanionUiModel) -> Unit = {},
     emptyDescription: String? = null,
     emptyActionLabel: String? = null,
+    emptyActionIsLoading: Boolean = false,
     onEmptyAction: () -> Unit = {}
 ) {
     Column(
@@ -91,10 +92,11 @@ fun TravelCompanionSection(
                     Spacer(modifier = Modifier.height(12.dp))
                     Button(
                         onClick = onEmptyAction,
+                        enabled = !emptyActionIsLoading,
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(containerColor = DduruTheme.colors.primary)
                     ) {
-                        Text(emptyActionLabel)
+                        Text(if (emptyActionIsLoading) "불러오는 중" else emptyActionLabel)
                     }
                 }
             }

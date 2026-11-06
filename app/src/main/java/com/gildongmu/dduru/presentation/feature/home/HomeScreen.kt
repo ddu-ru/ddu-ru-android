@@ -101,7 +101,8 @@ fun HomeRoute(
                 onSuperHostLikeClick = viewModel::onSuperHostLikeClick,
                 onTravelStyleSurveyClick = viewModel::onTravelStyleSurveyClick,
                 onTravelPreferencesClick = viewModel::onTravelPreferencesClick,
-                onRetryHomeDataClick = viewModel::onRetryHomeDataClick,
+                onRetrySurveyClick = viewModel::onRetrySurveyStateClick,
+                onRetryDestinationPreferenceClick = viewModel::onRetryDestinationPreferenceClick,
                 onCompanionMoreClick = viewModel::onCompanionMoreClick,
                 onCompanionClick = viewModel::onCompanionClick,
                 onCreateTravelRoomClick = viewModel::onCreateTravelRoomClick
@@ -126,7 +127,8 @@ private fun HomeScreen(
     onSuperHostLikeClick: (Long) -> Unit,
     onTravelStyleSurveyClick: () -> Unit,
     onTravelPreferencesClick: () -> Unit,
-    onRetryHomeDataClick: () -> Unit,
+    onRetrySurveyClick: () -> Unit,
+    onRetryDestinationPreferenceClick: () -> Unit,
     onCompanionMoreClick: () -> Unit,
     onCompanionClick: (Long) -> Unit,
     onCreateTravelRoomClick: () -> Unit,
@@ -193,7 +195,8 @@ private fun HomeScreen(
                         onPass = onAiMatchingPassClick,
                         onAccept = onAiMatchingAcceptClick,
                         onSurveyClick = onTravelStyleSurveyClick,
-                        onRetryClick = onRetryHomeDataClick
+                        onRetryClick = onRetrySurveyClick,
+                        isRetrying = uiState.isSurveyStateRefreshing
                     )
                 }
 
@@ -225,10 +228,11 @@ private fun HomeScreen(
                             HomeDestinationPreferenceState.UNKNOWN,
                             HomeDestinationPreferenceState.AVAILABLE -> null
                         },
+                        emptyActionIsLoading = uiState.isDestinationPreferenceRefreshing,
                         onEmptyAction = if (uiState.destinationPreferenceState == HomeDestinationPreferenceState.EMPTY) {
                             onTravelPreferencesClick
                         } else {
-                            onRetryHomeDataClick
+                            onRetryDestinationPreferenceClick
                         }
                     )
                 }
@@ -286,7 +290,8 @@ private fun HomeScreenPreview() {
             onSuperHostLikeClick = {},
             onTravelStyleSurveyClick = {},
             onTravelPreferencesClick = {},
-            onRetryHomeDataClick = {},
+            onRetrySurveyClick = {},
+            onRetryDestinationPreferenceClick = {},
             onCompanionMoreClick = {},
             onCompanionClick = {},
             onCreateTravelRoomClick = {}

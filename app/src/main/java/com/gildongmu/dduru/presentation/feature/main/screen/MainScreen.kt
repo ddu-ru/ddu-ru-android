@@ -11,6 +11,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -42,8 +43,10 @@ fun MainScreen(
     onNavigateToProfileEdit: () -> Unit,
     onNavigateToTravelStyleSurvey: () -> Unit,
     onNavigateToTravelPreferences: () -> Unit,
+    onNavigateToMatchingDestination: (Long) -> Unit,
     onNavigateToJourneyDetail: (Long, String?) -> Unit,
-    initialRoute: BottomNavRoute = BottomNavRoute.Home
+    initialRoute: BottomNavRoute = BottomNavRoute.Home,
+    initialDestinationId: Long? = null
 ) {
     val bottomNavItems = remember {
         listOf(
@@ -58,7 +61,9 @@ fun MainScreen(
     val bottomNavBackStack = rememberNavBackStack(initialRoute)
     val currentRoute = bottomNavBackStack.lastOrNull() as? BottomNavRoute
         ?: BottomNavRoute.Home
-    var pendingDestinationId by remember { mutableStateOf<Long?>(null) }
+    var pendingInitialDestinationId by rememberSaveable(initialDestinationId) {
+        mutableStateOf(initialDestinationId)
+    }
     val hazeState = remember { HazeState() }
     val navigateToBottomRoute: (BottomNavRoute) -> Unit = { route ->
         if (currentRoute != route) {
@@ -93,10 +98,7 @@ fun MainScreen(
                             navigateToUpcomingTripTask = {
                                 navigateToBottomRoute(BottomNavRoute.Journey)
                             },
-                            navigateToDestination = {
-                                pendingDestinationId = it
-                                navigateToBottomRoute(BottomNavRoute.Matching)
-                            },
+                            navigateToDestination = onNavigateToMatchingDestination,
                             navigateToMatchingDetail = onNavigateToMatchingDetail,
                             navigateToCreateTravelRoom = onNavigateToMatchingCreatePost,
                             navigateToTravelStyleSurvey = onNavigateToTravelStyleSurvey,
@@ -105,9 +107,11 @@ fun MainScreen(
                     }
                     is BottomNavRoute.Matching -> NavEntry(route) {
                         MatchingRoute(
-                            initialDestinationId = pendingDestinationId,
+                            initialDestinationId = pendingInitialDestinationId,
                             onDestinationFilterApplied = { appliedId ->
-                                if (pendingDestinationId == appliedId) pendingDestinationId = null
+                                if (pendingInitialDestinationId == appliedId) {
+                                    pendingInitialDestinationId = null
+                                }
                             },
                             navigateToNotification = onNavigateToHomeNotification,
                             navigateToMenu = onNavigateToHomeMenu,
@@ -173,6 +177,7 @@ private fun MainScreenPreview() {
             onNavigateToMatchingDetail = {},
             onNavigateToTravelStyleSurvey = {},
             onNavigateToTravelPreferences = {},
+            onNavigateToMatchingDestination = {},
             onNavigateToJourneyDetail = { _, _ -> }
         )
     }

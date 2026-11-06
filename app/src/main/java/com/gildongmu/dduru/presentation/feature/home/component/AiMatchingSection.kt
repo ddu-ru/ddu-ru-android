@@ -21,10 +21,10 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.home.DAILY_AI_MATCHING_LIMIT
 import com.gildongmu.dduru.presentation.feature.home.model.AiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.state.HomeSurveyState
 
-private const val DAILY_AI_MATCHING_LIMIT = 3
 private const val AI_MATCHING_CARD_RATIO = 343f / 456f
 
 @Composable
@@ -36,6 +36,7 @@ fun AiMatchingSection(
     onAccept: () -> Unit,
     onSurveyClick: () -> Unit,
     onRetryClick: () -> Unit,
+    isRetrying: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -86,12 +87,19 @@ fun AiMatchingSection(
                     Spacer(modifier = Modifier.height(24.dp))
                     Button(
                         onClick = if (isSurveyUnavailable) onRetryClick else onSurveyClick,
+                        enabled = !isRetrying,
                         shape = RoundedCornerShape(10.dp),
                         colors = ButtonDefaults.buttonColors(
                             containerColor = DduruTheme.colors.primary
                         )
                     ) {
-                        Text(if (isSurveyUnavailable) "다시 시도" else "취향 설문 시작하기")
+                        Text(
+                            text = when {
+                                isRetrying -> "확인 중"
+                                isSurveyUnavailable -> "다시 시도"
+                                else -> "취향 설문 시작하기"
+                            }
+                        )
                     }
                 }
             }

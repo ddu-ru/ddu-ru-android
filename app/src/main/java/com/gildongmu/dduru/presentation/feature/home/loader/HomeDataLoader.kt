@@ -1,4 +1,4 @@
-package com.gildongmu.dduru.presentation.feature.home.usecase
+package com.gildongmu.dduru.presentation.feature.home.loader
 
 import com.gildongmu.dduru.domain.entity.home.HomeInitialConfig
 import com.gildongmu.dduru.domain.entity.home.HomeMateRecommendations
@@ -6,6 +6,7 @@ import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
 import com.gildongmu.dduru.domain.repository.MyPageRepository
 import com.gildongmu.dduru.domain.repository.home.HomeRepository
+import com.gildongmu.dduru.presentation.feature.home.DAILY_AI_MATCHING_LIMIT
 import com.gildongmu.dduru.presentation.feature.home.mapper.toAiMatchingCardData
 import com.gildongmu.dduru.presentation.feature.home.mapper.toTravelCompanionUiModel
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUiModel
@@ -23,7 +24,7 @@ import kotlinx.coroutines.async
 import kotlinx.coroutines.coroutineScope
 
 @ViewModelScoped
-class LoadHomeDataUseCase @Inject constructor(
+class HomeDataLoader @Inject constructor(
     private val homeRepository: HomeRepository,
     private val myPageRepository: MyPageRepository,
     private val onboardingStatusRepository: OnboardingStatusRepository
@@ -31,6 +32,7 @@ class LoadHomeDataUseCase @Inject constructor(
     suspend operator fun invoke(): Result<HomeUiState> {
         val config = try {
             homeRepository.getHomeInitialConfig().getOrElse {
+                if (it is CancellationException) throw it
                 return Result.failure(it)
             }
         } catch (exception: CancellationException) {
@@ -43,35 +45,41 @@ class LoadHomeDataUseCase @Inject constructor(
             Result.success(coroutineScope {
                 val upcomingTrip = async {
                     if (config.isSectionEnabled(SECTION_UPCOMING_TRIP)) {
-                        homeRepository.getHomeUpcomingTrip().getOrNull()?.toUiState()
+                        safeRequest { homeRepository.getHomeUpcomingTrip() }
+                            .getOrNull()
+                            ?.toUiState()
                     } else {
                         null
                     }
                 }
                 val mateRecommendations = async {
                     if (config.isSectionEnabled(SECTION_MATE_RECOMMENDATIONS)) {
-                        homeRepository.getHomeMateRecommendations().getOrNull()
+                        safeRequest { homeRepository.getHomeMateRecommendations() }.getOrNull()
                     } else {
                         null
                     }
                 }
                 val popularDestinations = async {
                     if (config.isSectionEnabled(SECTION_POPULAR_DESTINATIONS)) {
-                        homeRepository.getHomePopularDestinations().getOrNull()
+                        safeRequest { homeRepository.getHomePopularDestinations() }.getOrNull()
                     } else {
                         null
                     }
                 }
                 val superHosts = async {
                     if (config.isSectionEnabled(SECTION_SUPER_HOSTS)) {
-                        homeRepository.getHomeSuperHosts().getOrNull().orEmpty().map { it.toUiModel() }
+                        safeRequest { homeRepository.getHomeSuperHosts() }
+                            .getOrNull()
+                            .orEmpty()
+                            .map { it.toUiModel() }
                     } else {
                         emptyList()
                     }
                 }
                 val sameDestinationTrips = async {
                     if (config.isSectionEnabled(SECTION_SAME_DESTINATION_TRIPS)) {
-                        homeRepository.getHomeSameDestinationTrips().getOrNull()
+                        safeRequest { homeRepository.getHomeSameDestinationTrips() }
+                            .getOrNull()
                             ?.map { it.toTravelCompanionUiModel() }
                             .orEmpty()
                     } else {
@@ -80,30 +88,16 @@ class LoadHomeDataUseCase @Inject constructor(
                 }
                 val sameAgeTrips = async {
                     if (config.isSectionEnabled(SECTION_SAME_AGE_TRIPS)) {
-                        homeRepository.getHomeSameAgeTrips().getOrNull()
+                        safeRequest { homeRepository.getHomeSameAgeTrips() }
+                            .getOrNull()
                             ?.map { it.toTravelCompanionUiModel() }
                             .orEmpty()
                     } else {
                         emptyList()
                     }
                 }
-                val surveyState = async {
-                    onboardingStatusRepository.getSurveyStatus()
-                        .fold({ it.toHomeSurveyState() }, { HomeSurveyState.UNAVAILABLE })
-                }
-                val destinationPreferenceState = async {
-                    myPageRepository.getTravelPreference()
-                        .fold(
-                            { preference ->
-                                if (preference.destinations.isEmpty()) {
-                                    HomeDestinationPreferenceState.EMPTY
-                                } else {
-                                    HomeDestinationPreferenceState.AVAILABLE
-                                }
-                            },
-                            { HomeDestinationPreferenceState.UNAVAILABLE }
-                        )
-                }
+                val surveyState = async { loadSurveyState() }
+                val destinationPreferenceState = async { loadDestinationPreferenceState() }
 
                 val recommendations = mateRecommendations.await()
                 val popular = popularDestinations.await()
@@ -131,6 +125,32 @@ class LoadHomeDataUseCase @Inject constructor(
         }
     }
 
+    suspend fun loadSurveyState(): HomeSurveyState =
+        safeRequest { onboardingStatusRepository.getSurveyStatus() }
+            .fold({ it.toHomeSurveyState() }, { HomeSurveyState.UNAVAILABLE })
+
+    suspend fun loadDestinationPreferenceState(): HomeDestinationPreferenceState =
+        safeRequest { myPageRepository.getTravelPreference() }
+            .fold(
+                { preference ->
+                    if (preference.destinations.isEmpty()) {
+                        HomeDestinationPreferenceState.EMPTY
+                    } else {
+                        HomeDestinationPreferenceState.AVAILABLE
+                    }
+                },
+                { HomeDestinationPreferenceState.UNAVAILABLE }
+            )
+
+    private suspend fun <T> safeRequest(request: suspend () -> Result<T>): Result<T> =
+        try {
+            request()
+        } catch (exception: CancellationException) {
+            throw exception
+        } catch (exception: Exception) {
+            Result.failure(exception)
+        }
+
     private fun HomeInitialConfig.isSectionEnabled(key: String): Boolean =
         sections.firstOrNull { it.key == key }?.enabled ?: true
 
@@ -147,7 +167,6 @@ class LoadHomeDataUseCase @Inject constructor(
         if (this == SurveyStatus.COMPLETED) HomeSurveyState.COMPLETED else HomeSurveyState.NOT_COMPLETED
 
     private companion object {
-        const val DAILY_AI_MATCHING_LIMIT = 3
         const val SECTION_UPCOMING_TRIP = "UPCOMING_TRIP"
         const val SECTION_MATE_RECOMMENDATIONS = "MATE_RECOMMENDATIONS"
         const val SECTION_POPULAR_DESTINATIONS = "POPULAR_DESTINATIONS"

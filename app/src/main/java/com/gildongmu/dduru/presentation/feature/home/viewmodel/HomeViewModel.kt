@@ -5,11 +5,12 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.domain.repository.home.HomeRepository
+import com.gildongmu.dduru.presentation.feature.home.DAILY_AI_MATCHING_LIMIT
 import com.gildongmu.dduru.presentation.feature.home.effect.HomeSideEffect
+import com.gildongmu.dduru.presentation.feature.home.loader.HomeDataLoader
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUiModel
 import com.gildongmu.dduru.presentation.feature.home.mapper.toUpdatedText
 import com.gildongmu.dduru.presentation.feature.home.state.HomeUiState
-import com.gildongmu.dduru.presentation.feature.home.usecase.LoadHomeDataUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
 import kotlinx.collections.immutable.toImmutableList
@@ -26,7 +27,7 @@ import kotlinx.coroutines.launch
 class HomeViewModel @Inject constructor(
     private val homeRepository: HomeRepository,
     private val postService: PostService,
-    private val loadHomeData: LoadHomeDataUseCase
+    private val homeDataLoader: HomeDataLoader
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<HomeUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<HomeUiState>> = _uiState.asStateFlow()
@@ -161,8 +162,36 @@ class HomeViewModel @Inject constructor(
         emitSideEffect(HomeSideEffect.NavigateToTravelPreferences)
     }
 
-    fun onRetryHomeDataClick() {
-        loadHome()
+    fun onRetrySurveyStateClick() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (currentState.isSurveyStateRefreshing) return
+
+        updateHomeUiState { copy(isSurveyStateRefreshing = true) }
+        viewModelScope.launch {
+            val surveyState = homeDataLoader.loadSurveyState()
+            updateHomeUiState {
+                copy(
+                    surveyState = surveyState,
+                    isSurveyStateRefreshing = false
+                )
+            }
+        }
+    }
+
+    fun onRetryDestinationPreferenceClick() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (currentState.isDestinationPreferenceRefreshing) return
+
+        updateHomeUiState { copy(isDestinationPreferenceRefreshing = true) }
+        viewModelScope.launch {
+            val preferenceState = homeDataLoader.loadDestinationPreferenceState()
+            updateHomeUiState {
+                copy(
+                    destinationPreferenceState = preferenceState,
+                    isDestinationPreferenceRefreshing = false
+                )
+            }
+        }
     }
 
     private fun emitSideEffect(sideEffect: HomeSideEffect) {
@@ -174,7 +203,7 @@ class HomeViewModel @Inject constructor(
     private fun loadHome() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
-            loadHomeData()
+            homeDataLoader()
                 .onSuccess { _uiState.value = UiState.Success(it) }
                 .onFailure { _uiState.value = UiState.Failure }
         }
@@ -214,7 +243,6 @@ class HomeViewModel @Inject constructor(
     }
 
     private companion object {
-        const val DAILY_AI_MATCHING_LIMIT = 3
         const val POPULAR_DESTINATION_TIMESTAMP_REFRESH_MILLIS = 60_000L
     }
 }

@@ -170,6 +170,14 @@ fun RootNavigation(
                             onNavigateToTravelPreferences = {
                                 rootBackStack.add(RootNavRoute.ProfileEditPreferences)
                             },
+                            onNavigateToMatchingDestination = { destinationId ->
+                                replaceTop(
+                                    RootNavRoute.MainTab(
+                                        bottomNavRoute = BottomNavRoute.Matching,
+                                        initialDestinationId = destinationId
+                                    )
+                                )
+                            },
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             }
@@ -202,10 +210,19 @@ fun RootNavigation(
                             onNavigateToTravelPreferences = {
                                 rootBackStack.add(RootNavRoute.ProfileEditPreferences)
                             },
+                            onNavigateToMatchingDestination = { destinationId ->
+                                replaceTop(
+                                    RootNavRoute.MainTab(
+                                        bottomNavRoute = BottomNavRoute.Matching,
+                                        initialDestinationId = destinationId
+                                    )
+                                )
+                            },
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             },
-                            initialRoute = route.bottomNavRoute
+                            initialRoute = route.bottomNavRoute,
+                            initialDestinationId = route.initialDestinationId
                         )
                     }
 
