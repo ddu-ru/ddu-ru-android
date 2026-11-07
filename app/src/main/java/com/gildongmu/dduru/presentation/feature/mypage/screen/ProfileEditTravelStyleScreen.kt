@@ -17,6 +17,8 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.layout.ContentScale
@@ -24,18 +26,66 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
+import com.gildongmu.dduru.core.designsystem.component.DduruButtonDisabledColors
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditHeader
 import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditTabRow
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelStyleDescriptionBox
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelStyleTagChip
 import com.gildongmu.dduru.presentation.feature.mypage.model.TravelStyleTag
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditTravelStyleViewModel
 
 private const val TRAVEL_STYLE_TAB_INDEX = 2
+
+@Composable
+fun ProfileEditTravelStyleRoute(
+    onBackClick: () -> Unit,
+    onTabClick: (Int) -> Unit,
+    onRetestClick: () -> Unit,
+    onNoSurveyResult: () -> Unit,
+    viewModel: ProfileEditTravelStyleViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.loadTravelStyle()
+    }
+
+    LaunchedEffect(uiState) {
+        if (uiState is UiState.Empty) onNoSurveyResult()
+    }
+
+    when (val state = uiState) {
+        UiState.Loading, UiState.Empty -> DduruLoadingScreen()
+        UiState.Failure -> DduruServiceFailureScreen(
+            onRetryClick = viewModel::loadTravelStyle,
+            onBackClick = onBackClick
+        )
+        is UiState.Success -> ProfileEditTravelStyleScreen(
+            styleName = state.data.styleName,
+            bubbleMessage = state.data.bubbleMessage,
+            imageUrl = state.data.imageUrl,
+            tags = state.data.tags,
+            descriptions = state.data.descriptions,
+            onBackClick = onBackClick,
+            onTabClick = onTabClick,
+            onTagToggle = viewModel::onTagToggle,
+            onRetestClick = onRetestClick,
+            canRetake = state.data.canRetake
+        )
+    }
+}
 
 @Composable
 fun ProfileEditTravelStyleScreen(
@@ -48,7 +98,8 @@ fun ProfileEditTravelStyleScreen(
     onTabClick: (Int) -> Unit,
     onTagToggle: (Int) -> Unit,
     onRetestClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    canRetake: Boolean = true
 ) {
     Column(
         modifier = modifier
@@ -111,7 +162,7 @@ fun ProfileEditTravelStyleScreen(
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
                 tags.forEachIndexed { index, tag ->
                     TravelStyleTagChip(
-                        text = tag.text,
+                        text = tag.text.trim(),
                         isActive = tag.isActive,
                         onToggleClick = { onTagToggle(index) }
                     )
@@ -127,6 +178,12 @@ fun ProfileEditTravelStyleScreen(
             DduruButton(
                 text = "테스트 다시하기",
                 onClick = onRetestClick,
+                enabled = canRetake,
+                disabledColors = DduruButtonDisabledColors(
+                    backgroundColor = DduruTheme.colors.gray200,
+                    textColor = DduruTheme.colors.gray400,
+                    borderColor = DduruTheme.colors.gray200
+                ),
                 textStyle = DduruTheme.typography.H1,
                 shape = RoundedCornerShape(12.dp),
                 contentPadding = PaddingValues(horizontal = 18.dp, vertical = 3.dp),
@@ -134,6 +191,18 @@ fun ProfileEditTravelStyleScreen(
                     .fillMaxWidth()
                     .height(48.dp)
             )
+
+            if (!canRetake) {
+                Spacer(modifier = Modifier.height(8.dp))
+
+                Text(
+                    text = "여행 스타일은 마지막 변경일로부터 30일이 지나야 다시 수정할 수 있어요",
+                    style = DduruTheme.typography.Caption2,
+                    color = DduruTheme.colors.gray500,
+                    textAlign = TextAlign.Center,
+                    modifier = Modifier.fillMaxWidth()
+                )
+            }
 
             Spacer(modifier = Modifier.height(93.dp))
         }

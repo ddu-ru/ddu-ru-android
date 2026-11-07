@@ -29,10 +29,13 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalSoftwareKeyboardController
+import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.ValidationMessage
 import com.gildongmu.dduru.presentation.feature.register.component.AuthCodeInput
 import com.gildongmu.dduru.presentation.feature.register.component.BirthInputRow
 import com.gildongmu.dduru.presentation.feature.register.component.GenderSegment
@@ -110,25 +113,31 @@ fun SignupScreen(
                 ) {
                     when (step) {
                         SignupStep.BIRTH -> {
-                            BirthInputRow(
-                                year = state.year,
-                                month = state.month,
-                                day = state.day,
-                                years = years,
-                                months = months,
-                                days = days,
-                                onYearSelected = onYearSelected,
-                                onMonthSelected = onMonthSelected,
-                                onDaySelected = onDaySelected
-                            )
+                            Column {
+                                BirthInputRow(
+                                    year = state.year,
+                                    month = state.month,
+                                    day = state.day,
+                                    years = years,
+                                    months = months,
+                                    days = days,
+                                    onYearSelected = onYearSelected,
+                                    onMonthSelected = onMonthSelected,
+                                    onDaySelected = onDaySelected
+                                )
+                                state.birthErrorRes?.let { ValidationMessage(text = stringResource(it)) }
+                            }
                         }
 
                         SignupStep.GENDER -> {
-                            GenderSegment(
-                                selected = state.gender,
-                                onSelect = onGenderSelect,
-                                enabled = true
-                            )
+                            Column {
+                                GenderSegment(
+                                    selected = state.gender,
+                                    onSelect = onGenderSelect,
+                                    enabled = true
+                                )
+                                state.genderErrorRes?.let { ValidationMessage(text = stringResource(it)) }
+                            }
                         }
 
                         SignupStep.PHONE -> {
@@ -138,7 +147,7 @@ fun SignupScreen(
                                 onValueChange = onPhoneChange,
                                 enabled = true,
                                 shouldAutoFocus = currentStep == SignupStep.PHONE,
-                                validationMessage = state.phoneErrorMessage
+                                validationMessage = state.phoneErrorRes?.let { stringResource(it) }.orEmpty()
                             )
                         }
 
@@ -151,7 +160,10 @@ fun SignupScreen(
                                 timerText = state.timerText,
                                 shouldAutoFocus = currentStep == SignupStep.AUTH,
                                 onResendClick = onPhoneComplete,
-                                validationMessage = state.authCodeErrorMessage
+                                validationMessage = state.authCodeErrorRes?.let { stringResource(it) }.orEmpty(),
+                                infoMessage = state.authCodeInfoRes?.let { stringResource(it) }.orEmpty(),
+                                resendText = resendButtonText(state.resendRemainingSeconds),
+                                isResendEnabled = !state.isSendingCode && state.resendRemainingSeconds == 0
                             )
                         }
 
@@ -211,6 +223,14 @@ fun SignupScreen(
         }
     }
 }
+
+@Composable
+private fun resendButtonText(remainingSeconds: Int): String =
+    when {
+        remainingSeconds <= 0 -> stringResource(R.string.auth_code_resend)
+        remainingSeconds < 60 -> stringResource(R.string.auth_code_resend_seconds, remainingSeconds)
+        else -> stringResource(R.string.auth_code_resend_waiting)
+    }
 
 @Preview(showBackground = true)
 @Composable

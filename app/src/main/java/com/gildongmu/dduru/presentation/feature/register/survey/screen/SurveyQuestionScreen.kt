@@ -47,8 +47,8 @@ fun SurveyQuestionScreen(
     SurveyQuestionLayout(
         questionNumber = question.displayOrder,
         totalQuestions = totalQuestions,
-        questionTitle = question.questionText,
-        imageUrl = question.imageUrl,
+        questionTitle = if (isMultiSelect) question.questionText.substringBefore("\n(") else question.questionText,
+        imageUrl = if (isMultiSelect) null else question.imageUrl,
         questionNote = if (isMultiSelect) "(최대 ${question.maxSelect}개)" else null,
         onBackClick = onBackClick,
         content = {
@@ -124,8 +124,7 @@ private fun MultiSelectContent(
                             text = "${option.icon} ${option.text}",
                             isSelected = selectedOptions.contains(option.code),
                             onClick = { onOptionToggled(index) },
-                            modifier = Modifier.weight(1f),
-                            maxLines = 2
+                            modifier = Modifier.weight(1f)
                         )
                     }
                     if (rowOptions.size == 1) {

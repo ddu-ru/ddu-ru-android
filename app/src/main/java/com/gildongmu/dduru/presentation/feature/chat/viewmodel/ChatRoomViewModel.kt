@@ -13,6 +13,8 @@ import com.gildongmu.dduru.domain.entity.chat.MessageEntity
 import com.gildongmu.dduru.domain.entity.chat.MessageType
 import com.gildongmu.dduru.domain.entity.chat.SystemMessageType
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
+import com.gildongmu.dduru.presentation.component.DduruErrorToasts
+import com.gildongmu.dduru.presentation.component.toErrorToast
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatAttachOption
 import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRoomSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatListItem
@@ -80,7 +82,7 @@ class ChatRoomViewModel @Inject constructor(
     fun loadMessages(chatRoomId: Long) {
         this.chatRoomId = chatRoomId
         viewModelScope.launch {
-            _uiState.update { it.copy(isLoading = true, errorMessage = null) }
+            _uiState.update { it.copy(isLoading = true, isLoadFailed = false, isAccessDenied = false) }
             chatRoomRepository.getMessages(chatRoomId, beforeMessageId = null)
                 .onSuccess { result ->
                     applyLatestPage(result)
@@ -88,19 +90,13 @@ class ChatRoomViewModel @Inject constructor(
                     startRoomSubscription(chatRoomId)
                 }
                 .onFailure { throwable ->
-                    val code = throwable.message ?: "OTHER"
-                    val (userMessage, isRetryable) = when (code) {
-                        "FORBIDDEN" -> "접근할 수 없는 채팅방이에요." to false
-                        "NOT_FOUND" -> "존재하지 않는 채팅방이에요." to false
-                        "NETWORK_ERROR" -> "연결이 원활하지 않아요. 잠시 후 다시 시도해 주세요." to true
-                        "SERVER_ERROR" -> "일시적인 오류가 발생했어요. 잠시 후 다시 시도해 주세요." to true
-                        else -> "채팅방을 불러오지 못했어요. 다시 시도해 주세요." to true
-                    }
+                    val isAccessDenied = throwable.message == "FORBIDDEN" || throwable.message == "NOT_FOUND"
                     _uiState.update {
-                        it.copy(isLoading = false, errorMessage = userMessage, isRetryable = isRetryable)
-                    }
-                    if (code == "FORBIDDEN" || code == "NOT_FOUND") {
-                        _sideEffect.emit(ChatRoomSideEffect.NavigateBack)
+                        it.copy(
+                            isLoading = false,
+                            isLoadFailed = !isAccessDenied,
+                            isAccessDenied = isAccessDenied
+                        )
                     }
                 }
         }
@@ -157,7 +153,6 @@ class ChatRoomViewModel @Inject constructor(
     }
 
     fun retryLoadMessages() {
-        _uiState.update { it.copy(errorMessage = null, isRetryable = false) }
         loadMessages(chatRoomId)
     }
 
@@ -213,11 +208,11 @@ class ChatRoomViewModel @Inject constructor(
                     }
                     pendingImageCount = (pendingImageCount - failedCount).coerceAtLeast(0)
                     if (failedCount > 0) {
-                        _sideEffect.emit(ChatRoomSideEffect.ShowMessage("사진을 보내지 못했어요. 잠시 후 다시 시도해 주세요."))
+                        _sideEffect.emit(ChatRoomSideEffect.ShowError(DduruErrorToasts.ServiceFailed))
                     }
                 }
                 .onFailure { throwable ->
-                    _sideEffect.emit(ChatRoomSideEffect.ShowMessage(throwable.message ?: "사진을 보내지 못했어요."))
+                    _sideEffect.emit(ChatRoomSideEffect.ShowError(throwable.toErrorToast()))
                 }
             _uiState.update { it.copy(isUploadingImage = false) }
         }
@@ -264,7 +259,7 @@ class ChatRoomViewModel @Inject constructor(
                     items = state.items.filterNot { it is ChatListItem.Message && it.message.id == tempId }
                 )
             }
-            emitEffect(ChatRoomSideEffect.ShowMessage("메시지를 보내지 못했어요. 잠시 후 다시 시도해 주세요."))
+            emitEffect(ChatRoomSideEffect.ShowError(DduruErrorToasts.ServiceFailed))
         }
     }
 

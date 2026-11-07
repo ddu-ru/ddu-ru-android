@@ -27,7 +27,8 @@ fun SurveyResponse.toDomain(): SurveyResult {
         descriptionLine1 = avatarProfile.descriptionLine1,
         descriptionLine2 = avatarProfile.descriptionLine2,
         descriptionLine3 = avatarProfile.descriptionLine3,
-        imageUrl = avatarProfile.imageUrl
+        imageUrl = avatarProfile.imageUrl,
+        canRetake = canRetake
     )
 }
 

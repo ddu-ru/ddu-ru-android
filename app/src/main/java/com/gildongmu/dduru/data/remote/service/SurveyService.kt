@@ -4,8 +4,10 @@ import com.gildongmu.dduru.data.remote.dto.request.SurveyRequest
 import com.gildongmu.dduru.data.remote.dto.response.ApiResponse
 import com.gildongmu.dduru.data.remote.dto.response.SurveyQuestionsResponse
 import com.gildongmu.dduru.data.remote.dto.response.SurveyResponse
+import retrofit2.Response
 import retrofit2.http.Body
 import retrofit2.http.GET
+import retrofit2.http.PATCH
 import retrofit2.http.POST
 
 interface SurveyService {
@@ -17,4 +19,10 @@ interface SurveyService {
 
     @GET("api/v1/surveys/questions")
     suspend fun getSurveyQuestions(): ApiResponse<SurveyQuestionsResponse>
+
+    @POST("api/v1/surveys/skip")
+    suspend fun skipSurvey(): Response<Unit>
+
+    @PATCH("api/v1/surveys/me")
+    suspend fun updateSurvey(@Body request: SurveyRequest): ApiResponse<SurveyResponse>
 }

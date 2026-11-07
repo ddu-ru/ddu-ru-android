@@ -128,6 +128,30 @@ class SurveyViewModel @Inject constructor(
         }
     }
 
+    private var isSkipping = false
+    private var isRetake = false
+
+    fun setRetakeMode(isRetake: Boolean) {
+        this.isRetake = isRetake
+    }
+
+    fun skipSurvey(onSkipped: () -> Unit) {
+        if (isSkipping) return
+        isSkipping = true
+
+        viewModelScope.launch {
+            surveyRepository.skipSurvey()
+                .onSuccess { onSkipped() }
+                .onFailure { error ->
+                    _uiState.value = SurveyUiState.Error(
+                        message = error.message ?: "설문을 건너뛰지 못했어요.",
+                        retryAction = SurveyRetryAction.RESUME
+                    )
+                }
+            isSkipping = false
+        }
+    }
+
     fun submitSurvey() {
         val answers = _surveyState.value.toAnswers()
         if (answers == null) {
@@ -141,7 +165,13 @@ class SurveyViewModel @Inject constructor(
         viewModelScope.launch {
             _uiState.value = SurveyUiState.Loading
 
-            surveyRepository.submitSurvey(answers).fold(
+            val result = if (isRetake) {
+                surveyRepository.updateSurvey(answers)
+            } else {
+                surveyRepository.submitSurvey(answers)
+            }
+
+            result.fold(
                 onSuccess = { surveyResult ->
                     _uiState.value = SurveyUiState.Success(surveyResult)
                 },

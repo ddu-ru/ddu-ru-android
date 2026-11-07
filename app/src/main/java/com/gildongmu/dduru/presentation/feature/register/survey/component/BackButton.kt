@@ -22,22 +22,25 @@ fun BackButton(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val shape = RoundedCornerShape(size = 99.dp)
+
     Box(
         modifier = modifier
             .dduruDualShadow(
                 firstAlpha = 0.10f,
-                secondAlpha = 0.05f,
+                secondAlpha = 0.08f,
+                shape = shape,
                 secondElevation = 8.dp
             )
             .size(48.dp)
             .border(
                 width = 1.dp,
                 color = DduruTheme.colors.gray0.copy(alpha = 0.30f),
-                shape = RoundedCornerShape(size = 99.dp)
+                shape = shape
             )
             .background(
-                color = DduruTheme.colors.gray0.copy(alpha = 0.30f),
-                shape = RoundedCornerShape(size = 99.dp)
+                color = DduruTheme.colors.gray0.copy(alpha = 0.50f),
+                shape = shape
             )
             .noRippleClickable(onClick = onClick)
             .padding(8.dp),

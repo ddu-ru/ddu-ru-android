@@ -28,13 +28,13 @@ import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.entity.SurveyResult
 import com.gildongmu.dduru.domain.entity.mypage.AvailableDate
 import com.gildongmu.dduru.domain.entity.mypage.DestinationPreference
 import com.gildongmu.dduru.domain.entity.mypage.DestinationPreferenceType
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.feature.mypage.component.ActionMenuItem
 import com.gildongmu.dduru.presentation.feature.mypage.component.ActionMenuSection
 import com.gildongmu.dduru.presentation.feature.mypage.component.MyPageHeader
@@ -82,7 +82,7 @@ fun MyPageRoute(
 
     when (val state = uiState) {
         UiState.Loading, UiState.Empty -> DduruLoadingScreen()
-        UiState.Failure -> DduruFailureScreen(message = "마이페이지 정보를 불러오지 못했어요.")
+        UiState.Failure -> DduruServiceFailureScreen(onRetryClick = viewModel::loadMyPage)
         is UiState.Success -> MyPageScreen(
             uiState = state.data,
             onNotificationClick = onNotificationClick,

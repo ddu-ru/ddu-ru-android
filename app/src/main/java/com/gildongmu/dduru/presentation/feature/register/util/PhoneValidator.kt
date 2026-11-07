@@ -14,9 +14,7 @@ object PhoneValidator {
             phone.length != 11 -> {
                 PhoneValidationResult.INVALID_LENGTH
             }
-            !phone.startsWith("010") && !phone.startsWith("011") &&
-                !phone.startsWith("016") && !phone.startsWith("017") &&
-                !phone.startsWith("018") && !phone.startsWith("019") -> {
+            !phone.startsWith("010") -> {
                 PhoneValidationResult.INVALID_FORMAT
             }
             else -> {

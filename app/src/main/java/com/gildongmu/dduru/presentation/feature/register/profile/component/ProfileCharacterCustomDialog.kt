@@ -34,7 +34,7 @@ import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBac
 @Composable
 fun ProfileCharacterCustomDialog(
     selectedBg: Color,
-    characterImage: Int,
+    characterImage: Any,
     avatarName: String,
     onBgColorSelected: (Color) -> Unit,
     onConfirm: () -> Unit,

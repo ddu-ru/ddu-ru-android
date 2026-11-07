@@ -8,4 +8,6 @@ interface SurveyRepository {
     suspend fun submitSurvey(answers: SurveyAnswers): Result<SurveyResult>
     suspend fun getMySurveyResult(): Result<SurveyResult>
     suspend fun getSurveyQuestions(): Result<SurveyQuestions>
+    suspend fun skipSurvey(): Result<Unit>
+    suspend fun updateSurvey(answers: SurveyAnswers): Result<SurveyResult>
 }

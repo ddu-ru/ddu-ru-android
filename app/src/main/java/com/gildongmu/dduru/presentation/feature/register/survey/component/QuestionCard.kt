@@ -30,7 +30,7 @@ fun QuestionCard(
     modifier: Modifier = Modifier,
     questionNote: String? = null
 ) {
-    val shouldShowImage = !imageUrl.isNullOrEmpty() && !imageUrl.contains("activity_tags")
+    val shouldShowImage = !imageUrl.isNullOrEmpty()
 
     Box(
         modifier = modifier

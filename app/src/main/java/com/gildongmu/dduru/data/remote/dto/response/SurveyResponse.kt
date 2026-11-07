@@ -9,7 +9,8 @@ data class SurveyResponse(
     val avatarType: String,
     val recordStyleType: String,
     val avatarLabel: String,
-    val avatarProfile: AvatarProfileDto
+    val avatarProfile: AvatarProfileDto,
+    val canRetake: Boolean = true
 )
 
 @Serializable

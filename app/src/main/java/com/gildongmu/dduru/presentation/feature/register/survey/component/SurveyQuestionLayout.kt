@@ -8,8 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.heightIn
-import androidx.compose.foundation.layout.navigationBarsPadding
-import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
@@ -44,7 +42,6 @@ fun SurveyQuestionLayout(
                 .verticalScroll(rememberScrollState())
                 .heightIn(min = maxHeight)
                 .statusBarsPadding()
-                .navigationBarsPadding()
                 .padding(horizontal = 16.dp)
         ) {
             Box(modifier = Modifier.fillMaxWidth()) {
@@ -62,8 +59,7 @@ fun SurveyQuestionLayout(
                 PenguinCharacter(
                     modifier = Modifier
                         .align(Alignment.TopCenter)
-                        .padding(top = 10.dp)
-                        .offset(x = 2.dp)
+                        .padding(top = 15.dp)
                 )
 
                 BackButton(
@@ -75,7 +71,7 @@ fun SurveyQuestionLayout(
             Box(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(top = 32.dp, bottom = 42.dp)
+                    .padding(top = 32.dp, bottom = 100.dp)
             ) {
                 content()
             }

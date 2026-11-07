@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.chat.screen
 
-import android.widget.Toast
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
@@ -13,15 +12,15 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
+import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
 import com.gildongmu.dduru.presentation.feature.chat.component.ApplicationCard
 import com.gildongmu.dduru.presentation.feature.chat.component.ApplicationCardAction
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatSectionHeader
@@ -41,14 +40,13 @@ fun ChatRequestRoute(
     viewModel: ChatRequestViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
-    val context = LocalContext.current
+    val errorToast = LocalDduruErrorToast.current
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { effect ->
             when (effect) {
                 is ChatRequestSideEffect.NavigateToChatRoom -> onNavigateToChatRoom(effect.chatRoomId)
-                is ChatRequestSideEffect.ShowMessage ->
-                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+                is ChatRequestSideEffect.ShowError -> errorToast.show(effect.toast)
             }
         }
     }
@@ -63,7 +61,7 @@ fun ChatRequestRoute(
             onConfirmedMoveClick = viewModel::onConfirmedMoveClick,
             onConfirmedDismiss = viewModel::onConfirmedDismiss
         )
-        is UiState.Failure -> DduruFailureScreen(message = "요청 목록을 불러올 수 없습니다.")
+        is UiState.Failure -> DduruServiceFailureScreen(onRetryClick = { viewModel.loadParticipations() })
         else -> Unit
     }
 }

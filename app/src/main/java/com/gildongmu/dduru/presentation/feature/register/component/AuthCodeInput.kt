@@ -26,7 +26,10 @@ fun AuthCodeInput(
     timerText: String,
     onResendClick: () -> Unit,
     shouldAutoFocus: Boolean = false,
-    validationMessage: String
+    validationMessage: String,
+    infoMessage: String = "",
+    resendText: String = "재전송",
+    isResendEnabled: Boolean = true
 ) {
     val focusRequester = remember { FocusRequester() }
     val keyboardController = LocalSoftwareKeyboardController.current
@@ -49,14 +52,14 @@ fun AuthCodeInput(
             enabled = enabled,
             actionContent = {
                 InlineActionButton(
-                    text = "재전송",
-                    enabled = enabled,
+                    text = resendText,
+                    enabled = enabled && isResendEnabled,
                     onClick = onResendClick,
                     colors = ButtonDefaults.buttonColors(
                         containerColor = Color.White,
                         contentColor = DduruTheme.colors.gray700,
                         disabledContainerColor = Color.White,
-                        disabledContentColor = DduruTheme.colors.gray700
+                        disabledContentColor = DduruTheme.colors.gray400
                     ),
                     border = BorderStroke(1.dp, DduruTheme.colors.gray300)
                 )
@@ -65,6 +68,11 @@ fun AuthCodeInput(
         if (validationMessage.isNotBlank()) {
             ValidationMessage(
                 text = validationMessage
+            )
+        } else if (infoMessage.isNotBlank()) {
+            ValidationMessage(
+                text = infoMessage,
+                color = DduruTheme.colors.gray600
             )
         }
     }

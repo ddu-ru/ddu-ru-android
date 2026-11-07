@@ -15,7 +15,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
-import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
@@ -47,7 +46,6 @@ fun ProfileEditHeader(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .size(48.dp)
-                .shadow(elevation = 8.dp, shape = CircleShape, clip = false)
                 .clip(CircleShape)
                 .background(DduruTheme.colors.gray0.copy(alpha = 0.5f))
                 .border(width = 1.dp, color = DduruTheme.colors.gray0.copy(alpha = 0.3f), shape = CircleShape)
@@ -57,7 +55,7 @@ fun ProfileEditHeader(
             Icon(
                 painter = painterResource(id = R.drawable.ic_chevron_left),
                 contentDescription = "뒤로가기",
-                tint = DduruTheme.colors.black,
+                tint = DduruTheme.colors.gray900,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -74,7 +72,6 @@ fun ProfileEditHeader(
                 modifier = Modifier
                     .align(Alignment.CenterEnd)
                     .size(48.dp)
-                    .shadow(elevation = 8.dp, shape = CircleShape, clip = false)
                     .clip(CircleShape)
                     .background(DduruTheme.colors.primary)
                     .border(width = 1.dp, color = DduruTheme.colors.gray0.copy(alpha = 0.3f), shape = CircleShape)

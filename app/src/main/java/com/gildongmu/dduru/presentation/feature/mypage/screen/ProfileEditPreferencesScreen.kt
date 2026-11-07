@@ -37,9 +37,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
+import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
+import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelDatePreferenceSection
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelDestinationPreferenceSection
 import com.gildongmu.dduru.presentation.feature.mypage.model.MAX_PREFERRED_DATE_COUNT
@@ -125,6 +127,7 @@ fun ProfileEditPreferencesRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    val errorToast = LocalDduruErrorToast.current
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collect { sideEffect ->
@@ -133,25 +136,44 @@ fun ProfileEditPreferencesRoute(
                 ProfileEditPreferencesSideEffect.NavigateToDestinationSelect -> onNavigateToDestinationSelect()
                 is ProfileEditPreferencesSideEffect.ShowMessage ->
                     Toast.makeText(context, sideEffect.message, Toast.LENGTH_SHORT).show()
+                is ProfileEditPreferencesSideEffect.ShowError -> errorToast.show(sideEffect.toast)
             }
         }
     }
 
     when (val state = uiState) {
         UiState.Loading, UiState.Empty -> DduruLoadingScreen()
-        UiState.Failure -> DduruFailureScreen(message = "여행 선호 정보를 불러오지 못했어요.")
-        is UiState.Success -> ProfileEditPreferencesScreen(
-            destinations = state.data.destinations.map { it.toPreferredDestination() },
-            dateRanges = state.data.dateRanges,
-            onBackClick = viewModel::onBackClick,
-            onConfirmClick = viewModel::onConfirmClick,
-            onTabClick = onTabClick,
-            onDestinationAddClick = viewModel::onDestinationAddClick,
-            onDateAddClick = viewModel::onDateAddClick,
-            onDateRemoveClick = viewModel::onDateRemoveClick,
-            onDateSelected = viewModel::onDateSelected,
-            isSaveEnabled = state.data.isSaveEnabled
+        UiState.Failure -> DduruServiceFailureScreen(
+            onRetryClick = viewModel::loadPreferences,
+            onBackClick = onBackClick
         )
+        is UiState.Success -> {
+            ProfileEditPreferencesScreen(
+                destinations = state.data.destinations.map { it.toPreferredDestination() },
+                dateRanges = state.data.dateRanges,
+                onBackClick = viewModel::onBackClick,
+                onConfirmClick = viewModel::onConfirmClick,
+                onTabClick = onTabClick,
+                onDestinationAddClick = viewModel::onDestinationAddClick,
+                onDateAddClick = viewModel::onDateAddClick,
+                onDateRemoveClick = viewModel::onDateRemoveClick,
+                onDateSelected = viewModel::onDateSelected,
+                isSaveEnabled = state.data.isSaveEnabled
+            )
+
+            if (state.data.showSaveFailedDialog) {
+                ConfirmDialog(
+                    title = "저장하지 못했어요",
+                    description = "연결이 원활하지 않아요.\n다시 시도해 주세요.",
+                    onDismiss = viewModel::onSaveFailedDismiss,
+                    onConfirm = viewModel::onSaveFailedRetry,
+                    dismissText = "뒤로가기",
+                    confirmText = "다시 시도",
+                    confirmBackgroundColor = DduruTheme.colors.gray900,
+                    confirmTextColor = DduruTheme.colors.gray0
+                )
+            }
+        }
     }
 }
 
