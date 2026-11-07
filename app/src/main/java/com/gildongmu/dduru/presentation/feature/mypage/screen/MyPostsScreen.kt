@@ -1,15 +1,15 @@
 package com.gildongmu.dduru.presentation.feature.mypage.screen
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.rememberScrollState
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.verticalScroll
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -20,9 +20,9 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingFilterChip
 import com.gildongmu.dduru.presentation.feature.mypage.component.MyPostManagementItem
-import com.gildongmu.dduru.presentation.feature.mypage.component.SuperhostInfoBottomSheet
-import com.gildongmu.dduru.presentation.feature.mypage.component.SuperhostInfoSheetSurface
 import com.gildongmu.dduru.presentation.feature.mypage.component.SuperhostTicketSummaryCard
+import com.gildongmu.dduru.presentation.feature.mypage.component.bottomsheet.SuperhostInfoBottomSheet
+import com.gildongmu.dduru.presentation.feature.mypage.component.bottomsheet.SuperhostInfoSheetSurface
 import com.gildongmu.dduru.presentation.feature.mypage.model.MyPostManagementUiModel
 
 @Composable
@@ -49,43 +49,54 @@ fun MyPostsScreen(
             onBackClick = onBackClick
         )
 
-        Column(
-            verticalArrangement = Arrangement.spacedBy(24.dp),
-            modifier = Modifier
-                .fillMaxSize()
-                .verticalScroll(rememberScrollState())
-                .padding(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 40.dp)
+        LazyColumn(
+            contentPadding = PaddingValues(start = 16.dp, end = 16.dp, top = 24.dp, bottom = 40.dp),
+            modifier = Modifier.fillMaxSize()
         ) {
-            SuperhostTicketSummaryCard(
-                title = "슈퍼호스트 티켓",
-                description = "게시글을 더 많은 동행에게 보여주세요",
-                ticketCount = ticketCount,
-                onInfoClick = onSuperhostInfoClick,
-                actionText = "슈퍼호스트 적용하기",
-                onActionClick = onApplySuperhostClick
-            )
+            item {
+                SuperhostTicketSummaryCard(
+                    title = "슈퍼호스트 티켓",
+                    description = "게시글을 더 많은 동행에게 보여주세요",
+                    ticketCount = ticketCount,
+                    onInfoClick = onSuperhostInfoClick,
+                    actionText = "슈퍼호스트 적용하기",
+                    onActionClick = onApplySuperhostClick
+                )
+            }
 
-            Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
+            item {
                 MatchingFilterChip(
                     text = selectedSort,
                     trailingIconRes = R.drawable.ic_chevron_down,
-                    onClick = onSortClick
+                    onClick = onSortClick,
+                    modifier = Modifier.padding(top = 24.dp, bottom = 16.dp)
                 )
+            }
 
-                Column(
+            itemsIndexed(
+                items = posts,
+                key = { _, post -> post.id }
+            ) { index, post ->
+                MyPostManagementItem(
+                    post = post,
+                    showDivider = index != posts.lastIndex,
+                    onClick = { onPostClick(post.id) },
                     modifier = Modifier
                         .fillMaxWidth()
-                        .background(DduruTheme.colors.gray0, RoundedCornerShape(24.dp))
-                        .padding(vertical = 8.dp)
-                ) {
-                    posts.forEachIndexed { index, post ->
-                        MyPostManagementItem(
-                            post = post,
-                            showDivider = index != posts.lastIndex,
-                            onClick = { onPostClick(post.id) }
+                        .background(
+                            color = DduruTheme.colors.gray0,
+                            shape = RoundedCornerShape(
+                                topStart = if (index == 0) 24.dp else 0.dp,
+                                topEnd = if (index == 0) 24.dp else 0.dp,
+                                bottomStart = if (index == posts.lastIndex) 24.dp else 0.dp,
+                                bottomEnd = if (index == posts.lastIndex) 24.dp else 0.dp
+                            )
                         )
-                    }
-                }
+                        .padding(
+                            top = if (index == 0) 8.dp else 0.dp,
+                            bottom = if (index == posts.lastIndex) 8.dp else 0.dp
+                        )
+                )
             }
         }
     }

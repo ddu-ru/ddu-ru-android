@@ -20,10 +20,10 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
-import com.gildongmu.dduru.presentation.feature.mypage.component.SuperhostApplyBottomSheet
-import com.gildongmu.dduru.presentation.feature.mypage.component.SuperhostApplySheetSurface
 import com.gildongmu.dduru.presentation.feature.mypage.component.SuperhostPostItem
 import com.gildongmu.dduru.presentation.feature.mypage.component.SuperhostTicketSummaryCard
+import com.gildongmu.dduru.presentation.feature.mypage.component.bottomsheet.SuperhostApplyBottomSheet
+import com.gildongmu.dduru.presentation.feature.mypage.component.bottomsheet.SuperhostApplySheetSurface
 import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostPostUiModel
 import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostSheetMode
 import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostSheetStep
