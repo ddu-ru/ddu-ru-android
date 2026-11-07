@@ -37,7 +37,7 @@ fun SettingsMenuSection(
         if (label != null) {
             Text(
                 text = label,
-                style = DduruTheme.typography.Body2,
+                style = DduruTheme.typography.Body4,
                 color = DduruTheme.colors.gray500
             )
         }

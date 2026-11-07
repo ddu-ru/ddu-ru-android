@@ -1,12 +1,14 @@
 package com.gildongmu.dduru.presentation.feature.register.profile.component
 
 import androidx.compose.foundation.BorderStroke
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
@@ -32,6 +34,7 @@ fun NicknameInput(
     text: String,
     validationMessage: String,
     modifier: Modifier = Modifier,
+    useProfileEditStyle: Boolean = false,
     onValueChange: (String) -> Unit,
     onRandomClick: () -> Unit
 ) {
@@ -40,7 +43,7 @@ fun NicknameInput(
     ) {
         Text(
             text = "닉네임",
-            style = DduruTheme.typography.Body2,
+            style = if (useProfileEditStyle) DduruTheme.typography.Body3 else DduruTheme.typography.Body2,
             color = DduruTheme.colors.gray800
         )
 
@@ -52,12 +55,15 @@ fun NicknameInput(
                 onValueChange = onValueChange,
                 modifier = Modifier.weight(1f),
                 maxLength = 10,
-                placeholder = "닉네임을 입력하세요"
+                placeholder = if (useProfileEditStyle) "닉네임 입력" else "닉네임을 입력하세요",
+                showCounter = !useProfileEditStyle
             )
 
             Spacer(Modifier.width(12.dp))
 
             RandomNicknameButton(
+                useProfileEditStyle = useProfileEditStyle,
+                modifier = if (useProfileEditStyle) Modifier.size(width = 120.dp, height = 48.dp) else Modifier,
                 onClick = onRandomClick
             )
         }
@@ -71,6 +77,7 @@ fun NicknameInput(
 
 @Composable
 private fun RandomNicknameButton(
+    useProfileEditStyle: Boolean,
     modifier: Modifier = Modifier,
     onClick: () -> Unit
 ) {
@@ -85,13 +92,18 @@ private fun RandomNicknameButton(
         )
     ) {
         Row(
-            modifier = Modifier.padding(vertical = 16.dp, horizontal = 32.dp),
+            modifier = if (useProfileEditStyle) {
+                Modifier
+            } else {
+                Modifier.padding(vertical = 16.dp, horizontal = 32.dp)
+            },
+            horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
         ) {
             Icon(
                 painter = painterResource(R.drawable.ic_random),
                 contentDescription = null,
-                // modifier = Modifier.size(12.dp),
+                modifier = if (useProfileEditStyle) Modifier.size(16.dp) else Modifier,
                 tint = DduruTheme.colors.gray700
             )
 
@@ -99,7 +111,7 @@ private fun RandomNicknameButton(
 
             Text(
                 text = "랜덤",
-                style = DduruTheme.typography.Title,
+                style = if (useProfileEditStyle) DduruTheme.typography.Title1 else DduruTheme.typography.Title,
                 color = DduruTheme.colors.gray700
             )
         }

@@ -36,7 +36,7 @@ fun MultiLineTextField(
         shape = RoundedCornerShape(16.dp),
         border = BorderStroke(
             width = 1.dp,
-            color = DduruTheme.colors.gray200
+            color = DduruTheme.colors.gray958.copy(alpha = 0.1f)
         ),
         color = DduruTheme.colors.gray0
     ) {
@@ -47,8 +47,8 @@ fun MultiLineTextField(
             },
             modifier = Modifier
                 .fillMaxWidth()
-                .padding(horizontal = 16.dp, vertical = 17.dp),
-            textStyle = DduruTheme.typography.Body2.copy(
+                .padding(start = 16.dp, top = 16.dp, end = 16.dp, bottom = 18.dp),
+            textStyle = DduruTheme.typography.Body1.copy(
                 color = DduruTheme.colors.gray958
             ),
             decorationBox = { innerTextField ->
@@ -63,7 +63,7 @@ fun MultiLineTextField(
                         if (value.isEmpty()) {
                             Text(
                                 text = placeholder,
-                                style = DduruTheme.typography.Body2,
+                                style = DduruTheme.typography.Body1,
                                 color = DduruTheme.colors.gray400
                             )
                         }
@@ -74,10 +74,10 @@ fun MultiLineTextField(
                     Text(
                         text = "${value.length}/$maxLength",
                         modifier = Modifier.fillMaxWidth(),
-                        style = DduruTheme.typography.Caption2,
+                        style = DduruTheme.typography.Body1,
                         textAlign = TextAlign.End,
                         color = if (value.isEmpty()) {
-                            DduruTheme.colors.gray500
+                            DduruTheme.colors.gray300
                         } else {
                             DduruTheme.colors.gray700
                         }

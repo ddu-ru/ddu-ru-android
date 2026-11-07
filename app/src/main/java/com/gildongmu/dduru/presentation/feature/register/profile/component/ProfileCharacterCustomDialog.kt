@@ -1,14 +1,20 @@
 package com.gildongmu.dduru.presentation.feature.register.profile.component
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBarsPadding
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.Text
@@ -27,6 +33,8 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
@@ -38,7 +46,8 @@ fun ProfileCharacterCustomDialog(
     avatarName: String,
     onBgColorSelected: (Color) -> Unit,
     onConfirm: () -> Unit,
-    onDismiss: () -> Unit
+    onDismiss: () -> Unit,
+    useProfileEditStyle: Boolean = false
 ) {
     Dialog(
         onDismissRequest = onDismiss,
@@ -52,6 +61,18 @@ fun ProfileCharacterCustomDialog(
                 .background(Color.Black.copy(alpha = 0.5f)),
             contentAlignment = Alignment.Center
         ) {
+            if (useProfileEditStyle) {
+                ProfileEditAvatarContent(
+                    selectedBg = selectedBg,
+                    characterImage = characterImage,
+                    avatarName = avatarName,
+                    onBgColorSelected = onBgColorSelected,
+                    onConfirm = onConfirm,
+                    onDismiss = onDismiss
+                )
+                return@Box
+            }
+
             Column(
                 modifier = Modifier
                     .fillMaxSize()
@@ -135,6 +156,124 @@ fun ProfileCharacterCustomDialog(
                         selectedColor = selectedBg,
                         onColorClick = onBgColorSelected
                     )
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProfileEditAvatarContent(
+    selectedBg: Color,
+    characterImage: Int,
+    avatarName: String,
+    onBgColorSelected: (Color) -> Unit,
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    Column(
+        horizontalAlignment = Alignment.CenterHorizontally,
+        modifier = Modifier
+            .fillMaxSize()
+            .statusBarsPadding()
+            .padding(horizontal = 16.dp)
+    ) {
+        Spacer(modifier = Modifier.height(4.dp))
+
+        Box(
+            modifier = Modifier
+                .fillMaxWidth()
+                .height(48.dp)
+        ) {
+            Box(
+                contentAlignment = Alignment.Center,
+                modifier = Modifier
+                    .align(Alignment.CenterStart)
+                    .size(48.dp)
+                    .dduruDualShadow(firstAlpha = 0.10f, secondAlpha = 0.08f, shape = CircleShape)
+                    .background(color = DduruTheme.colors.gray0.copy(alpha = 0.92f), shape = CircleShape)
+                    .border(width = 1.dp, color = DduruTheme.colors.gray0.copy(alpha = 0.3f), shape = CircleShape)
+                    .noRippleClickable(onClick = onDismiss)
+            ) {
+                Icon(
+                    painter = painterResource(id = R.drawable.ic_chevron_left),
+                    contentDescription = "뒤로가기",
+                    tint = DduruTheme.colors.black,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
+
+            Text(
+                text = "아바타 편집",
+                style = DduruTheme.typography.H1,
+                color = DduruTheme.colors.gray0,
+                modifier = Modifier.align(Alignment.Center)
+            )
+
+            DduruButton(
+                text = "완료",
+                onClick = onConfirm,
+                textStyle = DduruTheme.typography.Title2,
+                shape = CircleShape,
+                contentPadding = PaddingValues(horizontal = 16.dp),
+                modifier = Modifier
+                    .align(Alignment.CenterEnd)
+                    .height(48.dp)
+            )
+        }
+
+        Spacer(modifier = Modifier.height(36.dp))
+
+        ProfileImageCircle(
+            image = characterImage,
+            backgroundColor = selectedBg,
+            scale = 1.6f,
+            offsetRatio = 0.16f,
+            size = 260.dp
+        )
+
+        Spacer(modifier = Modifier.height(32.dp))
+
+        Text(
+            text = "아바타 유형",
+            style = DduruTheme.typography.Body4,
+            color = DduruTheme.colors.gray400
+        )
+
+        Spacer(modifier = Modifier.height(8.dp))
+
+        Text(
+            text = avatarName,
+            style = DduruTheme.typography.H1,
+            color = DduruTheme.colors.gray0
+        )
+
+        Spacer(modifier = Modifier.height(41.dp))
+
+        Column(
+            verticalArrangement = Arrangement.spacedBy(16.dp),
+            modifier = Modifier.fillMaxWidth()
+        ) {
+            ProfileBackgroundColorList.chunked(5).forEach { rowColors ->
+                Row(
+                    horizontalArrangement = Arrangement.SpaceBetween,
+                    modifier = Modifier.fillMaxWidth()
+                ) {
+                    rowColors.forEach { backgroundColor ->
+                        Box(
+                            modifier = Modifier
+                                .size(48.dp)
+                                .background(backgroundColor.color, CircleShape)
+                                .then(
+                                    if (backgroundColor.color == selectedBg) {
+                                        Modifier.border(4.dp, DduruTheme.colors.gray0, CircleShape)
+                                    } else {
+                                        Modifier
+                                    }
+                                )
+                                .noRippleClickable { onBgColorSelected(backgroundColor.color) }
+                        )
+                    }
                 }
             }
         }

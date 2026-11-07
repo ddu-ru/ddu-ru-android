@@ -27,7 +27,8 @@ fun SingleLineTextField(
     onValueChange: (String) -> Unit,
     maxLength: Int,
     placeholder: String,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    showCounter: Boolean = true
 ) {
     BasicTextField(
         value = value,
@@ -66,15 +67,17 @@ fun SingleLineTextField(
                         innerTextField()
                     }
 
-                    Text(
-                        text = "${value.length}/$maxLength",
-                        style = DduruTheme.typography.Caption2,
-                        color = if (value.isEmpty()) {
-                            DduruTheme.colors.gray500
-                        } else {
-                            DduruTheme.colors.gray700
-                        }
-                    )
+                    if (showCounter) {
+                        Text(
+                            text = "${value.length}/$maxLength",
+                            style = DduruTheme.typography.Caption2,
+                            color = if (value.isEmpty()) {
+                                DduruTheme.colors.gray500
+                            } else {
+                                DduruTheme.colors.gray700
+                            }
+                        )
+                    }
                 }
 
                 HorizontalDivider(

@@ -14,6 +14,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.MultiLineTextField
 
@@ -31,11 +32,11 @@ fun ProfileIntroduction(
     ) {
         Text(
             text = "자기소개",
-            style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray800
+            style = DduruTheme.typography.Body1.copy(lineHeight = 19.sp),
+            color = DduruTheme.colors.black
         )
 
-        Spacer(Modifier.height(8.dp))
+        Spacer(Modifier.height(16.dp))
 
         MultiLineTextField(
             value = text,

@@ -126,7 +126,7 @@ fun InquiryWriteScreen(
                     InquiryGuideNotes(items = guideNotes)
                 }
 
-                Spacer(modifier = Modifier.height(24.dp))
+                Spacer(modifier = Modifier.height(44.dp))
             }
 
             Box(

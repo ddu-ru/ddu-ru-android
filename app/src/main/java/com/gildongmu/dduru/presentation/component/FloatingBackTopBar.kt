@@ -3,6 +3,7 @@ package com.gildongmu.dduru.presentation.component
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
@@ -27,7 +28,8 @@ import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 fun FloatingBackTopBar(
     title: String,
     onBackClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    trailingContent: @Composable BoxScope.() -> Unit = {}
 ) {
     Box(
         modifier = modifier
@@ -76,6 +78,8 @@ fun FloatingBackTopBar(
             color = DduruTheme.colors.black,
             modifier = Modifier.align(Alignment.Center)
         )
+
+        trailingContent()
     }
 }
 

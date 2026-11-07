@@ -2,44 +2,31 @@ package com.gildongmu.dduru.presentation.feature.mypage.screen
 
 import android.widget.Toast
 import androidx.compose.foundation.background
-import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.verticalScroll
-import androidx.compose.material3.Icon
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.clip
 import androidx.compose.ui.platform.LocalContext
-import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
-import com.gildongmu.dduru.R
-import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditHeader
+import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditTabRow
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelDatePreferenceSection
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelDestinationPreferenceSection
 import com.gildongmu.dduru.presentation.feature.mypage.model.MAX_PREFERRED_DATE_COUNT
@@ -50,7 +37,6 @@ import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditPref
 import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditPreferencesViewModel
 import java.time.LocalDate
 
-private val PreferencesTabs = listOf("내 정보", "가고싶은 여행", "나의 여행 스타일")
 private const val PREFERENCES_TAB_INDEX = 1
 
 @Composable
@@ -73,10 +59,10 @@ fun ProfileEditPreferencesScreen(
             .fillMaxSize()
             .background(DduruTheme.colors.gray50)
     ) {
-        PreferencesHeader(
-            isSaveEnabled = isSaveEnabled,
+        ProfileEditHeader(
             onBackClick = onBackClick,
-            onConfirmClick = onConfirmClick
+            onConfirmClick = onConfirmClick,
+            isConfirmEnabled = isSaveEnabled
         )
 
         Column(
@@ -87,7 +73,7 @@ fun ProfileEditPreferencesScreen(
         ) {
             Spacer(modifier = Modifier.height(24.dp))
 
-            PreferencesTabRow(
+            ProfileEditTabRow(
                 selectedIndex = PREFERENCES_TAB_INDEX,
                 onTabClick = onTabClick
             )
@@ -152,103 +138,6 @@ fun ProfileEditPreferencesRoute(
             onDateSelected = viewModel::onDateSelected,
             isSaveEnabled = state.data.isSaveEnabled
         )
-    }
-}
-
-@Composable
-private fun PreferencesHeader(
-    isSaveEnabled: Boolean,
-    onBackClick: () -> Unit,
-    onConfirmClick: () -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Box(
-        modifier = modifier
-            .fillMaxWidth()
-            .statusBarsPadding()
-            .padding(horizontal = 16.dp)
-            .height(48.dp)
-    ) {
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterStart)
-                .size(48.dp)
-                .clip(CircleShape)
-                .background(DduruTheme.colors.gray0.copy(alpha = 0.5f))
-                .border(width = 1.dp, color = DduruTheme.colors.gray0.copy(alpha = 0.3f), shape = CircleShape)
-                .noRippleClickable(onClick = onBackClick),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_chevron_left),
-                contentDescription = "뒤로가기",
-                tint = DduruTheme.colors.gray900,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-
-        Text(
-            text = "프로필 수정",
-            style = DduruTheme.typography.H1,
-            color = DduruTheme.colors.black,
-            modifier = Modifier.align(Alignment.Center)
-        )
-
-        Box(
-            modifier = Modifier
-                .align(Alignment.CenterEnd)
-                .size(48.dp)
-                .clip(CircleShape)
-                .background(if (isSaveEnabled) DduruTheme.colors.primary else DduruTheme.colors.gray200)
-                .border(width = 1.dp, color = DduruTheme.colors.gray0.copy(alpha = 0.3f), shape = CircleShape)
-                .then(if (isSaveEnabled) Modifier.noRippleClickable(onClick = onConfirmClick) else Modifier),
-            contentAlignment = Alignment.Center
-        ) {
-            Icon(
-                painter = painterResource(id = R.drawable.ic_check),
-                contentDescription = "저장",
-                tint = if (isSaveEnabled) DduruTheme.colors.gray0 else DduruTheme.colors.gray400,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-    }
-}
-
-@Composable
-private fun PreferencesTabRow(
-    selectedIndex: Int,
-    onTabClick: (Int) -> Unit,
-    modifier: Modifier = Modifier
-) {
-    Row(
-        modifier = modifier,
-        horizontalArrangement = Arrangement.spacedBy(8.dp)
-    ) {
-        PreferencesTabs.forEachIndexed { index, title ->
-            val isSelected = index == selectedIndex
-
-            Box(
-                modifier = Modifier
-                    .clip(CircleShape)
-                    .background(if (isSelected) DduruTheme.colors.black else DduruTheme.colors.gray50)
-                    .then(
-                        if (isSelected) {
-                            Modifier
-                        } else {
-                            Modifier.border(width = 1.dp, color = DduruTheme.colors.gray100, shape = CircleShape)
-                        }
-                    )
-                    .noRippleClickable { onTabClick(index) }
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
-                contentAlignment = Alignment.Center
-            ) {
-                Text(
-                    text = title,
-                    style = DduruTheme.typography.Body2,
-                    color = if (isSelected) DduruTheme.colors.gray0 else DduruTheme.colors.gray600
-                )
-            }
-        }
     }
 }
 

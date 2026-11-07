@@ -35,10 +35,12 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.NoSearchResults
@@ -146,12 +148,12 @@ private fun DefaultContent(
         ) {
             Text(
                 text = "${uiState.selectedLocations.size} / ${MAX_PREFERRED_DESTINATION_COUNT}개 선택됨",
-                style = DduruTheme.typography.Caption1,
+                style = DduruTheme.typography.Caption1.copy(lineHeight = 16.8.sp),
                 color = DduruTheme.colors.gray600
             )
             Text(
                 text = "초기화",
-                style = DduruTheme.typography.Caption1,
+                style = DduruTheme.typography.Caption1.copy(lineHeight = 16.8.sp),
                 color = DduruTheme.colors.primary,
                 modifier = Modifier.noRippleClickable(onClick = onResetClick)
             )
@@ -195,12 +197,13 @@ private fun LocationListSection(
             Icon(
                 painter = painterResource(id = iconRes),
                 contentDescription = null,
+                tint = DduruTheme.colors.gray600,
                 modifier = Modifier.size(16.dp)
             )
             Spacer(modifier = Modifier.width(8.dp))
             Text(
                 text = title,
-                style = DduruTheme.typography.Caption1,
+                style = DduruTheme.typography.Caption1.copy(lineHeight = 16.8.sp),
                 color = DduruTheme.colors.gray600
             )
         }
@@ -227,6 +230,7 @@ private fun DestinationSelectRow(
     modifier: Modifier = Modifier
 ) {
     val isSelected = selectionOrder != null
+    val isCountry = location.id == 0L
 
     Row(
         modifier = modifier
@@ -239,7 +243,8 @@ private fun DestinationSelectRow(
                 shape = RoundedCornerShape(16.dp)
             )
             .noRippleClickable(onClick = onClick)
-            .padding(all = 17.dp),
+            .height(75.dp)
+            .padding(horizontal = 17.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Box(
@@ -271,15 +276,17 @@ private fun DestinationSelectRow(
 
         Column(modifier = Modifier.weight(1f)) {
             Text(
-                text = location.city,
+                text = if (isCountry) "${location.city} 전체" else location.city,
                 style = DduruTheme.typography.Title2,
-                color = if (isSelected) DduruTheme.colors.primary else DduruTheme.colors.black
+                color = if (isSelected) DduruTheme.colors.primary else DduruTheme.colors.gray958
             )
-            Text(
-                text = location.countryName,
-                style = DduruTheme.typography.Caption2,
-                color = DduruTheme.colors.gray600
-            )
+            if (!isCountry) {
+                Text(
+                    text = location.countryName,
+                    style = DduruTheme.typography.Caption2,
+                    color = DduruTheme.colors.gray600
+                )
+            }
         }
 
         if (isSelected) {
@@ -315,8 +322,8 @@ private fun TravelDestinationSelectHeader(
             modifier = Modifier
                 .align(Alignment.CenterStart)
                 .size(48.dp)
-                .clip(CircleShape)
-                .background(DduruTheme.colors.gray0.copy(alpha = 0.5f))
+                .dduruDualShadow(firstAlpha = 0.10f, secondAlpha = 0.08f, shape = CircleShape)
+                .background(color = DduruTheme.colors.gray0.copy(alpha = 0.92f), shape = CircleShape)
                 .border(width = 1.dp, color = DduruTheme.colors.gray0.copy(alpha = 0.3f), shape = CircleShape)
                 .noRippleClickable(onClick = onCloseClick),
             contentAlignment = Alignment.Center
@@ -324,7 +331,7 @@ private fun TravelDestinationSelectHeader(
             Icon(
                 painter = painterResource(id = R.drawable.ic_close),
                 contentDescription = "닫기",
-                tint = DduruTheme.colors.gray900,
+                tint = DduruTheme.colors.black,
                 modifier = Modifier.size(24.dp)
             )
         }
@@ -340,8 +347,8 @@ private fun TravelDestinationSelectHeader(
             modifier = Modifier
                 .align(Alignment.CenterEnd)
                 .size(48.dp)
-                .clip(CircleShape)
-                .background(DduruTheme.colors.primary)
+                .dduruDualShadow(firstAlpha = 0.10f, secondAlpha = 0.08f, shape = CircleShape)
+                .background(color = DduruTheme.colors.primary, shape = CircleShape)
                 .border(width = 1.dp, color = DduruTheme.colors.gray0.copy(alpha = 0.3f), shape = CircleShape)
                 .noRippleClickable(onClick = onConfirmClick),
             contentAlignment = Alignment.Center

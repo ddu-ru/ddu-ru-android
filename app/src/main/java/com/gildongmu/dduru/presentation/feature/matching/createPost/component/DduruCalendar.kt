@@ -26,6 +26,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -38,7 +39,8 @@ fun DduruCalendar(
     selectedStartDate: LocalDate?,
     selectedEndDate: LocalDate?,
     onDateSelected: (LocalDate) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    useProfileEditStyle: Boolean = false
 ) {
     var currentYearMonth by remember {
         mutableStateOf(
@@ -77,7 +79,7 @@ fun DduruCalendar(
             .border(width = 1.dp, color = DduruTheme.colors.gray300, shape = RoundedCornerShape(16.dp))
             .background(color = DduruTheme.colors.gray0, shape = RoundedCornerShape(16.dp))
             .padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(8.dp)
+        verticalArrangement = Arrangement.spacedBy(if (useProfileEditStyle) 10.dp else 8.dp)
     ) {
         Row(
             modifier = Modifier
@@ -132,12 +134,22 @@ fun DduruCalendar(
                     Box(
                         modifier = Modifier
                             .weight(1f)
-                            .padding(vertical = 4.dp),
+                            .then(
+                                if (useProfileEditStyle) {
+                                    Modifier.height(20.dp)
+                                } else {
+                                    Modifier.padding(vertical = 4.dp)
+                                }
+                            ),
                         contentAlignment = Alignment.Center
                     ) {
                         Text(
                             text = label,
-                            style = DduruTheme.typography.Caption2,
+                            style = if (useProfileEditStyle) {
+                                DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
+                            } else {
+                                DduruTheme.typography.Caption2
+                            },
                             color = DduruTheme.colors.gray700,
                             textAlign = TextAlign.Center
                         )
@@ -173,6 +185,7 @@ fun DduruCalendar(
                             startDate = normalizedStartDate,
                             endDate = normalizedEndDate,
                             onClick = { onDateSelected(date) },
+                            useProfileEditStyle = useProfileEditStyle,
                             modifier = Modifier.weight(1f)
                         )
                     }
@@ -189,6 +202,7 @@ private fun CalendarDayCell(
     startDate: LocalDate?,
     endDate: LocalDate?,
     onClick: () -> Unit,
+    useProfileEditStyle: Boolean,
     modifier: Modifier = Modifier
 ) {
     val hasRange = startDate != null && endDate != null
@@ -196,6 +210,12 @@ private fun CalendarDayCell(
     val isEnd = endDate != null && date == endDate
     val isInRange = hasRange && date.isAfter(startDate) && date.isBefore(endDate)
     val isPendingStart = isStart && !hasRange
+    val isDisabledPastDate = useProfileEditStyle &&
+        date.isBefore(LocalDate.now()) &&
+        !isStart &&
+        !isEnd &&
+        !isInRange
+    val isEnabled = isCurrentMonth && !isDisabledPastDate
 
     val rangeBackground: Pair<Color, RoundedCornerShape>? = when {
         isStart && hasRange && !isEnd -> DduruTheme.colors.secondary to RoundedCornerShape(
@@ -222,8 +242,8 @@ private fun CalendarDayCell(
                     Modifier.background(color = color, shape = shape)
                 } ?: Modifier
             )
-            .then(if (!isCurrentMonth) Modifier.alpha(0.1f) else Modifier)
-            .then(if (isCurrentMonth) Modifier.noRippleClickable(onClick = onClick) else Modifier),
+            .then(if (!isEnabled) Modifier.alpha(0.1f) else Modifier)
+            .then(if (isEnabled) Modifier.noRippleClickable(onClick = onClick) else Modifier),
         contentAlignment = Alignment.Center
     ) {
         val circleModifier: Modifier = when {
@@ -250,7 +270,7 @@ private fun CalendarDayCell(
         ) {
             Text(
                 text = date.dayOfMonth.toString(),
-                style = DduruTheme.typography.Body2,
+                style = if (useProfileEditStyle) DduruTheme.typography.Body4 else DduruTheme.typography.Body2,
                 color = textColor,
                 textAlign = TextAlign.Center
             )
