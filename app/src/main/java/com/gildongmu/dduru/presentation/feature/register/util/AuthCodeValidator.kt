@@ -5,8 +5,11 @@ import com.gildongmu.dduru.presentation.feature.register.state.AuthCodeValidatio
 object AuthCodeValidator {
     private const val AUTH_CODE_LENGTH = 6
 
-    fun validate(code: String): AuthCodeValidationResult {
+    fun validate(code: String, isExpired: Boolean = false): AuthCodeValidationResult {
         return when {
+            isExpired -> {
+                AuthCodeValidationResult.EXPIRED
+            }
             code.isBlank() -> {
                 AuthCodeValidationResult.EMPTY
             }

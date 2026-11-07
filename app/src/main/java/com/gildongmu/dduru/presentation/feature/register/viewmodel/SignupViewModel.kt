@@ -8,8 +8,8 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.util.DateUtils
-import com.gildongmu.dduru.data.local.TokenLocalDataSource
-import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
+import com.gildongmu.dduru.domain.auth.LoginSessionChecker
+import com.gildongmu.dduru.domain.auth.LoginSessionState
 import com.gildongmu.dduru.domain.entity.ExceptionResponse
 import com.gildongmu.dduru.domain.phone.PhoneVerificationRepository
 import com.gildongmu.dduru.domain.phone.VerificationTimers
@@ -27,35 +27,25 @@ import com.gildongmu.dduru.presentation.feature.register.util.PhoneValidator
 import com.gildongmu.dduru.presentation.feature.register.util.PhoneVerificationError
 import com.gildongmu.dduru.presentation.feature.register.util.PhoneVerificationErrorMapper
 import com.gildongmu.dduru.presentation.feature.register.util.ValidationMessageMapper.toMessageRes
+import com.gildongmu.dduru.presentation.feature.register.util.VerificationCountdown
+import com.gildongmu.dduru.presentation.feature.register.util.VerificationTimeParser
 import dagger.hilt.android.lifecycle.HiltViewModel
-import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
-import java.time.LocalDateTime
-import java.time.OffsetDateTime
-import java.time.ZoneId
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
-import kotlin.math.ceil
-import kotlinx.coroutines.Job
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.launch
 
 private const val ALREADY_VERIFIED_CODE = "ALREADY_VERIFIED"
 private const val INVALID_TOKEN_CODE = "INVALID_TOKEN"
 private const val INVALID_INPUT_CODE = "INVALID_INPUT_VALUE"
 private const val VERIFICATION_TOKEN_FIELD = "verificationToken"
-private const val DEFAULT_AUTH_SECONDS = 180L
-private const val TIMER_TICK_MILLIS = 1000L
-private val KST_ZONE = ZoneId.of("Asia/Seoul")
 
 @HiltViewModel
 class SignupViewModel @Inject constructor(
     private val phoneVerificationRepository: PhoneVerificationRepository,
     private val onboardingRegisterRepository: OnboardingRegisterRepository,
-    private val tokenLocalDataSource: TokenLocalDataSource,
-    private val tokenAuthenticator: TokenAuthenticator
+    private val loginSessionChecker: LoginSessionChecker
 ) : ViewModel() {
 
     private val signupFlow = listOf(
@@ -114,8 +104,12 @@ class SignupViewModel @Inject constructor(
     val days: List<Int>
         get() = DateUtils.getDayListInMonth(uiState.year, uiState.month)
 
-    private var authTimerJob: Job? = null
-    private var resendTimerJob: Job? = null
+    private val authCountdown = VerificationCountdown(viewModelScope) { remaining ->
+        updateState { copy(authTimerSeconds = remaining) }
+    }
+    private val resendCountdown = VerificationCountdown(viewModelScope) { remaining ->
+        updateState { copy(resendRemainingSeconds = remaining) }
+    }
 
     fun onYearSelected(value: Int) {
         val currentMonth = uiState.month
@@ -233,10 +227,10 @@ class SignupViewModel @Inject constructor(
                     updateState { copy(isSendingCode = false, authCode = "") }
                     moveToAuthStep()
 
-                    val expiresAt = sendResult.expiresAt.toKstInstant()
-                    val resendAvailableAt = sendResult.resendAvailableAt?.toOffsetInstant()
-                    startAuthTimer(expiresAt)
-                    resendAvailableAt?.let(::startResendTimer)
+                    val expiresAt = VerificationTimeParser.parseExpiresAt(sendResult.expiresAt)
+                    val resendAvailableAt = VerificationTimeParser.parseResendAvailableAt(sendResult.resendAvailableAt)
+                    authCountdown.start(expiresAt)
+                    resendAvailableAt?.let(resendCountdown::start)
                     phoneVerificationRepository.saveVerificationTimers(
                         VerificationTimers(
                             phoneNumber = uiState.phoneNumber,
@@ -251,7 +245,7 @@ class SignupViewModel @Inject constructor(
                     val error = e as? ExceptionResponse
                     updateState { copy(isSendingCode = false) }
                     error?.retryAfterSeconds?.let { seconds -> applyRetryAfter(seconds) }
-                    showVerificationError(PhoneVerificationErrorMapper.toError(error))
+                    showVerificationError(PhoneVerificationErrorMapper.toSendError(error))
                 }
         }
     }
@@ -263,21 +257,21 @@ class SignupViewModel @Inject constructor(
         val resendAvailableAtMillis = timers.resendAvailableAtMillis?.takeIf { it > now } ?: return false
 
         moveToAuthStep()
-        startAuthTimer(Instant.ofEpochMilli(expiresAtMillis))
-        startResendTimer(Instant.ofEpochMilli(resendAvailableAtMillis))
+        authCountdown.start(Instant.ofEpochMilli(expiresAtMillis))
+        resendCountdown.start(Instant.ofEpochMilli(resendAvailableAtMillis))
         return true
     }
 
     private suspend fun applyRetryAfter(seconds: Long) {
         val resendAvailableAt = Instant.now().plusSeconds(seconds)
-        startResendTimer(resendAvailableAt)
+        resendCountdown.start(resendAvailableAt)
 
         val savedExpiresAtMillis = phoneVerificationRepository
             .getVerificationTimers(uiState.phoneNumber)
             ?.expiresAtMillis
         savedExpiresAtMillis
             ?.takeIf { uiState.authTimerSeconds == 0 }
-            ?.let { startAuthTimer(Instant.ofEpochMilli(it)) }
+            ?.let { authCountdown.start(Instant.ofEpochMilli(it)) }
         phoneVerificationRepository.saveVerificationTimers(
             VerificationTimers(
                 phoneNumber = uiState.phoneNumber,
@@ -305,7 +299,10 @@ class SignupViewModel @Inject constructor(
     }
 
     fun onAuthComplete() {
-        val result = AuthCodeValidator.validate(uiState.authCode)
+        val result = AuthCodeValidator.validate(
+            code = uiState.authCode,
+            isExpired = uiState.isPhoneRequested && uiState.authTimerSeconds == 0
+        )
 
         if (result != AuthCodeValidationResult.VALID) {
             updateState { copy(authCodeErrorRes = result.toMessageRes()) }
@@ -352,7 +349,7 @@ class SignupViewModel @Inject constructor(
     }
 
     private fun moveToAuthVerified() {
-        stopAuthTimer()
+        authCountdown.stop()
         stopResendTimer()
         updateState {
             copy(
@@ -377,7 +374,6 @@ class SignupViewModel @Inject constructor(
                 }
             }
             is PhoneVerificationError.AuthCode -> {
-                if (uiState.step == SignupStep.PHONE) moveToAuthStep()
                 updateState { copy(authCodeErrorRes = error.messageRes) }
             }
             is PhoneVerificationError.Birth -> {
@@ -393,7 +389,7 @@ class SignupViewModel @Inject constructor(
     }
 
     private fun moveBackToPhone(@StringRes messageRes: Int) {
-        stopAuthTimer()
+        authCountdown.stop()
         stopResendTimer()
         updateState {
             copy(
@@ -414,29 +410,10 @@ class SignupViewModel @Inject constructor(
     }
 
     private suspend fun handleInvalidVerificationToken() {
-        when (checkLoginSession()) {
+        when (loginSessionChecker.check()) {
             LoginSessionState.VALID -> moveBackToPhone(R.string.phone_error_reverify)
             LoginSessionState.EXPIRED -> updateState { copy(isLoginExpired = true) }
             LoginSessionState.UNKNOWN -> showVerificationError(PhoneVerificationErrorMapper.toError(null))
-        }
-    }
-
-    private suspend fun checkLoginSession(): LoginSessionState {
-        val accessToken = tokenLocalDataSource.accessToken.first()
-        if (accessToken.isNullOrBlank()) return LoginSessionState.EXPIRED
-        if (!tokenAuthenticator.shouldRefresh(accessToken)) return LoginSessionState.VALID
-
-        val refreshToken = tokenLocalDataSource.refreshToken.first()
-        if (refreshToken.isNullOrBlank()) return LoginSessionState.EXPIRED
-
-        val refreshedTokens = tokenAuthenticator.refreshAndSaveTokens(
-            refreshToken = refreshToken,
-            staleAccessToken = accessToken
-        )
-        return when {
-            refreshedTokens != null -> LoginSessionState.VALID
-            tokenLocalDataSource.accessToken.first().isNullOrBlank() -> LoginSessionState.EXPIRED
-            else -> LoginSessionState.UNKNOWN
         }
     }
 
@@ -444,50 +421,10 @@ class SignupViewModel @Inject constructor(
         updateState { copy(toast = null) }
     }
 
-    private fun startAuthTimer(endAt: Instant) {
-        authTimerJob?.cancel()
-        authTimerJob = viewModelScope.launch {
-            do {
-                val remaining = remainingSeconds(endAt)
-                updateState { copy(authTimerSeconds = remaining) }
-                if (remaining > 0) delay(TIMER_TICK_MILLIS)
-            } while (remaining > 0)
-        }
-    }
-
-    private fun stopAuthTimer() {
-        authTimerJob?.cancel()
-        authTimerJob = null
-    }
-
-    private fun startResendTimer(endAt: Instant) {
-        resendTimerJob?.cancel()
-        resendTimerJob = viewModelScope.launch {
-            do {
-                val remaining = remainingSeconds(endAt)
-                updateState { copy(resendRemainingSeconds = remaining) }
-                if (remaining > 0) delay(TIMER_TICK_MILLIS)
-            } while (remaining > 0)
-        }
-    }
-
     private fun stopResendTimer() {
-        resendTimerJob?.cancel()
-        resendTimerJob = null
+        resendCountdown.stop()
         updateState { copy(resendRemainingSeconds = 0) }
     }
-
-    private fun remainingSeconds(endAt: Instant): Int {
-        val millis = Duration.between(Instant.now(), endAt).toMillis()
-        return ceil(millis / 1000.0).toInt().coerceAtLeast(0)
-    }
-
-    private fun String.toKstInstant(): Instant =
-        runCatching { LocalDateTime.parse(this).atZone(KST_ZONE).toInstant() }
-            .getOrElse { Instant.now().plusSeconds(DEFAULT_AUTH_SECONDS) }
-
-    private fun String.toOffsetInstant(): Instant? =
-        runCatching { OffsetDateTime.parse(this).toInstant() }.getOrNull()
 
     fun onRegisterComplete() {
         viewModelScope.launch {
@@ -540,10 +477,4 @@ class SignupViewModel @Inject constructor(
             }
         }
     }
-}
-
-private enum class LoginSessionState {
-    VALID,
-    EXPIRED,
-    UNKNOWN
 }

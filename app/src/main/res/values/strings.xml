@@ -19,6 +19,7 @@
     <string name="auth_code_error_not_found">인증 정보가 없거나 만료됐어요. 인증번호를 다시 받아주세요</string>
     <string name="auth_code_error_attempts_exceeded">입력 가능 횟수를 초과했어요. 인증번호를 다시 받아주세요</string>
     <string name="auth_code_error_daily_limit">인증번호 발송 한도에 도달했어요. 나중에 다시 시도해주세요</string>
+    <string name="auth_code_error_expired">인증 시간이 만료됐어요. 인증번호를 다시 받아주세요</string>
     <string name="auth_code_info_already_verified">이미 인증이 완료됐어요</string>
     <string name="auth_code_resend">재전송</string>
     <string name="auth_code_resend_seconds">%1$d초 후</string>

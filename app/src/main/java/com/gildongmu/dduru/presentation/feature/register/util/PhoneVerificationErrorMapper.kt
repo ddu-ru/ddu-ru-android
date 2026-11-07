@@ -37,6 +37,13 @@ object PhoneVerificationErrorMapper {
             else -> requestFailed()
         }
 
+    fun toSendError(error: ExceptionResponse?): PhoneVerificationError =
+        when (error?.errorCode) {
+            "TOO_MANY_REQUESTS" -> PhoneVerificationError.Phone(R.string.auth_code_error_too_many_requests)
+            "DAILY_SMS_LIMIT_EXCEEDED" -> PhoneVerificationError.Phone(R.string.auth_code_error_daily_limit)
+            else -> toError(error)
+        }
+
     private fun requestFailed() = PhoneVerificationError.Toast(
         titleRes = R.string.phone_toast_request_failed_title,
         messageRes = R.string.phone_toast_retry_later

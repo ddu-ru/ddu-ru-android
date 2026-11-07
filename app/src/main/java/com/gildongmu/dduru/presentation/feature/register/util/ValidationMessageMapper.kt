@@ -21,6 +21,7 @@ object ValidationMessageMapper {
         when (this) {
             AuthCodeValidationResult.EMPTY -> R.string.auth_code_error_empty
             AuthCodeValidationResult.INVALID_LENGTH -> R.string.auth_code_error_invalid_length
+            AuthCodeValidationResult.EXPIRED -> R.string.auth_code_error_expired
             AuthCodeValidationResult.VALID -> null
         }
 }

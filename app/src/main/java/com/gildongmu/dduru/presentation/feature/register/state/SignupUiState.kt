@@ -27,7 +27,8 @@ enum class PhoneValidationResult {
 enum class AuthCodeValidationResult {
     VALID,
     EMPTY,
-    INVALID_LENGTH
+    INVALID_LENGTH,
+    EXPIRED
 }
 
 data class CompletedItem(

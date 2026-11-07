@@ -18,6 +18,7 @@ import com.gildongmu.dduru.presentation.component.DduruErrorToasts
 import com.gildongmu.dduru.presentation.component.DduruToastMessage
 import com.gildongmu.dduru.presentation.component.toErrorToast
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
+import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameAvailabilityChecker
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
@@ -89,6 +90,7 @@ class ProfileEditViewModel @Inject constructor(
     private val myPageRepository: MyPageRepository,
     private val profileRepository: ProfileRepository,
     private val nicknameRepository: NicknameRepository,
+    private val nicknameAvailabilityChecker: NicknameAvailabilityChecker,
     private val onboardingStatusRepository: OnboardingStatusRepository,
     private val surveyRepository: SurveyRepository,
     private val imageUploader: ImagePresignedUrlUploader
@@ -187,23 +189,13 @@ class ProfileEditViewModel @Inject constructor(
     }
 
     private suspend fun checkNicknameAvailability(nickname: String) {
-        nicknameRepository.checkNicknameAvailability(nickname)
-            .onSuccess { isAvailable ->
-                updateData {
-                    it.copy(
-                        isNicknameVerified = isAvailable,
-                        nicknameErrorMessage = if (isAvailable) null else "이미 사용 중인 닉네임이에요."
-                    )
-                }
-            }
-            .onFailure { error ->
-                updateData {
-                    it.copy(
-                        isNicknameVerified = false,
-                        nicknameErrorMessage = error.message ?: "네트워크 문제가 발생했어요."
-                    )
-                }
-            }
+        val availability = nicknameAvailabilityChecker.check(nickname)
+        updateData {
+            it.copy(
+                isNicknameVerified = availability.isAvailable,
+                nicknameErrorMessage = availability.errorMessage
+            )
+        }
     }
 
     fun onBioChange(bio: String) {

@@ -18,6 +18,7 @@ import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEd
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
+import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameAvailabilityChecker
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
@@ -37,6 +38,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val nicknameRepository: NicknameRepository,
+    private val nicknameAvailabilityChecker: NicknameAvailabilityChecker,
     private val profileRepository: ProfileRepository,
     private val profileImageUploader: ImagePresignedUrlUploader,
     private val onboardingStatusRepository: OnboardingStatusRepository
@@ -273,25 +275,15 @@ class ProfileViewModel @Inject constructor(
 
         _uiState.update { it.copy(isDuplicationChecking = true, isDuplicationChecked = false) }
 
-        val result = nicknameRepository.checkNicknameAvailability(nickname)
+        val availability = nicknameAvailabilityChecker.check(nickname)
         if (_formState.value.nickname != nickname) return
 
-        result.onSuccess {
-            _uiState.update { state ->
-                state.copy(
-                    isDuplicationChecking = false,
-                    isDuplicationChecked = it,
-                    nicknameErrorMessage = if (it) null else "이미 사용 중인 닉네임이에요."
-                )
-            }
-        }.onFailure { e ->
-            _uiState.update {
-                it.copy(
-                    isDuplicationChecking = false,
-                    isDuplicationChecked = false,
-                    nicknameErrorMessage = e.message ?: "네트워크 문제가 발생했어요"
-                )
-            }
+        _uiState.update {
+            it.copy(
+                isDuplicationChecking = false,
+                isDuplicationChecked = availability.isAvailable,
+                nicknameErrorMessage = availability.errorMessage
+            )
         }
 
         checkCanStart()

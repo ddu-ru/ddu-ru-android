@@ -1,9 +1,11 @@
 package com.gildongmu.dduru.data.register.phone.di
 
+import com.gildongmu.dduru.data.auth.LoginSessionCheckerImpl
 import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSource
 import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSourceImpl
 import com.gildongmu.dduru.data.register.phone.api.PhoneVerificationApi
 import com.gildongmu.dduru.data.register.phone.repository.PhoneVerificationRepositoryImpl
+import com.gildongmu.dduru.domain.auth.LoginSessionChecker
 import com.gildongmu.dduru.domain.phone.PhoneVerificationRepository
 import dagger.Binds
 import dagger.Module
@@ -28,6 +30,12 @@ abstract class PhoneVerificationBindModule {
     abstract fun bindVerificationTokenLocalDataSource(
         impl: PhoneVerificationTokenLocalDataSourceImpl
     ): PhoneVerificationTokenLocalDataSource
+
+    @Binds
+    @Singleton
+    abstract fun bindLoginSessionChecker(
+        impl: LoginSessionCheckerImpl
+    ): LoginSessionChecker
 }
 
 @Module
