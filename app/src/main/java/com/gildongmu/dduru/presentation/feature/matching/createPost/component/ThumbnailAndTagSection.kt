@@ -42,6 +42,7 @@ fun ThumbnailAndTagSection(
     onTagInputChange: (String) -> Unit,
     onThumbnailImageChange: () -> Unit,
     onAddTag: () -> Unit,
+    onAddPopularTag: (String) -> Unit,
     onRemoveTag: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -191,7 +192,7 @@ fun ThumbnailAndTagSection(
                     backgroundColor = DduruTheme.colors.gray200,
                     contentPadding = PaddingValues(12.dp),
                     modifier = Modifier.clickable {
-                        onTagInputChange(popularTag)
+                        onAddPopularTag(popularTag)
                     }
                 )
             }
@@ -228,6 +229,7 @@ private fun ThumbnailAndTagSectionPreview() {
                 },
                 onThumbnailImageChange = {},
                 onAddTag = {},
+                onAddPopularTag = {},
                 onRemoveTag = {},
                 modifier = Modifier.padding(24.dp)
             )
