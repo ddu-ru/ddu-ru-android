@@ -116,10 +116,14 @@ fun ThumbnailAndTagSection(
         Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = uiState.tagValidationMessage
-                ?: "한글은 4자 이하, 영문/숫자는 7자 이하로 입력해 주세요.",
+            text = if (uiState.hasTagLimitError) {
+                "한글은 4자 이하, 영문/숫자는 7자 이하로 입력해 주세요."
+            } else {
+                uiState.tagValidationMessage
+                    ?: "한글은 4자 이하, 영문/숫자는 7자 이하로 입력해 주세요."
+            },
             style = DduruTheme.typography.Caption2,
-            color = if (uiState.tagValidationMessage == null) {
+            color = if (uiState.tagValidationMessage == null || uiState.hasTagLimitError) {
                 DduruTheme.colors.gray400
             } else {
                 DduruTheme.colors.validationRed
@@ -167,6 +171,16 @@ fun ThumbnailAndTagSection(
                     }
                 )
             }
+        }
+
+        if (uiState.hasTagLimitError) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = uiState.tagValidationMessage.orEmpty(),
+                style = DduruTheme.typography.Caption2,
+                color = DduruTheme.colors.validationRed
+            )
         }
 
         Spacer(modifier = Modifier.height(24.dp))
