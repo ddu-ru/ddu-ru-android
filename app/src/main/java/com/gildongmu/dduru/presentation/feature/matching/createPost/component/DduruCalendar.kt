@@ -191,6 +191,7 @@ private fun CalendarDayCell(
     onClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    val isPastDate = date.isBefore(LocalDate.now())
     val hasRange = startDate != null && endDate != null
     val isStart = startDate != null && date == startDate
     val isEnd = endDate != null && date == endDate
@@ -223,7 +224,13 @@ private fun CalendarDayCell(
                 } ?: Modifier
             )
             .then(if (!isCurrentMonth) Modifier.alpha(0.1f) else Modifier)
-            .then(if (isCurrentMonth) Modifier.noRippleClickable(onClick = onClick) else Modifier),
+            .then(
+                if (isCurrentMonth && !isPastDate) {
+                    Modifier.noRippleClickable(onClick = onClick)
+                } else {
+                    Modifier
+                }
+            ),
         contentAlignment = Alignment.Center
     ) {
         val circleModifier: Modifier = when {
@@ -239,6 +246,7 @@ private fun CalendarDayCell(
         }
 
         val textColor = when {
+            isPastDate -> DduruTheme.colors.black.copy(alpha = 0.5f)
             (isStart || isEnd) && hasRange -> DduruTheme.colors.gray0
             isPendingStart || isInRange -> DduruTheme.colors.primary
             else -> DduruTheme.colors.black
