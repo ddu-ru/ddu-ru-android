@@ -93,6 +93,7 @@ fun MatchingCreatePostRoute(
         onThumbnailImageChange = { galleryLauncher.launch("image/*") },
         onTagInputChange = viewModel::onTagInputChange,
         onAddTag = viewModel::onAddTag,
+        onAddPopularTag = viewModel::onAddPopularTag,
         onRemoveTag = viewModel::onRemoveTag,
         modifier = modifier
     )
@@ -115,6 +116,7 @@ fun MatchingCreatePostScreen(
     onThumbnailImageChange: () -> Unit,
     onTagInputChange: (String) -> Unit,
     onAddTag: () -> Unit,
+    onAddPopularTag: (String) -> Unit,
     onRemoveTag: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -220,6 +222,7 @@ fun MatchingCreatePostScreen(
                         onTagInputChange = onTagInputChange,
                         onThumbnailImageChange = onThumbnailImageChange,
                         onAddTag = onAddTag,
+                        onAddPopularTag = onAddPopularTag,
                         onRemoveTag = onRemoveTag
                     )
                 }
@@ -377,6 +380,7 @@ private fun MatchingCreatePostContentPreview() {
                     )
                 },
                 onAddTag = {},
+                onAddPopularTag = {},
                 onRemoveTag = {},
                 modifier = Modifier.fillMaxSize()
             )

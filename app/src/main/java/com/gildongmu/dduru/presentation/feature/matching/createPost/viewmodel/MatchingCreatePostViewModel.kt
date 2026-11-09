@@ -186,6 +186,28 @@ class MatchingCreatePostViewModel @Inject constructor(
         }
     }
 
+    fun onAddPopularTag(tag: String) {
+        _uiState.update { currentState ->
+            val thumbnailState = currentState.thumbnailAndTagUiState
+            val trimmedTag = tag.trim()
+            val validationMessage = thumbnailState.validateTagInput(trimmedTag)
+
+            if (trimmedTag.isBlank() || validationMessage != null) {
+                return@update currentState.copy(
+                    thumbnailAndTagUiState = thumbnailState.copy(
+                        tagValidationMessage = validationMessage
+                    )
+                )
+            }
+
+            currentState.copy(
+                thumbnailAndTagUiState = thumbnailState.copy(
+                    addedTags = thumbnailState.addedTags + trimmedTag
+                )
+            )
+        }
+    }
+
     fun onRemoveTag(tag: String) {
         _uiState.update { currentState ->
             val thumbnailState = currentState.thumbnailAndTagUiState
