@@ -6,20 +6,29 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.data.remote.dto.response.post.ParticipationRequest
 import com.gildongmu.dduru.data.remote.service.PostService
+import com.gildongmu.dduru.domain.repository.ChatRoomRepository
+import com.gildongmu.dduru.presentation.feature.matching.post.effect.MatchingDetailSideEffect
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MatchingDetailViewModel @Inject constructor(
-    private val postService: PostService
+    private val postService: PostService,
+    private val chatRoomRepository: ChatRoomRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MatchingDetailUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MatchingDetailUiState>> = _uiState.asStateFlow()
+
+    private val _sideEffect = MutableSharedFlow<MatchingDetailSideEffect>()
+    val sideEffect: SharedFlow<MatchingDetailSideEffect> = _sideEffect.asSharedFlow()
 
     private var loadedPostId: Long? = null
 
@@ -77,6 +86,32 @@ class MatchingDetailViewModel @Inject constructor(
                 .onSuccess { response ->
                     if (response.isSuccessful) loadMatchingDetail(postId)
                 }
+        }
+    }
+
+    fun onContactClick(postId: Long) {
+        val current = (_uiState.value as? UiState.Success)?.data ?: return
+        if (current.isContactRequesting) return
+
+        viewModelScope.launch {
+            _uiState.value = UiState.Success(current.copy(isContactRequesting = true))
+            chatRoomRepository.createPrivateChatRoom(postId)
+                .onSuccess { chatRoom ->
+                    _uiState.value = UiState.Success(current.copy(isContactRequesting = false))
+                    _sideEffect.emit(MatchingDetailSideEffect.NavigateToChatRoom(chatRoom))
+                }
+                .onFailure { error ->
+                    _uiState.value = UiState.Success(current.copy(isContactRequesting = false))
+                    _sideEffect.emit(MatchingDetailSideEffect.ShowMessage(error.toContactErrorMessage()))
+                }
+        }
+    }
+
+    private fun Throwable.toContactErrorMessage(): String {
+        return when (message) {
+            "FORBIDDEN" -> "자신의 게시글에는 문의할 수 없어요."
+            "NOT_FOUND" -> "사용자를 찾을 수 없어요."
+            else -> "채팅방을 열지 못했어요. 다시 시도해 주세요."
         }
     }
 

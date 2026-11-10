@@ -271,7 +271,9 @@ fun RootNavigation(
                             },
                             onShareClick = {},
                             onProfileClick = {},
-                            onContactClick = {},
+                            onNavigateToChatRoom = { chatRoomId ->
+                                rootBackStack.add(RootNavRoute.ChatRoom(chatRoomId))
+                            },
                             onBottomActionClick = {}
                         )
                     }

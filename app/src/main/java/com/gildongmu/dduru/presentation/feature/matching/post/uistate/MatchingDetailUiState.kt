@@ -27,6 +27,7 @@ data class MatchingDetailUiState(
     val hasLiked: Boolean = false,
     val participants: List<MatchingDetailParticipantUiState> = emptyList(),
     val myParticipationStatus: MatchingPostParticipationStatus = MatchingPostParticipationStatus.NONE,
+    val isContactRequesting: Boolean = false,
     val tripDurationText: String = "",
     val recruitDeadlineDDay: String = "",
     val companionType: String = ""
@@ -48,7 +49,11 @@ data class MatchingDetailUiState(
         }
 
     val ageConditionText: String
-        get() = if (minAge != null && maxAge != null) "$minAge-$maxAge 세 · $preferredGenderText" else preferredGenderText
+        get() = if (minAge != null && maxAge != null) {
+            "$minAge-$maxAge 세 · $preferredGenderText"
+        } else {
+            preferredGenderText
+        }
 
     val remainingSlots: Int
         get() = (recruitCapacity - recruitCount).coerceAtLeast(0)

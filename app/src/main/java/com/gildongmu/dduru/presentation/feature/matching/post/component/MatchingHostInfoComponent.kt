@@ -44,6 +44,7 @@ fun MatchingHostInfoComponent(
     profileImage: MatchingHostProfileImage?,
     onProfileClick: () -> Unit,
     onContactClick: () -> Unit,
+    isContactRequesting: Boolean = false,
     modifier: Modifier = Modifier
 ) {
     Column(
@@ -139,6 +140,7 @@ fun MatchingHostInfoComponent(
         DduruButton(
             text = "호스트에게 문의하기",
             onClick = onContactClick,
+            enabled = !isContactRequesting,
             enabledColors = DduruButtonEnabledColors(
                 backgroundColor = DduruTheme.colors.gray0,
                 textColor = DduruTheme.colors.gray800,

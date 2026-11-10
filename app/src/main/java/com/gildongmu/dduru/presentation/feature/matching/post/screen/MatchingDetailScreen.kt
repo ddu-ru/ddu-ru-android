@@ -1,6 +1,7 @@
 // ktlint-disable max-line-length
 package com.gildongmu.dduru.presentation.feature.matching.post.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +15,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -38,6 +40,7 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -59,6 +62,7 @@ import com.gildongmu.dduru.presentation.feature.matching.post.component.Matching
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostInfoComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostProfileImage
 import com.gildongmu.dduru.presentation.feature.matching.post.component.PostStatusDropdown
+import com.gildongmu.dduru.presentation.feature.matching.post.effect.MatchingDetailSideEffect
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailProfileImageUiState
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostParticipationStatus
@@ -75,15 +79,26 @@ fun MatchingDetailRoute(
     onOverflowClick: () -> Unit,
     onShareClick: () -> Unit,
     onProfileClick: () -> Unit,
-    onContactClick: () -> Unit,
+    onNavigateToChatRoom: (Long) -> Unit,
     onBottomActionClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MatchingDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
 
     LaunchedEffect(postId) {
         viewModel.loadMatchingDetail(postId)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is MatchingDetailSideEffect.NavigateToChatRoom -> onNavigateToChatRoom(effect.roomId)
+                is MatchingDetailSideEffect.ShowMessage ->
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     when (val state = uiState) {
@@ -98,7 +113,7 @@ fun MatchingDetailRoute(
                 onOverflowClick = onOverflowClick,
                 onShareClick = onShareClick,
                 onProfileClick = onProfileClick,
-                onContactClick = onContactClick,
+                onContactClick = { viewModel.onContactClick(postId) },
                 onBottomActionClick = {
                     if (!state.data.isOwner && state.data.myParticipationStatus == MatchingPostParticipationStatus.NONE) {
                         viewModel.onParticipationClick(postId)
@@ -163,7 +178,9 @@ fun MatchingDetailScreen(
                 myParticipationStatus = uiState.myParticipationStatus,
                 onButtonClick = onBottomActionClick,
                 hazeState = hazeState,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
             )
         }
     ) { innerPadding ->
@@ -237,7 +254,8 @@ fun MatchingDetailScreen(
                                 gender = uiState.author.genderText,
                                 profileImage = uiState.author.profileImage.toHostProfileImage(),
                                 onProfileClick = onProfileClick,
-                                onContactClick = onContactClick
+                                onContactClick = onContactClick,
+                                isContactRequesting = uiState.isContactRequesting
                             )
 
                             if (uiState.participants.isNotEmpty()) {
