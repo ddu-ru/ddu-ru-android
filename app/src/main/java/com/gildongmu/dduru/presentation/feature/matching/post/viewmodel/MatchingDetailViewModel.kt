@@ -45,6 +45,8 @@ class MatchingDetailViewModel @Inject constructor(
                             recruitCapacity = post.recruitCapacity,
                             recruitCount = post.recruitCount,
                             preferredGender = post.preferredGender,
+                            minAge = post.minAge.takeUnless { post.isAgeAny },
+                            maxAge = post.maxAge.takeUnless { post.isAgeAny },
                             photoUrl = post.photoUrl,
                             tags = post.tags,
                             likeCount = post.likeCount,

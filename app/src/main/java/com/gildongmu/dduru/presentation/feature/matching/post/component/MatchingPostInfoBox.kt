@@ -24,9 +24,7 @@ fun CommonBoxComponent(
     recruitmentType: String,
     recruitmentCount: String,
     recruitCapacity: String,
-    minAge: Int,
-    maxAge: Int,
-    preferredGender: String,
+    recruitmentCondition: String,
     modifier: Modifier = Modifier
 ) {
     Row(
@@ -97,7 +95,7 @@ fun CommonBoxComponent(
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             Text(
-                text = "$minAge-${maxAge}세 $preferredGender",
+                text = recruitmentCondition,
                 style = DduruTheme.typography.Title2,
                 color = DduruTheme.colors.black
             )
@@ -121,9 +119,7 @@ private fun CommonBoxComponentPreview() {
             recruitmentType = "전체 동행",
             recruitmentCount = "1",
             recruitCapacity = "4",
-            minAge = 20,
-            maxAge = 30,
-            preferredGender = "남성",
+            recruitmentCondition = "20-30세 남성",
             modifier = Modifier.padding(16.dp)
         )
     }

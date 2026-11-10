@@ -205,9 +205,7 @@ fun MatchingDetailScreen(
                             recruitmentType = uiState.companionTypeText,
                             recruitmentCount = uiState.recruitCount.toString(),
                             recruitCapacity = uiState.recruitCapacity.toString(),
-                            minAge = uiState.minAge,
-                            maxAge = uiState.maxAge,
-                            preferredGender = uiState.preferredGenderText
+                            recruitmentCondition = uiState.ageConditionText
                         )
 
                         MatchingDetailDescriptionSection(uiState = uiState)
@@ -242,21 +240,23 @@ fun MatchingDetailScreen(
                                 onContactClick = onContactClick
                             )
 
-                            MatchingDetailParticipantComponent(
-                                participants = uiState.participants.map { participant ->
-                                    MatchingDetailParticipantUiModel(
-                                        userId = participant.userId,
-                                        nickname = participant.nickname,
-                                        ageText = participant.ageText,
-                                        genderText = participant.genderText,
-                                        profileImage = participant.profileImage.url,
-                                        isHost = participant.isHost
-                                    )
-                                }.toPersistentList(),
-                                recruitCount = uiState.recruitCount,
-                                recruitCapacity = uiState.recruitCapacity,
-                                remainingSlots = uiState.remainingSlots
-                            )
+                            if (uiState.participants.isNotEmpty()) {
+                                MatchingDetailParticipantComponent(
+                                    participants = uiState.participants.map { participant ->
+                                        MatchingDetailParticipantUiModel(
+                                            userId = participant.userId,
+                                            nickname = participant.nickname,
+                                            ageText = participant.ageText,
+                                            genderText = participant.genderText,
+                                            profileImage = participant.profileImage.url,
+                                            isHost = participant.isHost
+                                        )
+                                    }.toPersistentList(),
+                                    recruitCount = uiState.recruitCount,
+                                    recruitCapacity = uiState.recruitCapacity,
+                                    remainingSlots = uiState.remainingSlots
+                                )
+                            }
                         } else {
                             Spacer(modifier = Modifier.height(16.dp))
                         }
@@ -315,30 +315,31 @@ private fun MatchingDetailDescriptionSection(
 private fun MatchingDetailMetaRow(
     uiState: MatchingDetailUiState
 ) {
+    val metadata = listOfNotNull(
+        uiState.createdDateText?.let { "작성일자 $it" },
+        uiState.viewCount?.let { "조회수 $it" }
+    )
+    if (metadata.isEmpty()) return
+
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "작성일자 ${uiState.createdDateText}",
-            style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray400
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Box(
-            modifier = Modifier
-                .size(4.dp)
-                .background(DduruTheme.colors.gray400, CircleShape)
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Text(
-            text = "조회수 ${uiState.viewCount}",
-            style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray400
-        )
+        metadata.forEachIndexed { index, text ->
+            if (index > 0) {
+                Spacer(modifier = Modifier.width(16.dp))
+                Box(
+                    modifier = Modifier
+                        .size(4.dp)
+                        .background(DduruTheme.colors.gray400, CircleShape)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+            Text(
+                text = text,
+                style = DduruTheme.typography.Body2,
+                color = DduruTheme.colors.gray400
+            )
+        }
     }
 }
 

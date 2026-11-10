@@ -44,7 +44,10 @@ data class PostDetailResponse(
     val destination: String = "",
     val recruitCapacity: Int = 0,
     val recruitCount: Int = 0,
-    val preferredGender: String = "U",
+    val preferredGender: String = "",
+    val isAgeAny: Boolean = true,
+    val minAge: Int? = null,
+    val maxAge: Int? = null,
     val photoUrl: String? = null,
     val tags: List<String> = emptyList(),
     val likeCount: Int = 0,
@@ -54,7 +57,7 @@ data class PostDetailResponse(
     val myParticipationStatus: String = "NONE",
     val tripDurationText: String = "",
     val recruitDeadlineDDay: String = "",
-    val companionType: String = "FULL"
+    val companionType: String = ""
 )
 
 @Serializable
