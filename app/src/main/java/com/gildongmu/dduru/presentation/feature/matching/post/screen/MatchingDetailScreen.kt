@@ -83,7 +83,6 @@ fun MatchingDetailRoute(
     onProfileClick: () -> Unit,
     onNavigateToChatRoom: (Long) -> Unit,
     onBottomActionClick: () -> Unit,
-    onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MatchingDetailViewModel = hiltViewModel()
 ) {
@@ -124,7 +123,6 @@ fun MatchingDetailRoute(
                         viewModel.onParticipationClick(postId)
                     }
                 },
-                onReportClick = onReportClick,
                 modifier = modifier
             )
         }
@@ -141,7 +139,6 @@ fun MatchingDetailScreen(
     onProfileClick: () -> Unit,
     onContactClick: () -> Unit,
     onBottomActionClick: () -> Unit,
-    onReportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val hazeState = remember { HazeState() }
@@ -287,7 +284,7 @@ fun MatchingDetailScreen(
                             Spacer(modifier = Modifier.height(16.dp))
                         }
 
-                        MatchingDetailReportButton(onClick = onReportClick)
+                        MatchingDetailReportButton()
                     }
                 }
             }
@@ -297,12 +294,9 @@ fun MatchingDetailScreen(
 
 @Composable
 private fun MatchingDetailReportButton(
-    onClick: () -> Unit
 ) {
     Row(
-        modifier = Modifier
-            .fillMaxWidth()
-            .clickable(onClick = onClick),
+        modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),
         verticalAlignment = Alignment.CenterVertically
     ) {
@@ -552,8 +546,7 @@ private fun MatchingDetailScreenPreview() {
                 onShareClick = {},
                 onProfileClick = {},
                 onContactClick = {},
-                onBottomActionClick = {},
-                onReportClick = {}
+                onBottomActionClick = {}
             )
         }
     }
