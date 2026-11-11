@@ -54,6 +54,7 @@ import com.gildongmu.dduru.presentation.feature.chat.viewmodel.ChatMainViewModel
 @Composable
 fun ChatMainRoute(
     onNavigateToChatRoom: (Long) -> Unit,
+    initialTab: ChatTab = ChatTab.ALL,
     viewModel: ChatMainViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -81,6 +82,7 @@ fun ChatMainRoute(
         is UiState.Loading -> DduruLoadingScreen()
         is UiState.Success -> ChatMainScreen(
             chatRooms = state.data.chatRooms,
+            initialTab = initialTab,
             selectedSort = state.data.selectedSort,
             onSortSelected = viewModel::onSortSelected,
             onChatRoomClick = { id -> viewModel.onChatRoomClick(id.toLong()) },

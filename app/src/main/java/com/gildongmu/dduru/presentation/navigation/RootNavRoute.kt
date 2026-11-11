@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.navigation
 
 import androidx.navigation3.runtime.NavKey
+import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatTab
 import kotlinx.serialization.Serializable
 
 sealed interface RootNavRoute : NavKey {
@@ -16,7 +17,11 @@ sealed interface RootNavRoute : NavKey {
 
     @Serializable data object Main : RootNavRoute
 
-    @Serializable data class MainTab(val bottomNavRoute: BottomNavRoute) : RootNavRoute
+    @Serializable
+    data class MainTab(
+        val bottomNavRoute: BottomNavRoute,
+        val initialChatTab: ChatTab? = null
+    ) : RootNavRoute
 
     @Serializable data object HomeNotification : RootNavRoute
 

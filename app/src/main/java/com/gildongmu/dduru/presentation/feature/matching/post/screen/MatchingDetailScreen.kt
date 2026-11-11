@@ -115,10 +115,11 @@ fun MatchingDetailRoute(
                 onProfileClick = onProfileClick,
                 onContactClick = { viewModel.onContactClick(postId) },
                 onBottomActionClick = {
-                    if (!state.data.isOwner && state.data.myParticipationStatus == MatchingPostParticipationStatus.NONE) {
+                    if (state.data.isOwner) {
+                        onBottomActionClick()
+                    } else if (state.data.myParticipationStatus == MatchingPostParticipationStatus.NONE) {
                         viewModel.onParticipationClick(postId)
                     }
-                    onBottomActionClick()
                 },
                 modifier = modifier
             )
