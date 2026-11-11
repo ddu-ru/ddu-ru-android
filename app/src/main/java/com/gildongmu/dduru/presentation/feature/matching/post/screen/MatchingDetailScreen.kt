@@ -248,6 +248,8 @@ fun MatchingDetailScreen(
 
                             MatchingDetailTagSection(tags = uiState.tags)
 
+                            SectionTitle(text = "호스트")
+
                             MatchingHostInfoComponent(
                                 username = uiState.author.nickname,
                                 age = uiState.author.ageText,
