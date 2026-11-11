@@ -29,6 +29,7 @@ import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingEditPostRoute
 import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailRoute
+import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingPostReportScreen
 import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditPreferencesRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.TravelDestinationSelectRoute
@@ -283,7 +284,16 @@ fun RootNavigation(
                                         initialChatTab = ChatTab.REQUEST
                                     )
                                 )
+                            },
+                            onReportClick = {
+                                rootBackStack.add(RootNavRoute.MatchingPostReport(route.postId))
                             }
+                        )
+                    }
+
+                    is RootNavRoute.MatchingPostReport -> NavEntry(route) {
+                        MatchingPostReportScreen(
+                            onBackClick = { navigateBack() }
                         )
                     }
 

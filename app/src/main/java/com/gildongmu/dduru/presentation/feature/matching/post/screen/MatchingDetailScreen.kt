@@ -25,6 +25,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -41,6 +42,7 @@ import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -81,6 +83,7 @@ fun MatchingDetailRoute(
     onProfileClick: () -> Unit,
     onNavigateToChatRoom: (Long) -> Unit,
     onBottomActionClick: () -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MatchingDetailViewModel = hiltViewModel()
 ) {
@@ -121,6 +124,7 @@ fun MatchingDetailRoute(
                         viewModel.onParticipationClick(postId)
                     }
                 },
+                onReportClick = onReportClick,
                 modifier = modifier
             )
         }
@@ -137,6 +141,7 @@ fun MatchingDetailScreen(
     onProfileClick: () -> Unit,
     onContactClick: () -> Unit,
     onBottomActionClick: () -> Unit,
+    onReportClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     val hazeState = remember { HazeState() }
@@ -281,10 +286,36 @@ fun MatchingDetailScreen(
                         } else {
                             Spacer(modifier = Modifier.height(16.dp))
                         }
+
+                        MatchingDetailReportButton(onClick = onReportClick)
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun MatchingDetailReportButton(
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .clickable(onClick = onClick),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_report),
+            contentDescription = null,
+            tint = DduruTheme.colors.gray600
+        )
+        Text(
+            text = "게시글 신고하기",
+            style = DduruTheme.typography.Body2,
+            color = DduruTheme.colors.gray600
+        )
     }
 }
 
@@ -521,7 +552,8 @@ private fun MatchingDetailScreenPreview() {
                 onShareClick = {},
                 onProfileClick = {},
                 onContactClick = {},
-                onBottomActionClick = {}
+                onBottomActionClick = {},
+                onReportClick = {}
             )
         }
     }
