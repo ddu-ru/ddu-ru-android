@@ -268,9 +268,10 @@ fun RootNavigation(
                         MatchingDetailRoute(
                             postId = route.postId,
                             onBackClick = { navigateBack() },
-                            onOverflowClick = {
+                            onEditClick = {
                                 rootBackStack.add(RootNavRoute.MatchingEditPost(route.postId))
                             },
+                            onDeleteClick = {},
                             onShareClick = {},
                             onProfileClick = {},
                             onNavigateToChatRoom = { chatRoomId ->

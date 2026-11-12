@@ -4,8 +4,11 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -14,13 +17,20 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
+import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Popup
+import androidx.compose.ui.window.PopupProperties
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
@@ -67,10 +77,12 @@ fun MatchingDetailTopActionButton(
     hasLiked: Boolean,
     isOwner: Boolean,
     onLikeClick: () -> Unit,
-    onMoreClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     onShareClick: () -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isMoreMenuVisible by remember { mutableStateOf(false) }
     val actionIconRes = if (isOwner) {
         R.drawable.ic_more_vertical
     } else {
@@ -129,21 +141,109 @@ fun MatchingDetailTopActionButton(
 
             Spacer(modifier = Modifier.width(24.dp))
 
-            Icon(
-                painter = painterResource(id = actionIconRes),
-                contentDescription = null,
-                tint = Color.Unspecified,
-                modifier = Modifier
-                    .size(20.dp)
-                    .noRippleClickable {
-                        if (isOwner) {
-                            onMoreClick()
-                        } else {
-                            onShareClick()
+            Box {
+                Icon(
+                    painter = painterResource(id = actionIconRes),
+                    contentDescription = if (isOwner) "게시글 관리" else "공유",
+                    tint = Color.Unspecified,
+                    modifier = Modifier
+                        .size(20.dp)
+                        .noRippleClickable {
+                            if (isOwner) {
+                                isMoreMenuVisible = true
+                            } else {
+                                onShareClick()
+                            }
                         }
+                )
+
+                if (isOwner && isMoreMenuVisible) {
+                    Popup(
+                        alignment = Alignment.TopEnd,
+                        offset = IntOffset(0, 28),
+                        onDismissRequest = { isMoreMenuVisible = false },
+                        properties = PopupProperties(focusable = true)
+                    ) {
+                        MatchingDetailPostMoreMenu(
+                            onEditClick = {
+                                isMoreMenuVisible = false
+                                onEditClick()
+                            },
+                            onDeleteClick = {
+                                isMoreMenuVisible = false
+                                onDeleteClick()
+                            }
+                        )
                     }
-            )
+                }
+            }
         }
+    }
+}
+
+@Composable
+private fun MatchingDetailPostMoreMenu(
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
+    modifier: Modifier = Modifier
+) {
+    val shape = RoundedCornerShape(16.dp)
+
+    Column(
+        modifier = modifier
+            .width(120.dp)
+            .height(104.dp)
+            .dduruDualShadow(
+                firstAlpha = 0.08f,
+                secondAlpha = 0.06f,
+                shape = shape
+            )
+            .background(DduruTheme.colors.gray0, shape)
+            .border(1.dp, DduruTheme.colors.gray200, shape)
+            .padding(horizontal = 16.dp, vertical = 16.dp),
+        verticalArrangement = Arrangement.spacedBy(0.dp)
+    ) {
+        MatchingDetailPostMoreMenuItem(
+            iconRes = R.drawable.ic_pencil,
+            text = "게시글 수정",
+            color = DduruTheme.colors.gray700,
+            onClick = onEditClick
+        )
+        MatchingDetailPostMoreMenuItem(
+            iconRes = R.drawable.ic_trash,
+            text = "게시글 삭제",
+            color = DduruTheme.colors.validationRed,
+            onClick = onDeleteClick
+        )
+    }
+}
+
+@Composable
+private fun MatchingDetailPostMoreMenuItem(
+    iconRes: Int,
+    text: String,
+    color: Color,
+    onClick: () -> Unit
+) {
+    Row(
+        modifier = Modifier
+            .fillMaxWidth()
+            .height(36.dp)
+            .noRippleClickable(onClick = onClick),
+        horizontalArrangement = Arrangement.spacedBy(8.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(id = iconRes),
+            contentDescription = null,
+            tint = color,
+            modifier = Modifier.size(16.dp)
+        )
+        Text(
+            text = text,
+            style = DduruTheme.typography.Micro,
+            color = color
+        )
     }
 }
 
@@ -164,7 +264,8 @@ private fun MatchingDetailTopBarOwnerPreview() {
                 hasLiked = false,
                 isOwner = true,
                 onLikeClick = {},
-                onMoreClick = {},
+                onEditClick = {},
+                onDeleteClick = {},
                 onShareClick = {}
             )
         }
@@ -188,7 +289,8 @@ private fun MatchingDetailTopBarGuestPreview() {
                 hasLiked = true,
                 isOwner = false,
                 onLikeClick = {},
-                onMoreClick = {},
+                onEditClick = {},
+                onDeleteClick = {},
                 onShareClick = {}
             )
         }
