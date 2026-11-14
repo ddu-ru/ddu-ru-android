@@ -1,6 +1,7 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.uistate
 
 data class MatchingCreatePostUiState(
+    val isSubmitting: Boolean = false,
     val currentStep: MatchingCreatePostStep = MatchingCreatePostStep.LOCATION,
     val locationSearchUiState: LocationSearchUiState = LocationSearchUiState(),
     val dateSectionUiState: DateSectionUiState = DateSectionUiState(),

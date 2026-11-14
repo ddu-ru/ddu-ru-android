@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -71,6 +72,10 @@ fun MatchingCreatePostRoute(
     val galleryLauncher = rememberGalleryLauncher(viewModel::onThumbnailImageSelected)
     var showExitDialog by remember { mutableStateOf(false) }
 
+    BackHandler(enabled = !uiState.isSubmitting) {
+        showExitDialog = true
+    }
+
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
@@ -82,7 +87,7 @@ fun MatchingCreatePostRoute(
 
     MatchingCreatePostScreen(
         uiState = uiState,
-        onDismissClick = { showExitDialog = true },
+        onDismissClick = { if (!uiState.isSubmitting) showExitDialog = true },
         onBackClick = viewModel::onBackClick,
         onNextClick = viewModel::onNextClick,
         onLocationSearchUiStateChange = viewModel::onLocationSearchUiStateChange,
@@ -100,7 +105,7 @@ fun MatchingCreatePostRoute(
         modifier = modifier
     )
 
-    if (showExitDialog) {
+    if (showExitDialog && !uiState.isSubmitting) {
         DduruConfirmDialog(
             title = "작성 중인 게시글이 있어요.",
             description = "나가면 작성한 내용이 모두 사라져요.\n그래도 나가시겠어요?",
@@ -175,7 +180,7 @@ fun MatchingCreatePostScreen(
                         DduruButton(
                             text = uiState.nextButtonText,
                             onClick = onNextClick,
-                            enabled = uiState.isNextEnabled,
+                            enabled = uiState.isNextEnabled && !uiState.isSubmitting,
                             enabledColors = DduruButtonDefaults.filledEnabledColors,
                             disabledColors = DduruButtonDefaults.whiteDisabledColors,
                             modifier = Modifier.weight(uiState.nextButtonWeight)

@@ -33,8 +33,8 @@ class MatchingDetailViewModel @Inject constructor(
     private var loadedPostId: Long? = null
     private var isDeleting = false
 
-    fun loadMatchingDetail(postId: Long) {
-        if (loadedPostId == postId && _uiState.value is UiState.Success) return
+    fun loadMatchingDetail(postId: Long, forceRefresh: Boolean = false) {
+        if (!forceRefresh && loadedPostId == postId && _uiState.value is UiState.Success) return
 
         loadedPostId = postId
         viewModelScope.launch {
@@ -142,7 +142,7 @@ class MatchingDetailViewModel @Inject constructor(
             val response = runCatching {
                 postService.createParticipation(postId, ParticipationRequest())
             }.getOrNull() ?: return@launch
-            if (response.status in 200..299) loadMatchingDetail(postId)
+            if (response.status in 200..299) loadMatchingDetail(postId, forceRefresh = true)
         }
     }
 }

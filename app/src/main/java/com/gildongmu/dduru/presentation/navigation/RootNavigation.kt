@@ -279,7 +279,8 @@ fun RootNavigation(
                             },
                             onDeleteClick = {
                                 matchingRefreshVersion++
-                                navigateBack()
+                                rootBackStack.clear()
+                                rootBackStack.add(RootNavRoute.MainTab(BottomNavRoute.Matching))
                             },
                             onShareClick = {},
                             onProfileClick = {},
