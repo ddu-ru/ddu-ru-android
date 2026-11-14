@@ -4,10 +4,11 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
-import android.media.ExifInterface
 import android.net.Uri
 import android.provider.OpenableColumns
 import android.webkit.MimeTypeMap
+import androidx.core.graphics.scale
+import androidx.exifinterface.media.ExifInterface
 import com.gildongmu.dduru.data.entity.image.api.ImagePresignedUrlApi
 import com.gildongmu.dduru.data.entity.image.model.ImageUploadFileRequest
 import com.gildongmu.dduru.data.entity.image.model.ImageUploadRequest
@@ -23,9 +24,9 @@ import okhttp3.Request
 import okhttp3.RequestBody.Companion.toRequestBody
 
 class ImagePresignedUrlUploader @Inject constructor(
-    @ApplicationContext private val context: Context,
+    @param:ApplicationContext private val context: Context,
     private val imagePresignedUrlApi: ImagePresignedUrlApi,
-    @Named("presignedUploadClient") private val uploadClient: OkHttpClient
+    @param:Named("presignedUploadClient") private val uploadClient: OkHttpClient
 ) {
     suspend fun uploadImage(uri: Uri, target: ImageUploadTarget): Result<String> = withContext(Dispatchers.IO) {
         runCatching {
@@ -60,7 +61,7 @@ class ImagePresignedUrlUploader @Inject constructor(
         }
     }
 
-    private data class ProcessedImage(val fileName: String, val extension: String, val bytes: ByteArray)
+    private class ProcessedImage(val fileName: String, val extension: String, val bytes: ByteArray)
 
     private fun processImage(uri: Uri): ProcessedImage {
         val mimeType = context.contentResolver.getType(uri)
@@ -81,11 +82,9 @@ class ImagePresignedUrlUploader @Inject constructor(
         val oriented = orient(bitmap, uri)
         val scale = minOf(1f, 1920f / maxOf(oriented.width, oriented.height))
         val resized = if (scale < 1f) {
-            Bitmap.createScaledBitmap(
-                oriented,
+            oriented.scale(
                 (oriented.width * scale).toInt(),
-                (oriented.height * scale).toInt(),
-                true
+                (oriented.height * scale).toInt()
             )
         } else {
             oriented

@@ -116,6 +116,7 @@ dependencies {
     androidTestImplementation(libs.bundles.test)
     debugImplementation(libs.bundles.debug)
     implementation(libs.bundles.androidx)
+    implementation(libs.androidx.exifinterface)
     implementation(platform(libs.androidx.compose.bom))
     implementation(libs.kotlinx.immutable)
     implementation(platform(libs.okhttp.bom))
