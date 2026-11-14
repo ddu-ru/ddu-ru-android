@@ -24,10 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
 import com.gildongmu.dduru.presentation.component.MultiLineTextField
-import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.InquiryCategoryGrid
 import com.gildongmu.dduru.presentation.feature.mypage.component.InquiryGuideNotes
 import com.gildongmu.dduru.presentation.feature.mypage.component.PhotoAttachField
@@ -152,15 +152,15 @@ fun InquiryWriteScreen(
         }
 
         if (showSubmitDialog) {
-            ConfirmDialog(
+            DduruConfirmDialog(
                 title = "문의를 제출할까요?",
                 description = "답변이 등록되면 알림으로 안내드려요.\n답변까지 1~3일 정도 걸릴 수 있어요.",
                 onDismiss = onSubmitDialogDismiss,
-                onConfirm = onSubmitConfirm,
-                dismissText = "취소",
-                confirmText = "제출",
-                confirmBackgroundColor = DduruTheme.colors.gray900,
-                confirmTextColor = DduruTheme.colors.gray0
+                onSecondButtonClick = onSubmitConfirm,
+                firstButtonText = "취소",
+                secondButtonText = "제출",
+                secondButtonBackgroundColor = DduruTheme.colors.gray900,
+                secondButtonTextColor = DduruTheme.colors.gray0
             )
         }
     }

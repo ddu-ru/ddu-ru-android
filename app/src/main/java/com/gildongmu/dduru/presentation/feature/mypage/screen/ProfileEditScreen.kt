@@ -42,11 +42,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
-import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.LabelValueRow
 import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditSideEffect
 import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditViewModel
@@ -273,15 +273,15 @@ fun ProfileEditScreen(
                     .background(Color.Black.copy(alpha = 0.5f)),
                 contentAlignment = Alignment.Center
             ) {
-                ConfirmDialog(
+                DduruConfirmDialog(
                     title = "저장하지 않고 나갈까요?",
                     description = "변경한 내용이 저장되지 않습니다.\n저장하지 않고 나가시겠어요?",
                     onDismiss = onLeaveConfirmDismiss,
-                    onConfirm = onLeaveConfirm,
-                    dismissText = "계속 수정",
-                    confirmText = "나가기",
-                    confirmBackgroundColor = DduruTheme.colors.gray900,
-                    confirmTextColor = DduruTheme.colors.gray0
+                    onSecondButtonClick = onLeaveConfirm,
+                    firstButtonText = "계속 수정",
+                    secondButtonText = "나가기",
+                    secondButtonBackgroundColor = DduruTheme.colors.gray900,
+                    secondButtonTextColor = DduruTheme.colors.gray0
                 )
             }
         }

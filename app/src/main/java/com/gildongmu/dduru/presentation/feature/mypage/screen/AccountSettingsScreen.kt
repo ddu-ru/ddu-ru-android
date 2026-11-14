@@ -10,9 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
-import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.SettingsMenuItem
 import com.gildongmu.dduru.presentation.feature.mypage.component.SettingsMenuSection
 
@@ -48,15 +48,15 @@ fun AccountSettingsScreen(
     }
 
     if (showLogoutDialog) {
-        ConfirmDialog(
+        DduruConfirmDialog(
             title = "로그아웃 하시겠습니까?",
             description = "나중에 다시 돌아올 수 있어요.\n정말로 로그아웃 하시겠습니까?",
             onDismiss = onLogoutDialogDismiss,
-            onConfirm = onLogoutConfirm,
-            dismissText = "취소",
-            confirmText = "로그아웃",
-            confirmBackgroundColor = DduruTheme.colors.gray900,
-            confirmTextColor = DduruTheme.colors.gray0
+            onSecondButtonClick = onLogoutConfirm,
+            firstButtonText = "취소",
+            secondButtonText = "로그아웃",
+            secondButtonBackgroundColor = DduruTheme.colors.gray900,
+            secondButtonTextColor = DduruTheme.colors.gray0
         )
     }
 }

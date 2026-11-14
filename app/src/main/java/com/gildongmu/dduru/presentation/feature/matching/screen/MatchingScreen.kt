@@ -45,6 +45,7 @@ fun MatchingRoute(
     navigateToMenu: () -> Unit = {},
     navigateToCreatePost: () -> Unit = {},
     navigateToPostDetail: (Long) -> Unit = {},
+    refreshVersion: Int = 0,
     viewModel: MatchingViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
@@ -58,6 +59,10 @@ fun MatchingRoute(
                 is MatchingSideEffect.NavigateToPostDetail -> navigateToPostDetail(sideEffect.id)
             }
         }
+    }
+
+    LaunchedEffect(refreshVersion) {
+        viewModel.refreshPosts()
     }
 
     when (val state = uiState) {

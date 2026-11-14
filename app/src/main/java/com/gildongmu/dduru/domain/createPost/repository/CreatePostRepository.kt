@@ -4,4 +4,5 @@ import com.gildongmu.dduru.data.createPost.model.CreatePostRequest
 
 interface CreatePostRepository {
     suspend fun createPost(request: CreatePostRequest): Result<Long>
+    suspend fun updatePost(postId: Long, request: CreatePostRequest): Result<Unit>
 }

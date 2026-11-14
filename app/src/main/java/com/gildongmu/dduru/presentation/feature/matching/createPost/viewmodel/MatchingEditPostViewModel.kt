@@ -2,33 +2,91 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.viewmodel
 
 import android.net.Uri
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostMockData
+import com.gildongmu.dduru.data.remote.service.PostService
+import com.gildongmu.dduru.domain.createPost.repository.CreatePostRepository
+import com.gildongmu.dduru.domain.createPost.repository.PopularTagRepository
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiAction
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingEditPostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.reduce
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 import dagger.hilt.android.lifecycle.HiltViewModel
+import java.time.LocalDate
 import javax.inject.Inject
+import kotlinx.coroutines.CancellationException
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
-class MatchingEditPostViewModel @Inject constructor() : ViewModel() {
+class MatchingEditPostViewModel @Inject constructor(
+    private val postService: PostService,
+    private val createPostRepository: CreatePostRepository,
+    private val popularTagRepository: PopularTagRepository
+) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MatchingEditPostUiState>>(
         UiState.Success(
-            MatchingEditPostUiState(popularTags = MatchingCreatePostMockData.popularTags)
+            MatchingEditPostUiState()
         )
     )
     val uiState: StateFlow<UiState<MatchingEditPostUiState>> = _uiState.asStateFlow()
+    private var popularTags: List<String> = emptyList()
+
+    init {
+        viewModelScope.launch {
+            popularTagRepository.getPopularTags().onSuccess { tags ->
+                popularTags = tags
+                updateUiState { it.copy(popularTags = tags) }
+            }
+        }
+    }
 
     fun loadPost(postId: Long) {
-        updateUiState { currentState ->
-            currentState.copy(postId = postId)
+        viewModelScope.launch {
+            _uiState.value = UiState.Loading
+            runCatching {
+                val post = postService.getPost(postId).data
+                    ?: error("게시글 정보를 찾을 수 없어요.")
+                MatchingEditPostUiState(
+                    postId = postId,
+                    popularTags = popularTags,
+                    dateSectionUiState = DateSectionUiState(
+                        LocalDate.parse(post.startDate),
+                        LocalDate.parse(post.endDate)
+                    ),
+                    recruitmentSectionUiState = RecruitmentScreenUiState(
+                        recruitmentCount = RecruitmentCountUiState(post.recruitCapacity),
+                        selectedCompanionType = MatchingCompanionType.entries
+                            .firstOrNull { it.code == post.companionType }
+                    ),
+                    ageSectionUiState = AgeSectionUiState(
+                        selectedGender = MatchingGender.entries.firstOrNull { it.code == post.preferredGender },
+                        isAgeIrrelevant = post.isAgeAny,
+                        selectedStartAge = post.minAge,
+                        selectedEndAge = post.maxAge
+                    ),
+                    postWritingUiState = PostWritingUiState(title = post.title, content = post.content),
+                    thumbnailAndTagUiState = ThumbnailAndTagUiState(
+                        previewImageUrl = post.photoUrl,
+                        photoUrl = post.photoUrl,
+                        addedTags = post.tags
+                    )
+                )
+            }.onSuccess { editPostUiState ->
+                _uiState.value = UiState.Success(editPostUiState)
+            }.onFailure { throwable ->
+                if (throwable is CancellationException) throw throwable
+                _uiState.value = UiState.Failure
+            }
         }
     }
 

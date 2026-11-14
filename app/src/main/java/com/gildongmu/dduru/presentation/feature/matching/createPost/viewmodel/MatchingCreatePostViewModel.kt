@@ -66,6 +66,12 @@ class MatchingCreatePostViewModel @Inject constructor(
         emitUiEvent(MatchingCreatePostUiEvent.Close)
     }
 
+    fun resetDraft() {
+        searchDebounceJob?.cancel()
+        searchRequestJob?.cancel()
+        _uiState.value = MatchingCreatePostUiState()
+    }
+
     fun onBackClick() {
         movePreviousStep()
     }
@@ -347,6 +353,7 @@ class MatchingCreatePostViewModel @Inject constructor(
 
     private fun submitPost() {
         val currentState = _uiState.value
+        if (currentState.isSubmitting) return
         val selectedLocation = currentState.locationSearchUiState.selectedLocation ?: return
         val startDate = currentState.dateSectionUiState.startDate ?: return
         val endDate = currentState.dateSectionUiState.endDate ?: return
@@ -368,11 +375,14 @@ class MatchingCreatePostViewModel @Inject constructor(
         )
 
         viewModelScope.launch {
+            _uiState.update { it.copy(isSubmitting = true) }
             createPostRepository.createPost(request)
                 .onSuccess {
+                    _uiState.update { it.copy(isSubmitting = false) }
                     _uiEvent.emit(MatchingCreatePostUiEvent.Complete)
                 }
                 .onFailure { throwable ->
+                    _uiState.update { it.copy(isSubmitting = false) }
                     Log.e("MatchingCreatePostViewModel", "submitPost failed", throwable)
                 }
         }

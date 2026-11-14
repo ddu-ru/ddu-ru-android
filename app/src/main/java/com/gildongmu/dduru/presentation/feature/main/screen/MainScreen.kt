@@ -18,6 +18,7 @@ import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatMainRoute
+import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatTab
 import com.gildongmu.dduru.presentation.feature.home.HomeRoute
 import com.gildongmu.dduru.presentation.feature.journey.component.JourneyDetailFilterType
 import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyRoute
@@ -39,7 +40,9 @@ fun MainScreen(
     onNavigateToProfileEdit: () -> Unit,
     onNavigateToTravelStyleSurvey: () -> Unit,
     onNavigateToJourneyDetail: (Long, String?) -> Unit,
-    initialRoute: BottomNavRoute = BottomNavRoute.Home
+    matchingRefreshVersion: Int = 0,
+    initialRoute: BottomNavRoute = BottomNavRoute.Home,
+    initialChatTab: ChatTab = ChatTab.ALL
 ) {
     val bottomNavItems = remember {
         listOf(
@@ -97,6 +100,7 @@ fun MainScreen(
                     }
                     is BottomNavRoute.Matching -> NavEntry(route) {
                         MatchingRoute(
+                            refreshVersion = matchingRefreshVersion,
                             navigateToNotification = onNavigateToHomeNotification,
                             navigateToMenu = onNavigateToHomeMenu,
                             navigateToCreatePost = onNavigateToMatchingCreatePost,
@@ -114,7 +118,8 @@ fun MainScreen(
                     }
                     is BottomNavRoute.Chat -> NavEntry(route) {
                         ChatMainRoute(
-                            onNavigateToChatRoom = onNavigateToChatRoom
+                            onNavigateToChatRoom = onNavigateToChatRoom,
+                            initialTab = initialChatTab
                         )
                     }
                     is BottomNavRoute.Journey -> NavEntry(route) {

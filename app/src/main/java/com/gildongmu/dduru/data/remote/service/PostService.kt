@@ -6,6 +6,7 @@ import com.gildongmu.dduru.data.remote.dto.response.post.PostDetailResponse
 import com.gildongmu.dduru.data.remote.dto.response.post.PostListResponse
 import retrofit2.Response
 import retrofit2.http.Body
+import retrofit2.http.DELETE
 import retrofit2.http.GET
 import retrofit2.http.POST
 import retrofit2.http.Path
@@ -32,6 +33,9 @@ interface PostService {
 
     @GET("api/v1/posts/{postId}")
     suspend fun getPost(@Path("postId") postId: Long): ApiResponse<PostDetailResponse>
+
+    @DELETE("api/v1/posts/{postId}")
+    suspend fun deletePost(@Path("postId") postId: Long): Response<Unit>
 
     @POST("api/v1/posts/{postId}/likes")
     suspend fun toggleLike(@Path("postId") postId: Long): Response<Unit>

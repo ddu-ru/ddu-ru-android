@@ -6,6 +6,9 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
@@ -15,6 +18,7 @@ import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatImageViewerScreen
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomMenuRoute
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatRoomRoute
+import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatTab
 import com.gildongmu.dduru.presentation.feature.home.screen.HomeMenuRoute
 import com.gildongmu.dduru.presentation.feature.home.screen.HomeNotificationRoute
 import com.gildongmu.dduru.presentation.feature.journey.screen.JourneyAdminRoute
@@ -52,6 +56,7 @@ fun RootNavigation(
         DduruLoadingScreen()
     } else {
         val rootBackStack = rememberNavBackStack(startDestination!!)
+        var matchingRefreshVersion by remember { mutableIntStateOf(0) }
         LaunchedEffect(startDestination) {
             rootBackStack.clear()
             rootBackStack.add(startDestination!!)
@@ -146,6 +151,7 @@ fun RootNavigation(
 
                     is RootNavRoute.Main -> NavEntry(route) {
                         MainScreen(
+                            matchingRefreshVersion = matchingRefreshVersion,
                             onNavigateToHomeNotification = {
                                 rootBackStack.add(RootNavRoute.HomeNotification)
                             },
@@ -175,6 +181,7 @@ fun RootNavigation(
 
                     is RootNavRoute.MainTab -> NavEntry(route) {
                         MainScreen(
+                            matchingRefreshVersion = matchingRefreshVersion,
                             onNavigateToHomeNotification = {
                                 rootBackStack.add(RootNavRoute.HomeNotification)
                             },
@@ -199,7 +206,8 @@ fun RootNavigation(
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             },
-                            initialRoute = route.bottomNavRoute
+                            initialRoute = route.bottomNavRoute,
+                            initialChatTab = route.initialChatTab ?: ChatTab.ALL
                         )
                     }
 
@@ -266,13 +274,27 @@ fun RootNavigation(
                         MatchingDetailRoute(
                             postId = route.postId,
                             onBackClick = { navigateBack() },
-                            onOverflowClick = {
+                            onEditClick = {
                                 rootBackStack.add(RootNavRoute.MatchingEditPost(route.postId))
+                            },
+                            onDeleteClick = {
+                                matchingRefreshVersion++
+                                rootBackStack.clear()
+                                rootBackStack.add(RootNavRoute.MainTab(BottomNavRoute.Matching))
                             },
                             onShareClick = {},
                             onProfileClick = {},
-                            onContactClick = {},
-                            onBottomActionClick = {}
+                            onNavigateToChatRoom = { chatRoomId ->
+                                rootBackStack.add(RootNavRoute.ChatRoom(chatRoomId))
+                            },
+                            onBottomActionClick = {
+                                rootBackStack.add(
+                                    RootNavRoute.MainTab(
+                                        bottomNavRoute = BottomNavRoute.Chat,
+                                        initialChatTab = ChatTab.REQUEST
+                                    )
+                                )
+                            }
                         )
                     }
 

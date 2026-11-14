@@ -84,6 +84,10 @@ class MatchingViewModel @Inject constructor(
         loadPosts(append = true)
     }
 
+    fun refreshPosts() {
+        loadPosts(showLoading = true)
+    }
+
     fun onPostClick(id: Long) {
         emitSideEffect(MatchingSideEffect.NavigateToPostDetail(id))
     }

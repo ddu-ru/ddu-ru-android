@@ -6,25 +6,35 @@ import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.data.remote.dto.response.post.ParticipationRequest
 import com.gildongmu.dduru.data.remote.service.PostService
+import com.gildongmu.dduru.domain.repository.ChatRoomRepository
+import com.gildongmu.dduru.presentation.feature.matching.post.effect.MatchingDetailSideEffect
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MatchingDetailViewModel @Inject constructor(
-    private val postService: PostService
+    private val postService: PostService,
+    private val chatRoomRepository: ChatRoomRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MatchingDetailUiState>>(UiState.Loading)
     val uiState: StateFlow<UiState<MatchingDetailUiState>> = _uiState.asStateFlow()
 
-    private var loadedPostId: Long? = null
+    private val _sideEffect = MutableSharedFlow<MatchingDetailSideEffect>()
+    val sideEffect: SharedFlow<MatchingDetailSideEffect> = _sideEffect.asSharedFlow()
 
-    fun loadMatchingDetail(postId: Long) {
-        if (loadedPostId == postId && _uiState.value is UiState.Success) return
+    private var loadedPostId: Long? = null
+    private var isDeleting = false
+
+    fun loadMatchingDetail(postId: Long, forceRefresh: Boolean = false) {
+        if (!forceRefresh && loadedPostId == postId && _uiState.value is UiState.Success) return
 
         loadedPostId = postId
         viewModelScope.launch {
@@ -45,6 +55,8 @@ class MatchingDetailViewModel @Inject constructor(
                             recruitCapacity = post.recruitCapacity,
                             recruitCount = post.recruitCount,
                             preferredGender = post.preferredGender,
+                            minAge = post.minAge.takeUnless { post.isAgeAny },
+                            maxAge = post.maxAge.takeUnless { post.isAgeAny },
                             photoUrl = post.photoUrl,
                             tags = post.tags,
                             likeCount = post.likeCount,
@@ -78,12 +90,59 @@ class MatchingDetailViewModel @Inject constructor(
         }
     }
 
+    fun onDeleteClick() {
+        val post = (_uiState.value as? UiState.Success)?.data ?: return
+        if (!post.isOwner || isDeleting) return
+        isDeleting = true
+        viewModelScope.launch {
+            runCatching { postService.deletePost(post.id) }
+                .onSuccess { response ->
+                    isDeleting = false
+                    if (response.code() == 204) {
+                        _sideEffect.emit(MatchingDetailSideEffect.NavigateBack)
+                    } else {
+                        _sideEffect.emit(MatchingDetailSideEffect.ShowMessage("게시글을 삭제하지 못했어요."))
+                    }
+                }
+                .onFailure {
+                    isDeleting = false
+                    _sideEffect.emit(MatchingDetailSideEffect.ShowMessage("게시글 삭제에 실패했어요."))
+                }
+        }
+    }
+
+    fun onContactClick(postId: Long) {
+        val current = (_uiState.value as? UiState.Success)?.data ?: return
+        if (current.isContactRequesting) return
+
+        viewModelScope.launch {
+            _uiState.value = UiState.Success(current.copy(isContactRequesting = true))
+            chatRoomRepository.createPrivateChatRoom(postId)
+                .onSuccess { chatRoom ->
+                    _uiState.value = UiState.Success(current.copy(isContactRequesting = false))
+                    _sideEffect.emit(MatchingDetailSideEffect.NavigateToChatRoom(chatRoom))
+                }
+                .onFailure { error ->
+                    _uiState.value = UiState.Success(current.copy(isContactRequesting = false))
+                    _sideEffect.emit(MatchingDetailSideEffect.ShowMessage(error.toContactErrorMessage()))
+                }
+        }
+    }
+
+    private fun Throwable.toContactErrorMessage(): String {
+        return when (message) {
+            "FORBIDDEN" -> "자신의 게시글에는 문의할 수 없어요."
+            "NOT_FOUND" -> "사용자를 찾을 수 없어요."
+            else -> "채팅방을 열지 못했어요. 다시 시도해 주세요."
+        }
+    }
+
     fun onParticipationClick(postId: Long) {
         viewModelScope.launch {
             val response = runCatching {
                 postService.createParticipation(postId, ParticipationRequest())
             }.getOrNull() ?: return@launch
-            if (response.status in 200..299) loadMatchingDetail(postId)
+            if (response.status in 200..299) loadMatchingDetail(postId, forceRefresh = true)
         }
     }
 }

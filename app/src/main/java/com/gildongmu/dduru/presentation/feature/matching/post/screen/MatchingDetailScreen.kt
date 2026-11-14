@@ -1,6 +1,6 @@
-// ktlint-disable max-line-length
 package com.gildongmu.dduru.presentation.feature.matching.post.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
@@ -14,6 +14,7 @@ import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.navigationBarsPadding
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -23,6 +24,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Icon
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -38,6 +40,8 @@ import androidx.compose.ui.draw.blur
 import androidx.compose.ui.graphics.Brush
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.layout.ContentScale
+import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
@@ -45,6 +49,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -59,6 +64,7 @@ import com.gildongmu.dduru.presentation.feature.matching.post.component.Matching
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostInfoComponent
 import com.gildongmu.dduru.presentation.feature.matching.post.component.MatchingHostProfileImage
 import com.gildongmu.dduru.presentation.feature.matching.post.component.PostStatusDropdown
+import com.gildongmu.dduru.presentation.feature.matching.post.effect.MatchingDetailSideEffect
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailProfileImageUiState
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingDetailUiState
 import com.gildongmu.dduru.presentation.feature.matching.post.uistate.MatchingPostParticipationStatus
@@ -72,18 +78,32 @@ import kotlinx.collections.immutable.toPersistentList
 fun MatchingDetailRoute(
     postId: Long,
     onBackClick: () -> Unit,
-    onOverflowClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     onShareClick: () -> Unit,
     onProfileClick: () -> Unit,
-    onContactClick: () -> Unit,
+    onNavigateToChatRoom: (Long) -> Unit,
     onBottomActionClick: () -> Unit,
     modifier: Modifier = Modifier,
     viewModel: MatchingDetailViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(postId) {
         viewModel.loadMatchingDetail(postId)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.sideEffect.collect { effect ->
+            when (effect) {
+                is MatchingDetailSideEffect.NavigateToChatRoom -> onNavigateToChatRoom(effect.roomId)
+                MatchingDetailSideEffect.NavigateBack -> onDeleteClick()
+                is MatchingDetailSideEffect.ShowMessage ->
+                    Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
+            }
+        }
     }
 
     when (val state = uiState) {
@@ -95,19 +115,37 @@ fun MatchingDetailRoute(
                 uiState = state.data,
                 onBackClick = onBackClick,
                 onLikeClick = viewModel::onLikeClick,
-                onOverflowClick = onOverflowClick,
+                onEditClick = onEditClick,
+                onDeleteClick = { showDeleteDialog = true },
                 onShareClick = onShareClick,
                 onProfileClick = onProfileClick,
-                onContactClick = onContactClick,
+                onContactClick = { viewModel.onContactClick(postId) },
                 onBottomActionClick = {
-                    if (!state.data.isOwner && state.data.myParticipationStatus == MatchingPostParticipationStatus.NONE) {
+                    if (state.data.isOwner) {
+                        onBottomActionClick()
+                    } else if (state.data.myParticipationStatus == MatchingPostParticipationStatus.NONE) {
                         viewModel.onParticipationClick(postId)
                     }
-                    onBottomActionClick()
                 },
                 modifier = modifier
             )
         }
+    }
+
+    if (showDeleteDialog) {
+        DduruConfirmDialog(
+            title = "게시글을 삭제할까요?",
+            description = "삭제한 게시글은 복구할 수 없습니다.\n신중하게 결정해 주세요.",
+            firstButtonText = "취소",
+            secondButtonText = "삭제",
+            onDismiss = { showDeleteDialog = false },
+            onSecondButtonClick = {
+                showDeleteDialog = false
+                viewModel.onDeleteClick()
+            },
+            secondButtonBackgroundColor = DduruTheme.colors.rejectConfirmBg,
+            secondButtonTextColor = DduruTheme.colors.validationRed
+        )
     }
 }
 
@@ -116,7 +154,8 @@ fun MatchingDetailScreen(
     uiState: MatchingDetailUiState,
     onBackClick: () -> Unit,
     onLikeClick: () -> Unit,
-    onOverflowClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onDeleteClick: () -> Unit,
     onShareClick: () -> Unit,
     onProfileClick: () -> Unit,
     onContactClick: () -> Unit,
@@ -145,7 +184,8 @@ fun MatchingDetailScreen(
                     hasLiked = uiState.hasLiked,
                     isOwner = uiState.isOwner,
                     onLikeClick = onLikeClick,
-                    onMoreClick = onOverflowClick,
+                    onEditClick = onEditClick,
+                    onDeleteClick = onDeleteClick,
                     onShareClick = onShareClick
                 )
             }
@@ -163,7 +203,9 @@ fun MatchingDetailScreen(
                 myParticipationStatus = uiState.myParticipationStatus,
                 onButtonClick = onBottomActionClick,
                 hazeState = hazeState,
-                modifier = Modifier.padding(horizontal = 16.dp, vertical = 12.dp)
+                modifier = Modifier
+                    .navigationBarsPadding()
+                    .padding(horizontal = 16.dp, vertical = 12.dp)
             )
         }
     ) { innerPadding ->
@@ -205,9 +247,7 @@ fun MatchingDetailScreen(
                             recruitmentType = uiState.companionTypeText,
                             recruitmentCount = uiState.recruitCount.toString(),
                             recruitCapacity = uiState.recruitCapacity.toString(),
-                            minAge = uiState.minAge,
-                            maxAge = uiState.maxAge,
-                            preferredGender = uiState.preferredGenderText
+                            recruitmentCondition = uiState.ageConditionText
                         )
 
                         MatchingDetailDescriptionSection(uiState = uiState)
@@ -233,37 +273,64 @@ fun MatchingDetailScreen(
 
                             MatchingDetailTagSection(tags = uiState.tags)
 
+                            SectionTitle(text = "호스트")
+
                             MatchingHostInfoComponent(
                                 username = uiState.author.nickname,
                                 age = uiState.author.ageText,
                                 gender = uiState.author.genderText,
                                 profileImage = uiState.author.profileImage.toHostProfileImage(),
                                 onProfileClick = onProfileClick,
-                                onContactClick = onContactClick
+                                onContactClick = onContactClick,
+                                isContactRequesting = uiState.isContactRequesting
                             )
 
-                            MatchingDetailParticipantComponent(
-                                participants = uiState.participants.map { participant ->
-                                    MatchingDetailParticipantUiModel(
-                                        userId = participant.userId,
-                                        nickname = participant.nickname,
-                                        ageText = participant.ageText,
-                                        genderText = participant.genderText,
-                                        profileImage = participant.profileImage.url,
-                                        isHost = participant.isHost
-                                    )
-                                }.toPersistentList(),
-                                recruitCount = uiState.recruitCount,
-                                recruitCapacity = uiState.recruitCapacity,
-                                remainingSlots = uiState.remainingSlots
-                            )
+                            if (uiState.participants.isNotEmpty()) {
+                                MatchingDetailParticipantComponent(
+                                    participants = uiState.participants.map { participant ->
+                                        MatchingDetailParticipantUiModel(
+                                            userId = participant.userId,
+                                            nickname = participant.nickname,
+                                            ageText = participant.ageText,
+                                            genderText = participant.genderText,
+                                            profileImage = participant.profileImage.url,
+                                            isHost = participant.isHost
+                                        )
+                                    }.toPersistentList(),
+                                    recruitCount = uiState.recruitCount,
+                                    recruitCapacity = uiState.recruitCapacity,
+                                    remainingSlots = uiState.remainingSlots
+                                )
+                            }
                         } else {
                             Spacer(modifier = Modifier.height(16.dp))
                         }
+
+                        MatchingDetailReportButton()
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+private fun MatchingDetailReportButton() {
+    Row(
+        modifier = Modifier.fillMaxWidth(),
+        horizontalArrangement = Arrangement.spacedBy(12.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        Icon(
+            painter = painterResource(R.drawable.ic_report),
+            contentDescription = null,
+            tint = DduruTheme.colors.gray600
+        )
+        Text(
+            text = "게시글 신고하기",
+            style = DduruTheme.typography.Body2,
+            color = DduruTheme.colors.gray600
+        )
     }
 }
 
@@ -315,30 +382,31 @@ private fun MatchingDetailDescriptionSection(
 private fun MatchingDetailMetaRow(
     uiState: MatchingDetailUiState
 ) {
+    val metadata = listOfNotNull(
+        uiState.createdDateText?.let { "작성일자 $it" },
+        uiState.viewCount?.let { "조회수 $it" }
+    )
+    if (metadata.isEmpty()) return
+
     Row(
         verticalAlignment = Alignment.CenterVertically
     ) {
-        Text(
-            text = "작성일자 ${uiState.createdDateText}",
-            style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray400
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Box(
-            modifier = Modifier
-                .size(4.dp)
-                .background(DduruTheme.colors.gray400, CircleShape)
-        )
-
-        Spacer(modifier = Modifier.width(16.dp))
-
-        Text(
-            text = "조회수 ${uiState.viewCount}",
-            style = DduruTheme.typography.Body2,
-            color = DduruTheme.colors.gray400
-        )
+        metadata.forEachIndexed { index, text ->
+            if (index > 0) {
+                Spacer(modifier = Modifier.width(16.dp))
+                Box(
+                    modifier = Modifier
+                        .size(4.dp)
+                        .background(DduruTheme.colors.gray400, CircleShape)
+                )
+                Spacer(modifier = Modifier.width(16.dp))
+            }
+            Text(
+                text = text,
+                style = DduruTheme.typography.Body2,
+                color = DduruTheme.colors.gray400
+            )
+        }
     }
 }
 
@@ -495,7 +563,8 @@ private fun MatchingDetailScreenPreview() {
                 uiState = MatchingDetailUiState(),
                 onBackClick = {},
                 onLikeClick = {},
-                onOverflowClick = {},
+                onEditClick = {},
+                onDeleteClick = {},
                 onShareClick = {},
                 onProfileClick = {},
                 onContactClick = {},

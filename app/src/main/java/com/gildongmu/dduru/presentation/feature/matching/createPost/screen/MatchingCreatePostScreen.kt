@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.screen
 
+import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -38,6 +39,7 @@ import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonDefaults
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.DateSelectionSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.LocationSearchSection
@@ -68,6 +70,11 @@ fun MatchingCreatePostRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val galleryLauncher = rememberGalleryLauncher(viewModel::onThumbnailImageSelected)
+    var showExitDialog by remember { mutableStateOf(false) }
+
+    BackHandler(enabled = !uiState.isSubmitting) {
+        showExitDialog = true
+    }
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collectLatest { event ->
@@ -80,7 +87,7 @@ fun MatchingCreatePostRoute(
 
     MatchingCreatePostScreen(
         uiState = uiState,
-        onDismissClick = viewModel::onDismissClick,
+        onDismissClick = { if (!uiState.isSubmitting) showExitDialog = true },
         onBackClick = viewModel::onBackClick,
         onNextClick = viewModel::onNextClick,
         onLocationSearchUiStateChange = viewModel::onLocationSearchUiStateChange,
@@ -97,6 +104,22 @@ fun MatchingCreatePostRoute(
         onRemoveTag = viewModel::onRemoveTag,
         modifier = modifier
     )
+
+    if (showExitDialog && !uiState.isSubmitting) {
+        DduruConfirmDialog(
+            title = "작성 중인 게시글이 있어요.",
+            description = "나가면 작성한 내용이 모두 사라져요.\n그래도 나가시겠어요?",
+            firstButtonText = "계속 작성",
+            secondButtonText = "나가기",
+            onDismiss = { showExitDialog = false },
+            onSecondButtonClick = {
+                viewModel.resetDraft()
+                onClose()
+            },
+            firstButtonBackgroundColor = DduruTheme.colors.gray0,
+            firstButtonTextColor = DduruTheme.colors.gray600
+        )
+    }
 }
 
 @Composable
@@ -157,7 +180,7 @@ fun MatchingCreatePostScreen(
                         DduruButton(
                             text = uiState.nextButtonText,
                             onClick = onNextClick,
-                            enabled = uiState.isNextEnabled,
+                            enabled = uiState.isNextEnabled && !uiState.isSubmitting,
                             enabledColors = DduruButtonDefaults.filledEnabledColors,
                             disabledColors = DduruButtonDefaults.whiteDisabledColors,
                             modifier = Modifier.weight(uiState.nextButtonWeight)
