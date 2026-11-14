@@ -18,7 +18,10 @@ data class ThumbnailAndTagUiState(
         get() = true
 
     val canAddTag: Boolean
-        get() = tagInput.trim().isNotBlank() && tagValidationMessage == null && addedTags.size < 10
+        get() = tagInput.trim().isNotBlank() && tagValidationMessage == null && addedTags.size < MAX_TAG_COUNT
+
+    val hasTagLimitError: Boolean
+        get() = tagValidationMessage == TAG_LIMIT_ERROR_MESSAGE
 
     fun validateTagInput(input: String = tagInput): String? {
         val tag = input.trim()
@@ -53,7 +56,7 @@ data class ThumbnailAndTagUiState(
     }
 
     private companion object {
-        const val MAX_TAG_COUNT = 10
-        const val TAG_LIMIT_ERROR_MESSAGE = "태그는 최대 10개까지 추가할 수 있어요."
+        const val MAX_TAG_COUNT = 4
+        const val TAG_LIMIT_ERROR_MESSAGE = "태그는 최대 4개까지 추가할 수 있어요."
     }
 }

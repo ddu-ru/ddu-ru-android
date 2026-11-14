@@ -381,7 +381,6 @@ fun MatchingEditPostScreen(
                                 )
                             )
                         },
-                        enabled = !ageState.isAgeIrrelevant,
                         isAgeIrrelevant = ageState.isAgeIrrelevant,
                         modifier = Modifier.fillMaxWidth()
                     )
