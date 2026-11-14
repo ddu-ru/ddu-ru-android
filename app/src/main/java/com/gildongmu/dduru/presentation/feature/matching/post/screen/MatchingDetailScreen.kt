@@ -51,6 +51,7 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHashtag
 import com.gildongmu.dduru.presentation.feature.matching.post.component.CommonBoxComponent
@@ -88,6 +89,7 @@ fun MatchingDetailRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val context = LocalContext.current
+    var showDeleteDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(postId) {
         viewModel.loadMatchingDetail(postId)
@@ -97,6 +99,7 @@ fun MatchingDetailRoute(
         viewModel.sideEffect.collect { effect ->
             when (effect) {
                 is MatchingDetailSideEffect.NavigateToChatRoom -> onNavigateToChatRoom(effect.roomId)
+                MatchingDetailSideEffect.NavigateBack -> onDeleteClick()
                 is MatchingDetailSideEffect.ShowMessage ->
                     Toast.makeText(context, effect.message, Toast.LENGTH_SHORT).show()
             }
@@ -113,7 +116,7 @@ fun MatchingDetailRoute(
                 onBackClick = onBackClick,
                 onLikeClick = viewModel::onLikeClick,
                 onEditClick = onEditClick,
-                onDeleteClick = onDeleteClick,
+                onDeleteClick = { showDeleteDialog = true },
                 onShareClick = onShareClick,
                 onProfileClick = onProfileClick,
                 onContactClick = { viewModel.onContactClick(postId) },
@@ -127,6 +130,22 @@ fun MatchingDetailRoute(
                 modifier = modifier
             )
         }
+    }
+
+    if (showDeleteDialog) {
+        DduruConfirmDialog(
+            title = "게시글을 삭제할까요?",
+            description = "삭제한 게시글은 복구할 수 없습니다.\n신중하게 결정해 주세요.",
+            firstButtonText = "취소",
+            secondButtonText = "삭제",
+            onDismiss = { showDeleteDialog = false },
+            onSecondButtonClick = {
+                showDeleteDialog = false
+                viewModel.onDeleteClick()
+            },
+            secondButtonBackgroundColor = DduruTheme.colors.rejectConfirmBg,
+            secondButtonTextColor = DduruTheme.colors.validationRed
+        )
     }
 }
 

@@ -31,6 +31,7 @@ class MatchingDetailViewModel @Inject constructor(
     val sideEffect: SharedFlow<MatchingDetailSideEffect> = _sideEffect.asSharedFlow()
 
     private var loadedPostId: Long? = null
+    private var isDeleting = false
 
     fun loadMatchingDetail(postId: Long) {
         if (loadedPostId == postId && _uiState.value is UiState.Success) return
@@ -85,6 +86,24 @@ class MatchingDetailViewModel @Inject constructor(
             runCatching { postService.toggleLike(postId) }
                 .onSuccess { response ->
                     if (response.isSuccessful) loadMatchingDetail(postId)
+                }
+        }
+    }
+
+    fun onDeleteClick() {
+        val post = (_uiState.value as? UiState.Success)?.data ?: return
+        if (!post.isOwner || isDeleting) return
+        isDeleting = true
+        viewModelScope.launch {
+            runCatching { postService.deletePost(post.id) }
+                .onSuccess { response ->
+                    isDeleting = false
+                    if (response.code() == 204) _sideEffect.emit(MatchingDetailSideEffect.NavigateBack)
+                    else _sideEffect.emit(MatchingDetailSideEffect.ShowMessage("게시글을 삭제하지 못했어요."))
+                }
+                .onFailure {
+                    isDeleting = false
+                    _sideEffect.emit(MatchingDetailSideEffect.ShowMessage("게시글 삭제에 실패했어요."))
                 }
         }
     }

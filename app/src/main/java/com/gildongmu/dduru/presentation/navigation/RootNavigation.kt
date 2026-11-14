@@ -271,7 +271,7 @@ fun RootNavigation(
                             onEditClick = {
                                 rootBackStack.add(RootNavRoute.MatchingEditPost(route.postId))
                             },
-                            onDeleteClick = {},
+                            onDeleteClick = { navigateBack() },
                             onShareClick = {},
                             onProfileClick = {},
                             onNavigateToChatRoom = { chatRoomId ->
