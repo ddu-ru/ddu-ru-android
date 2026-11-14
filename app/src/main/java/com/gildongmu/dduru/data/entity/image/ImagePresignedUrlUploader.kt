@@ -4,9 +4,9 @@ import android.content.Context
 import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.Matrix
+import android.media.ExifInterface
 import android.net.Uri
 import android.provider.OpenableColumns
-import android.media.ExifInterface
 import android.webkit.MimeTypeMap
 import com.gildongmu.dduru.data.entity.image.api.ImagePresignedUrlApi
 import com.gildongmu.dduru.data.entity.image.model.ImageUploadFileRequest
@@ -80,7 +80,16 @@ class ImagePresignedUrlUploader @Inject constructor(
         } ?: error("이미지를 읽을 수 없어요.")
         val oriented = orient(bitmap, uri)
         val scale = minOf(1f, 1920f / maxOf(oriented.width, oriented.height))
-        val resized = if (scale < 1f) Bitmap.createScaledBitmap(oriented, (oriented.width * scale).toInt(), (oriented.height * scale).toInt(), true) else oriented
+        val resized = if (scale < 1f) {
+            Bitmap.createScaledBitmap(
+                oriented,
+                (oriented.width * scale).toInt(),
+                (oriented.height * scale).toInt(),
+                true
+            )
+        } else {
+            oriented
+        }
         val format = if (extension == "png") Bitmap.CompressFormat.PNG else Bitmap.CompressFormat.JPEG
         var quality = 85
         var bytes = java.io.ByteArrayOutputStream().also { resized.compress(format, quality, it) }.toByteArray()
@@ -89,7 +98,13 @@ class ImagePresignedUrlUploader @Inject constructor(
             bytes = java.io.ByteArrayOutputStream().also { resized.compress(format, quality, it) }.toByteArray()
         }
         require(bytes.size <= MAX_SIZE) { "이미지는 5MB 이하여야 해요." }
-        val sourceName = context.contentResolver.query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)?.use { cursor ->
+        val sourceName = context.contentResolver.query(
+            uri,
+            arrayOf(OpenableColumns.DISPLAY_NAME),
+            null,
+            null,
+            null
+        )?.use { cursor ->
             if (cursor.moveToFirst()) cursor.getString(0) else null
         }
         resized.recycle()
@@ -100,7 +115,12 @@ class ImagePresignedUrlUploader @Inject constructor(
     }
 
     private fun orient(bitmap: Bitmap, uri: Uri): Bitmap {
-        val orientation = context.contentResolver.openInputStream(uri)?.use { ExifInterface(it).getAttributeInt(ExifInterface.TAG_ORIENTATION, ExifInterface.ORIENTATION_NORMAL) } ?: ExifInterface.ORIENTATION_NORMAL
+        val orientation = context.contentResolver.openInputStream(uri)?.use {
+            ExifInterface(it).getAttributeInt(
+                ExifInterface.TAG_ORIENTATION,
+                ExifInterface.ORIENTATION_NORMAL
+            )
+        } ?: ExifInterface.ORIENTATION_NORMAL
         val matrix = Matrix().apply {
             when (orientation) {
                 ExifInterface.ORIENTATION_ROTATE_90 -> postRotate(90f)
@@ -108,7 +128,19 @@ class ImagePresignedUrlUploader @Inject constructor(
                 ExifInterface.ORIENTATION_ROTATE_270 -> postRotate(270f)
             }
         }
-        return if (matrix.isIdentity) bitmap else Bitmap.createBitmap(bitmap, 0, 0, bitmap.width, bitmap.height, matrix, true)
+        return if (matrix.isIdentity) {
+            bitmap
+        } else {
+            Bitmap.createBitmap(
+                bitmap,
+                0,
+                0,
+                bitmap.width,
+                bitmap.height,
+                matrix,
+                true
+            )
+        }
     }
 
     private companion object { const val MAX_SIZE = 5L * 1024 * 1024 }

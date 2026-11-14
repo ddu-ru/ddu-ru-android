@@ -26,9 +26,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
-import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.AiMatchingSection
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHeader
@@ -226,19 +226,19 @@ private fun HomeScreen(
             )
 
             Box {
-            if (isWritingMenuVisible) {
-                WritingExpandedMenu(
-                    onDismiss = { isWritingMenuVisible = false },
-                    onCreateTravelRoom = {
-                        isWritingMenuVisible = false
-                        onCreateTravelRoomClick()
-                    }
-                )
-            } else {
-                WritingButton(
-                    onClick = { isWritingMenuVisible = true }
-                )
-            }
+                if (isWritingMenuVisible) {
+                    WritingExpandedMenu(
+                        onDismiss = { isWritingMenuVisible = false },
+                        onCreateTravelRoom = {
+                            isWritingMenuVisible = false
+                            onCreateTravelRoomClick()
+                        }
+                    )
+                } else {
+                    WritingButton(
+                        onClick = { isWritingMenuVisible = true }
+                    )
+                }
             }
         }
     }
