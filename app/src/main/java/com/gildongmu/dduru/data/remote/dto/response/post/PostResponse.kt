@@ -35,6 +35,7 @@ data class PostSummaryAuthorResponse(
 @Serializable
 data class PostDetailResponse(
     val id: Long,
+    val destinationId: Long? = null,
     val title: String = "",
     val content: String = "",
     val status: String = "OPEN",

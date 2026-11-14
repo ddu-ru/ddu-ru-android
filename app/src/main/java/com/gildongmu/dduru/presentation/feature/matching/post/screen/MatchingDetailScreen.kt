@@ -1,4 +1,3 @@
-// ktlint-disable max-line-length
 package com.gildongmu.dduru.presentation.feature.matching.post.screen
 
 import android.widget.Toast
@@ -297,8 +296,7 @@ fun MatchingDetailScreen(
 }
 
 @Composable
-private fun MatchingDetailReportButton(
-) {
+private fun MatchingDetailReportButton() {
     Row(
         modifier = Modifier.fillMaxWidth(),
         horizontalArrangement = Arrangement.spacedBy(12.dp),

@@ -36,4 +36,14 @@ class CreatePostRepositoryImpl @Inject constructor(
             Result.failure(Exception("알 수 없는 오류: ${e.message}", e))
         }
     }
+
+    override suspend fun updatePost(postId: Long, request: CreatePostRequest): Result<Unit> = try {
+        val response = createPostApi.updatePost(postId, request)
+        if (response.code() == 204) Result.success(Unit)
+        else Result.failure(HttpException(response))
+    } catch (e: CancellationException) {
+        throw e
+    } catch (e: Exception) {
+        Result.failure(e)
+    }
 }
