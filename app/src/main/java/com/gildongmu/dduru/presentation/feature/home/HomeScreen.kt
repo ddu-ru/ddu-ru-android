@@ -28,6 +28,7 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
+import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.home.component.AiMatchingSection
 import com.gildongmu.dduru.presentation.feature.home.component.HomeHeader
@@ -211,12 +212,20 @@ private fun HomeScreen(
             }
         }
 
-        Box(
+        Column(
+            horizontalAlignment = Alignment.End,
+            verticalArrangement = Arrangement.spacedBy(10.dp),
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .navigationBarsPadding()
-                .padding(end = 0.dp)
+                .padding(end = 0.dp, bottom = 12.dp)
         ) {
+            DduruButton(
+                text = "매칭 글 작성",
+                onClick = onCreateTravelRoomClick
+            )
+
+            Box {
             if (isWritingMenuVisible) {
                 WritingExpandedMenu(
                     onDismiss = { isWritingMenuVisible = false },
@@ -229,6 +238,7 @@ private fun HomeScreen(
                 WritingButton(
                     onClick = { isWritingMenuVisible = true }
                 )
+            }
             }
         }
     }

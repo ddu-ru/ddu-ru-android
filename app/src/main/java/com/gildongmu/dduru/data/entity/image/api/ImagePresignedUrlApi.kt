@@ -21,4 +21,9 @@ interface ImagePresignedUrlApi {
     suspend fun createJourneyPresignedUrl(
         @Body request: ImageUploadRequest
     ): ApiResponse<List<ImagePresignedUrlResponse>>
+
+    @POST("api/v1/images/posts/presigned-url")
+    suspend fun createPostPresignedUrls(
+        @Body request: ImageUploadRequest
+    ): ApiResponse<List<ImagePresignedUrlResponse>>
 }

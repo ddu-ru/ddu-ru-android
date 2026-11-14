@@ -6,6 +6,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.data.entity.image.ImagePresignedUrlUploader
+import com.gildongmu.dduru.data.entity.image.ImageUploadTarget
 import com.gildongmu.dduru.domain.register.model.SurveyStatus
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
@@ -320,7 +321,7 @@ class ProfileViewModel @Inject constructor(
         _uiState.update { it.copy(isImageUploading = true) }
         checkCanStart()
 
-        return profileImageUploader.uploadImage(selectedImageUri)
+        return profileImageUploader.uploadImage(selectedImageUri, ImageUploadTarget.PROFILE)
             .map { uploadedUrl ->
                 _formState.update { it.copy(profileUploadedUrl = uploadedUrl) }
                 _uiState.update { it.copy(isImageUploading = false) }

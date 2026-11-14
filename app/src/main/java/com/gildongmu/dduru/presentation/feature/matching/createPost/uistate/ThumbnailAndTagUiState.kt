@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.uistate
 
+import android.net.Uri
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.presentation.feature.matching.createPost.util.TagValidator
 
@@ -9,6 +10,7 @@ data class ThumbnailAndTagUiState(
     val imageResId: Int = R.drawable.fukuoka,
     val previewImageUrl: String? = null,
     val photoUrl: String? = null,
+    val selectedImageUri: Uri? = null,
     val tagInput: String = "",
     val addedTags: List<String> = emptyList(),
     val popularTags: List<String> = emptyList(),

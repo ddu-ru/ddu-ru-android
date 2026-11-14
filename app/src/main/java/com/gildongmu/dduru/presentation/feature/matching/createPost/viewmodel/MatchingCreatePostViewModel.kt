@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.createPost.model.CreatePostRequest
+import com.gildongmu.dduru.data.entity.image.ImagePresignedUrlUploader
+import com.gildongmu.dduru.data.entity.image.ImageUploadTarget
 import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
 import com.gildongmu.dduru.domain.createPost.repository.CreatePostRepository
 import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
@@ -37,7 +39,8 @@ import kotlinx.coroutines.launch
 class MatchingCreatePostViewModel @Inject constructor(
     private val destinationRepository: DestinationRepository,
     private val createPostRepository: CreatePostRepository,
-    private val popularTagRepository: PopularTagRepository
+    private val popularTagRepository: PopularTagRepository,
+    private val imageUploader: ImagePresignedUrlUploader
 ) : ViewModel() {
     private companion object {
         const val POPULAR_DESTINATIONS_ERROR_MESSAGE =
@@ -144,7 +147,8 @@ class MatchingCreatePostViewModel @Inject constructor(
         _uiState.update { currentState ->
             currentState.copy(
                 thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
-                    previewImageUrl = uri.toString()
+                    previewImageUrl = uri.toString(),
+                    selectedImageUri = uri
                 )
             )
         }
@@ -351,23 +355,29 @@ class MatchingCreatePostViewModel @Inject constructor(
         val startDate = currentState.dateSectionUiState.startDate ?: return
         val endDate = currentState.dateSectionUiState.endDate ?: return
 
-        val request = CreatePostRequest(
-            destinationId = selectedLocation.id,
-            title = currentState.postWritingUiState.title,
-            content = currentState.postWritingUiState.content,
-            startDate = startDate,
-            endDate = endDate,
-            recruitCapacity = currentState.recruitmentSectionUiState.recruitCount,
-            preferredGender = currentState.ageSectionUiState.preferredGender.code,
-            isAgeAny = currentState.ageSectionUiState.isAgeAny,
-            minAge = currentState.ageSectionUiState.minAge,
-            maxAge = currentState.ageSectionUiState.maxAge,
-            photoUrl = currentState.thumbnailAndTagUiState.photoUrl,
-            tags = currentState.thumbnailAndTagUiState.addedTags,
-            companionType = currentState.recruitmentSectionUiState.companionType.code
-        )
-
         viewModelScope.launch {
+            val thumbnail = currentState.thumbnailAndTagUiState
+            val photoUrl = thumbnail.selectedImageUri?.let { uri ->
+                imageUploader.uploadImage(uri, ImageUploadTarget.POST).getOrElse {
+                    Log.e("MatchingCreatePostViewModel", "게시글 사진 업로드 실패", it)
+                    return@launch
+                }
+            } ?: thumbnail.photoUrl
+            val request = CreatePostRequest(
+                destinationId = selectedLocation.id,
+                title = currentState.postWritingUiState.title,
+                content = currentState.postWritingUiState.content,
+                startDate = startDate,
+                endDate = endDate,
+                recruitCapacity = currentState.recruitmentSectionUiState.recruitCount,
+                preferredGender = currentState.ageSectionUiState.preferredGender.code,
+                isAgeAny = currentState.ageSectionUiState.isAgeAny,
+                minAge = currentState.ageSectionUiState.minAge,
+                maxAge = currentState.ageSectionUiState.maxAge,
+                photoUrl = photoUrl,
+                tags = currentState.thumbnailAndTagUiState.addedTags,
+                companionType = currentState.recruitmentSectionUiState.companionType.code
+            )
             createPostRepository.createPost(request)
                 .onSuccess {
                     _uiEvent.emit(MatchingCreatePostUiEvent.Complete)

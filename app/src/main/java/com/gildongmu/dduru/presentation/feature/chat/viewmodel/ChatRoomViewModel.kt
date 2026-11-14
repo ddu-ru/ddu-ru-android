@@ -3,7 +3,8 @@ package com.gildongmu.dduru.presentation.feature.chat.viewmodel
 import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.gildongmu.dduru.data.entity.image.ChatImageUploader
+import com.gildongmu.dduru.data.entity.image.ImagePresignedUrlUploader
+import com.gildongmu.dduru.data.entity.image.ImageUploadTarget
 import com.gildongmu.dduru.data.remote.dto.websocket.ChatRoomEvent
 import com.gildongmu.dduru.data.remote.dto.websocket.WebSocketSystemMessage
 import com.gildongmu.dduru.data.remote.websocket.StompChatClient
@@ -57,7 +58,7 @@ private data class PendingSentMessage(val tempId: String, val content: String)
 class ChatRoomViewModel @Inject constructor(
     private val chatRoomRepository: ChatRoomRepository,
     private val stompChatClient: StompChatClient,
-    private val chatImageUploader: ChatImageUploader
+    private val imageUploader: ImagePresignedUrlUploader
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow(ChatRoomUiState())
@@ -205,7 +206,11 @@ class ChatRoomViewModel @Inject constructor(
         if (uris.isEmpty() || !_uiState.value.isInputEnabled) return
         viewModelScope.launch {
             _uiState.update { it.copy(isUploadingImage = true) }
-            chatImageUploader.uploadImages(uris)
+            runCatching {
+                uris.map { uri ->
+                    imageUploader.uploadImage(uri, ImageUploadTarget.CHAT).getOrThrow()
+                }
+            }
                 .onSuccess { fileUrls ->
                     pendingImageCount += fileUrls.size
                     val failedCount = fileUrls.count { fileUrl ->
