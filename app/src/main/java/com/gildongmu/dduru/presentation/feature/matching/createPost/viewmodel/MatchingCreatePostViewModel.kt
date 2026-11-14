@@ -192,6 +192,10 @@ class MatchingCreatePostViewModel @Inject constructor(
             val trimmedTag = tag.trim()
             val validationMessage = thumbnailState.validateTagInput(trimmedTag)
 
+            if (trimmedTag in thumbnailState.addedTags) {
+                return@update currentState
+            }
+
             if (trimmedTag.isBlank() || validationMessage != null) {
                 return@update currentState.copy(
                     thumbnailAndTagUiState = thumbnailState.copy(

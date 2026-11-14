@@ -172,7 +172,9 @@ fun DduruCalendar(
                             isCurrentMonth = isCurrentMonth,
                             startDate = normalizedStartDate,
                             endDate = normalizedEndDate,
-                            onClick = { onDateSelected(date) },
+                            onClick = {
+                                if (!date.isBefore(LocalDate.now())) onDateSelected(date)
+                            },
                             modifier = Modifier.weight(1f)
                         )
                     }
