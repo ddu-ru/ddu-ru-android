@@ -59,6 +59,7 @@ class MatchingCreatePostViewModel @Inject constructor(
     val uiEvent: SharedFlow<MatchingCreatePostUiEvent> = _uiEvent.asSharedFlow()
     private var searchDebounceJob: Job? = null
     private var searchRequestJob: Job? = null
+    private var submitJob: Job? = null
 
     init {
         fetchPopularDestinations()
@@ -98,7 +99,8 @@ class MatchingCreatePostViewModel @Inject constructor(
                 thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
                     regionName = location.city,
                     countryName = location.countryName,
-                    previewImageUrl = location.image
+                    previewImageUrl = location.image,
+                    selectedImageUri = null
                 )
             )
         }
@@ -350,16 +352,23 @@ class MatchingCreatePostViewModel @Inject constructor(
     }
 
     private fun submitPost() {
+        if (submitJob?.isActive == true) return
         val currentState = _uiState.value
         val selectedLocation = currentState.locationSearchUiState.selectedLocation ?: return
         val startDate = currentState.dateSectionUiState.startDate ?: return
         val endDate = currentState.dateSectionUiState.endDate ?: return
 
-        viewModelScope.launch {
+        submitJob = viewModelScope.launch {
             val thumbnail = currentState.thumbnailAndTagUiState
             val photoUrl = thumbnail.selectedImageUri?.let { uri ->
                 imageUploader.uploadImage(uri, ImageUploadTarget.POST).getOrElse {
                     Log.e("MatchingCreatePostViewModel", "게시글 사진 업로드 실패", it)
+                    val message = if (it.message?.contains("5MB") == true) {
+                        "이미지는 5MB 이하여야 해요."
+                    } else {
+                        "이미지 업로드에 실패했어요. 다시 시도해 주세요."
+                    }
+                    _uiEvent.emit(MatchingCreatePostUiEvent.ShowMessage(message))
                     return@launch
                 }
             } ?: thumbnail.photoUrl

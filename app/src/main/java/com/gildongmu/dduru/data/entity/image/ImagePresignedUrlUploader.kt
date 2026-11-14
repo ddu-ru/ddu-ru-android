@@ -122,9 +122,19 @@ class ImagePresignedUrlUploader @Inject constructor(
         } ?: ExifInterface.ORIENTATION_NORMAL
         val matrix = Matrix().apply {
             when (orientation) {
+                ExifInterface.ORIENTATION_FLIP_HORIZONTAL -> postScale(-1f, 1f)
                 ExifInterface.ORIENTATION_ROTATE_90 -> postRotate(90f)
                 ExifInterface.ORIENTATION_ROTATE_180 -> postRotate(180f)
+                ExifInterface.ORIENTATION_FLIP_VERTICAL -> postScale(1f, -1f)
+                ExifInterface.ORIENTATION_TRANSPOSE -> {
+                    postRotate(90f)
+                    postScale(-1f, 1f)
+                }
                 ExifInterface.ORIENTATION_ROTATE_270 -> postRotate(270f)
+                ExifInterface.ORIENTATION_TRANSVERSE -> {
+                    postRotate(270f)
+                    postScale(-1f, 1f)
+                }
             }
         }
         return if (matrix.isIdentity) {
