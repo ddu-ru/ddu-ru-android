@@ -5,6 +5,8 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.data.createPost.model.CreatePostRequest
+import com.gildongmu.dduru.data.entity.image.ImagePresignedUrlUploader
+import com.gildongmu.dduru.data.entity.image.ImageUploadTarget
 import com.gildongmu.dduru.domain.createPost.entity.PopularDestination
 import com.gildongmu.dduru.domain.createPost.repository.CreatePostRepository
 import com.gildongmu.dduru.domain.createPost.repository.DestinationRepository
@@ -37,7 +39,8 @@ import kotlinx.coroutines.launch
 class MatchingCreatePostViewModel @Inject constructor(
     private val destinationRepository: DestinationRepository,
     private val createPostRepository: CreatePostRepository,
-    private val popularTagRepository: PopularTagRepository
+    private val popularTagRepository: PopularTagRepository,
+    private val imageUploader: ImagePresignedUrlUploader
 ) : ViewModel() {
     private companion object {
         const val POPULAR_DESTINATIONS_ERROR_MESSAGE =
@@ -56,6 +59,7 @@ class MatchingCreatePostViewModel @Inject constructor(
     val uiEvent: SharedFlow<MatchingCreatePostUiEvent> = _uiEvent.asSharedFlow()
     private var searchDebounceJob: Job? = null
     private var searchRequestJob: Job? = null
+    private var submitJob: Job? = null
 
     init {
         fetchPopularDestinations()
@@ -95,7 +99,8 @@ class MatchingCreatePostViewModel @Inject constructor(
                 thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
                     regionName = location.city,
                     countryName = location.countryName,
-                    previewImageUrl = location.image
+                    previewImageUrl = location.image,
+                    selectedImageUri = null
                 )
             )
         }
@@ -144,7 +149,8 @@ class MatchingCreatePostViewModel @Inject constructor(
         _uiState.update { currentState ->
             currentState.copy(
                 thumbnailAndTagUiState = currentState.thumbnailAndTagUiState.copy(
-                    previewImageUrl = uri.toString()
+                    previewImageUrl = uri.toString(),
+                    selectedImageUri = uri
                 )
             )
         }
@@ -346,28 +352,41 @@ class MatchingCreatePostViewModel @Inject constructor(
     }
 
     private fun submitPost() {
+        if (submitJob?.isActive == true) return
         val currentState = _uiState.value
         val selectedLocation = currentState.locationSearchUiState.selectedLocation ?: return
         val startDate = currentState.dateSectionUiState.startDate ?: return
         val endDate = currentState.dateSectionUiState.endDate ?: return
 
-        val request = CreatePostRequest(
-            destinationId = selectedLocation.id,
-            title = currentState.postWritingUiState.title,
-            content = currentState.postWritingUiState.content,
-            startDate = startDate,
-            endDate = endDate,
-            recruitCapacity = currentState.recruitmentSectionUiState.recruitCount,
-            preferredGender = currentState.ageSectionUiState.preferredGender.code,
-            isAgeAny = currentState.ageSectionUiState.isAgeAny,
-            minAge = currentState.ageSectionUiState.minAge,
-            maxAge = currentState.ageSectionUiState.maxAge,
-            photoUrl = currentState.thumbnailAndTagUiState.photoUrl,
-            tags = currentState.thumbnailAndTagUiState.addedTags,
-            companionType = currentState.recruitmentSectionUiState.companionType.code
-        )
-
-        viewModelScope.launch {
+        submitJob = viewModelScope.launch {
+            val thumbnail = currentState.thumbnailAndTagUiState
+            val photoUrl = thumbnail.selectedImageUri?.let { uri ->
+                imageUploader.uploadImage(uri, ImageUploadTarget.POST).getOrElse {
+                    Log.e("MatchingCreatePostViewModel", "게시글 사진 업로드 실패", it)
+                    val message = if (it.message?.contains("5MB") == true) {
+                        "이미지는 5MB 이하여야 해요."
+                    } else {
+                        "이미지 업로드에 실패했어요. 다시 시도해 주세요."
+                    }
+                    _uiEvent.emit(MatchingCreatePostUiEvent.ShowMessage(message))
+                    return@launch
+                }
+            } ?: thumbnail.photoUrl
+            val request = CreatePostRequest(
+                destinationId = selectedLocation.id,
+                title = currentState.postWritingUiState.title,
+                content = currentState.postWritingUiState.content,
+                startDate = startDate,
+                endDate = endDate,
+                recruitCapacity = currentState.recruitmentSectionUiState.recruitCount,
+                preferredGender = currentState.ageSectionUiState.preferredGender.code,
+                isAgeAny = currentState.ageSectionUiState.isAgeAny,
+                minAge = currentState.ageSectionUiState.minAge,
+                maxAge = currentState.ageSectionUiState.maxAge,
+                photoUrl = photoUrl,
+                tags = currentState.thumbnailAndTagUiState.addedTags,
+                companionType = currentState.recruitmentSectionUiState.companionType.code
+            )
             createPostRepository.createPost(request)
                 .onSuccess {
                     _uiEvent.emit(MatchingCreatePostUiEvent.Complete)

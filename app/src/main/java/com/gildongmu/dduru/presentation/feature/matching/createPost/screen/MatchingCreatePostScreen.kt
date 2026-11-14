@@ -1,5 +1,6 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.screen
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.Arrangement
@@ -28,6 +29,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -68,12 +70,16 @@ fun MatchingCreatePostRoute(
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
     val galleryLauncher = rememberGalleryLauncher(viewModel::onThumbnailImageSelected)
+    val context = LocalContext.current
 
     LaunchedEffect(Unit) {
         viewModel.uiEvent.collectLatest { event ->
             when (event) {
                 MatchingCreatePostUiEvent.Close -> onClose()
                 MatchingCreatePostUiEvent.Complete -> onComplete()
+                is MatchingCreatePostUiEvent.ShowMessage -> {
+                    Toast.makeText(context, event.message, Toast.LENGTH_SHORT).show()
+                }
             }
         }
     }
