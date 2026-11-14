@@ -112,6 +112,7 @@ dependencies {
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.monitor)
     implementation(libs.androidx.junit.ktx)
+    implementation(libs.exifinterface)
     androidTestImplementation(platform(libs.androidx.compose.bom))
     androidTestImplementation(libs.bundles.test)
     debugImplementation(libs.bundles.debug)
