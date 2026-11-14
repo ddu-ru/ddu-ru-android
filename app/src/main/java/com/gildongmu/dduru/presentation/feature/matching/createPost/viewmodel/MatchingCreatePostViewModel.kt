@@ -66,6 +66,12 @@ class MatchingCreatePostViewModel @Inject constructor(
         emitUiEvent(MatchingCreatePostUiEvent.Close)
     }
 
+    fun resetDraft() {
+        searchDebounceJob?.cancel()
+        searchRequestJob?.cancel()
+        _uiState.value = MatchingCreatePostUiState()
+    }
+
     fun onBackClick() {
         movePreviousStep()
     }

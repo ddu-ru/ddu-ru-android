@@ -40,6 +40,7 @@ fun MainScreen(
     onNavigateToProfileEdit: () -> Unit,
     onNavigateToTravelStyleSurvey: () -> Unit,
     onNavigateToJourneyDetail: (Long, String?) -> Unit,
+    matchingRefreshVersion: Int = 0,
     initialRoute: BottomNavRoute = BottomNavRoute.Home,
     initialChatTab: ChatTab = ChatTab.ALL
 ) {
@@ -99,6 +100,7 @@ fun MainScreen(
                     }
                     is BottomNavRoute.Matching -> NavEntry(route) {
                         MatchingRoute(
+                            refreshVersion = matchingRefreshVersion,
                             navigateToNotification = onNavigateToHomeNotification,
                             navigateToMenu = onNavigateToHomeMenu,
                             navigateToCreatePost = onNavigateToMatchingCreatePost,

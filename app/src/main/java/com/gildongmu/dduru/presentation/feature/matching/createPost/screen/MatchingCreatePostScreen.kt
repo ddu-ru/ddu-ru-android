@@ -107,7 +107,10 @@ fun MatchingCreatePostRoute(
             firstButtonText = "계속 작성",
             secondButtonText = "나가기",
             onDismiss = { showExitDialog = false },
-            onSecondButtonClick = onClose,
+            onSecondButtonClick = {
+                viewModel.resetDraft()
+                onClose()
+            },
             firstButtonBackgroundColor = DduruTheme.colors.gray0,
             firstButtonTextColor = DduruTheme.colors.gray600
         )

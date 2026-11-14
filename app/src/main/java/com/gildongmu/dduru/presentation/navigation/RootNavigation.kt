@@ -6,6 +6,9 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.navigation3.runtime.NavEntry
@@ -53,6 +56,7 @@ fun RootNavigation(
         DduruLoadingScreen()
     } else {
         val rootBackStack = rememberNavBackStack(startDestination!!)
+        var matchingRefreshVersion by remember { mutableIntStateOf(0) }
         LaunchedEffect(startDestination) {
             rootBackStack.clear()
             rootBackStack.add(startDestination!!)
@@ -147,6 +151,7 @@ fun RootNavigation(
 
                     is RootNavRoute.Main -> NavEntry(route) {
                         MainScreen(
+                            matchingRefreshVersion = matchingRefreshVersion,
                             onNavigateToHomeNotification = {
                                 rootBackStack.add(RootNavRoute.HomeNotification)
                             },
@@ -176,6 +181,7 @@ fun RootNavigation(
 
                     is RootNavRoute.MainTab -> NavEntry(route) {
                         MainScreen(
+                            matchingRefreshVersion = matchingRefreshVersion,
                             onNavigateToHomeNotification = {
                                 rootBackStack.add(RootNavRoute.HomeNotification)
                             },
@@ -271,7 +277,10 @@ fun RootNavigation(
                             onEditClick = {
                                 rootBackStack.add(RootNavRoute.MatchingEditPost(route.postId))
                             },
-                            onDeleteClick = { navigateBack() },
+                            onDeleteClick = {
+                                matchingRefreshVersion++
+                                navigateBack()
+                            },
                             onShareClick = {},
                             onProfileClick = {},
                             onNavigateToChatRoom = { chatRoomId ->
