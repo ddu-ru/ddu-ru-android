@@ -10,9 +10,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
-import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.SettingsMenuItem
 import com.gildongmu.dduru.presentation.feature.mypage.component.SettingsMenuSection
 

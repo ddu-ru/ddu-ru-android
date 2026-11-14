@@ -98,8 +98,11 @@ class MatchingDetailViewModel @Inject constructor(
             runCatching { postService.deletePost(post.id) }
                 .onSuccess { response ->
                     isDeleting = false
-                    if (response.code() == 204) _sideEffect.emit(MatchingDetailSideEffect.NavigateBack)
-                    else _sideEffect.emit(MatchingDetailSideEffect.ShowMessage("게시글을 삭제하지 못했어요."))
+                    if (response.code() == 204) {
+                        _sideEffect.emit(MatchingDetailSideEffect.NavigateBack)
+                    } else {
+                        _sideEffect.emit(MatchingDetailSideEffect.ShowMessage("게시글을 삭제하지 못했어요."))
+                    }
                 }
                 .onFailure {
                     isDeleting = false

@@ -39,8 +39,11 @@ class CreatePostRepositoryImpl @Inject constructor(
 
     override suspend fun updatePost(postId: Long, request: CreatePostRequest): Result<Unit> = try {
         val response = createPostApi.updatePost(postId, request)
-        if (response.code() == 204) Result.success(Unit)
-        else Result.failure(HttpException(response))
+        if (response.code() == 204) {
+            Result.success(Unit)
+        } else {
+            Result.failure(HttpException(response))
+        }
     } catch (e: CancellationException) {
         throw e
     } catch (e: Exception) {

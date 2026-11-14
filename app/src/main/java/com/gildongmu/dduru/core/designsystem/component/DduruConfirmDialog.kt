@@ -57,17 +57,49 @@ fun DduruConfirmDialog(
                 Text(description, style = descriptionTextStyle, color = descriptionColor)
             }
             Row(horizontalArrangement = Arrangement.spacedBy(8.dp), modifier = Modifier.fillMaxWidth()) {
-                DialogButton(firstButtonText, firstButtonTextStyle, firstButtonBackgroundColor, firstButtonTextColor, cornerRadius, onFirstButtonClick, Modifier.weight(1f))
-                DialogButton(secondButtonText, secondButtonTextStyle, secondButtonBackgroundColor, secondButtonTextColor, cornerRadius, onSecondButtonClick, Modifier.weight(1f))
+                DialogButton(
+                    firstButtonText,
+                    firstButtonTextStyle,
+                    firstButtonBackgroundColor,
+                    firstButtonTextColor,
+                    cornerRadius,
+                    onFirstButtonClick,
+                    Modifier.weight(1f)
+                )
+                DialogButton(
+                    secondButtonText,
+                    secondButtonTextStyle,
+                    secondButtonBackgroundColor,
+                    secondButtonTextColor,
+                    cornerRadius,
+                    onSecondButtonClick,
+                    Modifier.weight(1f)
+                )
             }
         }
     }
 }
 
 @Composable
-private fun DialogButton(text: String, textStyle: TextStyle, background: Color, textColor: Color, radius: Dp, onClick: () -> Unit, modifier: Modifier) {
+private fun DialogButton(
+    text: String,
+    textStyle: TextStyle,
+    background: Color,
+    textColor: Color,
+    radius: Dp,
+    onClick: () -> Unit,
+    modifier: Modifier
+) {
     val shape = RoundedCornerShape(radius)
-    Row(modifier.height(48.dp).border(1.dp, DduruTheme.colors.gray200, shape).background(background, shape).noRippleClickable(onClick), horizontalArrangement = Arrangement.Center, verticalAlignment = Alignment.CenterVertically) {
+    Row(
+        modifier = modifier
+            .height(48.dp)
+            .border(1.dp, DduruTheme.colors.gray200, shape)
+            .background(background, shape)
+            .noRippleClickable(onClick),
+        horizontalArrangement = Arrangement.Center,
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Text(text, style = textStyle, color = textColor)
     }
 }

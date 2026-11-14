@@ -24,10 +24,10 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
 import com.gildongmu.dduru.presentation.component.MultiLineTextField
-import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.InquiryCategoryGrid
 import com.gildongmu.dduru.presentation.feature.mypage.component.InquiryGuideNotes
 import com.gildongmu.dduru.presentation.feature.mypage.component.PhotoAttachField

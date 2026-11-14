@@ -42,11 +42,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
-import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.LabelValueRow
 import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditSideEffect
 import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.ProfileEditViewModel

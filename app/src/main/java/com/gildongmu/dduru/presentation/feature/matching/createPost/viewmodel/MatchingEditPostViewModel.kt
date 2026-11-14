@@ -12,18 +12,19 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.Date
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.MatchingEditPostUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.PostWritingUiState
+import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentScreenUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.ThumbnailAndTagUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.reduce
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 import dagger.hilt.android.lifecycle.HiltViewModel
-import javax.inject.Inject
 import java.time.LocalDate
-import kotlinx.coroutines.launch
+import javax.inject.Inject
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.launch
 
 @HiltViewModel
 class MatchingEditPostViewModel @Inject constructor(
@@ -53,26 +54,33 @@ class MatchingEditPostViewModel @Inject constructor(
             _uiState.value = UiState.Loading
             runCatching { postService.getPost(postId).data ?: error("게시글 정보를 찾을 수 없어요.") }
                 .onSuccess { post ->
-                    _uiState.value = UiState.Success(MatchingEditPostUiState(
-                        postId = postId,
-                        popularTags = popularTags,
-                        dateSectionUiState = DateSectionUiState(
-                            LocalDate.parse(post.startDate),
-                            LocalDate.parse(post.endDate)
-                        ),
-                        recruitmentSectionUiState = RecruitmentScreenUiState(
-                            recruitmentCount = com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.RecruitmentCountUiState(post.recruitCapacity),
-                            selectedCompanionType = MatchingCompanionType.entries.firstOrNull { it.code == post.companionType }
-                        ),
-                        ageSectionUiState = AgeSectionUiState(
-                            selectedGender = MatchingGender.entries.firstOrNull { it.code == post.preferredGender },
-                            isAgeIrrelevant = post.isAgeAny,
-                            selectedStartAge = post.minAge,
-                            selectedEndAge = post.maxAge
-                        ),
-                        postWritingUiState = PostWritingUiState(title = post.title, content = post.content),
-                        thumbnailAndTagUiState = ThumbnailAndTagUiState(previewImageUrl = post.photoUrl, photoUrl = post.photoUrl, addedTags = post.tags)
-                    ))
+                    _uiState.value = UiState.Success(
+                        MatchingEditPostUiState(
+                            postId = postId,
+                            popularTags = popularTags,
+                            dateSectionUiState = DateSectionUiState(
+                                LocalDate.parse(post.startDate),
+                                LocalDate.parse(post.endDate)
+                            ),
+                            recruitmentSectionUiState = RecruitmentScreenUiState(
+                                recruitmentCount = RecruitmentCountUiState(post.recruitCapacity),
+                                selectedCompanionType = MatchingCompanionType.entries
+                                    .firstOrNull { it.code == post.companionType }
+                            ),
+                            ageSectionUiState = AgeSectionUiState(
+                                selectedGender = MatchingGender.entries.firstOrNull { it.code == post.preferredGender },
+                                isAgeIrrelevant = post.isAgeAny,
+                                selectedStartAge = post.minAge,
+                                selectedEndAge = post.maxAge
+                            ),
+                            postWritingUiState = PostWritingUiState(title = post.title, content = post.content),
+                            thumbnailAndTagUiState = ThumbnailAndTagUiState(
+                                previewImageUrl = post.photoUrl,
+                                photoUrl = post.photoUrl,
+                                addedTags = post.tags
+                            )
+                        )
+                    )
                 }.onFailure { _uiState.value = UiState.Failure }
         }
     }
