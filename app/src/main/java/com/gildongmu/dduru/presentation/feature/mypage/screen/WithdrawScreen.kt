@@ -27,7 +27,7 @@ import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
 import com.gildongmu.dduru.presentation.feature.mypage.component.AgreementCheckRow
-import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
+import com.gildongmu.dduru.core.designsystem.component.DduruConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.WithdrawNoticeSection
 import com.gildongmu.dduru.presentation.feature.mypage.component.WithdrawWarningBox
 
@@ -131,15 +131,15 @@ fun WithdrawScreen(
     }
 
     if (showConfirmDialog) {
-        ConfirmDialog(
+        DduruConfirmDialog(
             title = "정말로 탈퇴하시겠어요?",
             description = "이 선택은 되돌릴 수 없습니다.\n신중하게 결정해 주세요",
             onDismiss = onConfirmDialogDismiss,
-            onConfirm = onWithdrawConfirm,
-            dismissText = "취소",
-            confirmText = "탈퇴",
-            confirmBackgroundColor = DduruTheme.colors.rejectConfirmBg,
-            confirmTextColor = DduruTheme.colors.validationRed
+            onSecondButtonClick = onWithdrawConfirm,
+            firstButtonText = "취소",
+            secondButtonText = "탈퇴",
+            secondButtonBackgroundColor = DduruTheme.colors.rejectConfirmBg,
+            secondButtonTextColor = DduruTheme.colors.validationRed
         )
     }
 }

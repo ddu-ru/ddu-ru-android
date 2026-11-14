@@ -4,9 +4,9 @@ import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.data.createPost.model.CreatePostRequest
 import com.gildongmu.dduru.data.remote.service.PostService
 import com.gildongmu.dduru.domain.createPost.repository.CreatePostRepository
+import com.gildongmu.dduru.domain.createPost.repository.PopularTagRepository
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.AgeSectionUiState
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiAction
 import com.gildongmu.dduru.presentation.feature.matching.createPost.uistate.DateSectionUiState
@@ -28,7 +28,8 @@ import kotlinx.coroutines.flow.asStateFlow
 @HiltViewModel
 class MatchingEditPostViewModel @Inject constructor(
     private val postService: PostService,
-    private val createPostRepository: CreatePostRepository
+    private val createPostRepository: CreatePostRepository,
+    private val popularTagRepository: PopularTagRepository
 ) : ViewModel() {
     private val _uiState = MutableStateFlow<UiState<MatchingEditPostUiState>>(
         UiState.Success(
@@ -36,6 +37,16 @@ class MatchingEditPostViewModel @Inject constructor(
         )
     )
     val uiState: StateFlow<UiState<MatchingEditPostUiState>> = _uiState.asStateFlow()
+    private var popularTags: List<String> = emptyList()
+
+    init {
+        viewModelScope.launch {
+            popularTagRepository.getPopularTags().onSuccess { tags ->
+                popularTags = tags
+                updateUiState { it.copy(popularTags = tags) }
+            }
+        }
+    }
 
     fun loadPost(postId: Long) {
         viewModelScope.launch {
@@ -44,6 +55,7 @@ class MatchingEditPostViewModel @Inject constructor(
                 .onSuccess { post ->
                     _uiState.value = UiState.Success(MatchingEditPostUiState(
                         postId = postId,
+                        popularTags = popularTags,
                         dateSectionUiState = DateSectionUiState(
                             LocalDate.parse(post.startDate),
                             LocalDate.parse(post.endDate)
