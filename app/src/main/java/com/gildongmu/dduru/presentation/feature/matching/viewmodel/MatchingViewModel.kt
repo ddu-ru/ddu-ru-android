@@ -43,6 +43,8 @@ class MatchingViewModel @Inject constructor(
     private var searchJob: Job? = null
     private var postLoadJob: Job? = null
     private val likeRequestsInFlight = mutableSetOf<Long>()
+    private var likeRevision = 0L
+    private val likeOverrides = mutableMapOf<Long, LikeOverride>()
 
     init {
         loadPosts()
@@ -100,6 +102,7 @@ class MatchingViewModel @Inject constructor(
             likeRequestsInFlight.remove(id)
             return
         }
+        likeOverrides[id] = LikeOverride(++likeRevision, !previousItem.isLiked)
         updateMatchingUiState {
             copy(
                 posts = posts.map { post ->
@@ -108,8 +111,16 @@ class MatchingViewModel @Inject constructor(
             )
         }
         viewModelScope.launch {
-            runCatching { postService.toggleLike(id) }
-                .onFailure {
+            try {
+                val succeeded = try {
+                    postService.toggleLike(id).isSuccessful
+                } catch (exception: CancellationException) {
+                    throw exception
+                } catch (exception: Exception) {
+                    false
+                }
+                if (!succeeded) {
+                    likeOverrides.remove(id)
                     updateMatchingUiState {
                         copy(
                             posts = posts.map { post ->
@@ -118,18 +129,10 @@ class MatchingViewModel @Inject constructor(
                         )
                     }
                 }
-                .onSuccess { response ->
-                    if (!response.isSuccessful) {
-                        updateMatchingUiState {
-                            copy(
-                                posts = posts.map { post ->
-                                    if (post.id == id) post.copy(isLiked = previousItem.isLiked) else post
-                                }.toPersistentList()
-                            )
-                        }
-                    }
-                }
-                .also { likeRequestsInFlight.remove(id) }
+            } finally {
+                likeRequestsInFlight.remove(id)
+                if (postLoadJob?.isActive != true) likeOverrides.remove(id)
+            }
         }
     }
 
@@ -154,6 +157,7 @@ class MatchingViewModel @Inject constructor(
     private fun loadPosts(append: Boolean = false, showLoading: Boolean = true) {
         postLoadJob?.cancel()
         postLoadJob = viewModelScope.launch {
+            val likeRevisionAtRequest = likeRevision
             val current = (_uiState.value as? UiState.Success)?.data ?: MatchingUiState()
             if (append) {
                 _uiState.value = UiState.Success(current.copy(isLoadingMore = true))
@@ -179,12 +183,11 @@ class MatchingViewModel @Inject constructor(
                 )
                 val data = response.data ?: error("게시글 목록 응답이 비어있어요.")
                 val latest = (_uiState.value as? UiState.Success)?.data ?: current
-                val latestPostsById = latest.posts.associateBy { it.id }
                 val responsePosts = data.posts.map { postResponse ->
                     val post = postResponse.toUiModel()
-                    latestPostsById[post.id]
-                        ?.let { post.copy(isLiked = it.isLiked) }
-                        ?: post
+                    likeOverrides[post.id]
+                        ?.takeIf { it.revision > likeRevisionAtRequest }
+                        ?.let { post.copy(isLiked = it.isLiked) } ?: post
                 }
                 _uiState.value = UiState.Success(
                     latest.copy(
@@ -195,6 +198,7 @@ class MatchingViewModel @Inject constructor(
                         isLoadingMore = false
                     )
                 )
+                likeOverrides.keys.removeAll { it !in likeRequestsInFlight }
             } catch (exception: CancellationException) {
                 throw exception
             } catch (exception: Exception) {
@@ -219,6 +223,8 @@ class MatchingViewModel @Inject constructor(
     private companion object {
         const val SEARCH_DEBOUNCE_MILLIS = 300L
     }
+
+    private data class LikeOverride(val revision: Long, val isLiked: Boolean)
 
     private fun PopularDestination.toFilterOption() = MatchingDestinationOption(
         id = id,

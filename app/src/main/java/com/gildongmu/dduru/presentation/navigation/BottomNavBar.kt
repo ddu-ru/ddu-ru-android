@@ -49,6 +49,8 @@ import com.gildongmu.dduru.core.common.extension.rememberDduruHazeState
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import dev.chrisbanes.haze.HazeState
 
+internal val BottomNavBarHeight = 108.dp
+
 @Composable
 fun BottomNavBar(
     items: List<BottomNavItem>,
@@ -90,7 +92,7 @@ private fun BottomNavBackground(
     Box(
         modifier = modifier
             .fillMaxWidth()
-            .height(108.dp)
+            .height(BottomNavBarHeight)
     ) {
         Box(
             modifier = Modifier
