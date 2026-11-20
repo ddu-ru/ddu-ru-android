@@ -109,6 +109,7 @@ android {
 }
 
 dependencies {
+    testImplementation(libs.junit)
     implementation(libs.androidx.compose.material)
     implementation(libs.androidx.monitor)
     implementation(libs.androidx.junit.ktx)

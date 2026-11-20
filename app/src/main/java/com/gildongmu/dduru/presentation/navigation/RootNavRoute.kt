@@ -16,7 +16,12 @@ sealed interface RootNavRoute : NavKey {
 
     @Serializable data object Main : RootNavRoute
 
-    @Serializable data class MainTab(val bottomNavRoute: BottomNavRoute) : RootNavRoute
+    @Serializable
+    data class MainTab(
+        val bottomNavRoute: BottomNavRoute,
+        val initialDestinationId: Long? = null,
+        val requestId: Long = 0L
+    ) : RootNavRoute
 
     @Serializable data object HomeNotification : RootNavRoute
 

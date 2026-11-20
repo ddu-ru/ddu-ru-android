@@ -38,10 +38,18 @@ class MatchingViewModel @Inject constructor(
     val sideEffect: SharedFlow<MatchingSideEffect> = _sideEffect.asSharedFlow()
     private var searchJob: Job? = null
     private var postLoadJob: Job? = null
+    private var isInitialized = false
+    private var destinationOptions = emptyList<MatchingDestinationOption>()
 
-    init {
-        loadPosts()
+    fun initialize(initialDestinationId: Long? = null) {
+        if (isInitialized) return
+        isInitialized = true
+        val initialState = MatchingUiState(
+            filters = MatchingFilterOptions(destinationId = initialDestinationId)
+        )
+        _uiState.value = UiState.Success(initialState)
         loadDestinationOptions()
+        loadPosts()
     }
 
     fun onNotificationClick() {
@@ -145,6 +153,7 @@ class MatchingViewModel @Inject constructor(
                 _uiState.value = UiState.Success(
                     current.copy(
                         posts = (if (append) current.posts + data.posts.map { it.toUiModel() } else data.posts.map { it.toUiModel() }).toPersistentList(),
+                        destinationOptions = destinationOptions,
                         nextCursor = data.nextCursor,
                         nextCursorValue = data.nextCursorValue,
                         hasNext = data.hasNext,
@@ -165,8 +174,9 @@ class MatchingViewModel @Inject constructor(
         viewModelScope.launch {
             destinationRepository.getPopularDestinations()
                 .onSuccess { destinations ->
+                    destinationOptions = destinations.map { it.toFilterOption() }
                     updateMatchingUiState {
-                        copy(destinationOptions = destinations.map { it.toFilterOption() })
+                        copy(destinationOptions = destinationOptions)
                     }
                 }
         }

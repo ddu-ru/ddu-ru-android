@@ -6,10 +6,15 @@ import androidx.compose.animation.ExitTransition
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableLongStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import androidx.lifecycle.viewmodel.navigation3.rememberViewModelStoreNavEntryDecorator
 import androidx.navigation3.runtime.NavEntry
 import androidx.navigation3.runtime.rememberNavBackStack
+import androidx.navigation3.runtime.rememberSaveableStateHolderNavEntryDecorator
 import androidx.navigation3.ui.NavDisplay
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.presentation.feature.chat.screen.ChatImageViewerScreen
@@ -65,6 +70,17 @@ fun RootNavigation(
             rootBackStack.removeLastOrNull()
             rootBackStack.add(route)
         }
+        var matchingRequestId by rememberSaveable { mutableLongStateOf(0L) }
+        fun navigateToMatchingDestination(destinationId: Long) {
+            matchingRequestId += 1
+            replaceTop(
+                RootNavRoute.MainTab(
+                    bottomNavRoute = BottomNavRoute.Matching,
+                    initialDestinationId = destinationId,
+                    requestId = matchingRequestId
+                )
+            )
+        }
         LaunchedEffect(pendingNotificationRoute) {
             val route = pendingNotificationRoute ?: return@LaunchedEffect
             if (startDestination !is RootNavRoute.Login) {
@@ -83,6 +99,10 @@ fun RootNavigation(
 
         NavDisplay(
             backStack = rootBackStack,
+            entryDecorators = listOf(
+                rememberSaveableStateHolderNavEntryDecorator(),
+                rememberViewModelStoreNavEntryDecorator()
+            ),
             transitionSpec = {
                 ContentTransform(EnterTransition.None, ExitTransition.None)
             },
@@ -167,6 +187,10 @@ fun RootNavigation(
                             onNavigateToTravelStyleSurvey = {
                                 rootBackStack.add(RootNavRoute.TravelStyleSurvey)
                             },
+                            onNavigateToTravelPreferences = {
+                                rootBackStack.add(RootNavRoute.ProfileEditPreferences)
+                            },
+                            onNavigateToMatchingDestination = ::navigateToMatchingDestination,
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             }
@@ -196,10 +220,15 @@ fun RootNavigation(
                             onNavigateToTravelStyleSurvey = {
                                 rootBackStack.add(RootNavRoute.TravelStyleSurvey)
                             },
+                            onNavigateToTravelPreferences = {
+                                rootBackStack.add(RootNavRoute.ProfileEditPreferences)
+                            },
+                            onNavigateToMatchingDestination = ::navigateToMatchingDestination,
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             },
-                            initialRoute = route.bottomNavRoute
+                            initialRoute = route.bottomNavRoute,
+                            initialDestinationId = route.initialDestinationId
                         )
                     }
 
