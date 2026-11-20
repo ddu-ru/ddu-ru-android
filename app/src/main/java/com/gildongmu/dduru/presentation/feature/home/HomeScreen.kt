@@ -24,6 +24,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
@@ -58,6 +60,11 @@ fun HomeRoute(
     viewModel: HomeViewModel = hiltViewModel()
 ) {
     val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.onRetrySurveyStateClick()
+        viewModel.onRetryDestinationPreferenceClick()
+    }
 
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collectLatest { sideEffect ->
@@ -101,6 +108,7 @@ fun HomeRoute(
                 onTravelStyleSurveyClick = viewModel::onTravelStyleSurveyClick,
                 onTravelPreferencesClick = viewModel::onTravelPreferencesClick,
                 onRetrySurveyClick = viewModel::onRetrySurveyStateClick,
+                onRetryAiMatchingClick = viewModel::onRetryAiMatchingClick,
                 onRetryDestinationPreferenceClick = viewModel::onRetryDestinationPreferenceClick,
                 onCompanionMoreClick = viewModel::onCompanionMoreClick,
                 onCompanionClick = viewModel::onCompanionClick,
@@ -127,6 +135,7 @@ private fun HomeScreen(
     onTravelStyleSurveyClick: () -> Unit,
     onTravelPreferencesClick: () -> Unit,
     onRetrySurveyClick: () -> Unit,
+    onRetryAiMatchingClick: () -> Unit,
     onRetryDestinationPreferenceClick: () -> Unit,
     onCompanionMoreClick: () -> Unit,
     onCompanionClick: (Long) -> Unit,
@@ -191,10 +200,14 @@ private fun HomeScreen(
                         matchUsedCount = uiState.aiMatchingUsedCount,
                         data = uiState.aiMatchingCard,
                         surveyState = uiState.surveyState,
+                        isEnabled = uiState.isAiMatchingEnabled,
+                        loadFailed = uiState.aiMatchingLoadFailed,
+                        isRefreshing = uiState.isAiMatchingRefreshing,
                         onPass = onAiMatchingPassClick,
                         onAccept = onAiMatchingAcceptClick,
                         onSurveyClick = onTravelStyleSurveyClick,
                         onRetryClick = onRetrySurveyClick,
+                        onRetryRecommendationClick = onRetryAiMatchingClick,
                         isRetrying = uiState.isSurveyStateRefreshing
                     )
                 }
@@ -292,6 +305,7 @@ private fun HomeScreenPreview() {
             onTravelStyleSurveyClick = {},
             onTravelPreferencesClick = {},
             onRetrySurveyClick = {},
+            onRetryAiMatchingClick = {},
             onRetryDestinationPreferenceClick = {},
             onCompanionMoreClick = {},
             onCompanionClick = {},

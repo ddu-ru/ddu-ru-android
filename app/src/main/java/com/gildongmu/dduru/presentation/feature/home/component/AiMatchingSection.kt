@@ -36,6 +36,10 @@ fun AiMatchingSection(
     onAccept: () -> Unit,
     onSurveyClick: () -> Unit,
     onRetryClick: () -> Unit,
+    onRetryRecommendationClick: () -> Unit = {},
+    isEnabled: Boolean = true,
+    loadFailed: Boolean = false,
+    isRefreshing: Boolean = false,
     isRetrying: Boolean = false,
     modifier: Modifier = Modifier
 ) {
@@ -103,6 +107,15 @@ fun AiMatchingSection(
                     }
                 }
             }
+        } else if (!isEnabled) {
+            AiMatchingMessageCard(message = "현재 여행 메이트 추천을 이용할 수 없어요.")
+        } else if (loadFailed) {
+            AiMatchingMessageCard(
+                message = "추천을 불러오지 못했어요.\n다시 확인해 주세요.",
+                actionLabel = if (isRefreshing) "확인 중" else "다시 시도",
+                onAction = onRetryRecommendationClick,
+                isActionEnabled = !isRefreshing
+            )
         } else if (data != null && matchUsedCount < DAILY_AI_MATCHING_LIMIT) {
             AiMatchingCard(
                 data = data,
@@ -112,12 +125,51 @@ fun AiMatchingSection(
                     .fillMaxWidth()
                     .aspectRatio(AI_MATCHING_CARD_RATIO)
             )
-        } else {
+        } else if (matchUsedCount >= DAILY_AI_MATCHING_LIMIT) {
             AiMatchingFinishedCard(
                 modifier = Modifier
                     .fillMaxWidth()
                     .aspectRatio(AI_MATCHING_CARD_RATIO)
             )
+        } else {
+            AiMatchingMessageCard(message = "지금 추천할 여행 메이트가 없어요.")
+        }
+    }
+}
+
+@Composable
+private fun AiMatchingMessageCard(
+    message: String,
+    actionLabel: String? = null,
+    onAction: () -> Unit = {},
+    isActionEnabled: Boolean = true
+) {
+    Box(
+        modifier = Modifier
+            .fillMaxWidth()
+            .aspectRatio(AI_MATCHING_CARD_RATIO)
+            .background(DduruTheme.colors.gray0, RoundedCornerShape(16.dp))
+            .padding(24.dp),
+        contentAlignment = Alignment.Center
+    ) {
+        Column(horizontalAlignment = Alignment.CenterHorizontally) {
+            Text(
+                text = message,
+                style = DduruTheme.typography.Body1,
+                color = DduruTheme.colors.gray700,
+                textAlign = TextAlign.Center
+            )
+            if (actionLabel != null) {
+                Spacer(modifier = Modifier.height(24.dp))
+                Button(
+                    onClick = onAction,
+                    enabled = isActionEnabled,
+                    shape = RoundedCornerShape(10.dp),
+                    colors = ButtonDefaults.buttonColors(containerColor = DduruTheme.colors.primary)
+                ) {
+                    Text(text = actionLabel)
+                }
+            }
         }
     }
 }

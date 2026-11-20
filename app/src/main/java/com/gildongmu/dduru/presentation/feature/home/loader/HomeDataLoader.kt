@@ -55,7 +55,7 @@ class HomeDataLoader @Inject constructor(
                     }
                     val mateRecommendations = async {
                         if (config.isSectionEnabled(SECTION_MATE_RECOMMENDATIONS)) {
-                            safeRequest { homeRepository.getHomeMateRecommendations() }.getOrNull()
+                            loadMateRecommendations()
                         } else {
                             null
                         }
@@ -100,7 +100,8 @@ class HomeDataLoader @Inject constructor(
                     val surveyState = async { loadSurveyState() }
                     val destinationPreferenceState = async { loadDestinationPreferenceState() }
 
-                    val recommendations = mateRecommendations.await()
+                    val recommendationResult = mateRecommendations.await()
+                    val recommendations = recommendationResult?.getOrNull()
                     val popular = popularDestinations.await()
                     HomeUiState(
                         upcomingTrip = upcomingTrip.await() ?: HomeUiState().upcomingTrip,
@@ -112,6 +113,8 @@ class HomeDataLoader @Inject constructor(
                         popularDestinationUpdatedText = popular?.updatedAt?.toUpdatedText() ?: "방금 전",
                         aiMatchingUsedCount = recommendations?.usedCount() ?: 0,
                         aiMatchingCard = recommendations?.toCardOrNull(),
+                        isAiMatchingEnabled = recommendationResult != null,
+                        aiMatchingLoadFailed = recommendationResult?.isFailure == true,
                         surveyState = surveyState.await(),
                         destinationPreferenceState = destinationPreferenceState.await(),
                         superHosts = superHosts.await(),
@@ -130,6 +133,9 @@ class HomeDataLoader @Inject constructor(
     suspend fun loadSurveyState(): HomeSurveyState =
         safeRequest { onboardingStatusRepository.getSurveyStatus() }
             .fold({ it.toHomeSurveyState() }, { HomeSurveyState.UNAVAILABLE })
+
+    suspend fun loadMateRecommendations(): Result<HomeMateRecommendations> =
+        safeRequest { homeRepository.getHomeMateRecommendations() }
 
     suspend fun loadDestinationPreferenceState(): HomeDestinationPreferenceState =
         safeRequest { myPageRepository.getTravelPreference() }
@@ -156,11 +162,11 @@ class HomeDataLoader @Inject constructor(
     private fun HomeInitialConfig.isSectionEnabled(key: String): Boolean =
         sections.firstOrNull { it.key == key }?.enabled ?: true
 
-    private fun HomeMateRecommendations.usedCount(): Int =
+    fun HomeMateRecommendations.usedCount(): Int =
         (if (isAvailable) DAILY_AI_MATCHING_LIMIT - remainingFreeCount else DAILY_AI_MATCHING_LIMIT)
             .coerceIn(0, DAILY_AI_MATCHING_LIMIT)
 
-    private fun HomeMateRecommendations.toCardOrNull() =
+    fun HomeMateRecommendations.toCardOrNull() =
         recommendations.firstOrNull()
             ?.toAiMatchingCardData()
             .takeIf { isAvailable }

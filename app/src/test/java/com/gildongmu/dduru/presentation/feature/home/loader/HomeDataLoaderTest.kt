@@ -49,16 +49,37 @@ class HomeDataLoaderTest {
         assertEquals(HomeSurveyState.NOT_COMPLETED, loader.loadSurveyState())
     }
 
+    @Test
+    fun `failed recommendations are distinct from disabled recommendations`() = runBlocking {
+        val failedLoader = createLoader(
+            enabledSections = setOf("MATE_RECOMMENDATIONS"),
+            mateResult = Result.failure(IllegalStateException("offline"))
+        )
+        val disabledLoader = createLoader()
+
+        val failed = failedLoader().getOrThrow()
+        val disabled = disabledLoader().getOrThrow()
+
+        assertTrue(failed.isAiMatchingEnabled)
+        assertTrue(failed.aiMatchingLoadFailed)
+        assertFalse(disabled.isAiMatchingEnabled)
+        assertFalse(disabled.aiMatchingLoadFailed)
+    }
+
     private fun createLoader(
         enabledSections: Set<String> = emptySet(),
-        surveyResult: Result<SurveyStatus> = Result.success(SurveyStatus.COMPLETED)
+        surveyResult: Result<SurveyStatus> = Result.success(SurveyStatus.COMPLETED),
+        mateResult: Result<HomeMateRecommendations> = Result.failure(IllegalStateException("offline"))
     ) = HomeDataLoader(
-        homeRepository = StubHomeRepository(enabledSections),
+        homeRepository = StubHomeRepository(enabledSections, mateResult),
         myPageRepository = StubMyPageRepository(),
         onboardingStatusRepository = StubOnboardingStatusRepository(surveyResult)
     )
 
-    private class StubHomeRepository(enabledSections: Set<String>) : HomeRepository {
+    private class StubHomeRepository(
+        enabledSections: Set<String>,
+        private val mateResult: Result<HomeMateRecommendations>
+    ) : HomeRepository {
         private val config = HomeInitialConfig(
             userAccessStatus = "ACTIVE",
             sections = SECTION_KEYS.map { key ->
@@ -73,8 +94,7 @@ class HomeDataLoaderTest {
 
         override suspend fun getHomeInitialConfig() = Result.success(config)
 
-        override suspend fun getHomeMateRecommendations(): Result<HomeMateRecommendations> =
-            error("Mate recommendations are disabled in this test")
+        override suspend fun getHomeMateRecommendations(): Result<HomeMateRecommendations> = mateResult
 
         override suspend fun getHomePopularDestinations(): Result<HomePopularDestinations> =
             error("Popular destinations are disabled in this test")

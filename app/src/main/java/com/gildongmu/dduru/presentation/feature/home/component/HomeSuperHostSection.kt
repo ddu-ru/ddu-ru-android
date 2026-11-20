@@ -32,7 +32,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.painter.ColorPainter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
@@ -174,7 +173,7 @@ fun HomeSuperHostCard(
                         id = if (item.isLiked) R.drawable.ic_heart_rounded_filled else R.drawable.ic_heart_rounded
                     ),
                     contentDescription = if (item.isLiked) "찜 해제" else "찜하기",
-                    tint = if (item.isLiked) Color.Red else DduruTheme.colors.gray0,
+                    tint = if (item.isLiked) DduruTheme.colors.validationRed else DduruTheme.colors.gray0,
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(end = 16.dp, bottom = 44.dp)

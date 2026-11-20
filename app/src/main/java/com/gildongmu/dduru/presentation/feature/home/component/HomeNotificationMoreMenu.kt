@@ -7,7 +7,7 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
@@ -61,7 +61,7 @@ fun HomeNotificationMoreMenu(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(32.dp)
+                    .heightIn(min = 32.dp)
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -90,7 +90,7 @@ fun HomeNotificationMoreMenu(
             Row(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .height(32.dp)
+                    .heightIn(min = 32.dp)
                     .padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -146,7 +146,7 @@ private fun HomeNotificationMenuItem(
     Row(
         modifier = modifier
             .fillMaxWidth()
-            .height(32.dp)
+            .heightIn(min = 32.dp)
             .noRippleClickable(onClick = { if (enabled) onClick() })
             .padding(8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -162,8 +162,7 @@ private fun HomeNotificationMenuItem(
         Text(
             text = text,
             style = DduruTheme.typography.Caption2,
-            color = if (enabled) DduruTheme.colors.gray700 else DduruTheme.colors.gray400,
-            maxLines = 1
+            color = if (enabled) DduruTheme.colors.gray700 else DduruTheme.colors.gray400
         )
     }
 }

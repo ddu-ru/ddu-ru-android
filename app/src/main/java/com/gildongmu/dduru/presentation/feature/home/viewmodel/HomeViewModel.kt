@@ -182,6 +182,33 @@ class HomeViewModel @Inject constructor(
         }
     }
 
+    fun onRetryAiMatchingClick() {
+        val currentState = (_uiState.value as? UiState.Success)?.data ?: return
+        if (!currentState.isAiMatchingEnabled || currentState.isAiMatchingRefreshing) return
+
+        updateHomeUiState { copy(isAiMatchingRefreshing = true) }
+        viewModelScope.launch {
+            val result = homeDataLoader.loadMateRecommendations()
+            updateHomeUiState {
+                result.fold(
+                    onSuccess = { recommendations ->
+                        with(homeDataLoader) {
+                            copy(
+                                aiMatchingUsedCount = recommendations.usedCount(),
+                                aiMatchingCard = recommendations.toCardOrNull(),
+                                aiMatchingLoadFailed = false,
+                                isAiMatchingRefreshing = false
+                            )
+                        }
+                    },
+                    onFailure = {
+                        copy(aiMatchingLoadFailed = true, isAiMatchingRefreshing = false)
+                    }
+                )
+            }
+        }
+    }
+
     fun onRetryDestinationPreferenceClick() {
         val currentState = (_uiState.value as? UiState.Success)?.data ?: return
         if (currentState.isDestinationPreferenceRefreshing) return
