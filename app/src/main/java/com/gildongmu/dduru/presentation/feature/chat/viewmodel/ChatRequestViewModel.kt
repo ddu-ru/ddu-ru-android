@@ -7,6 +7,7 @@ import com.gildongmu.dduru.core.common.extension.toRelativeTime
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.domain.entity.ParticipationException
 import com.gildongmu.dduru.domain.repository.ParticipationRepository
+import com.gildongmu.dduru.presentation.component.DduruErrorToasts
 import com.gildongmu.dduru.presentation.feature.chat.effect.ChatRequestSideEffect
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestItemUiState
 import com.gildongmu.dduru.presentation.feature.chat.uistate.ChatRequestSectionUiState
@@ -44,7 +45,7 @@ class ChatRequestViewModel @Inject constructor(
                     _sideEffect.emit(ChatRequestSideEffect.NavigateToChatRoom(privateRoomId))
                     loadParticipations()
                 }
-                .onFailure { showError(it, "연락을 시작하지 못했어요. 다시 시도해 주세요.") }
+                .onFailure { showError(it) }
         }
     }
 
@@ -55,7 +56,7 @@ class ChatRequestViewModel @Inject constructor(
                     loadParticipations(showConfirmedDialog = true, confirmedGroupRoomId = groupRoomId)
                 }
                 .onFailure {
-                    showError(it, "수락하지 못했어요. 다시 시도해 주세요.")
+                    showError(it)
                     loadParticipations()
                 }
         }
@@ -66,15 +67,26 @@ class ChatRequestViewModel @Inject constructor(
             participationRepository.rejectParticipation(participationId.toLong())
                 .onSuccess { loadParticipations() }
                 .onFailure {
-                    showError(it, "거절하지 못했어요. 다시 시도해 주세요.")
+                    showError(it)
                     loadParticipations()
                 }
         }
     }
 
-    private suspend fun showError(throwable: Throwable, defaultMessage: String) {
-        val message = (throwable as? ParticipationException)?.message?.takeIf { it.isNotBlank() } ?: defaultMessage
-        _sideEffect.emit(ChatRequestSideEffect.ShowMessage(message))
+    private suspend fun showError(throwable: Throwable) {
+        val toast = when ((throwable as? ParticipationException)?.errorCode) {
+            "PARTICIPATION_NOT_FOUND",
+            "DUPLICATE_PARTICIPATION",
+            "PARTICIPATION_CONTACT_NOT_ALLOWED",
+            "PARTICIPATION_APPROVAL_NOT_ALLOWED",
+            "PARTICIPATION_REJECTION_NOT_ALLOWED" -> DduruErrorToasts.RequestProcessed
+            "RECRUITMENT_CLOSED", "RECRUITMENT_FULL" -> DduruErrorToasts.ClosedMeetup
+            "ACCESS_DENIED", "POST_ACCESS_DENIED" -> DduruErrorToasts.PermissionDenied
+            "POST_NOT_FOUND" -> DduruErrorToasts.PostUnavailable
+            null -> DduruErrorToasts.ServiceFailed
+            else -> DduruErrorToasts.ServerFailed
+        }
+        _sideEffect.emit(ChatRequestSideEffect.ShowError(toast))
     }
 
     fun onConfirmedMoveClick() {
@@ -97,7 +109,7 @@ class ChatRequestViewModel @Inject constructor(
         )
     }
 
-    private fun loadParticipations(
+    fun loadParticipations(
         showConfirmedDialog: Boolean = false,
         confirmedGroupRoomId: Long? = null
     ) {

@@ -86,4 +86,42 @@ class SurveyRepositoryImpl @Inject constructor(
             Result.failure(Exception("알 수 없는 오류: ${e.message}"))
         }
     }
+
+    override suspend fun skipSurvey(): Result<Unit> {
+        return try {
+            val response = surveyRemoteDataSource.skipSurvey()
+            if (response.isSuccessful) {
+                Result.success(Unit)
+            } else {
+                Result.failure(Exception("설문을 건너뛰지 못했어요."))
+            }
+        } catch (e: java.io.IOException) {
+            Result.failure(Exception("네트워크 오류: 인터넷 연결을 확인해주세요."))
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(Exception("설문을 건너뛰지 못했어요."))
+        }
+    }
+
+    override suspend fun updateSurvey(answers: SurveyAnswers): Result<SurveyResult> {
+        return try {
+            val response = surveyRemoteDataSource.updateSurvey(answers.toRequest())
+            val data = response.data
+            if (response.status == 200 && data != null) {
+                Result.success(data.toDomain())
+            } else {
+                Result.failure(Exception("설문 수정에 실패했어요."))
+            }
+        } catch (e: retrofit2.HttpException) {
+            val message = if (e.code() == 429) "아직 다시 테스트할 수 없어요." else "설문 수정에 실패했어요."
+            Result.failure(Exception(message))
+        } catch (e: java.io.IOException) {
+            Result.failure(Exception("네트워크 오류: 인터넷 연결을 확인해주세요."))
+        } catch (e: kotlinx.coroutines.CancellationException) {
+            throw e
+        } catch (e: Exception) {
+            Result.failure(Exception("설문 수정에 실패했어요."))
+        }
+    }
 }

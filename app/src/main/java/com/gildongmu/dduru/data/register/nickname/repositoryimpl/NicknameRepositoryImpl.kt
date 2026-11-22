@@ -1,14 +1,17 @@
 package com.gildongmu.dduru.data.register.nickname.repositoryimpl
 
 import com.gildongmu.dduru.data.register.nickname.service.NicknameService
+import com.gildongmu.dduru.data.remote.toExceptionResponse
 import com.gildongmu.dduru.domain.register.nickname.entity.NicknameErrorMapper
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
+import kotlinx.serialization.json.Json
 import retrofit2.HttpException
 
 class NicknameRepositoryImpl @Inject constructor(
-    private val nicknameService: NicknameService
+    private val nicknameService: NicknameService,
+    private val json: Json
 ) : NicknameRepository {
 
     override suspend fun getRandomNickname(): Result<String> {
@@ -31,11 +34,12 @@ class NicknameRepositoryImpl @Inject constructor(
             val isAvailable = response.status == 200 && response.data != false
             Result.success(isAvailable)
         } catch (e: HttpException) {
-            Result.failure(Exception(NicknameErrorMapper.toMessage(e.code())))
+            val error = e.toExceptionResponse(json)
+            Result.failure(Exception(NicknameErrorMapper.toMessage(error.status, error.errorCode)))
         } catch (e: CancellationException) {
             throw e
         } catch (e: Exception) {
-            Result.failure(Exception(e.message ?: "이미 사용중인 닉네임입니다."))
+            Result.failure(Exception("네트워크 문제가 발생했어요."))
         }
     }
 }

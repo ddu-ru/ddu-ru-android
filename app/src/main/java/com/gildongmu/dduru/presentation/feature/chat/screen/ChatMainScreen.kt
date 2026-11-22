@@ -37,10 +37,10 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import androidx.lifecycle.repeatOnLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.entity.chat.ChatRoomType
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatActionBar
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatFilterTab
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatRoomCard
@@ -90,7 +90,7 @@ fun ChatMainRoute(
             requestContent = { ChatRequestRoute(onNavigateToChatRoom = onNavigateToChatRoom) },
             applicationContent = { ChatApplicationRoute(onNavigateToChatRoom = onNavigateToChatRoom) }
         )
-        is UiState.Failure -> DduruFailureScreen(message = "채팅 목록을 불러올 수 없습니다.")
+        is UiState.Failure -> DduruServiceFailureScreen(onRetryClick = viewModel::loadChatRooms)
         else -> Unit
     }
 }

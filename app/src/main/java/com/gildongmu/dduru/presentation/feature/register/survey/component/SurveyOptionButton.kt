@@ -5,7 +5,7 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
+import androidx.compose.foundation.layout.heightIn
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
@@ -24,14 +24,13 @@ fun SurveyOptionButton(
     text: String,
     isSelected: Boolean,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier,
-    maxLines: Int = 1
+    modifier: Modifier = Modifier
 ) {
     Box(
         contentAlignment = Alignment.Center,
         modifier = modifier
             .fillMaxWidth()
-            .height(66.dp)
+            .heightIn(min = 66.dp)
             .border(
                 width = if (isSelected) 2.dp else 1.dp,
                 color = if (isSelected) DduruTheme.colors.primary else DduruTheme.colors.gray200,
@@ -47,14 +46,13 @@ fun SurveyOptionButton(
             )
             .clip(OptionShape)
             .clickable(onClick = onClick)
-            .padding(horizontal = 8.dp)
+            .padding(horizontal = 16.dp, vertical = 12.dp)
     ) {
         Text(
             text = text,
             style = DduruTheme.typography.Title1,
             color = if (isSelected) DduruTheme.colors.primary else DduruTheme.colors.gray700,
-            textAlign = TextAlign.Center,
-            maxLines = maxLines
+            textAlign = TextAlign.Center
         )
     }
 }

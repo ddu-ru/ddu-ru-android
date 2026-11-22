@@ -19,6 +19,7 @@ import androidx.core.content.ContextCompat
 import androidx.lifecycle.lifecycleScope
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.repository.FcmTokenRepository
+import com.gildongmu.dduru.presentation.component.DduruErrorToastHost
 import com.gildongmu.dduru.presentation.navigation.RootNavRoute
 import com.gildongmu.dduru.presentation.navigation.RootNavigation
 import com.gildongmu.dduru.presentation.navigation.toPushNotificationRoute
@@ -49,13 +50,15 @@ class MainActivity : ComponentActivity() {
 
         setContent {
             DduruTheme {
-                Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
-                    RootNavigation(
-                        pendingNotificationRoute = pendingNotificationRoute,
-                        onNotificationRouteConsumed = {
-                            pendingNotificationRoute = null
-                        }
-                    )
+                DduruErrorToastHost {
+                    Scaffold(modifier = Modifier.fillMaxSize()) { innerPadding ->
+                        RootNavigation(
+                            pendingNotificationRoute = pendingNotificationRoute,
+                            onNotificationRouteConsumed = {
+                                pendingNotificationRoute = null
+                            }
+                        )
+                    }
                 }
             }
         }

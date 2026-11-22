@@ -51,7 +51,7 @@ fun NicknameInput(
                 value = text,
                 onValueChange = onValueChange,
                 modifier = Modifier.weight(1f),
-                maxLength = 10,
+                maxLength = 14,
                 placeholder = "닉네임을 입력하세요"
             )
 

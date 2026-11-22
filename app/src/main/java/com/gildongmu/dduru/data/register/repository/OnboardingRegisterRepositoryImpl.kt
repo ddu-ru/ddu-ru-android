@@ -3,15 +3,17 @@ package com.gildongmu.dduru.data.register.repository
 import com.gildongmu.dduru.data.local.PhoneVerificationTokenLocalDataSource
 import com.gildongmu.dduru.data.register.api.OnboardingRegisterApi
 import com.gildongmu.dduru.data.register.model.OnboardingRegisterRequest
-import com.gildongmu.dduru.domain.entity.ExceptionResponse
+import com.gildongmu.dduru.data.remote.toExceptionResponse
 import com.gildongmu.dduru.domain.register.OnboardingRegisterRepository
 import javax.inject.Inject
 import kotlin.coroutines.cancellation.CancellationException
 import kotlinx.coroutines.flow.first
+import kotlinx.serialization.json.Json
 
 class OnboardingRegisterRepositoryImpl @Inject constructor(
     private val api: OnboardingRegisterApi,
-    private val verificationTokenLocalDataSource: PhoneVerificationTokenLocalDataSource
+    private val verificationTokenLocalDataSource: PhoneVerificationTokenLocalDataSource,
+    private val json: Json
 ) : OnboardingRegisterRepository {
     override suspend fun onboardingRegister(
         gender: String,
@@ -32,9 +34,7 @@ class OnboardingRegisterRepositoryImpl @Inject constructor(
             )
 
             if (response.code() != 204) {
-                throw ExceptionResponse(
-                    status = response.code()
-                )
+                throw response.toExceptionResponse(json)
             }
             Result.success(Unit)
         } catch (e: CancellationException) {

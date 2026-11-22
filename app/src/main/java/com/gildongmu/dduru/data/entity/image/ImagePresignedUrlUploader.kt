@@ -6,6 +6,8 @@ import android.webkit.MimeTypeMap
 import com.gildongmu.dduru.data.entity.image.api.ImagePresignedUrlApi
 import com.gildongmu.dduru.data.entity.image.model.ImageUploadFileRequest
 import com.gildongmu.dduru.data.entity.image.model.ImageUploadRequest
+import com.gildongmu.dduru.domain.entity.ImageUploadPolicyException
+import com.gildongmu.dduru.domain.entity.ImageUploadPolicyReason
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.UUID
 import javax.inject.Inject
@@ -18,6 +20,8 @@ import okhttp3.Request
 import okhttp3.RequestBody
 import okio.BufferedSink
 import okio.source
+
+private const val MAX_FILE_SIZE = 5L * 1024 * 1024
 
 class ImagePresignedUrlUploader @Inject constructor(
     @ApplicationContext private val context: Context,
@@ -37,6 +41,7 @@ class ImagePresignedUrlUploader @Inject constructor(
                 ?.use { it.length }
                 ?.takeIf { it > 0 }
                 ?: error("이미지 크기를 확인할 수 없어요.")
+            if (fileSize > MAX_FILE_SIZE) throw ImageUploadPolicyException(ImageUploadPolicyReason.TOO_LARGE)
             val presignedUrlRequest = ImageUploadRequest(
                 files = listOf(ImageUploadFileRequest(fileName = fileName, fileSize = fileSize))
             )
@@ -71,12 +76,14 @@ class ImagePresignedUrlUploader @Inject constructor(
         return (mimeExtension ?: pathExtension)
             ?.lowercase()
             ?.takeIf { it.isNotBlank() }
-            ?: error("지원하지 않는 이미지 형식이에요.")
+            ?: throw ImageUploadPolicyException(ImageUploadPolicyReason.UNSUPPORTED_FORMAT)
     }
 
     private fun validateExtension(extension: String) {
         val allowedExtensions = setOf("jpg", "jpeg", "png")
-        require(extension in allowedExtensions) { "jpg, jpeg, png 파일만 업로드할 수 있어요." }
+        if (extension !in allowedExtensions) {
+            throw ImageUploadPolicyException(ImageUploadPolicyReason.UNSUPPORTED_FORMAT)
+        }
     }
 
     private fun defaultMimeType(extension: String): String {

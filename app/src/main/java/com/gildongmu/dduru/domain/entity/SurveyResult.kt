@@ -15,5 +15,6 @@ data class SurveyResult(
     val descriptionLine1: String,
     val descriptionLine2: String,
     val descriptionLine3: String,
-    val imageUrl: String?
+    val imageUrl: String?,
+    val canRetake: Boolean = true
 )

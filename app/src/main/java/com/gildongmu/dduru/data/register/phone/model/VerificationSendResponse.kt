@@ -4,5 +4,6 @@ import kotlinx.serialization.Serializable
 
 @Serializable
 data class VerificationSendResponse(
-    val expiresAt: String
+    val expiresAt: String,
+    val resendAvailableAt: String? = null
 )

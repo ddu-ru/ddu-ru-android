@@ -29,6 +29,7 @@ import com.gildongmu.dduru.core.common.util.rememberGalleryLauncher
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.domain.register.model.SurveyStatus
+import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
 import com.gildongmu.dduru.presentation.component.SpeechBubble
 import com.gildongmu.dduru.presentation.feature.register.component.ValidationMessage
 import com.gildongmu.dduru.presentation.feature.register.profile.component.NicknameInput
@@ -60,10 +61,13 @@ fun ProfileSettingRoute(
         viewModel.onImageSelected(uri)
     }
 
+    val errorToast = LocalDduruErrorToast.current
+
     LaunchedEffect(Unit) {
         viewModel.sideEffect.collectLatest { sideEffect ->
             when (sideEffect) {
                 ProfileSideEffect.NavigateToMain -> onProfileComplete()
+                is ProfileSideEffect.ShowError -> errorToast.show(sideEffect.toast)
             }
         }
     }
