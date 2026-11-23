@@ -42,6 +42,7 @@ fun ThumbnailAndTagSection(
     onTagInputChange: (String) -> Unit,
     onThumbnailImageChange: () -> Unit,
     onAddTag: () -> Unit,
+    onAddPopularTag: (String) -> Unit,
     onRemoveTag: (String) -> Unit,
     modifier: Modifier = Modifier
 ) {
@@ -55,7 +56,7 @@ fun ThumbnailAndTagSection(
             uiModel = MatchingCreatePostStep.THUMBNAIL_AND_TAG.headerUiModel
         )
 
-        Spacer(modifier = Modifier.weight(24f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "대표사진",
@@ -63,7 +64,7 @@ fun ThumbnailAndTagSection(
             color = DduruTheme.colors.gray868
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         ThumbnailImageCard(
             regionName = uiState.regionName,
@@ -73,7 +74,7 @@ fun ThumbnailAndTagSection(
             onChangeClick = onThumbnailImageChange
         )
 
-        Spacer(modifier = Modifier.weight(40f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "해시태그",
@@ -81,7 +82,7 @@ fun ThumbnailAndTagSection(
             color = DduruTheme.colors.gray868
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         RoundedMatchingTextField(
             value = uiState.tagInput,
@@ -112,20 +113,24 @@ fun ThumbnailAndTagSection(
             )
         )
 
-        Spacer(modifier = Modifier.height(12.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
-            text = uiState.tagValidationMessage
-                ?: "한글은 4자 이하, 영문/숫자는 7자 이하로 입력해 주세요.",
+            text = if (uiState.hasTagLimitError) {
+                "한글은 4자 이하, 영문/숫자는 7자 이하로 입력해 주세요."
+            } else {
+                uiState.tagValidationMessage
+                    ?: "한글은 4자 이하, 영문/숫자는 7자 이하로 입력해 주세요."
+            },
             style = DduruTheme.typography.Caption2,
-            color = if (uiState.tagValidationMessage == null) {
+            color = if (uiState.tagValidationMessage == null || uiState.hasTagLimitError) {
                 DduruTheme.colors.gray400
             } else {
                 DduruTheme.colors.validationRed
             }
         )
 
-        Spacer(modifier = Modifier.height(40.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "추가된 태그",
@@ -133,7 +138,7 @@ fun ThumbnailAndTagSection(
             color = DduruTheme.colors.gray800
         )
 
-        Spacer(modifier = Modifier.weight(16f))
+        Spacer(modifier = Modifier.height(24.dp))
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -168,7 +173,17 @@ fun ThumbnailAndTagSection(
             }
         }
 
-        Spacer(modifier = Modifier.weight(16f))
+        if (uiState.hasTagLimitError) {
+            Spacer(modifier = Modifier.height(8.dp))
+
+            Text(
+                text = uiState.tagValidationMessage.orEmpty(),
+                style = DduruTheme.typography.Caption2,
+                color = DduruTheme.colors.validationRed
+            )
+        }
+
+        Spacer(modifier = Modifier.height(24.dp))
 
         Text(
             text = "인기 태그",
@@ -176,7 +191,7 @@ fun ThumbnailAndTagSection(
             color = DduruTheme.colors.gray800
         )
 
-        Spacer(modifier = Modifier.height(16.dp))
+        Spacer(modifier = Modifier.height(24.dp))
 
         FlowRow(
             modifier = Modifier.fillMaxWidth(),
@@ -189,12 +204,15 @@ fun ThumbnailAndTagSection(
                     textColor = DduruTheme.colors.gray700,
                     textStyle = DduruTheme.typography.Caption1,
                     backgroundColor = DduruTheme.colors.gray200,
-                    contentPadding = PaddingValues(12.dp)
+                    contentPadding = PaddingValues(12.dp),
+                    modifier = Modifier.clickable {
+                        onAddPopularTag(popularTag)
+                    }
                 )
             }
         }
 
-        Spacer(modifier = Modifier.weight(33f))
+        Spacer(modifier = Modifier.height(24.dp))
     }
 }
 
@@ -225,6 +243,7 @@ private fun ThumbnailAndTagSectionPreview() {
                 },
                 onThumbnailImageChange = {},
                 onAddTag = {},
+                onAddPopularTag = {},
                 onRemoveTag = {},
                 modifier = Modifier.padding(24.dp)
             )

@@ -20,6 +20,14 @@ fun DateSectionUiState.reduce(action: DateSectionUiAction): DateSectionUiState {
 }
 
 private fun DateSectionUiState.handleDateSelected(date: java.time.LocalDate): DateSectionUiState {
+    if (selectedStartDate != null && selectedEndDate != null) {
+        return copy(
+            selectedStartDate = date,
+            selectedEndDate = null,
+            selectionTarget = DateSelectionTarget.END
+        )
+    }
+
     return when (selectionTarget) {
         DateSelectionTarget.START -> {
             val updatedState = if (selectedEndDate != null && date.isAfter(selectedEndDate)) {

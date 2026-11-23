@@ -68,6 +68,7 @@ fun SingleLineTextField(
 
                     Text(
                         text = "${value.length}/$maxLength",
+                        modifier = Modifier.padding(end = 4.dp),
                         style = DduruTheme.typography.Caption2,
                         color = if (value.isEmpty()) {
                             DduruTheme.colors.gray500

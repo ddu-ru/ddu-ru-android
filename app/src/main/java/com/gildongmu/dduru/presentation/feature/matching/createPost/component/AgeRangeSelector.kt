@@ -2,6 +2,7 @@ package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
 import androidx.compose.foundation.Canvas
 import androidx.compose.foundation.gestures.detectDragGestures
+import androidx.compose.foundation.gestures.detectTapGestures
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -104,34 +105,38 @@ fun AgeRangeBar(
                     if (!enabled) {
                         baseModifier
                     } else {
-                        baseModifier.pointerInput(
-                            enabled,
-                            containerWidthPx
-                        ) {
-                            detectDragGestures(
-                                onDragStart = { offset ->
+                        baseModifier
+                            .pointerInput(enabled, containerWidthPx) {
+                                detectTapGestures { offset ->
                                     val index = xToIndex(offset.x)
-                                    dragStartIndex = index
                                     currentOnRangeChanged(ages[index], ages[index + 1])
-                                },
-                                onDrag = { change, _ ->
-                                    val start = dragStartIndex ?: return@detectDragGestures
-                                    val current = xToIndex(change.position.x)
-
-                                    val from = minOf(start, current)
-                                    val to = maxOf(start, current)
-
-                                    currentOnRangeChanged(ages[from], ages[to + 1])
-                                    change.consume()
-                                },
-                                onDragEnd = {
-                                    dragStartIndex = null
-                                },
-                                onDragCancel = {
-                                    dragStartIndex = null
                                 }
-                            )
-                        }
+                            }
+                            .pointerInput(enabled, containerWidthPx) {
+                                detectDragGestures(
+                                    onDragStart = { offset ->
+                                        val index = xToIndex(offset.x)
+                                        dragStartIndex = index
+                                        currentOnRangeChanged(ages[index], ages[index + 1])
+                                    },
+                                    onDrag = { change, _ ->
+                                        val start = dragStartIndex ?: return@detectDragGestures
+                                        val current = xToIndex(change.position.x)
+
+                                        val from = minOf(start, current)
+                                        val to = maxOf(start, current)
+
+                                        currentOnRangeChanged(ages[from], ages[to + 1])
+                                        change.consume()
+                                    },
+                                    onDragEnd = {
+                                        dragStartIndex = null
+                                    },
+                                    onDragCancel = {
+                                        dragStartIndex = null
+                                    }
+                                )
+                            }
                     }
                 }
         ) {
