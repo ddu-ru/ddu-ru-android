@@ -1,12 +1,13 @@
 package com.gildongmu.dduru.presentation.feature.register.survey
 
-import android.util.Log
 import androidx.activity.compose.BackHandler
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.ui.Modifier
 import androidx.hilt.navigation.compose.hiltViewModel
 import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
@@ -14,13 +15,15 @@ import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.presentation.feature.register.survey.screen.QuestionStart
 import com.gildongmu.dduru.presentation.feature.register.survey.screen.SurveyQuestionScreen
 import com.gildongmu.dduru.presentation.feature.register.survey.screen.SurveyResultScreen
-
 @Composable
 fun SurveyMainScreen(
     onSurveyComplete: () -> Unit,
     onBackPressed: () -> Unit,
     viewModel: SurveyViewModel = hiltViewModel(),
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    isFromMyPage: Boolean = false,
+    isRetake: Boolean = false,
+    onSurveySkipped: () -> Unit = {}
 ) {
     val currentQuestion by viewModel.currentQuestion.collectAsState()
     val surveyState by viewModel.surveyState.collectAsState()
@@ -28,9 +31,13 @@ fun SurveyMainScreen(
     val questions by viewModel.questions.collectAsState()
     val questionsLoading by viewModel.questionsLoading.collectAsState()
 
+    LaunchedEffect(isRetake) {
+        viewModel.setRetakeMode(isRetake)
+    }
+
     BackHandler(enabled = true) {
         when {
-            uiState is SurveyUiState.Success -> { /* 결과 화면에서는 뒤로 막기 */ }
+            uiState is SurveyUiState.Success -> { }
             currentQuestion > 0 -> viewModel.previousQuestion()
             else -> onBackPressed()
         }
@@ -67,7 +74,13 @@ fun SurveyMainScreen(
             currentQuestion == 0 -> {
                 QuestionStart(
                     onNextClick = { viewModel.nextQuestion() },
-                    onGuestClick = onBackPressed
+                    onGuestClick = {
+                        if (isFromMyPage) {
+                            onBackPressed()
+                        } else {
+                            viewModel.skipSurvey(onSurveySkipped)
+                        }
+                    }
                 )
             }
 
@@ -100,38 +113,39 @@ fun SurveyMainScreen(
                         emptySet()
                     }
 
-                    SurveyQuestionScreen(
-                        question = question,
-                        totalQuestions = questions.size,
-                        selectedOption = selectedOption,
-                        selectedOptions = selectedOptions,
-                        onOptionSelected = { answer ->
-                            viewModel.updateAnswer(question.id, answer)
-                            if (isLastQuestion) {
-                                viewModel.submitSurvey()
-                            } else {
-                                viewModel.nextQuestion()
+                    key(question.id) {
+                        SurveyQuestionScreen(
+                            question = question,
+                            totalQuestions = questions.size,
+                            selectedOption = selectedOption,
+                            selectedOptions = selectedOptions,
+                            onOptionSelected = { answer ->
+                                viewModel.updateAnswer(question.id, answer)
+                                if (isLastQuestion) {
+                                    viewModel.submitSurvey()
+                                } else {
+                                    viewModel.nextQuestion()
+                                }
+                            },
+                            onOptionToggled = { answer ->
+                                if (question.id == "activity_tags") {
+                                    viewModel.toggleActivityTag(answer)
+                                }
+                            },
+                            onNextClick = {
+                                if (isLastQuestion) {
+                                    viewModel.submitSurvey()
+                                } else {
+                                    viewModel.nextQuestion()
+                                }
+                            },
+                            onBackClick = {
+                                if (currentQuestion > 0) {
+                                    viewModel.previousQuestion()
+                                }
                             }
-                        },
-                        onOptionToggled = { answer ->
-                            if (question.id == "activity_tags") {
-                                viewModel.toggleActivityTag(answer)
-                            }
-                        },
-                        onNextClick = {
-                            if (isLastQuestion) {
-                                viewModel.submitSurvey()
-                            } else {
-                                viewModel.nextQuestion()
-                            }
-                        },
-                        onBackClick = {
-                            Log.d("SurveyBack", "화면 뒤로 버튼 클릭 - Question: $currentQuestion")
-                            if (currentQuestion > 0) {
-                                viewModel.previousQuestion()
-                            }
-                        }
-                    )
+                        )
+                    }
                 }
             }
         }

@@ -32,8 +32,8 @@ data class ChatRoomUiState(
     val items: List<ChatListItem> = emptyList(),
     val inputText: String = "",
     val isLoading: Boolean = false,
-    val errorMessage: String? = null,
-    val isRetryable: Boolean = false,
+    val isLoadFailed: Boolean = false,
+    val isAccessDenied: Boolean = false,
     val isInputEnabled: Boolean = true,
     val isAttachPanelOpen: Boolean = false,
     val isUploadingImage: Boolean = false

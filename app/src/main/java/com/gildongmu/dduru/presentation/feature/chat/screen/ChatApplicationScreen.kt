@@ -13,9 +13,9 @@ import androidx.compose.ui.unit.dp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.core.designsystem.component.DduruFailureScreen
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.feature.chat.component.ApplicationCard
 import com.gildongmu.dduru.presentation.feature.chat.component.ApplicationCardAction
 import com.gildongmu.dduru.presentation.feature.chat.component.ChatSectionHeader
@@ -48,7 +48,7 @@ fun ChatApplicationRoute(
             onCancelClick = viewModel::onCancelClick,
             onEnterClick = viewModel::onEnterClick
         )
-        is UiState.Failure -> DduruFailureScreen(message = "신청 내역을 불러올 수 없습니다.")
+        is UiState.Failure -> DduruServiceFailureScreen(onRetryClick = viewModel::loadMyParticipations)
         else -> Unit
     }
 }

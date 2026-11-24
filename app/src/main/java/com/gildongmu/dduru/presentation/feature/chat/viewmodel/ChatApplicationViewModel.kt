@@ -53,7 +53,7 @@ class ChatApplicationViewModel @Inject constructor(
         }
     }
 
-    private fun loadMyParticipations() {
+    fun loadMyParticipations() {
         viewModelScope.launch {
             _uiState.value = UiState.Loading
             participationRepository.getMyParticipations()

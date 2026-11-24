@@ -30,6 +30,7 @@ import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.Match
 import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditPreferencesRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditTravelStyleRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.TravelDestinationSelectRoute
 import com.gildongmu.dduru.presentation.feature.poll.screen.JourneyPollRoute
 import com.gildongmu.dduru.presentation.feature.poll.screen.PollCreateRoute
@@ -38,6 +39,7 @@ import com.gildongmu.dduru.presentation.feature.register.screen.SignupRoute
 import com.gildongmu.dduru.presentation.feature.register.survey.SurveyMainScreen
 
 private const val PROFILE_EDIT_INFO_TAB_INDEX = 0
+private const val PROFILE_EDIT_DESTINATION_TAB_INDEX = 1
 private const val PROFILE_EDIT_STYLE_TAB_INDEX = 2
 
 @Composable
@@ -122,6 +124,10 @@ fun RootNavigation(
                         SignupRoute(
                             onSignupComplete = {
                                 rootBackStack.add(RootNavRoute.RegisterSurvey)
+                            },
+                            onLoginExpired = {
+                                rootBackStack.clear()
+                                rootBackStack.add(RootNavRoute.Login)
                             }
                         )
                     }
@@ -131,7 +137,10 @@ fun RootNavigation(
                             onSurveyComplete = {
                                 rootBackStack.add(RootNavRoute.RegisterProfile)
                             },
-                            onBackPressed = { navigateBack() }
+                            onBackPressed = { navigateBack() },
+                            onSurveySkipped = {
+                                rootBackStack.add(RootNavRoute.RegisterProfile)
+                            }
                         )
                     }
 
@@ -165,7 +174,10 @@ fun RootNavigation(
                                 rootBackStack.add(RootNavRoute.MatchingDetail(postId))
                             },
                             onNavigateToTravelStyleSurvey = {
-                                rootBackStack.add(RootNavRoute.TravelStyleSurvey)
+                                rootBackStack.add(RootNavRoute.TravelStyleSurvey(isRetake = false))
+                            },
+                            onNavigateToTravelStyleResult = {
+                                rootBackStack.add(RootNavRoute.ProfileEditTravelStyle)
                             },
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
@@ -194,7 +206,10 @@ fun RootNavigation(
                                 rootBackStack.add(RootNavRoute.MatchingDetail(postId))
                             },
                             onNavigateToTravelStyleSurvey = {
-                                rootBackStack.add(RootNavRoute.TravelStyleSurvey)
+                                rootBackStack.add(RootNavRoute.TravelStyleSurvey(isRetake = false))
+                            },
+                            onNavigateToTravelStyleResult = {
+                                rootBackStack.add(RootNavRoute.ProfileEditTravelStyle)
                             },
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
@@ -291,7 +306,7 @@ fun RootNavigation(
                                 replaceTop(RootNavRoute.ProfileEditPreferences)
                             },
                             onNavigateToStyleTab = {
-                                rootBackStack.add(RootNavRoute.TravelStyleSurvey)
+                                replaceTop(RootNavRoute.ProfileEditTravelStyle)
                             }
                         )
                     }
@@ -305,8 +320,27 @@ fun RootNavigation(
                             onTabClick = { index ->
                                 when (index) {
                                     PROFILE_EDIT_INFO_TAB_INDEX -> replaceTop(RootNavRoute.ProfileEdit)
-                                    PROFILE_EDIT_STYLE_TAB_INDEX -> rootBackStack.add(RootNavRoute.TravelStyleSurvey)
+                                    PROFILE_EDIT_STYLE_TAB_INDEX -> replaceTop(RootNavRoute.ProfileEditTravelStyle)
                                 }
+                            }
+                        )
+                    }
+
+                    is RootNavRoute.ProfileEditTravelStyle -> NavEntry(route) {
+                        ProfileEditTravelStyleRoute(
+                            onBackClick = { navigateBack() },
+                            onTabClick = { index ->
+                                when (index) {
+                                    PROFILE_EDIT_INFO_TAB_INDEX -> replaceTop(RootNavRoute.ProfileEdit)
+                                    PROFILE_EDIT_DESTINATION_TAB_INDEX ->
+                                        replaceTop(RootNavRoute.ProfileEditPreferences)
+                                }
+                            },
+                            onRetestClick = {
+                                rootBackStack.add(RootNavRoute.TravelStyleSurvey(isRetake = true))
+                            },
+                            onNoSurveyResult = {
+                                replaceTop(RootNavRoute.TravelStyleSurvey(isRetake = false))
                             }
                         )
                     }
@@ -318,7 +352,9 @@ fun RootNavigation(
                     is RootNavRoute.TravelStyleSurvey -> NavEntry(route) {
                         SurveyMainScreen(
                             onSurveyComplete = { navigateBack() },
-                            onBackPressed = { navigateBack() }
+                            onBackPressed = { navigateBack() },
+                            isFromMyPage = true,
+                            isRetake = route.isRetake
                         )
                     }
 

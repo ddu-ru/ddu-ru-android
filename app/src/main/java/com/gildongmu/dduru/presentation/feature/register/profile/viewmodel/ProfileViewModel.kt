@@ -12,11 +12,13 @@ import com.gildongmu.dduru.domain.register.profile.model.ProfileImageType
 import com.gildongmu.dduru.domain.register.profile.model.ProfileUpdateModel
 import com.gildongmu.dduru.domain.register.profile.repository.ProfileRepository
 import com.gildongmu.dduru.domain.register.repository.OnboardingStatusRepository
+import com.gildongmu.dduru.presentation.component.toErrorToast
 import com.gildongmu.dduru.presentation.feature.register.profile.effect.ProfileSideEffect
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileFormState
 import com.gildongmu.dduru.presentation.feature.register.profile.state.ProfileUiState
+import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameAvailabilityChecker
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidationResult
 import com.gildongmu.dduru.presentation.feature.register.profile.util.NicknameValidator
 import com.gildongmu.dduru.presentation.feature.register.profile.util.ProfileBackgroundColorList
@@ -36,6 +38,7 @@ import kotlinx.coroutines.launch
 @HiltViewModel
 class ProfileViewModel @Inject constructor(
     private val nicknameRepository: NicknameRepository,
+    private val nicknameAvailabilityChecker: NicknameAvailabilityChecker,
     private val profileRepository: ProfileRepository,
     private val profileImageUploader: ImagePresignedUrlUploader,
     private val onboardingStatusRepository: OnboardingStatusRepository
@@ -148,12 +151,9 @@ class ProfileViewModel @Inject constructor(
             } else {
                 uploadSelectedImageIfNeeded(latestFormState.selectedImageUri).getOrElse { e ->
                     _uiState.update {
-                        it.copy(
-                            isImageUploading = false,
-                            isSubmitting = false,
-                            imageErrorMessage = e.message ?: "이미지 업로드에 실패했어요."
-                        )
+                        it.copy(isImageUploading = false, isSubmitting = false)
                     }
+                    _sideEffect.send(ProfileSideEffect.ShowError(e.toErrorToast()))
                     checkCanStart()
                     return@launch
                 }
@@ -183,12 +183,9 @@ class ProfileViewModel @Inject constructor(
                 _sideEffect.send(ProfileSideEffect.NavigateToMain)
             }.onFailure { e ->
                 _uiState.update {
-                    it.copy(
-                        isSubmitting = false,
-                        isImageUploading = false,
-                        submitErrorMessage = e.message ?: "프로필 저장에 실패했어요."
-                    )
+                    it.copy(isSubmitting = false, isImageUploading = false)
                 }
+                _sideEffect.send(ProfileSideEffect.ShowError(e.toErrorToast()))
             }
 
             checkCanStart()
@@ -278,25 +275,15 @@ class ProfileViewModel @Inject constructor(
 
         _uiState.update { it.copy(isDuplicationChecking = true, isDuplicationChecked = false) }
 
-        val result = nicknameRepository.checkNicknameAvailability(nickname)
+        val availability = nicknameAvailabilityChecker.check(nickname)
         if (_formState.value.nickname != nickname) return
 
-        result.onSuccess {
-            _uiState.update { state ->
-                state.copy(
-                    isDuplicationChecking = false,
-                    isDuplicationChecked = it,
-                    nicknameErrorMessage = if (it) null else "이미 사용 중인 닉네임이에요."
-                )
-            }
-        }.onFailure { e ->
-            _uiState.update {
-                it.copy(
-                    isDuplicationChecking = false,
-                    isDuplicationChecked = false,
-                    nicknameErrorMessage = e.message ?: "네트워크 문제가 발생했어요"
-                )
-            }
+        _uiState.update {
+            it.copy(
+                isDuplicationChecking = false,
+                isDuplicationChecked = availability.isAvailable,
+                nicknameErrorMessage = availability.errorMessage
+            )
         }
 
         checkCanStart()

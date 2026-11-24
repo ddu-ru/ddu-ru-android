@@ -7,6 +7,8 @@ import android.webkit.MimeTypeMap
 import com.gildongmu.dduru.data.entity.image.api.ImagePresignedUrlApi
 import com.gildongmu.dduru.data.entity.image.model.ImageUploadFileRequest
 import com.gildongmu.dduru.data.entity.image.model.ImageUploadRequest
+import com.gildongmu.dduru.domain.entity.ImageUploadPolicyException
+import com.gildongmu.dduru.domain.entity.ImageUploadPolicyReason
 import dagger.hilt.android.qualifiers.ApplicationContext
 import java.util.UUID
 import javax.inject.Inject
@@ -28,7 +30,7 @@ class ChatImageUploader @Inject constructor(
     suspend fun uploadImages(uris: List<Uri>): Result<List<String>> = withContext(Dispatchers.IO) {
         runCatching {
             require(uris.isNotEmpty()) { "보낼 사진이 없어요." }
-            require(uris.size <= MAX_IMAGE_COUNT) { "사진은 한 번에 최대 ${MAX_IMAGE_COUNT}장까지 보낼 수 있어요." }
+            if (uris.size > MAX_IMAGE_COUNT) throw ImageUploadPolicyException(ImageUploadPolicyReason.TOO_MANY)
 
             val files = uris.map { it.toUploadFile() }
             val presignedList = imagePresignedUrlApi.createChatPresignedUrls(
@@ -58,10 +60,12 @@ class ChatImageUploader @Inject constructor(
             mimeType?.let { MimeTypeMap.getSingleton().getExtensionFromMimeType(it) }
                 ?: MimeTypeMap.getFileExtensionFromUrl(toString())
             )?.lowercase()
-        require(extension != null && extension in ALLOWED_EXTENSIONS) { "jpg, jpeg, png 사진만 보낼 수 있어요." }
+        if (extension == null || extension !in ALLOWED_EXTENSIONS) {
+            throw ImageUploadPolicyException(ImageUploadPolicyReason.UNSUPPORTED_FORMAT)
+        }
 
         val size = resolveFileSize(this)
-        require(size in 1..MAX_FILE_SIZE) { "사진은 한 장에 최대 5MB까지 보낼 수 있어요." }
+        if (size !in 1..MAX_FILE_SIZE) throw ImageUploadPolicyException(ImageUploadPolicyReason.TOO_LARGE)
 
         return UploadFile(
             uri = this,

@@ -3,6 +3,7 @@ package com.gildongmu.dduru.presentation.feature.register.profile.component
 import android.net.Uri
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
+import androidx.compose.foundation.interaction.MutableInteractionSource
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -15,7 +16,6 @@ import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
-import androidx.compose.material3.RadioButton
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
@@ -65,9 +65,11 @@ fun ProfileImageSelector(
                     Modifier
                         .selectable(
                             selected = option.type == selectedOption,
-                            onClick = { if (!optionLocked) onOptionSelected(option) },
+                            interactionSource = remember { MutableInteractionSource() },
+                            indication = null,
                             enabled = !optionLocked,
-                            role = Role.RadioButton
+                            role = Role.RadioButton,
+                            onClick = { if (!optionLocked) onOptionSelected(option) }
                         )
                         .semantics {
                             contentDescription = buildString {
@@ -93,7 +95,7 @@ fun ProfileImageSelector(
                     verticalArrangement = Arrangement.spacedBy(12.dp)
                 ) {
                     val currentSource: Any = if (option.type == ProfileEditOption.CUSTOM) {
-                        selectedImageUri ?: R.drawable.img_blank_profile
+                        selectedImageUri ?: option.image
                     } else {
                         option.image
                     }
@@ -113,10 +115,9 @@ fun ProfileImageSelector(
                             enabled = !optionLocked
                         )
                     } else {
-                        RadioButton(
-                            selected = option.type == selectedOption,
-                            onClick = null,
-                            enabled = !optionLocked
+                        ProfileOptionCheck(
+                            isSelected = option.type == selectedOption,
+                            isLocked = optionLocked
                         )
                     }
                 }
@@ -179,6 +180,40 @@ private fun ProfileEditSelectionIndicator(
                 contentDescription = null,
                 tint = DduruTheme.colors.gray0,
                 modifier = Modifier.size(10.dp)
+            )
+        }
+    }
+}
+
+@Composable
+private fun ProfileOptionCheck(
+    isSelected: Boolean,
+    isLocked: Boolean
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(16.dp)
+            .clip(CircleShape)
+            .background(
+                when {
+                    isSelected -> DduruTheme.colors.primary
+                    isLocked -> DduruTheme.colors.gray200
+                    else -> DduruTheme.colors.gray0
+                }
+            )
+            .border(
+                width = 1.dp,
+                color = if (isSelected) DduruTheme.colors.primary else DduruTheme.colors.gray300,
+                shape = CircleShape
+            )
+    ) {
+        if (isSelected) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_check),
+                contentDescription = null,
+                tint = DduruTheme.colors.gray0,
+                modifier = Modifier.size(12.dp)
             )
         }
     }
