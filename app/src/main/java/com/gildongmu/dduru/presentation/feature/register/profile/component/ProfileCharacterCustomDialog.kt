@@ -165,7 +165,7 @@ fun ProfileCharacterCustomDialog(
 @Composable
 private fun ProfileEditAvatarContent(
     selectedBg: Color,
-    characterImage: Int,
+    characterImage: Any,
     avatarName: String,
     onBgColorSelected: (Color) -> Unit,
     onConfirm: () -> Unit,
