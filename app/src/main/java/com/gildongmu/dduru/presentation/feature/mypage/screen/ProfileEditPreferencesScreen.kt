@@ -24,11 +24,11 @@ import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditHeader
-import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditTabRow
 import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
 import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
+import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditHeader
+import com.gildongmu.dduru.presentation.feature.mypage.component.ProfileEditTabRow
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelDatePreferenceSection
 import com.gildongmu.dduru.presentation.feature.mypage.component.TravelDestinationPreferenceSection
 import com.gildongmu.dduru.presentation.feature.mypage.model.MAX_PREFERRED_DATE_COUNT
