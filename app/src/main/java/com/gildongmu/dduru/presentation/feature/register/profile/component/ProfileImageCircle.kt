@@ -18,6 +18,7 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -30,7 +31,8 @@ fun ProfileImageCircle(
     scale: Float = 1f,
     offsetRatio: Float = 0f,
     size: Dp = 100.dp,
-    isLocked: Boolean = false
+    isLocked: Boolean = false,
+    useProfileEditStyle: Boolean = false
 ) {
     Box(
         modifier = modifier
@@ -60,8 +62,12 @@ fun ProfileImageCircle(
 
             Text(
                 text = "추가설문 후\n선택 가능해요",
-                style = DduruTheme.typography.Caption1,
-                color = Color.White,
+                style = if (useProfileEditStyle) {
+                    DduruTheme.typography.Caption1.copy(lineHeight = 14.4.sp)
+                } else {
+                    DduruTheme.typography.Caption1
+                },
+                color = if (useProfileEditStyle) DduruTheme.colors.gray100 else Color.White,
                 textAlign = TextAlign.Center,
                 modifier = Modifier.align(Alignment.Center)
             )

@@ -17,6 +17,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -44,7 +45,7 @@ fun TravelStyleSection(
             Text(
                 text = label,
                 color = DduruTheme.colors.gray400,
-                style = DduruTheme.typography.Caption2
+                style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
             )
 
             Column(verticalArrangement = Arrangement.spacedBy(16.dp)) {
@@ -70,7 +71,7 @@ fun TravelStyleSection(
                         Text(
                             text = description,
                             color = DduruTheme.colors.gray500,
-                            style = DduruTheme.typography.Caption2
+                            style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
                         )
                     }
 
@@ -79,7 +80,7 @@ fun TravelStyleSection(
                             painter = painterResource(R.drawable.ic_chevron_right),
                             contentDescription = null,
                             tint = DduruTheme.colors.gray600,
-                            modifier = Modifier.size(12.dp)
+                            modifier = Modifier.size(16.dp)
                         )
                     }
                 }

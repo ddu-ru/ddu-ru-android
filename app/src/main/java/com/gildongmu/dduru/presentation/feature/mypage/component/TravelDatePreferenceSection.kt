@@ -10,7 +10,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
@@ -54,32 +53,34 @@ fun TravelDatePreferenceSection(
 
         Spacer(modifier = Modifier.height(23.dp))
 
-        Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+        Column(verticalArrangement = Arrangement.spacedBy(23.dp)) {
             dateRanges.forEachIndexed { index, dateRange ->
-                PreferredDateRow(
-                    order = index + 1,
-                    dateRange = dateRange,
-                    onRemoveClick = {
-                        editingIndex = null
-                        onRemoveClick(index)
-                    },
-                    onBoxClick = { editingIndex = index }
-                )
-
-                if (editingIndex == index) {
-                    Spacer(modifier = Modifier.height(16.dp))
-                    DduruCalendar(
-                        selectedStartDate = dateRange.startDate,
-                        selectedEndDate = dateRange.endDate,
-                        onDateSelected = { onDateSelected(index, it) },
-                        modifier = Modifier.fillMaxWidth()
+                Column(verticalArrangement = Arrangement.spacedBy(9.dp)) {
+                    PreferredDateRow(
+                        order = index + 1,
+                        dateRange = dateRange,
+                        onRemoveClick = {
+                            editingIndex = null
+                            onRemoveClick(index)
+                        },
+                        onBoxClick = { editingIndex = index }
                     )
+
+                    if (editingIndex == index) {
+                        DduruCalendar(
+                            selectedStartDate = dateRange.startDate,
+                            selectedEndDate = dateRange.endDate,
+                            onDateSelected = { onDateSelected(index, it) },
+                            modifier = Modifier.fillMaxWidth(),
+                            useProfileEditStyle = true
+                        )
+                    }
                 }
             }
         }
 
         if (dateRanges.size < MAX_PREFERRED_DATE_COUNT) {
-            Spacer(modifier = Modifier.height(if (dateRanges.isEmpty()) 0.dp else 9.dp))
+            Spacer(modifier = Modifier.height(if (dateRanges.isEmpty()) 0.dp else 23.dp))
 
             Row(
                 modifier = Modifier
@@ -97,7 +98,7 @@ fun TravelDatePreferenceSection(
                 )
                 Text(
                     text = "선호 날짜 추가",
-                    style = DduruTheme.typography.Body2,
+                    style = DduruTheme.typography.Body3,
                     color = DduruTheme.colors.gray400
                 )
             }
@@ -140,30 +141,32 @@ private fun PreferredDateRow(
             }
         }
 
-        Spacer(modifier = Modifier.height(10.dp))
+        Spacer(modifier = Modifier.height(9.dp))
 
         Row(
             modifier = Modifier.fillMaxWidth(),
             verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.spacedBy(6.dp)
+            horizontalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             TripDatePickerBox(
-                label = "시작 날짜",
+                label = if (dateRange.startDate == null) "출발 날짜" else "시작 날짜",
                 selectedDate = dateRange.startDate?.toKoreanDateString(),
                 onClick = onBoxClick,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                valueStyle = DduruTheme.typography.Body4
             )
             Icon(
                 painter = painterResource(id = R.drawable.ic_arrow),
                 contentDescription = null,
                 tint = DduruTheme.colors.gray500,
-                modifier = Modifier.width(8.dp)
+                modifier = Modifier.size(10.dp)
             )
             TripDatePickerBox(
-                label = "종료 날짜",
+                label = if (dateRange.endDate == null) "도착 날짜" else "종료 날짜",
                 selectedDate = dateRange.endDate?.toKoreanDateString(),
                 onClick = onBoxClick,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
+                valueStyle = DduruTheme.typography.Body4
             )
         }
     }

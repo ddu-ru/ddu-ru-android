@@ -89,7 +89,7 @@ fun WithdrawScreen(
                 )
             }
 
-            Spacer(modifier = Modifier.height(24.dp))
+            Spacer(modifier = Modifier.height(64.dp))
         }
 
         Column(
@@ -139,7 +139,7 @@ fun WithdrawScreen(
             dismissText = "취소",
             confirmText = "탈퇴",
             confirmBackgroundColor = DduruTheme.colors.rejectConfirmBg,
-            confirmTextColor = DduruTheme.colors.validationRed
+            confirmTextColor = DduruTheme.colors.journeyKickText
         )
     }
 }

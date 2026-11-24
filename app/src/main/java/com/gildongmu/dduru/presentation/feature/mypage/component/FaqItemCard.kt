@@ -57,7 +57,7 @@ fun FaqItemCard(
             Icon(
                 painter = painterResource(id = R.drawable.ic_chevron_down),
                 contentDescription = null,
-                tint = DduruTheme.colors.gray700,
+                tint = DduruTheme.colors.gray600,
                 modifier = Modifier
                     .size(12.dp)
                     .rotate(if (isExpanded) 180f else 0f)

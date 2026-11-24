@@ -32,7 +32,7 @@ fun WithdrawWarningBox(
             .fillMaxWidth()
             .background(color = DduruTheme.colors.rejectConfirmBg, shape = shape)
             .border(width = 1.dp, color = DduruTheme.colors.rejectRedBg, shape = shape)
-            .padding(16.dp),
+            .padding(17.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         Icon(

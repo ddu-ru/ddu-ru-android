@@ -22,6 +22,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.hilt.navigation.compose.hiltViewModel
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.compose.LifecycleEventEffect
@@ -126,7 +127,7 @@ private fun MyPageScreen(
             .fillMaxSize()
             .background(DduruTheme.colors.gray50)
             .statusBarsPadding(),
-        contentPadding = PaddingValues(horizontal = 16.dp, vertical = 16.dp),
+        contentPadding = PaddingValues(start = 16.dp, top = 8.dp, end = 16.dp, bottom = 16.dp),
         verticalArrangement = Arrangement.spacedBy(24.dp)
     ) {
         item { MyPageHeader(onNotificationClick, onMenuClick) }
@@ -245,7 +246,7 @@ private fun DestinationAddSection(
         Text(
             text = "선호 여행지",
             color = DduruTheme.colors.gray400,
-            style = DduruTheme.typography.Caption2
+            style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
         )
 
         StatusTagXs(

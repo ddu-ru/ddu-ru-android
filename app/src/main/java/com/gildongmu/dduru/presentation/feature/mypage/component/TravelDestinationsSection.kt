@@ -13,6 +13,7 @@ import androidx.compose.ui.draw.clip
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
@@ -34,7 +35,7 @@ fun TravelDestinationsSection(
         Text(
             text = label,
             color = DduruTheme.colors.gray400,
-            style = DduruTheme.typography.Caption2
+            style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp)
         )
 
         Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {

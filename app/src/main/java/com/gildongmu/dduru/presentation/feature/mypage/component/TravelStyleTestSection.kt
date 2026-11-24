@@ -15,6 +15,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -40,7 +41,7 @@ fun TravelStyleTestSection(
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     Text(
                         text = label,
-                        style = DduruTheme.typography.Caption2,
+                        style = DduruTheme.typography.Caption2.copy(lineHeight = 14.4.sp),
                         color = DduruTheme.colors.gray400
                     )
 

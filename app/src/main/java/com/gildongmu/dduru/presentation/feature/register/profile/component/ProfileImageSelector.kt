@@ -34,6 +34,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.core.net.toUri
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileEditOption
 import com.gildongmu.dduru.presentation.feature.register.profile.model.ProfileImageCropOption
@@ -46,7 +47,8 @@ fun ProfileImageSelector(
     characterBackgroundColor: Color,
     isLocked: Boolean,
     onOptionSelected: (ProfileImageCropOption) -> Unit,
-    onActionClick: () -> Unit
+    onActionClick: () -> Unit,
+    useProfileEditStyle: Boolean = false
 ) {
     Column(
         horizontalAlignment = Alignment.CenterHorizontally,
@@ -103,26 +105,81 @@ fun ProfileImageSelector(
                         scale = option.scale,
                         backgroundColor = characterBackgroundColor,
                         offsetRatio = option.offsetRatio,
-                        isLocked = optionLocked
+                        isLocked = optionLocked,
+                        useProfileEditStyle = useProfileEditStyle
                     )
 
-                    ProfileOptionCheck(
-                        isSelected = option.type == selectedOption,
-                        isLocked = optionLocked
-                    )
+                    if (useProfileEditStyle) {
+                        ProfileEditSelectionIndicator(
+                            selected = option.type == selectedOption,
+                            enabled = !optionLocked
+                        )
+                    } else {
+                        ProfileOptionCheck(
+                            isSelected = option.type == selectedOption,
+                            isLocked = optionLocked
+                        )
+                    }
                 }
             }
         }
 
-        Button(
-            onActionClick,
-            colors = ButtonDefaults.buttonColors(DduruTheme.colors.gray200),
-            modifier = Modifier.padding(top = 16.dp)
-        ) {
+        if (useProfileEditStyle) {
             Text(
-                text = if (selectedOption == ProfileEditOption.CHARACTER) "배경 색상 선택" else "사진 변경",
-                style = DduruTheme.typography.Body2,
-                color = DduruTheme.colors.gray700
+                text = if (selectedOption == ProfileEditOption.CHARACTER) "배경색 편집" else "사진 변경",
+                style = DduruTheme.typography.Body4,
+                color = DduruTheme.colors.gray700,
+                modifier = Modifier
+                    .padding(top = 16.dp)
+                    .clip(CircleShape)
+                    .background(DduruTheme.colors.gray200)
+                    .noRippleClickable(onClick = onActionClick)
+                    .padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+        } else {
+            Button(
+                onActionClick,
+                colors = ButtonDefaults.buttonColors(DduruTheme.colors.gray200),
+                modifier = Modifier.padding(top = 16.dp)
+            ) {
+                Text(
+                    text = if (selectedOption == ProfileEditOption.CHARACTER) "배경 색상 선택" else "사진 변경",
+                    style = DduruTheme.typography.Body2,
+                    color = DduruTheme.colors.gray700
+                )
+            }
+        }
+    }
+}
+
+@Composable
+private fun ProfileEditSelectionIndicator(
+    selected: Boolean,
+    enabled: Boolean
+) {
+    Box(
+        contentAlignment = Alignment.Center,
+        modifier = Modifier
+            .size(16.dp)
+            .then(
+                if (selected) {
+                    Modifier.background(DduruTheme.colors.primary, CircleShape)
+                } else {
+                    Modifier
+                        .background(
+                            color = if (enabled) DduruTheme.colors.gray0 else DduruTheme.colors.gray200,
+                            shape = CircleShape
+                        )
+                        .border(1.dp, DduruTheme.colors.gray300, CircleShape)
+                }
+            )
+    ) {
+        if (selected) {
+            Icon(
+                painter = painterResource(id = R.drawable.ic_check),
+                contentDescription = null,
+                tint = DduruTheme.colors.gray0,
+                modifier = Modifier.size(10.dp)
             )
         }
     }

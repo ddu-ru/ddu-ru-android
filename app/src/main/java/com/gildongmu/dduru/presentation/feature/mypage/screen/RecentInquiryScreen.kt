@@ -15,6 +15,8 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
@@ -90,7 +92,7 @@ fun RecentInquiryScreen(
             Text(
                 text = "답변이 등록되면 알림으로 알려드려요.",
                 style = if (inquiries.isEmpty()) {
-                    DduruTheme.typography.Caption2.copy(lineHeight = 19.sp)
+                    DduruTheme.typography.Caption2.copy(fontWeight = FontWeight.Normal, lineHeight = 19.sp)
                 } else {
                     DduruTheme.typography.Body4
                 },
@@ -115,6 +117,12 @@ fun RecentInquiryScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
+                    .shadow(
+                        elevation = 12.dp,
+                        shape = RoundedCornerShape(12.dp),
+                        ambientColor = DduruTheme.colors.black.copy(alpha = 0.14f),
+                        spotColor = DduruTheme.colors.black.copy(alpha = 0.14f)
+                    )
             )
 
             Spacer(modifier = Modifier.height(40.dp))

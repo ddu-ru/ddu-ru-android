@@ -26,7 +26,10 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 
 @Composable
-fun InquiryEmptyCard(modifier: Modifier = Modifier) {
+fun InquiryEmptyCard(
+    modifier: Modifier = Modifier,
+    message: String = "아직 문의한 내용이 없어요.\n궁금한 점이 생기면 언제든 문의해주세요."
+) {
     Column(
         modifier = modifier
             .fillMaxWidth()
@@ -49,7 +52,7 @@ fun InquiryEmptyCard(modifier: Modifier = Modifier) {
         }
 
         Text(
-            text = "아직 문의한 내용이 없어요.\n궁금한 점이 생기면 언제든 문의해주세요.",
+            text = message,
             style = DduruTheme.typography.Body2,
             color = DduruTheme.colors.gray600,
             textAlign = TextAlign.Center,

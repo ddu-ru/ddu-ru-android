@@ -12,12 +12,15 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.SideEffect
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalView
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogWindowProvider
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -35,6 +38,12 @@ fun ConfirmDialog(
     confirmTextColor: Color? = null
 ) {
     Dialog(onDismissRequest = onDismiss) {
+        val dialogWindow = (LocalView.current.parent as? DialogWindowProvider)?.window
+
+        SideEffect {
+            dialogWindow?.setDimAmount(0.5f)
+        }
+
         ConfirmDialogContent(
             title = title,
             description = description,

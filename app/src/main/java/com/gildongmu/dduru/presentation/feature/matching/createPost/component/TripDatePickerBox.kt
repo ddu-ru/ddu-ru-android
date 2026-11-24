@@ -13,6 +13,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -22,7 +23,8 @@ fun TripDatePickerBox(
     label: String,
     selectedDate: String?,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    valueStyle: TextStyle = DduruTheme.typography.Body2
 ) {
     Column(
         modifier = modifier
@@ -48,7 +50,7 @@ fun TripDatePickerBox(
             )
             Text(
                 text = selectedDate ?: "선택해주세요",
-                style = DduruTheme.typography.Body2,
+                style = valueStyle,
                 color = if (selectedDate != null) {
                     DduruTheme.colors.gray868
                 } else {

@@ -58,7 +58,7 @@ fun BlockedUserItem(
                 )
                 BlockedUserActionButton(
                     text = "해제",
-                    textColor = DduruTheme.colors.rejectRed,
+                    textColor = DduruTheme.colors.journeyKick,
                     onClick = onUnblockClick
                 )
             }

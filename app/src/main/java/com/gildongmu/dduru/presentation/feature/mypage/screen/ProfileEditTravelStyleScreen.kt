@@ -21,6 +21,7 @@ import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.style.TextAlign
@@ -182,7 +183,7 @@ fun ProfileEditTravelStyleScreen(
                 disabledColors = DduruButtonDisabledColors(
                     backgroundColor = DduruTheme.colors.gray200,
                     textColor = DduruTheme.colors.gray400,
-                    borderColor = DduruTheme.colors.gray200
+                    borderColor = DduruTheme.colors.gray300
                 ),
                 textStyle = DduruTheme.typography.H1,
                 shape = RoundedCornerShape(12.dp),
@@ -190,28 +191,40 @@ fun ProfileEditTravelStyleScreen(
                 modifier = Modifier
                     .fillMaxWidth()
                     .height(48.dp)
+                    .then(
+                        if (canRetake) {
+                            Modifier
+                        } else {
+                            Modifier.shadow(
+                                elevation = 12.dp,
+                                shape = RoundedCornerShape(12.dp),
+                                ambientColor = DduruTheme.colors.black.copy(alpha = 0.14f),
+                                spotColor = DduruTheme.colors.black.copy(alpha = 0.14f)
+                            )
+                        }
+                    )
             )
 
-            if (!canRetake) {
-                Spacer(modifier = Modifier.height(8.dp))
+            if (canRetake) {
+                Spacer(modifier = Modifier.height(93.dp))
+            } else {
+                Spacer(modifier = Modifier.height(16.dp))
 
                 Text(
-                    text = "여행 스타일은 마지막 변경일로부터 30일이 지나야 다시 수정할 수 있어요",
+                    text = "여행 스타일은 마지막 변경일로부터\n30일이 지나야 다시 수정할 수 있어요",
                     style = DduruTheme.typography.Caption2,
-                    color = DduruTheme.colors.gray500,
-                    textAlign = TextAlign.Center,
-                    modifier = Modifier.fillMaxWidth()
+                    color = DduruTheme.colors.gray400,
+                    textAlign = TextAlign.Center
                 )
-            }
 
-            Spacer(modifier = Modifier.height(93.dp))
+                Spacer(modifier = Modifier.height(43.dp))
+            }
         }
     }
 }
 
-@Preview(showBackground = true, heightDp = 882, name = "36400 나의 여행 스타일")
 @Composable
-private fun ProfileEditTravelStyleScreenPreview() {
+private fun ProfileEditTravelStyleScreenPreviewHost(canRetake: Boolean) {
     DduruTheme {
         ProfileEditTravelStyleScreen(
             styleName = "스윗",
@@ -226,7 +239,20 @@ private fun ProfileEditTravelStyleScreenPreview() {
             onBackClick = {},
             onTabClick = {},
             onTagToggle = {},
-            onRetestClick = {}
+            onRetestClick = {},
+            canRetake = canRetake
         )
     }
+}
+
+@Preview(showBackground = true, heightDp = 882, name = "나의 여행 스타일")
+@Composable
+private fun ProfileEditTravelStyleScreenPreview() {
+    ProfileEditTravelStyleScreenPreviewHost(canRetake = true)
+}
+
+@Preview(showBackground = true, heightDp = 882, name = "나의 여행 스타일 Blocked")
+@Composable
+private fun ProfileEditTravelStyleBlockedPreview() {
+    ProfileEditTravelStyleScreenPreviewHost(canRetake = false)
 }

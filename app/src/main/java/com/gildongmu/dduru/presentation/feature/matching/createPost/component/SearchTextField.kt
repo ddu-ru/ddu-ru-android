@@ -1,9 +1,11 @@
 package com.gildongmu.dduru.presentation.feature.matching.createPost.component
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.text.KeyboardActions
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.Icon
@@ -58,11 +60,19 @@ fun SearchTextField(
         trailingIcon = {
             if (showClearButton && value.isNotEmpty()) {
                 IconButton(onClick = { onValueChange("") }) {
-                    Icon(
-                        painter = painterResource(id = R.drawable.ic_x_gray),
-                        contentDescription = null,
-                        tint = DduruTheme.colors.gray400
-                    )
+                    Box(
+                        contentAlignment = Alignment.Center,
+                        modifier = Modifier
+                            .size(16.dp)
+                            .background(color = DduruTheme.colors.gray400, shape = CircleShape)
+                    ) {
+                        Icon(
+                            painter = painterResource(id = R.drawable.ic_x_gray),
+                            contentDescription = "검색어 지우기",
+                            tint = DduruTheme.colors.gray100,
+                            modifier = Modifier.size(10.dp)
+                        )
+                    }
                 }
             } else {
                 IconButton(
