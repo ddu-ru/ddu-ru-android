@@ -14,6 +14,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -24,17 +25,74 @@ import androidx.compose.ui.draw.shadow
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.FilterChipRow
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
+import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.SearchTextField
 import com.gildongmu.dduru.presentation.feature.mypage.component.FaqItemCard
 import com.gildongmu.dduru.presentation.feature.mypage.component.PillSegmentedControl
 import com.gildongmu.dduru.presentation.feature.mypage.model.FaqUiModel
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.CustomerCenterViewModel
 
 private val CustomerCenterSegments = listOf("FAQ", "최근 문의")
+
+@Composable
+fun CustomerCenterRoute(
+    onBackClick: () -> Unit,
+    onNewInquiryClick: () -> Unit,
+    onInquiryClick: (Long) -> Unit,
+    initialSegmentIndex: Int = 0,
+    viewModel: CustomerCenterViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errorToast = LocalDduruErrorToast.current
+
+    LaunchedEffect(initialSegmentIndex) {
+        if (initialSegmentIndex != uiState.segmentIndex) viewModel.onSegmentClick(initialSegmentIndex)
+    }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.refreshInquiries()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.errorToast.collect { errorToast.show(it) }
+    }
+
+    if (uiState.segmentIndex == 0) {
+        CustomerCenterScreen(
+            segmentIndex = uiState.segmentIndex,
+            categories = uiState.categories,
+            selectedCategoryIndex = uiState.selectedCategoryIndex,
+            searchQuery = uiState.searchQuery,
+            faqs = uiState.faqs,
+            expandedFaqIds = uiState.expandedFaqIds,
+            onBackClick = onBackClick,
+            onSegmentClick = viewModel::onSegmentClick,
+            onCategoryClick = viewModel::onCategoryClick,
+            onSearchQueryChange = viewModel::onSearchQueryChange,
+            onSearchClick = viewModel::onSearchClick,
+            onFaqClick = viewModel::onFaqClick,
+            onInquiryClick = onNewInquiryClick
+        )
+    } else {
+        RecentInquiryScreen(
+            inquiries = uiState.inquiries,
+            onBackClick = onBackClick,
+            onSegmentClick = viewModel::onSegmentClick,
+            onInquiryClick = onInquiryClick,
+            onNewInquiryClick = onNewInquiryClick,
+            onLoadMore = viewModel::loadMoreInquiries
+        )
+    }
+}
 
 @Composable
 fun CustomerCenterScreen(

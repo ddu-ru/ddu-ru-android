@@ -15,6 +15,7 @@ data class DestinationPreferenceResponse(
     val countryName: String? = null,
     val destinationId: Long? = null,
     val city: String? = null,
+    val imageUrl: String? = null,
     val preferenceRank: Int = 0
 )
 

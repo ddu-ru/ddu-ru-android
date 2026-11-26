@@ -31,10 +31,10 @@ import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
-import com.gildongmu.dduru.domain.entity.SurveyResult
 import com.gildongmu.dduru.domain.entity.mypage.AvailableDate
 import com.gildongmu.dduru.domain.entity.mypage.DestinationPreference
 import com.gildongmu.dduru.domain.entity.mypage.DestinationPreferenceType
+import com.gildongmu.dduru.domain.entity.mypage.TravelStyleSummary
 import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.feature.mypage.component.ActionMenuItem
 import com.gildongmu.dduru.presentation.feature.mypage.component.ActionMenuSection
@@ -203,7 +203,7 @@ private fun MyProfileCard(
                 destinations = uiState.destinations.map {
                     TravelDestination(
                         name = it.city ?: it.countryName,
-                        imageUrl = R.drawable.ic_home_location
+                        imageUrl = it.imageUrl ?: R.drawable.ic_home_location
                     )
                 }
             )
@@ -223,9 +223,9 @@ private fun MyProfileCard(
         val travelStyle = uiState.travelStyle
         if (travelStyle != null) {
             TravelStyleSection(
-                title = travelStyle.characterName,
-                description = travelStyle.descriptionLine1,
-                tags = travelStyle.toTravelStyleTags(),
+                title = travelStyle.name,
+                description = travelStyle.description,
+                tags = travelStyle.tags.map { TravelStyleTag(emoji = "", label = it) },
                 onExpandClick = onTravelStyleClick
             )
         } else {
@@ -268,9 +268,6 @@ private fun DestinationAddSection(
     }
 }
 
-private fun SurveyResult.toTravelStyleTags(): List<TravelStyleTag> =
-    tags.map { TravelStyleTag(emoji = "", label = it) }
-
 private val PreviewCompleteUiState = MyPageUiState(
     nickname = "차한잔마시고해",
     bio = "야호~반갑습니다~~",
@@ -283,22 +280,10 @@ private val PreviewCompleteUiState = MyPageUiState(
         AvailableDate(LocalDate.of(2026, 3, 15), LocalDate.of(2026, 3, 20)),
         AvailableDate(LocalDate.of(2026, 5, 2), LocalDate.of(2026, 5, 5))
     ),
-    travelStyle = SurveyResult(
-        rhythmScore = 0.0,
-        energyScore = 0.0,
-        consumptionScore = 0.0,
-        decisionScore = 0.0,
-        avatarCode = 0,
-        avatarType = "",
-        recordStyleType = "",
-        avatarLabel = "",
-        characterName = "스윗",
-        speechBubbleText = "",
-        tags = listOf("맛집러", "기록파", "야경 좋아함"),
-        descriptionLine1 = "도시를 걸으며 새로운 장소를 발견해요!",
-        descriptionLine2 = "",
-        descriptionLine3 = "",
-        imageUrl = null
+    travelStyle = TravelStyleSummary(
+        name = "스윗",
+        description = "도시를 걸으며 새로운 장소를 발견해요!",
+        tags = listOf("맛집러", "기록파", "야경 좋아함")
     )
 )
 

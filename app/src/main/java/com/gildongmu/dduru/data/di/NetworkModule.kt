@@ -6,6 +6,7 @@ import com.gildongmu.dduru.data.remote.interceptor.AuthInterceptor
 import com.gildongmu.dduru.data.remote.interceptor.TokenAuthenticator
 import com.gildongmu.dduru.data.remote.service.AuthService
 import com.gildongmu.dduru.data.remote.service.ChatRoomService
+import com.gildongmu.dduru.data.remote.service.CustomerSupportService
 import com.gildongmu.dduru.data.remote.service.FcmTokenService
 import com.gildongmu.dduru.data.remote.service.JourneyCommentService
 import com.gildongmu.dduru.data.remote.service.JourneyPostService
@@ -13,6 +14,7 @@ import com.gildongmu.dduru.data.remote.service.JourneyService
 import com.gildongmu.dduru.data.remote.service.MyPageService
 import com.gildongmu.dduru.data.remote.service.ParticipationService
 import com.gildongmu.dduru.data.remote.service.PostService
+import com.gildongmu.dduru.data.remote.service.SuperHostService
 import com.gildongmu.dduru.data.remote.service.SurveyService
 import com.gildongmu.dduru.data.remote.service.home.HomeNotificationService
 import com.gildongmu.dduru.data.remote.service.home.HomeService
@@ -193,5 +195,17 @@ object NetworkModule {
     @Singleton
     fun provideMyPageService(retrofit: Retrofit): MyPageService {
         return retrofit.create(MyPageService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideSuperHostService(retrofit: Retrofit): SuperHostService {
+        return retrofit.create(SuperHostService::class.java)
+    }
+
+    @Provides
+    @Singleton
+    fun provideCustomerSupportService(retrofit: Retrofit): CustomerSupportService {
+        return retrofit.create(CustomerSupportService::class.java)
     }
 }

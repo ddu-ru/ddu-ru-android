@@ -13,6 +13,10 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.derivedStateOf
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.shadow
@@ -41,8 +45,16 @@ fun RecentInquiryScreen(
     onSegmentClick: (Int) -> Unit,
     onInquiryClick: (Long) -> Unit,
     onNewInquiryClick: () -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLoadMore: () -> Unit = {}
 ) {
+    val scrollState = rememberScrollState()
+    val isScrolledToEnd by remember { derivedStateOf { scrollState.value == scrollState.maxValue } }
+
+    LaunchedEffect(isScrolledToEnd, inquiries.size) {
+        if (isScrolledToEnd && inquiries.isNotEmpty()) onLoadMore()
+    }
+
     Column(
         modifier = modifier
             .fillMaxSize()
@@ -56,7 +68,7 @@ fun RecentInquiryScreen(
         Column(
             modifier = Modifier
                 .fillMaxSize()
-                .verticalScroll(rememberScrollState())
+                .verticalScroll(scrollState)
                 .padding(horizontal = 16.dp)
         ) {
             Spacer(modifier = Modifier.height(16.dp))

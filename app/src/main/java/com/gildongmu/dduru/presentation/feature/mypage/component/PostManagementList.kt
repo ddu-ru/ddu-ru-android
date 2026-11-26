@@ -10,6 +10,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
 import androidx.compose.ui.unit.dp
@@ -22,7 +23,8 @@ fun PostManagementList(
     showAuthor: Boolean,
     onCardClick: (Long) -> Unit,
     onLikeClick: (Long) -> Unit,
-    modifier: Modifier = Modifier
+    modifier: Modifier = Modifier,
+    onLoadMore: () -> Unit = {}
 ) {
     LazyColumn(
         modifier = modifier
@@ -38,6 +40,10 @@ fun PostManagementList(
             items = items,
             key = { _, item -> item.id }
         ) { index, item ->
+            if (index == items.lastIndex) {
+                LaunchedEffect(items.size) { onLoadMore() }
+            }
+
             MyPostCard(
                 item = item,
                 showDivider = index != items.lastIndex,

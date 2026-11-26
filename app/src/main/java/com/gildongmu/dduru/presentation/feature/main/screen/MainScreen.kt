@@ -40,6 +40,10 @@ fun MainScreen(
     onNavigateToTravelStyleSurvey: () -> Unit,
     onNavigateToTravelStyleResult: () -> Unit,
     onNavigateToJourneyDetail: (Long, String?) -> Unit,
+    onNavigateToWishlist: () -> Unit = {},
+    onNavigateToMyPosts: () -> Unit = {},
+    onNavigateToBlockedList: () -> Unit = {},
+    onNavigateToCustomerCenter: () -> Unit = {},
     initialRoute: BottomNavRoute = BottomNavRoute.Home
 ) {
     val bottomNavItems = remember {
@@ -110,7 +114,11 @@ fun MainScreen(
                             onMenuClick = onNavigateToHomeMenu,
                             onEditProfileClick = onNavigateToProfileEdit,
                             onTravelStyleClick = onNavigateToTravelStyleResult,
-                            onStartTravelStyleTestClick = onNavigateToTravelStyleSurvey
+                            onStartTravelStyleTestClick = onNavigateToTravelStyleSurvey,
+                            onWishlistClick = onNavigateToWishlist,
+                            onMyPostsClick = onNavigateToMyPosts,
+                            onBlockedListClick = onNavigateToBlockedList,
+                            onCustomerCenterClick = onNavigateToCustomerCenter
                         )
                     }
                     is BottomNavRoute.Chat -> NavEntry(route) {

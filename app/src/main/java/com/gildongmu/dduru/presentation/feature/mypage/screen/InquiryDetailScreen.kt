@@ -19,6 +19,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -26,16 +27,54 @@ import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.dduruDualShadow
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
+import com.gildongmu.dduru.core.common.state.UiState
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
 import com.gildongmu.dduru.presentation.feature.mypage.component.InquiryEmptyCard
 import com.gildongmu.dduru.presentation.feature.mypage.model.InquiryDetailUiModel
 import com.gildongmu.dduru.presentation.feature.mypage.model.InquiryStatus
+import com.gildongmu.dduru.presentation.feature.mypage.model.toUiModel
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.InquiryDetailViewModel
+
+@Composable
+fun InquiryDetailRoute(
+    inquiryId: Long,
+    onBackClick: () -> Unit,
+    onEditClick: () -> Unit,
+    onNewInquiryClick: () -> Unit,
+    viewModel: InquiryDetailViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.load(inquiryId)
+    }
+
+    when (val state = uiState) {
+        UiState.Loading, UiState.Empty -> DduruLoadingScreen()
+        UiState.Failure -> DduruServiceFailureScreen(
+            onRetryClick = { viewModel.load(inquiryId) },
+            onBackClick = onBackClick
+        )
+        is UiState.Success -> InquiryDetailScreen(
+            inquiry = state.data.toUiModel(),
+            onBackClick = onBackClick,
+            onEditClick = { if (state.data.editable) onEditClick() },
+            onNewInquiryClick = onNewInquiryClick
+        )
+    }
+}
 
 @Composable
 fun InquiryDetailScreen(
@@ -157,11 +196,13 @@ private fun InquiryQuestionCard(inquiry: InquiryDetailUiModel) {
                 style = DduruTheme.typography.Title3,
                 color = DduruTheme.colors.gray958
             )
-            Text(
-                text = inquiry.body,
-                style = DduruTheme.typography.Body2,
-                color = DduruTheme.colors.gray700
-            )
+            if (inquiry.body.isNotBlank()) {
+                Text(
+                    text = inquiry.body,
+                    style = DduruTheme.typography.Body2,
+                    color = DduruTheme.colors.gray700
+                )
+            }
         }
     }
 }

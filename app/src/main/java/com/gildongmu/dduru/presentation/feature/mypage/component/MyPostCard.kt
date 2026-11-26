@@ -1,6 +1,5 @@
 package com.gildongmu.dduru.presentation.feature.mypage.component
 
-import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -25,6 +24,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import coil.compose.AsyncImage
 import com.gildongmu.dduru.R
 import com.gildongmu.dduru.core.common.extension.noRippleClickable
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
@@ -294,9 +294,11 @@ private fun MyPostThumbnail(
             .size(72.dp)
             .clip(RoundedCornerShape(16.dp))
     ) {
-        Image(
-            painter = painterResource(id = item.thumbnailImageRes),
+        AsyncImage(
+            model = item.thumbnailImageUrl ?: item.thumbnailImageRes,
             contentDescription = null,
+            placeholder = painterResource(id = item.thumbnailImageRes),
+            error = painterResource(id = item.thumbnailImageRes),
             contentScale = ContentScale.Crop,
             modifier = Modifier.matchParentSize()
         )

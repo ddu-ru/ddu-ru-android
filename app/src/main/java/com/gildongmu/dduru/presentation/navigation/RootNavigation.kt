@@ -28,10 +28,18 @@ import com.gildongmu.dduru.presentation.feature.main.screen.MainScreen
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingCreatePostRoute
 import com.gildongmu.dduru.presentation.feature.matching.createPost.screen.MatchingEditPostRoute
 import com.gildongmu.dduru.presentation.feature.matching.post.screen.MatchingDetailRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.BlockedListRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.CustomerCenterRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.InquiryCompleteScreen
+import com.gildongmu.dduru.presentation.feature.mypage.screen.InquiryDetailRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.InquiryWriteRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.MyPostsRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditPreferencesRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.ProfileEditTravelStyleRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.SuperhostRoute
 import com.gildongmu.dduru.presentation.feature.mypage.screen.TravelDestinationSelectRoute
+import com.gildongmu.dduru.presentation.feature.mypage.screen.WishlistRoute
 import com.gildongmu.dduru.presentation.feature.poll.screen.JourneyPollRoute
 import com.gildongmu.dduru.presentation.feature.poll.screen.PollCreateRoute
 import com.gildongmu.dduru.presentation.feature.register.profile.screen.ProfileSettingRoute
@@ -181,7 +189,11 @@ fun RootNavigation(
                             },
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
-                            }
+                            },
+                            onNavigateToWishlist = { rootBackStack.add(RootNavRoute.Wishlist) },
+                            onNavigateToMyPosts = { rootBackStack.add(RootNavRoute.MyPosts) },
+                            onNavigateToBlockedList = { rootBackStack.add(RootNavRoute.BlockedList) },
+                            onNavigateToCustomerCenter = { rootBackStack.add(RootNavRoute.CustomerCenter()) }
                         )
                     }
 
@@ -214,6 +226,10 @@ fun RootNavigation(
                             onNavigateToJourneyDetail = { journeyId, initialFilter ->
                                 rootBackStack.add(RootNavRoute.JourneyDetail(journeyId, initialFilter))
                             },
+                            onNavigateToWishlist = { rootBackStack.add(RootNavRoute.Wishlist) },
+                            onNavigateToMyPosts = { rootBackStack.add(RootNavRoute.MyPosts) },
+                            onNavigateToBlockedList = { rootBackStack.add(RootNavRoute.BlockedList) },
+                            onNavigateToCustomerCenter = { rootBackStack.add(RootNavRoute.CustomerCenter()) },
                             initialRoute = route.bottomNavRoute
                         )
                     }
@@ -422,6 +438,70 @@ fun RootNavigation(
 
                     is RootNavRoute.JourneyVoteCompose -> NavEntry(route) {
                         JourneyPollRoute(onCloseClick = { navigateBack() })
+                    }
+
+                    is RootNavRoute.Wishlist -> NavEntry(route) {
+                        WishlistRoute(
+                            onBackClick = { navigateBack() },
+                            onCardClick = { postId -> rootBackStack.add(RootNavRoute.MatchingDetail(postId)) }
+                        )
+                    }
+
+                    is RootNavRoute.MyPosts -> NavEntry(route) {
+                        MyPostsRoute(
+                            onBackClick = { navigateBack() },
+                            onApplySuperhostClick = { rootBackStack.add(RootNavRoute.Superhost) },
+                            onPostClick = { postId -> rootBackStack.add(RootNavRoute.MatchingDetail(postId)) }
+                        )
+                    }
+
+                    is RootNavRoute.Superhost -> NavEntry(route) {
+                        SuperhostRoute(onBackClick = { navigateBack() })
+                    }
+
+                    is RootNavRoute.BlockedList -> NavEntry(route) {
+                        BlockedListRoute(onBackClick = { navigateBack() })
+                    }
+
+                    is RootNavRoute.CustomerCenter -> NavEntry(route) {
+                        CustomerCenterRoute(
+                            onBackClick = { navigateBack() },
+                            onNewInquiryClick = { rootBackStack.add(RootNavRoute.InquiryWrite()) },
+                            onInquiryClick = { inquiryId -> rootBackStack.add(RootNavRoute.InquiryDetail(inquiryId)) },
+                            initialSegmentIndex = route.initialSegmentIndex
+                        )
+                    }
+
+                    is RootNavRoute.InquiryWrite -> NavEntry(route) {
+                        InquiryWriteRoute(
+                            onBackClick = { navigateBack() },
+                            onCreated = { replaceTop(RootNavRoute.InquiryComplete) },
+                            onUpdated = { navigateBack() },
+                            inquiryId = route.inquiryId
+                        )
+                    }
+
+                    is RootNavRoute.InquiryDetail -> NavEntry(route) {
+                        InquiryDetailRoute(
+                            inquiryId = route.inquiryId,
+                            onBackClick = { navigateBack() },
+                            onEditClick = { rootBackStack.add(RootNavRoute.InquiryWrite(route.inquiryId)) },
+                            onNewInquiryClick = { rootBackStack.add(RootNavRoute.InquiryWrite()) }
+                        )
+                    }
+
+                    is RootNavRoute.InquiryComplete -> NavEntry(route) {
+                        InquiryCompleteScreen(
+                            onCloseClick = { navigateBack() },
+                            onViewInquiriesClick = {
+                                navigateBack()
+                                if (rootBackStack.lastOrNull() is RootNavRoute.CustomerCenter) {
+                                    replaceTop(RootNavRoute.CustomerCenter(initialSegmentIndex = 1))
+                                } else {
+                                    rootBackStack.add(RootNavRoute.CustomerCenter(initialSegmentIndex = 1))
+                                }
+                            }
+                        )
                     }
 
                     else -> NavEntry(route) {}

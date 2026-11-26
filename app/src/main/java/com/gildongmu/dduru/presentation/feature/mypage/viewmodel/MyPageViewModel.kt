@@ -3,14 +3,12 @@ package com.gildongmu.dduru.presentation.feature.mypage.viewmodel
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.gildongmu.dduru.core.common.state.UiState
-import com.gildongmu.dduru.domain.entity.SurveyResult
 import com.gildongmu.dduru.domain.entity.mypage.AvailableDate
 import com.gildongmu.dduru.domain.entity.mypage.DestinationPreference
+import com.gildongmu.dduru.domain.entity.mypage.TravelStyleSummary
 import com.gildongmu.dduru.domain.repository.MyPageRepository
-import com.gildongmu.dduru.domain.repository.SurveyRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.async
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -22,13 +20,12 @@ data class MyPageUiState(
     val profileImageUrl: String? = null,
     val destinations: List<DestinationPreference> = emptyList(),
     val dateRanges: List<AvailableDate> = emptyList(),
-    val travelStyle: SurveyResult? = null
+    val travelStyle: TravelStyleSummary? = null
 )
 
 @HiltViewModel
 class MyPageViewModel @Inject constructor(
-    private val myPageRepository: MyPageRepository,
-    private val surveyRepository: SurveyRepository
+    private val myPageRepository: MyPageRepository
 ) : ViewModel() {
 
     private val _uiState = MutableStateFlow<UiState<MyPageUiState>>(UiState.Loading)
@@ -38,26 +35,22 @@ class MyPageViewModel @Inject constructor(
         viewModelScope.launch {
             if (_uiState.value !is UiState.Success) _uiState.value = UiState.Loading
 
-            val profileResult = async { myPageRepository.getMyProfile() }
-            val preferenceResult = async { myPageRepository.getTravelPreference() }
-            val surveyResult = async { surveyRepository.getMySurveyResult() }
-
-            val profile = profileResult.await().getOrElse {
-                if (_uiState.value !is UiState.Success) _uiState.value = UiState.Failure
-                return@launch
-            }
-            val preference = preferenceResult.await().getOrNull()
-
-            _uiState.value = UiState.Success(
-                MyPageUiState(
-                    nickname = profile.nickname,
-                    bio = profile.bio,
-                    profileImageUrl = profile.profileImageUrl,
-                    destinations = preference?.destinations.orEmpty(),
-                    dateRanges = preference?.availableDates.orEmpty(),
-                    travelStyle = surveyResult.await().getOrNull()
-                )
-            )
+            myPageRepository.getOverview()
+                .onSuccess { overview ->
+                    _uiState.value = UiState.Success(
+                        MyPageUiState(
+                            nickname = overview.nickname,
+                            bio = overview.bio,
+                            profileImageUrl = overview.profileImageUrl,
+                            destinations = overview.destinations,
+                            dateRanges = overview.availableDates,
+                            travelStyle = overview.travelStyleSummary
+                        )
+                    )
+                }
+                .onFailure {
+                    if (_uiState.value !is UiState.Success) _uiState.value = UiState.Failure
+                }
         }
     }
 }
