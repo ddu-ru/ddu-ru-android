@@ -9,6 +9,7 @@ import com.gildongmu.dduru.presentation.component.DduruToastMessage
 import com.gildongmu.dduru.presentation.component.toErrorToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -40,8 +41,11 @@ class BlockedListViewModel @Inject constructor(
         load()
     }
 
+    private var loadJob: Job? = null
+
     fun load() {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             _uiState.value = UiState.Loading
             myPageRepository.getBlockedUsers(cursor = null)
                 .onSuccess { page ->

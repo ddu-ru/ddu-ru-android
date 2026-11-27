@@ -18,6 +18,7 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -44,9 +45,11 @@ class SuperhostViewModel @Inject constructor(
     val errorToast: SharedFlow<DduruToastMessage> = _errorToast.asSharedFlow()
 
     private var status: SuperHostStatus? = null
+    private var loadJob: Job? = null
 
     fun load() {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             if (_uiState.value !is UiState.Success) _uiState.value = UiState.Loading
             superHostRepository.getMyStatus()
                 .onSuccess { result ->
@@ -90,6 +93,10 @@ class SuperhostViewModel @Inject constructor(
         viewModelScope.launch {
             superHostRepository.applyTicket(sheet.post.id)
                 .onSuccess { result ->
+                    _uiState.update { state ->
+                        val data = (state as? UiState.Success)?.data ?: return@update state
+                        UiState.Success(data.copy(ticketCount = result.unusedTicketCount))
+                    }
                     updateSheet { current ->
                         current?.copy(
                             step = SuperhostSheetStep.COMPLETE,

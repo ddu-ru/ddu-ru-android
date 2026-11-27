@@ -13,12 +13,13 @@ import com.gildongmu.dduru.presentation.feature.mypage.model.toInquiryCategory
 import com.gildongmu.dduru.presentation.feature.mypage.model.toInquiryType
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
-import kotlinx.coroutines.flow.MutableSharedFlow
+import kotlinx.coroutines.Job
+import kotlinx.coroutines.channels.Channel
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.SharedFlow
 import kotlinx.coroutines.flow.StateFlow
-import kotlinx.coroutines.flow.asSharedFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.receiveAsFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 
@@ -31,6 +32,7 @@ data class InquiryWriteUiState(
     val attachedImageUris: List<Uri> = emptyList(),
     val attachedImageUrls: List<String> = emptyList(),
     val attachedFileNames: List<String> = emptyList(),
+    val isInquiryLoaded: Boolean = true,
     val showSubmitDialog: Boolean = false,
     val isSubmitting: Boolean = false
 ) {
@@ -55,25 +57,30 @@ class InquiryWriteViewModel @Inject constructor(
     private val _uiState = MutableStateFlow(InquiryWriteUiState())
     val uiState: StateFlow<InquiryWriteUiState> = _uiState.asStateFlow()
 
-    private val _event = MutableSharedFlow<InquiryWriteEvent>()
-    val event: SharedFlow<InquiryWriteEvent> = _event.asSharedFlow()
+    private val _event = Channel<InquiryWriteEvent>(Channel.BUFFERED)
+    val event: Flow<InquiryWriteEvent> = _event.receiveAsFlow()
+
+    private var loadJob: Job? = null
 
     fun loadInquiry(inquiryId: Long) {
-        if (_uiState.value.inquiryId == inquiryId) return
-        viewModelScope.launch {
+        val state = _uiState.value
+        if (state.inquiryId == inquiryId && (state.isInquiryLoaded || loadJob?.isActive == true)) return
+        _uiState.update { it.copy(inquiryId = inquiryId, isInquiryLoaded = false) }
+
+        loadJob = viewModelScope.launch {
             customerSupportRepository.getInquiry(inquiryId)
                 .onSuccess { inquiry ->
                     _uiState.update {
                         it.copy(
-                            inquiryId = inquiry.id,
                             selectedCategory = inquiry.type.toInquiryCategory(),
                             content = inquiry.content,
                             attachedImageUrls = inquiry.imageUrls,
-                            attachedFileNames = inquiry.imageUrls.map { url -> url.substringAfterLast('/') }
+                            attachedFileNames = inquiry.imageUrls.map { url -> url.substringAfterLast('/') },
+                            isInquiryLoaded = true
                         )
                     }
                 }
-                .onFailure { error -> _event.emit(InquiryWriteEvent.ShowError(error.toErrorToast())) }
+                .onFailure { error -> _event.send(InquiryWriteEvent.ShowError(error.toErrorToast())) }
         }
     }
 
@@ -99,9 +106,13 @@ class InquiryWriteViewModel @Inject constructor(
 
     fun onSubmitClick() {
         val state = _uiState.value
+        if (state.inquiryId != null && !state.isInquiryLoaded) {
+            loadInquiry(state.inquiryId)
+            return
+        }
         if (state.selectedCategory == null || state.content.isBlank()) {
             viewModelScope.launch {
-                _event.emit(
+                _event.send(
                     InquiryWriteEvent.ShowError(
                         DduruToastMessage("입력 내용을 확인해주세요", "문의 유형과 상세 내용을 입력해주세요")
                     )
@@ -119,7 +130,7 @@ class InquiryWriteViewModel @Inject constructor(
     fun onSubmitConfirm() {
         val state = _uiState.value
         val category = state.selectedCategory ?: return
-        if (state.isSubmitting) return
+        if (state.isSubmitting || !state.isInquiryLoaded) return
         _uiState.update { it.copy(showSubmitDialog = false, isSubmitting = true) }
 
         viewModelScope.launch {
@@ -129,7 +140,7 @@ class InquiryWriteViewModel @Inject constructor(
                 state.attachedImageUris.map { uri ->
                     imageUploader.uploadImage(uri, ImageUploadTarget.INQUIRY).getOrElse { error ->
                         _uiState.update { it.copy(isSubmitting = false) }
-                        _event.emit(InquiryWriteEvent.ShowError(error.toErrorToast()))
+                        _event.send(InquiryWriteEvent.ShowError(error.toErrorToast()))
                         return@launch
                     }
                 }
@@ -145,9 +156,9 @@ class InquiryWriteViewModel @Inject constructor(
             _uiState.update { it.copy(isSubmitting = false) }
             result
                 .onSuccess {
-                    _event.emit(if (state.inquiryId == null) InquiryWriteEvent.Created else InquiryWriteEvent.Updated)
+                    _event.send(if (state.inquiryId == null) InquiryWriteEvent.Created else InquiryWriteEvent.Updated)
                 }
-                .onFailure { error -> _event.emit(InquiryWriteEvent.ShowError(error.toErrorToast())) }
+                .onFailure { error -> _event.send(InquiryWriteEvent.ShowError(error.toErrorToast())) }
         }
     }
 }

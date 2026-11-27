@@ -55,7 +55,7 @@ fun CustomerCenterRoute(
     val errorToast = LocalDduruErrorToast.current
 
     LaunchedEffect(initialSegmentIndex) {
-        if (initialSegmentIndex != uiState.segmentIndex) viewModel.onSegmentClick(initialSegmentIndex)
+        viewModel.applyInitialSegment(initialSegmentIndex)
     }
 
     LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {

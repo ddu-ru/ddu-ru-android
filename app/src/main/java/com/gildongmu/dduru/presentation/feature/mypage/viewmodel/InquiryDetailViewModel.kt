@@ -7,6 +7,7 @@ import com.gildongmu.dduru.domain.entity.mypage.InquiryDetail
 import com.gildongmu.dduru.domain.repository.CustomerSupportRepository
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
@@ -20,8 +21,11 @@ class InquiryDetailViewModel @Inject constructor(
     private val _uiState = MutableStateFlow<UiState<InquiryDetail>>(UiState.Loading)
     val uiState: StateFlow<UiState<InquiryDetail>> = _uiState.asStateFlow()
 
+    private var loadJob: Job? = null
+
     fun load(inquiryId: Long) {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadJob = viewModelScope.launch {
             if (_uiState.value !is UiState.Success) _uiState.value = UiState.Loading
             customerSupportRepository.getInquiry(inquiryId)
                 .onSuccess { _uiState.value = UiState.Success(it) }

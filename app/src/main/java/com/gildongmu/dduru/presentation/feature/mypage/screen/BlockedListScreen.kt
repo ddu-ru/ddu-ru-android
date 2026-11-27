@@ -87,10 +87,8 @@ fun BlockedListScreen(
                 )
             }
 
-            if (users.isNotEmpty()) {
-                item {
-                    LaunchedEffect(users.size) { onLoadMore() }
-                }
+            item {
+                LaunchedEffect(users.size) { onLoadMore() }
             }
         }
     }

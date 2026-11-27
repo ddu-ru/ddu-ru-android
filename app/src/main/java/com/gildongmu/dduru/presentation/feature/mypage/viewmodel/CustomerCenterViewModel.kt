@@ -46,9 +46,16 @@ class CustomerCenterViewModel @Inject constructor(
     val errorToast: SharedFlow<DduruToastMessage> = _errorToast.asSharedFlow()
 
     private var faqJob: Job? = null
+    private var isInitialSegmentApplied = false
 
     init {
         loadFaqs()
+    }
+
+    fun applyInitialSegment(index: Int) {
+        if (isInitialSegmentApplied) return
+        isInitialSegmentApplied = true
+        if (index != _uiState.value.segmentIndex) onSegmentClick(index)
     }
 
     fun onSegmentClick(index: Int) {

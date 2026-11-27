@@ -12,6 +12,7 @@ import com.gildongmu.dduru.presentation.component.DduruToastMessage
 import com.gildongmu.dduru.presentation.component.toErrorToast
 import dagger.hilt.android.lifecycle.HiltViewModel
 import javax.inject.Inject
+import kotlinx.coroutines.Job
 import kotlinx.coroutines.flow.MutableSharedFlow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharedFlow
@@ -39,6 +40,9 @@ abstract class MyPagePostListViewModel : ViewModel() {
     private val _errorToast = MutableSharedFlow<DduruToastMessage>()
     val errorToast: SharedFlow<DduruToastMessage> = _errorToast.asSharedFlow()
 
+    private var loadJob: Job? = null
+    private var loadMoreJob: Job? = null
+
     protected abstract suspend fun fetch(
         cursor: Long?,
         filter: MyPagePostFilter,
@@ -49,13 +53,17 @@ abstract class MyPagePostListViewModel : ViewModel() {
         filter: MyPagePostFilter = currentData()?.filter ?: MyPagePostFilter.ALL,
         sort: MyPagePostSort = currentData()?.sort ?: MyPagePostSort.LATEST
     ) {
-        viewModelScope.launch {
+        loadJob?.cancel()
+        loadMoreJob?.cancel()
+        onLoadStart()
+        updateData { it.copy(isLoadingMore = false) }
+        loadJob = viewModelScope.launch {
             if (_uiState.value !is UiState.Success) _uiState.value = UiState.Loading
             fetch(cursor = null, filter = filter, sort = sort)
                 .onSuccess { page ->
                     _uiState.value = UiState.Success(
                         MyPagePostListUiState(
-                            posts = page.posts,
+                            posts = filterLoadedPosts(page.posts),
                             nextCursor = page.nextCursor,
                             hasNext = page.hasNext,
                             totalCount = page.totalCount,
@@ -77,15 +85,15 @@ abstract class MyPagePostListViewModel : ViewModel() {
 
     fun loadMore() {
         val state = currentData() ?: return
-        if (!state.hasNext || state.isLoadingMore) return
+        if (!state.hasNext || state.isLoadingMore || loadJob?.isActive == true) return
 
-        viewModelScope.launch {
+        loadMoreJob = viewModelScope.launch {
             updateData { it.copy(isLoadingMore = true) }
             fetch(cursor = state.nextCursor, filter = state.filter, sort = state.sort)
                 .onSuccess { page ->
                     updateData {
                         it.copy(
-                            posts = it.posts + page.posts,
+                            posts = it.posts + filterLoadedPosts(page.posts),
                             nextCursor = page.nextCursor,
                             hasNext = page.hasNext,
                             isLoadingMore = false
@@ -98,6 +106,10 @@ abstract class MyPagePostListViewModel : ViewModel() {
                 }
         }
     }
+
+    protected open fun onLoadStart() = Unit
+
+    protected open fun filterLoadedPosts(posts: List<MyPagePost>): List<MyPagePost> = posts
 
     protected fun currentData(): MyPagePostListUiState? = (_uiState.value as? UiState.Success)?.data
 
@@ -124,14 +136,35 @@ class WishlistViewModel @Inject constructor(
         sort: MyPagePostSort
     ): Result<MyPagePostPage> = myPageRepository.getLikedPosts(cursor)
 
+    private val pendingUnlikeIds = mutableSetOf<Long>()
+    private val completedUnlikeIds = mutableSetOf<Long>()
+
+    override fun onLoadStart() {
+        completedUnlikeIds.clear()
+    }
+
+    override fun filterLoadedPosts(posts: List<MyPagePost>): List<MyPagePost> =
+        posts.filterNot { it.id in pendingUnlikeIds || it.id in completedUnlikeIds }
+
     fun onUnlikeClick(postId: Long) {
-        val removed = currentData()?.posts?.firstOrNull { it.id == postId } ?: return
+        val posts = currentData()?.posts ?: return
+        val index = posts.indexOfFirst { it.id == postId }
+        if (index < 0) return
+        val removed = posts[index]
+        pendingUnlikeIds += postId
         updateData { data -> data.copy(posts = data.posts.filterNot { it.id == postId }) }
 
         viewModelScope.launch {
-            myPageRepository.togglePostLike(postId).onFailure { error ->
+            val result = myPageRepository.togglePostLike(postId)
+            pendingUnlikeIds -= postId
+            result.onSuccess { completedUnlikeIds += postId }
+            result.onFailure { error ->
                 updateData { data ->
-                    if (data.posts.any { it.id == postId }) data else data.copy(posts = listOf(removed) + data.posts)
+                    if (data.posts.any { it.id == postId }) {
+                        data
+                    } else {
+                        data.copy(posts = data.posts.toMutableList().apply { add(index.coerceAtMost(size), removed) })
+                    }
                 }
                 emitError(error)
             }
