@@ -91,7 +91,8 @@ private fun MatchingFilterBottomSheetContent(
     var selectedEndDate by remember { mutableStateOf<LocalDate?>(null) }
     var selectedRecruitmentStatus by remember { mutableStateOf<String?>(null) }
     var selectedGender by remember { mutableStateOf<MatchingGender?>(null) }
-    var selectedParticipantOption by remember { mutableStateOf<String?>(null) }
+    var selectedMinRecruitCapacity by remember { mutableStateOf<Int?>(null) }
+    var selectedMaxRecruitCapacity by remember { mutableStateOf<Int?>(null) }
     var selectedAgeStart by remember { mutableStateOf<Int?>(null) }
     var selectedAgeEnd by remember { mutableStateOf<Int?>(null) }
     var selectedCompanionType by remember { mutableStateOf<MatchingCompanionType?>(null) }
@@ -102,7 +103,8 @@ private fun MatchingFilterBottomSheetContent(
         selectedEndDate = null
         selectedRecruitmentStatus = null
         selectedGender = null
-        selectedParticipantOption = null
+        selectedMinRecruitCapacity = null
+        selectedMaxRecruitCapacity = null
         selectedAgeStart = null
         selectedAgeEnd = null
         selectedCompanionType = null
@@ -159,9 +161,11 @@ private fun MatchingFilterBottomSheetContent(
                         onGenderSelected = {
                             selectedGender = selectedGender.toggle(it)
                         },
-                        selectedParticipantOption = selectedParticipantOption,
-                        onParticipantOptionSelected = {
-                            selectedParticipantOption = selectedParticipantOption.toggle(it)
+                        selectedMinRecruitCapacity = selectedMinRecruitCapacity,
+                        selectedMaxRecruitCapacity = selectedMaxRecruitCapacity,
+                        onRecruitCapacityChanged = { minimum, maximum ->
+                            selectedMinRecruitCapacity = minimum
+                            selectedMaxRecruitCapacity = maximum
                         },
                         selectedAgeStart = selectedAgeStart,
                         selectedAgeEnd = selectedAgeEnd,
@@ -188,8 +192,8 @@ private fun MatchingFilterBottomSheetContent(
                         endDate = selectedEndDate?.toString(),
                         recruitmentStatus = selectedRecruitmentStatus?.toRecruitmentStatusCode(),
                         preferredGender = selectedGender?.code,
-                        minRecruitCapacity = selectedParticipantOption?.toMinCapacity(),
-                        maxRecruitCapacity = selectedParticipantOption?.toMaxCapacity(),
+                        minRecruitCapacity = selectedMinRecruitCapacity,
+                        maxRecruitCapacity = selectedMaxRecruitCapacity,
                         minAge = selectedAgeStart,
                         maxAge = selectedAgeEnd,
                         companionType = selectedCompanionType?.code
@@ -207,9 +211,6 @@ private fun String.toRecruitmentStatusCode() = when (this) {
     "모집 완료" -> "CLOSED"
     else -> null
 }
-
-private fun String.toMinCapacity() = when (this) { "2명", "2-4명" -> 2; "4명" -> 4; else -> null }
-private fun String.toMaxCapacity() = when (this) { "2명" -> 2; "4명", "2-4명" -> 4; else -> null }
 
 private fun <T> T?.toggle(value: T): T? {
     return if (this == value) null else value

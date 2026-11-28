@@ -4,8 +4,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
-import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -15,6 +13,10 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
@@ -35,7 +37,6 @@ import java.time.format.DateTimeFormatter
 
 private val DateFormatter: DateTimeFormatter = DateTimeFormatter.ofPattern("yyyy년 MM월 dd일")
 private val RecruitmentStatusOptions = listOf("모집중", "마감임박", "모집 완료")
-private val ParticipantQuickOptions = listOf("2명", "4명", "2-4명")
 
 @Composable
 fun MatchingDateFilterContent(
@@ -86,7 +87,6 @@ fun MatchingDateFilterContent(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun MatchingDetailFilterContent(
     destinationOptions: List<MatchingDestinationOption>,
@@ -96,8 +96,9 @@ fun MatchingDetailFilterContent(
     onRecruitmentStatusSelected: (String) -> Unit,
     selectedGender: MatchingGender?,
     onGenderSelected: (MatchingGender) -> Unit,
-    selectedParticipantOption: String?,
-    onParticipantOptionSelected: (String) -> Unit,
+    selectedMinRecruitCapacity: Int?,
+    selectedMaxRecruitCapacity: Int?,
+    onRecruitCapacityChanged: (Int?, Int?) -> Unit,
     selectedAgeStart: Int?,
     selectedAgeEnd: Int?,
     onAgeRangeChanged: (Int, Int) -> Unit,
@@ -105,31 +106,29 @@ fun MatchingDetailFilterContent(
     onCompanionTypeSelected: (MatchingCompanionType) -> Unit,
     modifier: Modifier = Modifier
 ) {
+    var isDestinationPickerVisible by remember { mutableStateOf(false) }
+    var isMinCountPickerVisible by remember { mutableStateOf(false) }
+    var isMaxCountPickerVisible by remember { mutableStateOf(false) }
+
     Column(modifier = modifier.fillMaxWidth()) {
         MatchingFilterSection(title = "여행지") {
-            MatchingDestinationField(
-                selectedDestinationName = destinationOptions
-                    .firstOrNull { it.id == selectedDestinationId }
-                    ?.name
-            )
-            FlowRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                destinationOptions.forEach { destination ->
-                    MatchingFilterSmallChip(
-                        text = destination.name,
-                        selected = destination.id == selectedDestinationId,
-                        onClick = {
-                            onDestinationSelected(
-                                if (destination.id == selectedDestinationId) null else destination.id
-                            )
-                        }
-                    )
-                }
+            Column {
+                MatchingDestinationField(
+                    selectedDestination = destinationOptions.firstOrNull { it.id == selectedDestinationId },
+                    onClick = { isDestinationPickerVisible = true },
+                    onClearClick = { onDestinationSelected(null) }
+                )
+                MatchingDropdownMenu(
+                    expanded = isDestinationPickerVisible,
+                    items = destinationOptions,
+                    itemLabel = MatchingDestinationOption::name,
+                    onItemSelected = { destination ->
+                        onDestinationSelected(destination.id)
+                        isDestinationPickerVisible = false
+                    },
+                    onDismissRequest = { isDestinationPickerVisible = false },
+                    horizontalInset = 3.dp
+                )
             }
         }
 
@@ -158,8 +157,15 @@ fun MatchingDetailFilterContent(
                 verticalAlignment = Alignment.CenterVertically,
                 horizontalArrangement = Arrangement.spacedBy(12.dp)
             ) {
-                MatchingUnderlineInput(
-                    text = "최소인원",
+                MatchingParticipantCountField(
+                    selectedCount = selectedMinRecruitCapacity,
+                    placeholder = "최소인원",
+                    expanded = isMinCountPickerVisible,
+                    onExpandedChange = { isMinCountPickerVisible = it },
+                    onSelected = { minimum ->
+                        val adjustedMaximum = selectedMaxRecruitCapacity?.let { maxOf(it, minimum ?: it) }
+                        onRecruitCapacityChanged(minimum, adjustedMaximum)
+                    },
                     modifier = Modifier.weight(1f)
                 )
                 Text(
@@ -167,26 +173,17 @@ fun MatchingDetailFilterContent(
                     style = DduruTheme.typography.Title2,
                     color = DduruTheme.colors.gray500
                 )
-                MatchingUnderlineInput(
-                    text = "최대인원",
+                MatchingParticipantCountField(
+                    selectedCount = selectedMaxRecruitCapacity,
+                    placeholder = "최대인원",
+                    expanded = isMaxCountPickerVisible,
+                    onExpandedChange = { isMaxCountPickerVisible = it },
+                    onSelected = { maximum ->
+                        val adjustedMinimum = selectedMinRecruitCapacity?.let { minOf(it, maximum ?: it) }
+                        onRecruitCapacityChanged(adjustedMinimum, maximum)
+                    },
                     modifier = Modifier.weight(1f)
                 )
-            }
-
-            FlowRow(
-                modifier = Modifier
-                    .fillMaxWidth()
-                    .padding(top = 12.dp),
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalArrangement = Arrangement.spacedBy(8.dp)
-            ) {
-                ParticipantQuickOptions.forEach { option ->
-                    MatchingFilterSmallChip(
-                        text = option,
-                        selected = option == selectedParticipantOption,
-                        onClick = { onParticipantOptionSelected(option) }
-                    )
-                }
             }
         }
 
@@ -249,7 +246,7 @@ fun MatchingFilterSection(
     Column(
         modifier = modifier
             .fillMaxWidth()
-            .padding(vertical = 24.dp),
+            .padding(vertical = 16.dp),
         verticalArrangement = Arrangement.spacedBy(12.dp)
     ) {
         if (title != null) {

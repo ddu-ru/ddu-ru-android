@@ -5,9 +5,11 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.WindowInsets
+import androidx.compose.foundation.layout.asPaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.navigationBarsPadding
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.runtime.Composable
@@ -35,8 +37,10 @@ import com.gildongmu.dduru.presentation.feature.matching.component.MatchingWrite
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.MatchingPostListSection
 import com.gildongmu.dduru.presentation.feature.matching.createPost.component.MatchingSortBottomSheet
 import com.gildongmu.dduru.presentation.feature.matching.effect.MatchingSideEffect
+import com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions
 import com.gildongmu.dduru.presentation.feature.matching.state.MatchingUiState
 import com.gildongmu.dduru.presentation.feature.matching.viewmodel.MatchingViewModel
+import com.gildongmu.dduru.presentation.navigation.BottomNavBarHeight
 import kotlinx.coroutines.flow.collectLatest
 
 @Composable
@@ -79,7 +83,10 @@ fun MatchingRoute(
                 onPostClick = viewModel::onPostClick,
                 onPostLikeClick = viewModel::onPostLikeClick,
                 onLoadMore = viewModel::loadMorePosts,
-                onWriteClick = viewModel::onWriteClick
+                onWriteClick = viewModel::onWriteClick,
+                onClearFilters = {
+                    viewModel.onFiltersApplied(MatchingFilterOptions())
+                }
             )
         }
     }
@@ -92,15 +99,18 @@ private fun MatchingScreen(
     onMenuClick: () -> Unit,
     onSearchQueryChange: (String) -> Unit,
     onSortSelected: (String) -> Unit,
-    onFiltersApplied: (com.gildongmu.dduru.presentation.feature.matching.model.MatchingFilterOptions) -> Unit,
+    onFiltersApplied: (MatchingFilterOptions) -> Unit,
     onPostClick: (Long) -> Unit,
     onPostLikeClick: (Long) -> Unit,
     onLoadMore: () -> Unit,
     onWriteClick: () -> Unit,
+    onClearFilters: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var isFilterSheetVisible by remember { mutableStateOf(false) }
     var isSortSheetVisible by remember { mutableStateOf(false) }
+    val bottomNavInset = WindowInsets.navigationBars.asPaddingValues().calculateBottomPadding()
+    val bottomNavHeight = BottomNavBarHeight + bottomNavInset
 
     Box(
         modifier = modifier
@@ -149,13 +159,15 @@ private fun MatchingScreen(
                 hasNext = uiState.hasNext,
                 isLoadingMore = uiState.isLoadingMore,
                 onLoadMore = onLoadMore,
+                showEmptyFilterState = uiState.filters.hasAppliedFilter,
+                onClearFilters = onClearFilters,
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),
                 contentPadding = PaddingValues(
                     start = 16.dp,
                     end = 16.dp,
-                    bottom = 16.dp
+                    bottom = bottomNavHeight + 32.dp
                 )
             )
         }
@@ -165,8 +177,7 @@ private fun MatchingScreen(
             modifier = Modifier
                 .align(Alignment.BottomEnd)
                 .zIndex(1f)
-                .navigationBarsPadding()
-                .padding(end = 16.dp)
+                .padding(end = 16.dp, bottom = bottomNavHeight + 8.dp)
         )
 
         MatchingSortBottomSheet(
@@ -200,7 +211,8 @@ private fun MatchingScreenPreview() {
             onPostClick = {},
             onPostLikeClick = {},
             onLoadMore = {},
-            onWriteClick = {}
+            onWriteClick = {},
+            onClearFilters = {}
         )
     }
 }

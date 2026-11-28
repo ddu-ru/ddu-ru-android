@@ -11,7 +11,19 @@ data class MatchingFilterOptions(
     val minAge: Int? = null,
     val maxAge: Int? = null,
     val companionType: String? = null
-)
+) {
+    val hasAppliedFilter: Boolean
+        get() = destinationId != null ||
+            startDate != null ||
+            endDate != null ||
+            recruitmentStatus != null ||
+            preferredGender != null ||
+            minRecruitCapacity != null ||
+            maxRecruitCapacity != null ||
+            minAge != null ||
+            maxAge != null ||
+            companionType != null
+}
 
 data class MatchingDestinationOption(
     val id: Long,
