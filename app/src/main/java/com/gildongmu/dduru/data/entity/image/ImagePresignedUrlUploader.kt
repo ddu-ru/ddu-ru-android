@@ -48,6 +48,7 @@ class ImagePresignedUrlUploader @Inject constructor(
             val presigned = when (target) {
                 ImageUploadTarget.PROFILE -> imagePresignedUrlApi.createProfilePresignedUrl(presignedUrlRequest)
                 ImageUploadTarget.JOURNEY -> imagePresignedUrlApi.createJourneyPresignedUrl(presignedUrlRequest)
+                ImageUploadTarget.INQUIRY -> imagePresignedUrlApi.createInquiryPresignedUrl(presignedUrlRequest)
             }.data?.firstOrNull() ?: error("업로드 URL을 받아오지 못했어요.")
 
             val mimeType = context.contentResolver.getType(uri) ?: defaultMimeType(extension)
@@ -112,5 +113,6 @@ class ImagePresignedUrlUploader @Inject constructor(
 
 enum class ImageUploadTarget {
     PROFILE,
-    JOURNEY
+    JOURNEY,
+    INQUIRY
 }

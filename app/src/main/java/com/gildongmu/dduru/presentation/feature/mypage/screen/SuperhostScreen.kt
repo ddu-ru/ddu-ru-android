@@ -12,12 +12,22 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
+import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
+import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingCompanionType
 import com.gildongmu.dduru.presentation.feature.matching.model.MatchingGender
 import com.gildongmu.dduru.presentation.feature.mypage.component.SuperhostPostItem
@@ -29,6 +39,40 @@ import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostSheetMode
 import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostSheetStep
 import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostSheetUiState
 import com.gildongmu.dduru.presentation.feature.mypage.model.SuperhostUiState
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.SuperhostViewModel
+
+@Composable
+fun SuperhostRoute(
+    onBackClick: () -> Unit,
+    viewModel: SuperhostViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errorToast = LocalDduruErrorToast.current
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.load()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.errorToast.collect { errorToast.show(it) }
+    }
+
+    when (val state = uiState) {
+        UiState.Loading, UiState.Empty -> DduruLoadingScreen()
+        UiState.Failure -> DduruServiceFailureScreen(
+            onRetryClick = viewModel::load,
+            onBackClick = onBackClick
+        )
+        is UiState.Success -> SuperhostScreen(
+            uiState = state.data,
+            onBackClick = onBackClick,
+            onApplyClick = viewModel::onApplyClick,
+            onExtendClick = viewModel::onExtendClick,
+            onSheetDismiss = viewModel::onSheetDismiss,
+            onSheetConfirm = viewModel::onSheetConfirm
+        )
+    }
+}
 
 @Composable
 fun SuperhostScreen(

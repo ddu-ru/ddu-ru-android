@@ -3,9 +3,11 @@ package com.gildongmu.dduru.data.di
 import com.gildongmu.dduru.data.register.nickname.repositoryimpl.NicknameRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.AuthRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ChatRoomRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.CustomerSupportRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.FcmTokenRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.MyPageRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.ParticipationRepositoryImpl
+import com.gildongmu.dduru.data.repositoryimpl.SuperHostRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.SurveyRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.home.HomeNotificationRepositoryImpl
 import com.gildongmu.dduru.data.repositoryimpl.home.HomeRepositoryImpl
@@ -18,9 +20,11 @@ import com.gildongmu.dduru.domain.journey.repository.JourneyRepository
 import com.gildongmu.dduru.domain.register.nickname.repository.NicknameRepository
 import com.gildongmu.dduru.domain.repository.AuthRepository
 import com.gildongmu.dduru.domain.repository.ChatRoomRepository
+import com.gildongmu.dduru.domain.repository.CustomerSupportRepository
 import com.gildongmu.dduru.domain.repository.FcmTokenRepository
 import com.gildongmu.dduru.domain.repository.MyPageRepository
 import com.gildongmu.dduru.domain.repository.ParticipationRepository
+import com.gildongmu.dduru.domain.repository.SuperHostRepository
 import com.gildongmu.dduru.domain.repository.SurveyRepository
 import com.gildongmu.dduru.domain.repository.home.HomeNotificationRepository
 import com.gildongmu.dduru.domain.repository.home.HomeRepository
@@ -105,4 +109,16 @@ abstract class RepositoryModule {
     abstract fun bindMyPageRepository(
         myPageRepositoryImpl: MyPageRepositoryImpl
     ): MyPageRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindSuperHostRepository(
+        superHostRepositoryImpl: SuperHostRepositoryImpl
+    ): SuperHostRepository
+
+    @Binds
+    @Singleton
+    abstract fun bindCustomerSupportRepository(
+        customerSupportRepositoryImpl: CustomerSupportRepositoryImpl
+    ): CustomerSupportRepository
 }

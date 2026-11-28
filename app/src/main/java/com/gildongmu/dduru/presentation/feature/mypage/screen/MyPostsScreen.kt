@@ -11,19 +11,75 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.compose.LifecycleEventEffect
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.R
+import com.gildongmu.dduru.core.common.state.UiState
+import com.gildongmu.dduru.core.designsystem.component.DduruLoadingScreen
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
+import com.gildongmu.dduru.presentation.component.DduruServiceFailureScreen
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
+import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
 import com.gildongmu.dduru.presentation.feature.matching.component.MatchingFilterChip
 import com.gildongmu.dduru.presentation.feature.mypage.component.MyPostManagementItem
 import com.gildongmu.dduru.presentation.feature.mypage.component.SuperhostTicketSummaryCard
 import com.gildongmu.dduru.presentation.feature.mypage.component.bottomsheet.SuperhostInfoBottomSheet
 import com.gildongmu.dduru.presentation.feature.mypage.component.bottomsheet.SuperhostInfoSheetSurface
 import com.gildongmu.dduru.presentation.feature.mypage.model.MyPostManagementUiModel
+import com.gildongmu.dduru.presentation.feature.mypage.model.toManagementUiModel
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.MyPostsViewModel
+
+@Composable
+fun MyPostsRoute(
+    onBackClick: () -> Unit,
+    onApplySuperhostClick: () -> Unit,
+    onPostClick: (Long) -> Unit,
+    viewModel: MyPostsViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val errorToast = LocalDduruErrorToast.current
+    var showSuperhostInfo by rememberSaveable { mutableStateOf(false) }
+
+    LifecycleEventEffect(Lifecycle.Event.ON_RESUME) {
+        viewModel.load()
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.errorToast.collect { errorToast.show(it) }
+    }
+
+    when (val state = uiState) {
+        UiState.Loading, UiState.Empty -> DduruLoadingScreen()
+        UiState.Failure -> DduruServiceFailureScreen(
+            onRetryClick = { viewModel.load() },
+            onBackClick = onBackClick
+        )
+        is UiState.Success -> MyPostsScreen(
+            posts = state.data.posts.map { it.toManagementUiModel() },
+            ticketCount = state.data.ticketCount,
+            selectedSort = state.data.sort.label,
+            onBackClick = onBackClick,
+            onSuperhostInfoClick = { showSuperhostInfo = true },
+            onApplySuperhostClick = onApplySuperhostClick,
+            onSortClick = viewModel::onSortClick,
+            onPostClick = onPostClick,
+            onLoadMore = viewModel::loadMore,
+            showSuperhostInfo = showSuperhostInfo,
+            onSuperhostInfoDismiss = { showSuperhostInfo = false }
+        )
+    }
+}
 
 @Composable
 fun MyPostsScreen(
@@ -36,6 +92,7 @@ fun MyPostsScreen(
     onSortClick: () -> Unit,
     onPostClick: (Long) -> Unit,
     modifier: Modifier = Modifier,
+    onLoadMore: () -> Unit = {},
     showSuperhostInfo: Boolean = false,
     onSuperhostInfoDismiss: () -> Unit = {}
 ) {
@@ -77,6 +134,10 @@ fun MyPostsScreen(
                 items = posts,
                 key = { _, post -> post.id }
             ) { index, post ->
+                if (index == posts.lastIndex) {
+                    LaunchedEffect(posts.size) { onLoadMore() }
+                }
+
                 MyPostManagementItem(
                     post = post,
                     showDivider = index != posts.lastIndex,

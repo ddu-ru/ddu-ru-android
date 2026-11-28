@@ -12,7 +12,8 @@ data class DestinationPreference(
     val countryCode: String,
     val countryName: String,
     val destinationId: Long? = null,
-    val city: String? = null
+    val city: String? = null,
+    val imageUrl: String? = null
 )
 
 enum class DestinationPreferenceType { COUNTRY, CITY }

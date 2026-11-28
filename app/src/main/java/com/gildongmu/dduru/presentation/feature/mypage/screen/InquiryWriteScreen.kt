@@ -1,5 +1,9 @@
 package com.gildongmu.dduru.presentation.feature.mypage.screen
 
+import android.provider.OpenableColumns
+import androidx.activity.compose.rememberLauncherForActivityResult
+import androidx.activity.result.PickVisualMediaRequest
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -15,25 +19,89 @@ import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
+import androidx.hilt.navigation.compose.hiltViewModel
+import androidx.lifecycle.compose.collectAsStateWithLifecycle
 import com.gildongmu.dduru.core.designsystem.component.DduruButton
 import com.gildongmu.dduru.core.designsystem.component.DduruButtonEnabledColors
 import com.gildongmu.dduru.core.designsystem.theme.DduruTheme
 import com.gildongmu.dduru.presentation.component.FloatingBackTopBar
+import com.gildongmu.dduru.presentation.component.LocalDduruErrorToast
 import com.gildongmu.dduru.presentation.component.MultiLineTextField
 import com.gildongmu.dduru.presentation.feature.mypage.component.ConfirmDialog
 import com.gildongmu.dduru.presentation.feature.mypage.component.InquiryCategoryGrid
 import com.gildongmu.dduru.presentation.feature.mypage.component.InquiryGuideNotes
 import com.gildongmu.dduru.presentation.feature.mypage.component.PhotoAttachField
 import com.gildongmu.dduru.presentation.feature.mypage.model.InquiryCategory
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.InquiryWriteEvent
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.InquiryWriteViewModel
+import com.gildongmu.dduru.presentation.feature.mypage.viewmodel.MAX_INQUIRY_IMAGE_COUNT
 
 private const val INQUIRY_CONTENT_MAX_LENGTH = 500
+
+@Composable
+fun InquiryWriteRoute(
+    onBackClick: () -> Unit,
+    onCreated: () -> Unit,
+    onUpdated: () -> Unit,
+    inquiryId: Long? = null,
+    viewModel: InquiryWriteViewModel = hiltViewModel()
+) {
+    val uiState by viewModel.uiState.collectAsStateWithLifecycle()
+    val context = LocalContext.current
+    val errorToast = LocalDduruErrorToast.current
+    val photoPickerLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.PickMultipleVisualMedia(MAX_INQUIRY_IMAGE_COUNT)
+    ) { uris ->
+        viewModel.onImagesSelected(
+            uris.map { uri ->
+                val fileName = context.contentResolver
+                    .query(uri, arrayOf(OpenableColumns.DISPLAY_NAME), null, null, null)
+                    ?.use { cursor -> if (cursor.moveToFirst()) cursor.getString(0) else null }
+                uri to (fileName ?: uri.lastPathSegment.orEmpty())
+            }
+        )
+    }
+
+    LaunchedEffect(inquiryId) {
+        inquiryId?.let(viewModel::loadInquiry)
+    }
+
+    LaunchedEffect(Unit) {
+        viewModel.event.collect { event ->
+            when (event) {
+                InquiryWriteEvent.Created -> onCreated()
+                InquiryWriteEvent.Updated -> onUpdated()
+                is InquiryWriteEvent.ShowError -> errorToast.show(event.toast)
+            }
+        }
+    }
+
+    InquiryWriteScreen(
+        selectedCategory = uiState.selectedCategory,
+        content = uiState.content,
+        attachedFileName = uiState.attachedFileName,
+        guideNotes = DefaultGuideNotes,
+        onBackClick = onBackClick,
+        onCategoryClick = viewModel::onCategoryClick,
+        onContentChange = viewModel::onContentChange,
+        onAttachClick = {
+            photoPickerLauncher.launch(PickVisualMediaRequest(ActivityResultContracts.PickVisualMedia.ImageOnly))
+        },
+        onSubmitClick = viewModel::onSubmitClick,
+        showSubmitDialog = uiState.showSubmitDialog,
+        onSubmitDialogDismiss = viewModel::onSubmitDialogDismiss,
+        onSubmitConfirm = viewModel::onSubmitConfirm
+    )
+}
 
 @Composable
 fun InquiryWriteScreen(

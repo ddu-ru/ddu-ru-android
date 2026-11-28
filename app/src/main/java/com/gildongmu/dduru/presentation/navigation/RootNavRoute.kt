@@ -60,4 +60,20 @@ sealed interface RootNavRoute : NavKey {
     @Serializable data class JourneyVoteCompose(val journeyId: Long) : RootNavRoute
 
     @Serializable data object ProfileEditTravelStyle : RootNavRoute
+
+    @Serializable data object Wishlist : RootNavRoute
+
+    @Serializable data object MyPosts : RootNavRoute
+
+    @Serializable data object Superhost : RootNavRoute
+
+    @Serializable data object BlockedList : RootNavRoute
+
+    @Serializable data class CustomerCenter(val initialSegmentIndex: Int = 0) : RootNavRoute
+
+    @Serializable data class InquiryWrite(val inquiryId: Long? = null) : RootNavRoute
+
+    @Serializable data class InquiryDetail(val inquiryId: Long) : RootNavRoute
+
+    @Serializable data object InquiryComplete : RootNavRoute
 }
